@@ -4,7 +4,6 @@ RUN mkdir pong_nestjs
 WORKDIR /pong_nestjs
 
 COPY package.json .
-COPY package-lock.json .
 RUN npm i
 COPY . .
 RUN npm run build

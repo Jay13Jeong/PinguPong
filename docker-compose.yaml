@@ -44,20 +44,20 @@ services:
     volumes:
       - ./pong_nestjs/src:/pong_nestjs/src
 
-  # pong_front:
-  #   container_name: pong_front
-  #   restart: always
-  #   # environment:
-  #   #   - VITE_BASE_URL=
-  #   build:
-  #     context: ./pong_front
-  #     dockerfile: Dockerfile
-  #   # command: npm run dev
-  #   working_dir: /pong_front
-  #   networks:
-  #     - pong
-  #   volumes:
-  #     - ./pong_front/src:/pong_front/src
+  pong_front:
+    container_name: pong_front
+    restart: always
+    # environment:
+    #   - VITE_BASE_URL=
+    build:
+      context: ./pong_front
+      dockerfile: Dockerfile
+    # command: npm run dev
+    working_dir: /pong_front
+    networks:
+      - pong
+    volumes:
+      - ./pong_front/src:/pong_front/src
 
   pong_proxy:
     container_name: pong_proxy

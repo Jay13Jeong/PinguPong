@@ -10,7 +10,7 @@ server {
   set $nestjs pong_nestjs;
 
   location / {
-    proxy_pass http://$front:4242;
+    proxy_pass http://$front:80;
   }
 
   location /api {
