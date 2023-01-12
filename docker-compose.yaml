@@ -33,6 +33,8 @@ services:
       - REFRESH_SECRET=${REFRESH_SECRET}
       - SERVER_HOST=${SERVER_HOST}
       - DB_DIALECT=postgres
+      - JWTKEY=${ACCESS_SECRET};
+      # - TOKEN_EXPIRATION=1d;
     build:
       context: ./pong_nestjs
       dockerfile: Dockerfile
