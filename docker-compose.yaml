@@ -26,13 +26,13 @@ services:
     environment:
       - DB_HOST=pong_database
       - DB_PORT=5432
-      - DB_USERNAME=${NESTJS_USER}
-      - DB_PASSWORD=${NESTJS_PASSWORD}
-      - DB_NAME=pong
+      - DB_USER=${NESTJS_USER}
+      - DB_PASS=${NESTJS_PASSWORD}
+      - DB_NAME_DEVELOPMENT=pong
       - ACCESS_SECRET=${ACCESS_SECRET}
       - REFRESH_SECRET=${REFRESH_SECRET}
       - SERVER_HOST=${SERVER_HOST}
-      - MODE=pong
+      - DB_DIALECT=postgres
     build:
       context: ./pong_nestjs
       dockerfile: Dockerfile
