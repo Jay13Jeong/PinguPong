@@ -1,10 +1,13 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { BrowserRouter,Route, Link,Routes } from "react-router-dom";
+import Routing from './Routing';
 
 function App() {
   return (
     <div className="App">
+      {/* <Routing /> */}
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
