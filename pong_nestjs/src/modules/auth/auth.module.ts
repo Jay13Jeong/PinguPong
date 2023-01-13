@@ -15,7 +15,7 @@ import { JwtStrategy } from './jwt.strategy';
     UsersModule,
     JwtModule.register({
         secret: process.env.JWTKEY,
-        signOptions: { expiresIn: "2h" },
+        signOptions: { expiresIn: "2h" }, //토큰 만료시간 2시간으로 설정.
     }),
   ],
   providers: [

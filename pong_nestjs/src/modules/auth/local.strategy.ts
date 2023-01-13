@@ -9,6 +9,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
         super();
     }
 
+    //로그인이 필요한 서비스인지 검사하는 메소드. 
     async validate(username: string, password: string): Promise<any>{
         const user = await this.authService.validateUser(username, password);
 
