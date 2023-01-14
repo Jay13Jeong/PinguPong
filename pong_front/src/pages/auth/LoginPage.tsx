@@ -25,7 +25,7 @@ import { Link } from "react-router-dom";
 export default function LoginPage() {
   return (
     <Link to="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-e607d301881ee531825879addc115683a5bf969a5afc9160db766b30e0132ef3&redirect_uri=http%3A%2F%2Flocalhost%2F&response_type=code"><button>Login</button></Link>
-    // <Container>
+    // <Container> 
     //   <Login />
     //   <CustomP>OR</CustomP>
     //   <RegisterButton children="회원가입" to="/auth/register" />

@@ -1,9 +1,11 @@
 import { Route, Routes } from 'react-router';
 import LoginPage from './pages/auth/LoginPage';
+import Home from './pages/TestPage';
 
 export default function Routing() {
     return (
       <Routes>
+        <Route path="/" element={<Home />} />
         <Route path="/auth/signin" element={<LoginPage />} />
         {/* <Route path="/lesson/category" element={<CategoryPage />} />
         <Route path="/lesson/classes" element={<ClassListPage />} />
