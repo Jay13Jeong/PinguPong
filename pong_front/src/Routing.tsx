@@ -1,12 +1,15 @@
 import { Route, Routes } from 'react-router';
 import LoginPage from './pages/auth/LoginPage';
-import Home from './pages/TestPage';
+import Test from './pages/TestPage';
+import Lobby from './pages/LobbyPage';
 
 export default function Routing() {
     return (
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/auth/signin" element={<LoginPage />} />
+        <Route path="/" element={<Test />} />
+        <Route path="/lobby" element={<Lobby />} />
+        <Route path="/auth/login" element={<LoginPage />} />
+        
         {/* <Route path="/lesson/category" element={<CategoryPage />} />
         <Route path="/lesson/classes" element={<ClassListPage />} />
         <Route path="/lesson/class/:id" element={<ClassPage />} />

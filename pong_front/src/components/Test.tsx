@@ -2,7 +2,7 @@
 import logo from '../logo.svg';
 import '../App.css';
 
-export default function Home() {
+export default function Test() {
     // const [test, setTest] = useState(0);
     // useEffect(() => {
     // }, []);
