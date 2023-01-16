@@ -6,6 +6,7 @@ import { PostDto } from './dto/post.dto';
 
 @Controller('posts')
 export class PostsController {
+    // private사용시 선언과 동시에 초기화 됨.
     constructor(private readonly postService: PostsService) { }
 
     @Get()
