@@ -1,6 +1,6 @@
 import React, {useRef, useState, useEffect} from "react";
-import { Center, Stack } from '@chakra-ui/react'
 import GameCanvas from "./GameCanvas";
+import {Center} from "../../styles/Layout";
 
 
 function GameRoom(props: any) {

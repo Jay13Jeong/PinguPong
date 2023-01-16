@@ -2,7 +2,8 @@ import React from 'react';
 import './App.css';
 import Routing from './Routing';
 import { BrowserRouter } from 'react-router-dom';
-import { ChakraProvider } from '@chakra-ui/react'
+import { ThemeProvider } from "styled-components";
+import theme from "./styles/Theme";
 
 import socketIOClient from "socket.io-client";
 
@@ -16,11 +17,11 @@ export const socket = socketIOClient(ENDPOINT, {
 function App() {
   return (
     <div >
-    <ChakraProvider>
+    <ThemeProvider theme={theme}>
       <BrowserRouter>
         <Routing />
       </BrowserRouter>
-    </ChakraProvider>
+    </ThemeProvider>
     </div>
   );
 }

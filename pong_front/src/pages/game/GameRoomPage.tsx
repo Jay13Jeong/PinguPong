@@ -1,4 +1,3 @@
-import React, {useState, useEffect} from "react";
 import GameRoom from "../../components/game/GameRoom"
 
 function GameRoomPage(props: any) {

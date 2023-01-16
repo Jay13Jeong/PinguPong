@@ -1,7 +1,10 @@
 import React, {useState, useEffect} from "react";
 import { useNavigate } from "react-router-dom";
 import { socket } from "../../App";
-import { Stack, Spinner, Center, Button, Radio, RadioGroup } from '@chakra-ui/react'
+import { Center, Stack } from "../../styles/Layout";
+import { Button } from "../../styles/Inputs";
+import DifficultyButtons from "./DifficultyButtons";
+import LoadingBar from "../util/LoadingBar";
 
 /**
  * NOTE - Socket.io Event
@@ -12,19 +15,8 @@ import { Stack, Spinner, Center, Button, Radio, RadioGroup } from '@chakra-ui/re
 
 function MatchMake(props: any) {
     const [loading, setLoading] = useState<boolean>(false);
+    var currentDifficulty: number = 0;
     const navigate = useNavigate();
-    interface difficulty {
-        id: string; // 아이디
-        name: string;   // Easy, Normal, Hard
-        speed: number;  // 속도
-        defaultChecked: boolean;    // 기본 선택 여부
-    }
-    const difficulties: difficulty[] = [
-        {id: '0', name: 'Easy', speed: 1, defaultChecked: true}, 
-        {id: '1', name: 'Normal', speed: 2, defaultChecked: false},
-        {id: '2', name: 'Hard', speed: 3, defaultChecked: false}
-    ];
-    const [selectedDifficulty, setSelectedDifficulty] = useState<difficulty>(difficulties[0]);
 
     useEffect(() => {
         socket.on('MATCH_MAKE_SUCCESS', (data: any) => {
@@ -35,18 +27,20 @@ function MatchMake(props: any) {
     }, []);
 
     function handleMatchMakeRequest(e: any) {
-        e.preventDefault();
-        socket.emit('REQUEST_MATCH_MAKE', {difficulty: selectedDifficulty.id});
-        console.log(selectedDifficulty.id);
+        socket.emit('REQUEST_MATCH_MAKE', {difficulty: currentDifficulty});
         setLoading(true);
+    }
+
+    function setDifficulty(difficulty: number) {
+        currentDifficulty = difficulty;
+        // console.log(currentDifficulty);
     }
 
     if (loading) {
         return (
             <Center>
                 <Stack>
-                    <div>게임 매칭 대기중</div>
-                    <Spinner />
+                    <LoadingBar text="매칭 중..."/>
                 </Stack>
             </Center>
         );
@@ -54,17 +48,10 @@ function MatchMake(props: any) {
     else {
         return (
             <Center>
-            <form onSubmit={handleMatchMakeRequest}>
-                <RadioGroup defaultValue='0'>
-                    <Stack>
-                    {difficulties.map((item) =>
-                        <Radio key={item.id} value={item.id} onChange={(e) => setSelectedDifficulty(difficulties[(e.target.value as unknown as number)])}>{item.name}</Radio>
-                        )}
-                    <div>{selectedDifficulty.name} 단계는 반사 속도가 {selectedDifficulty.speed}부터 시작합니다.</div>
-                    <Button type="submit">Request Match!</Button>
-                    </Stack>
-                </RadioGroup>
-            </form>
+                <Stack>
+                    <DifficultyButtons difficulty={currentDifficulty} setDifficulty={setDifficulty}/>
+                    <Button onClickCapture={handleMatchMakeRequest}> 게임 매칭 요청 </Button>
+                </Stack>
             </Center>
         );
     }

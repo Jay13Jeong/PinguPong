@@ -1,25 +1,33 @@
-import React, {useState} from "react";
+import React from "react";
 import {useNavigate} from 'react-router-dom'
-import { Center, Button } from '@chakra-ui/react'
+import {Center, Stack} from "../../styles/Layout"
+import {Button} from "../../styles/Inputs"
 
 function GameLobbyPage(props: any) {
     const navigate = useNavigate();
 
-    function buttonClicked(option: number, e: any) {
-        if (option === 1)
-            navigate(`/game/match`);
-        else
-            navigate(`/game/observer`);
+    const onMatch = () => {
+        navigate(`/game/match`);
+    }
+
+    const onObserver = () => {
+        navigate(`/game/observer`);
+    }
+
+    function buttonClicked(handler: Function, e: any) {
+        handler();
     }
     return (
         <Center>
-            <h1>Game Lobby</h1>
-            <Button colorScheme='teal' variant='ghost' size='lg' onClick={(e) => buttonClicked(1, e)}>
-                게임 시작
-            </Button>
-            <Button colorScheme='teal' variant='ghost' size='lg' onClick={(e) => buttonClicked(2, e)}>
-                관전 시작
-            </Button>
+            <Stack>
+                <h1>Game Lobby</h1>
+                <Button onClick={(e) => buttonClicked(onMatch, e)}>
+                    게임 시작
+                </Button>
+                <Button onClick={(e) => buttonClicked(onObserver, e)}>
+                    관전 시작
+                </Button>
+            </Stack>
         </Center>
     );
 }
