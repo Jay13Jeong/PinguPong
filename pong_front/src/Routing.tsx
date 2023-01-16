@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router';
 import LoginPage from './pages/auth/LoginPage';
 import Test from './pages/TestPage';
 import Lobby from './pages/LobbyPage';
+import Modal from './pages/profile/profileModal';
 
 export default function Routing() {
     return (
@@ -9,6 +10,7 @@ export default function Routing() {
         <Route path="/" element={<Test />} />
         <Route path="/lobby" element={<Lobby />} />
         <Route path="/auth/login" element={<LoginPage />} />
+        <Route path="/modal" element={<Modal />} />
         
         {/* <Route path="/lesson/category" element={<CategoryPage />} />
         <Route path="/lesson/classes" element={<ClassListPage />} />
