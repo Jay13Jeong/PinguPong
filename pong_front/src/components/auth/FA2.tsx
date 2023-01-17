@@ -24,7 +24,7 @@ const TableParent = createGlobalStyle`
   .img-wrapper {
       position: relative;
       width: 500px;
-      height: 500px;
+      height: 300px;
   }
   .img-wrapper img {
       position: absolute;
@@ -43,7 +43,7 @@ const TableParent = createGlobalStyle`
 `;
 
 
-export default function Profile() {
+export default function EditProfile() {
     const [userName, setUsername] = useState("pinga"); //유저 이름.
     const [userStatus, setUserStatus] = useState("off"); //접속상태.
     const [rank, setRank] = useState(0); //랭크.
@@ -58,25 +58,16 @@ export default function Profile() {
           <TableParent />
             <table>
                 <tr>
-                    <td colSpan={2} className="img-wrapper"><img src="https://cdn.myanimelist.net/images/characters/11/421848.jpg"/></td>
-                    {/* <td colSpan={2} className="img-wrapper"><img src="https://i.ytimg.com/vi/C5UYvLrgUCE/maxresdefault.jpg"/></td> */}
+                    <td className="img-wrapper"><img src="https://scontent-ssn1-1.xx.fbcdn.net/v/t1.18169-9/10431485_666745710089728_670308968098148269_n.jpg?stp=cp0_dst-jpg_e15_fr_q65&_nc_cat=100&ccb=1-7&_nc_sid=110474&_nc_ohc=90mkqitwfMAAX9sFbrj&_nc_ht=scontent-ssn1-1.xx&oh=00_AfDhSGG80BTHq6zB9yFH-_x69J_tUzzc1f2E2IvCp2sGsA&oe=63EDB524"/></td>
                 </tr>
                 <tr>
-                    <td className='halfDiv'>{userName}</td>
-                    <td className='halfDiv'>Status : {userStatus}</td>
+                    <td>42Email Certification</td>
                 </tr>
                 <tr>
-                    <td className='halfDiv'><button>Follow</button></td>
-                    <td className='halfDiv'><button>Edit Profile</button></td>
+                    <td>CODE : <input type="text" /></td>
                 </tr>
                 <tr>
-                    <td className='halfDiv'>Rank : {rank}</td>
-                    <td className='halfDiv'>Odds : {odds}%</td>
-                </tr>
-                <tr>
-                    <td colSpan={2}>
-                    {record.map((item) => <div>{item[0]} {item[1]}:{item[3]} {item[2]}</div>)}
-                    </td>
+                    <td><button>Confirm</button></td>
                 </tr>
             </table>
             {/* </TableParent> */}

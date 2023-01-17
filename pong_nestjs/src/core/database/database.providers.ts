@@ -6,7 +6,7 @@ import { Post } from '../../modules/posts/post.entity';
 
 export const databaseProviders = [{
     provide: SEQUELIZE,
-    useFactory: async () => {
+    useFactory: async () => { //동적으로 모듈 만들기.
         let config;
         switch (process.env.NODE_ENV) {
         case DEVELOPMENT:
