@@ -2,6 +2,7 @@
 // import logo from '../logo.svg';
 import '../App.css';
 import { Link } from "react-router-dom";
+import { Button } from "../styles/Inputs"
 
 export default function Lobby() {
     // const [test, setTest] = useState(0);
@@ -12,10 +13,10 @@ export default function Lobby() {
       
       <header className="App-header">
         <Link to="/game">
-          <button>GAME</button>
+          <Button primary>GAME</Button>
         </Link>
         <Link to="/chat">
-          <button>CHAT</button>
+          <Button>CHAT</Button>
         </Link>
       </header>
     </div>
