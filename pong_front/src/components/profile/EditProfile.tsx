@@ -43,7 +43,7 @@ const TableParent = createGlobalStyle`
 `;
 
 
-export default function Profile() {
+export default function EditProfile() {
     const [userName, setUsername] = useState("pinga"); //유저 이름.
     const [userStatus, setUserStatus] = useState("off"); //접속상태.
     const [rank, setRank] = useState(0); //랭크.
@@ -59,24 +59,16 @@ export default function Profile() {
             <table>
                 <tr>
                     <td colSpan={2} className="img-wrapper"><img src="https://cdn.myanimelist.net/images/characters/11/421848.jpg"/></td>
-                    {/* <td colSpan={2} className="img-wrapper"><img src="https://i.ytimg.com/vi/C5UYvLrgUCE/maxresdefault.jpg"/></td> */}
                 </tr>
                 <tr>
-                    <td className='halfDiv'>{userName}</td>
-                    <td className='halfDiv'>Status : {userStatus}</td>
+                    <td colSpan={2}><button>Edit Image</button></td>
                 </tr>
                 <tr>
-                    <td className='halfDiv'><button>Follow</button></td>
-                    <td className='halfDiv'><button>Edit Profile</button></td>
+                    <td className='halfDiv'><button>Edit Name</button></td>
+                    <td className='halfDiv'>Info : <button>Private/Public</button></td>
                 </tr>
                 <tr>
-                    <td className='halfDiv'>Rank : {rank}</td>
-                    <td className='halfDiv'>Odds : {odds}%</td>
-                </tr>
-                <tr>
-                    <td colSpan={2}>
-                    {record.map((item) => <div>{item[0]} {item[1]}:{item[3]} {item[2]}</div>)}
-                    </td>
+                    <td colSpan={2}><button>Activate 2FA</button></td>
                 </tr>
             </table>
             {/* </TableParent> */}

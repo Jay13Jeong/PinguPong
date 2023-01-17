@@ -1,8 +1,10 @@
 import { Route, Routes } from 'react-router';
 import LoginPage from './pages/auth/LoginPage';
+import FA2Page from './pages/auth/FA2Page';
 import Test from './pages/TestPage';
 import Lobby from './pages/LobbyPage';
-import Modal from './pages/profile/profileModal';
+import ProfilePage from './pages/profile/ProfileModal';
+import EditProfilePage from './pages/profile/EditProfileModal';
 import GameLobbyPage from './pages/game/GameLobbyPage';
 import GameMatchPage from './pages/game/GameMatchPage';
 import GameRoomPage from './pages/game/GameRoomPage';
@@ -13,7 +15,9 @@ export default function Routing() {
         <Route path="/" element={<Test />} />
         <Route path="/lobby" element={<Lobby />} />
         <Route path="/auth/login" element={<LoginPage />} />
-        <Route path="/modal" element={<Modal />} />
+        <Route path="/auth/fa2" element={<FA2Page />} />
+        <Route path="/profile/:id" element={<ProfilePage />} />
+        <Route path="/profile/edit/:id" element={<EditProfilePage />} />
         <Route path="/game/" element={<GameLobbyPage/>}></Route>
         <Route path="/game/match" element={<GameMatchPage/>}></Route>
         <Route path="/game/match/:id" element={<GameRoomPage/>}></Route>
