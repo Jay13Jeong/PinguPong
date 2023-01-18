@@ -1,9 +1,10 @@
 import React, {useRef, useState, useEffect} from 'react';
 import {useRecoilValue} from 'recoil';
 import {gamePos} from '../../recoil/gamePos'
-import { Center, Stack } from '../../styles/Layout';
+import {drawNet, drawPaddle} from './GameEngine/draw'
+import {colors, sizes} from "./GameEngine/variables"
 
-function GameCanvas(props: any) {
+function GameCanvas(props: {width: number, height: number}) {
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [ctx, setCtx] = useState<CanvasRenderingContext2D>();
@@ -15,26 +16,23 @@ function GameCanvas(props: any) {
             const context = canvas.getContext('2d');
             if (context)
                 setCtx(context);
-            canvas.width = window.innerWidth / 2;
-            canvas.height = window.innerHeight / 2;
+            canvas.width = sizes.canvasWidth;
+            canvas.height = sizes.canvasHeight;
         }
-    }, []);
+    });
 
     useEffect(() => {
         const canvas = canvasRef.current;
-        if (canvas) {
-            canvas.focus();
+        if (canvas && ctx) {
+            drawNet(ctx);
+            drawPaddle(ctx, 0, getGamePos.player1, colors.p1Color);
+            drawPaddle(ctx, sizes.canvasWidth, getGamePos.player2, colors.p2Color);
         }
-    })
+    }, [ctx, getGamePos]);
 
     return (
-        <Center>
-            <Stack>
-            {getGamePos.player1 ? <div>{getGamePos.player1}</div> : <div>NULL</div>}
-            <canvas id="gameCanvas" style={{background: "grey"}} ref={canvasRef} onKeyDown={props.keyHander ? props.keyHander : null} tabIndex={0}>
-            </canvas>
-            </Stack>
-        </Center>
+        <canvas id="gameCanvas" style={{background: colors.backgroudColor}} ref={canvasRef} tabIndex={0}>
+        </canvas>
     );
 }
 
