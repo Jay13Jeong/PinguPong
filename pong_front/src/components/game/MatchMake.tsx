@@ -22,13 +22,24 @@ function MatchMake(props: any) {
         socket.on('MATCH_MAKE_SUCCESS', (data: any) => {
             console.log('MATCH_MAKE_SUCCESS');
             // TODO 방 번호 뿐 아니라 플레이어들의 정보도 받아야 함. (상대의 id도 표시해줘야함)
-            navigate(`/game/match/${data.room}`);
+            navigate(`/game/match/${data.room}`, {state: {
+                player1: data.p1,
+                player2: data.p2
+            }});
         });
     }, []);
 
     function handleMatchMakeRequest(e: any) {
         socket.emit('REQUEST_MATCH_MAKE', {difficulty: currentDifficulty});
         setLoading(true);
+    }
+
+    // TODO - test button용 핸들러
+    function handleTest(e: any) {
+        navigate(`/game/match/hh`, {state: {
+            player1: "pingpong_king",
+            player2: "loser"
+        }});
     }
 
     function setDifficulty(difficulty: number) {
@@ -51,6 +62,7 @@ function MatchMake(props: any) {
                 <Stack>
                     <DifficultyButtons difficulty={currentDifficulty} setDifficulty={setDifficulty}/>
                     <Button onClickCapture={handleMatchMakeRequest}> 게임 매칭 요청 </Button>
+                    <Button onClickCapture={handleTest}> 테스트 입장 </Button>
                 </Stack>
             </Center>
         );

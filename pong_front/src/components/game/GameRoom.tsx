@@ -1,4 +1,5 @@
 import React, {useEffect} from "react";
+import { useLocation } from "react-router-dom";
 import GameCanvas from "./GameCanvas";
 import {Center, Stack} from "../../styles/Layout";
 import {useSetRecoilState} from 'recoil';
@@ -8,6 +9,10 @@ import {sizes} from "./GameEngine/variables"
 function GameRoom(props: any) {
 
     const setGamePosState = useSetRecoilState(gamePos);
+    const location = useLocation();
+    const player1 = location.state.player1;
+    const currentPlayer = "pingpong_king";  // TODO - 현재 유저의 ID를 받아올것
+    // const currentPlayer = "loser";  // TODO - 현재 유저의 ID를 받아올것
     let pressdKey: string = "";
 
     let player1Pos: number = sizes.canvasHeight / 2;
@@ -46,14 +51,28 @@ function GameRoom(props: any) {
     });
 
     useEffect(() => {
-        setGamePos(sizes.canvasHeight / 2, sizes.canvasHeight / 2, sizes.canvasHeight / 2, sizes.canvasWidth / 2, 1);
+        // TODO - 본인이 왼쪽(player1)유저인지 오른쪽(player2)유저인지에 따라서 ball의 방향 반대로 바꿔주기
+        setGamePos(sizes.canvasHeight / 2,
+            sizes.canvasHeight / 2,
+            sizes.canvasHeight / 2,
+            sizes.canvasWidth / 2,
+            currentPlayer === player1 ? 1 : -1);
     }, [])
 
     function movePaddle(move: number) {
-        const temp = player1Pos + move;
-        const new_pos = (temp >= sizes.paddleSize && temp <= sizes.canvasHeight - sizes.paddleSize) ? temp : player1Pos;
-        if (new_pos !== player1Pos) {
-            setGamePos(new_pos, player2Pos, ballPosY, ballPosX, ballDir);
+        if (currentPlayer === player1) {
+            const temp = player1Pos + move;
+            const new_pos = (temp >= sizes.paddleSize && temp <= sizes.canvasHeight - sizes.paddleSize) ? temp : player1Pos;
+            if (new_pos !== player1Pos) {
+                setGamePos(new_pos, player2Pos, ballPosY, ballPosX, ballDir);
+            }
+        }
+        else {
+            const temp = player2Pos + move;
+            const new_pos = (temp >= sizes.paddleSize && temp <= sizes.canvasHeight - sizes.paddleSize) ? temp : player2Pos;
+            if (new_pos !== player2Pos) {
+                setGamePos(player1Pos, new_pos, ballPosY, ballPosX, ballDir);
+            }
         }
     }
 
