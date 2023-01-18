@@ -26,6 +26,18 @@ const TableParent = createGlobalStyle`
     width: 1300px;
     text-align: left
   }
+
+  .roomUnit {
+    text-align: left;
+    position: static;
+    bottom: 0px;
+    left:0px;
+  }
+
+  .roomList {
+    position:relative;
+    height:100%
+  }
 `;
 
 
@@ -59,10 +71,12 @@ export default function Profile() {
               <tr>
                 <td rowSpan={4} className='emptySpace'>**방 선택하면 <br/>아래 입장 버튼 활성화 됩니다.</td>
                 <td rowSpan={6} className='chatBackground'>
-                  {room.map((item) =>
-                    // <div onClick={(e) => buttonClicked(enterRoom, e)} >{item[0]} {" | "} {item[1]} {" | "} {item[2]}</div>
-                    <div onClick={(e) => setSelectedRoom(item[0]) }>{item[0]} {" | "} {item[1]} {" | "} {item[2]}</div>
-                  )}
+                  <div className='roomList'>
+                    {room.map((item) =>
+                      // <div onClick={(e) => buttonClicked(enterRoom, e)} >{item[0]} {" | "} {item[1]} {" | "} {item[2]}</div>
+                      <div className='roomUnit' onClick={(e) => setSelectedRoom(item[0]) }>{item[0]} {" | "} {item[1]} {" | "} {item[2]}</div>
+                    )}
+                  </div>
                 </td>
               </tr>
               <tr></tr><tr></tr><tr></tr>
