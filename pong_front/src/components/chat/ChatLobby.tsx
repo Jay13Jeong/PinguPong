@@ -1,7 +1,7 @@
 import { useState } from 'react';
 // import { useEffect } from 'react';
 import '../../App.css';
-import { Link } from "react-router-dom";
+import {useNavigate, Link} from 'react-router-dom'
 import { createGlobalStyle }  from "styled-components";
 
 const TableParent = createGlobalStyle`
@@ -22,45 +22,66 @@ const TableParent = createGlobalStyle`
   }
 
   .chatBackground {
-    height: 1000px;
-    width: 1500px;
+    height: 800px;
+    width: 1300px;
+    text-align: left
   }
 `;
 
 
 export default function Profile() {
     const [me, setMe] = useState("jjeong"); //나 자신.
-    const [chat, setChat] = useState([["cheolee","나다 철리"],["jjeong","안녕하세요 철리님!"],["jeyoon","안녕하세요!"]]); //서버에서 가져온 채팅 데이터.
+    //room : 방 식별 id, 방 제목, 방장 이름 
+    const [room, setRoom] = useState([["1","LIBFT 42번 평가받은 지식 공유합니다.", "cheolee"],["2","ft_container 뽀개기!","jeyoon"],["3", "webserv물어보세요~","jjeong"]]);
+    
+    const [selectedRoom, setSelectedRoom] = useState("0"); //선택한 방 번호.
+
     // useEffect(() => {
     // }, []);
+
+    const navigate = useNavigate();
+
+    const enterRoom = () => {
+        navigate(`/chat/room/1`);
+    }
+
+    function buttonClicked(handler: Function, e: any) {
+      handler();
+    }
+
   return (
     <div className="App">
-      <header className="App-header">
+        <header className="App-header">
         <div>
+          <h3>Chat Lobby</h3>
           <TableParent />
             <table className='chatLobby'>
               <tr>
-                <td rowSpan={4} className='emptySpace'></td>
+                <td rowSpan={4} className='emptySpace'>**방 선택하면 <br/>아래 입장 버튼 활성화 됩니다.</td>
                 <td rowSpan={6} className='chatBackground'>
-                  {chat.map((item) => {
-                    if (item[0] === me){
-                      return <div>{item[1]} {"<<="} {item[0]}</div>
-                    }else{
-                      return <div>{item[0]} {"=>>"} {item[1]} </div>
-                    }
-                  })}
+                  {room.map((item) =>
+                    // <div onClick={(e) => buttonClicked(enterRoom, e)} >{item[0]} {" | "} {item[1]} {" | "} {item[2]}</div>
+                    <div onClick={(e) => setSelectedRoom(item[0]) }>{item[0]} {" | "} {item[1]} {" | "} {item[2]}</div>
+                  )}
                 </td>
               </tr>
               <tr></tr><tr></tr><tr></tr>
               <tr>
-                    <td className='optionBtn'>Enter Chat</td>
+                    <td className='optionBtn'>
+                      {
+                        selectedRoom === '0'?
+                        <div> {"Enter Chat"} </div>
+                        : <Link to={`/chat/room/${selectedRoom}`}>Enter Chat</Link>
+                      }
+                    </td>
               </tr>
               <tr>
+                    {/* 방 생성 모달 띄워야함. */}
                   <td className='optionBtn'>Create Chat</td>
               </tr>
             </table>
         </div>
-      </header>
+       </header>
     </div>
   );
 }

@@ -28,7 +28,7 @@ export default function LoginPage() {
     <div>
       <Login />
     </div>
-    // <Link to="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-e607d301881ee531825879addc115683a5bf969a5afc9160db766b30e0132ef3&redirect_uri=http%3A%2F%2Flocalhost%2F&response_type=code"><button>Login</button></Link>
+    // <Link to="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-e607d301881ee531825879addc115683a5bf969a5afc9160db766b30e0132ef3&redirect_uri=http%3A%2F%2Flocalhost%2Fauth%2Ffa2&response_type=code"><button>Login</button></Link>
     // <Container> 
     //   <Login />
     //   <CustomP>OR</CustomP>
