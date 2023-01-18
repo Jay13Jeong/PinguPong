@@ -67,7 +67,7 @@ export default function EditProfile() {
                     <td>CODE : <input type="text" /></td>
                 </tr>
                 <tr>
-                    <td><button>Confirm</button></td>
+                    <td><Link to="/lobby"><button>Confirm</button></Link></td>
                 </tr>
             </table>
             {/* </TableParent> */}
