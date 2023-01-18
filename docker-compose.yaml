@@ -64,11 +64,11 @@ services:
       - ./pong_front/src:/pong_front/src
 
   pong_proxy:
-    container_name: pong_proxy
-    depends_on:
-      - pong_nestjs
-      - pong_front
-    environment:
+   container_name: pong_proxy
+   depends_on:
+     - pong_nestjs
+     - pong_front
+   environment:
       - SERVER_HOST=${SERVER_HOST}
     build: ./pong_proxy
     ports:
