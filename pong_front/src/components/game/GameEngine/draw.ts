@@ -22,3 +22,11 @@ export function drawPaddle(
     ctx.stroke();
 }
 
+export function drawBall(ctx: CanvasRenderingContext2D, xPos: number, yPos: number) {
+    ctx.beginPath();
+    ctx.strokeStyle = colors.ballColor;
+    ctx.arc(xPos, yPos, sizes.lineWidth / 2, 0, 2 * Math.PI);
+    ctx.lineWidth = 0;
+    ctx.stroke();
+}
+
