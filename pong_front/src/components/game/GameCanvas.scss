@@ -1,0 +1,19 @@
+.gameGrid{
+    display: grid;
+    grid-template-columns: repeat(2, minmax(400px, 400px));
+    grid-template-rows: repeat(3, minmax(auto, auto));
+    gap: 20px;
+}
+.playerName{
+    text-align: center;
+    font-size: 1rem;
+    font-weight: bold;
+}
+.score{
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+}
+.gameCanvas{
+    grid-column: 1 / 3;
+}

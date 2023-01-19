@@ -14,7 +14,6 @@ export function drawPaddle(
         xPos: number, 
         yPos: number, 
         color: string) {
-    // console.log(`p1 pos : ${yPos}`);
     ctx.beginPath();
     ctx.strokeStyle = color;
     ctx.lineWidth = sizes.lineWidth;
