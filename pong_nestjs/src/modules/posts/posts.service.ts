@@ -6,6 +6,7 @@ import { POST_REPOSITORY } from '../../core/constants';
 
 @Injectable()
 export class PostsService {
+    //속성기반 주입.
     constructor(@Inject(POST_REPOSITORY) private readonly postRepository: typeof Post) { }
 
     async create(post: PostDto, userId): Promise<Post> { //게시물 올리기.
