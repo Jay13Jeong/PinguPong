@@ -43,11 +43,10 @@
 
       function msg_send() {
         /* 메시지 전송 */
-        //let message = $('#msg').val();
-        //socket.emit('send', room, nickname, message);
-        //$('#msg').val('');
-        //$('#chatList').append(`<div style="color:red;">나 : ${message}</div>`);
-        socket.emit('chat', { test: 'haha', data : "leele" });
+        let message = $('#msg').val();
+        socket.emit('send', room, nickname, message);
+        $('#msg').val('');
+        $('#chatList').append(`<div style="color:red;">나 : ${message}</div>`);
       }
 
       $(document).ready(() => {

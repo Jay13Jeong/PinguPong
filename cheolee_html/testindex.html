@@ -14,7 +14,7 @@
             return result;
         }
         const id = makeid(5);
-        const socket = io('http://localhost/chat');
+        const socket = io('ws://localhost:3000/api/chat');
         socket.on('users', function (data) {
             console.log('Connected', data);
         });
@@ -22,7 +22,7 @@
             console.log('event', data);
         });
         function send() {
-            socket.emit('chat', { test: 'test', data : id });
+            socket.emit('chat', { test: 'test', data : id});
         }
     </script>
 </head>
