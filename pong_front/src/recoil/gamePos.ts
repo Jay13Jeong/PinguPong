@@ -1,9 +1,10 @@
 import {atom} from 'recoil';
 
-interface ball {
+export interface ball {
     y: number,
     x: number,
-    dir: number
+    dy: number,
+    dx: number
 };
 
 export interface gameInfo {
@@ -20,7 +21,8 @@ export const gamePos = atom<gameInfo>({
         ball: {
             y: 0,
             x: 0,
-            dir: 0
+            dy: 0,
+            dx: 0
         }
     }
 });

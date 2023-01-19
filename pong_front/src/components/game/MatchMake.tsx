@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
 import { useNavigate } from "react-router-dom";
-import { socket } from "../../App";
+// import { socket } from "../../App";
 import { Center, Stack } from "../../styles/Layout";
 import { Button } from "../../styles/Inputs";
 import DifficultyButtons from "./DifficultyButtons";
@@ -19,18 +19,18 @@ function MatchMake(props: any) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        socket.on('MATCH_MAKE_SUCCESS', (data: any) => {
-            console.log('MATCH_MAKE_SUCCESS');
-            // TODO 방 번호 뿐 아니라 플레이어들의 정보도 받아야 함. (상대의 id도 표시해줘야함)
-            navigate(`/game/match/${data.room}`, {state: {
-                player1: data.p1,
-                player2: data.p2
-            }});
-        });
+        // socket.on('MATCH_MAKE_SUCCESS', (data: any) => {
+        //     console.log('MATCH_MAKE_SUCCESS');
+        //     // TODO 방 번호 뿐 아니라 플레이어들의 정보도 받아야 함. (상대의 id도 표시해줘야함)
+        //     navigate(`/game/match/${data.room}`, {state: {
+        //         player1: data.p1,
+        //         player2: data.p2
+        //     }});
+        // });
     }, []);
 
     function handleMatchMakeRequest(e: any) {
-        socket.emit('REQUEST_MATCH_MAKE', {difficulty: currentDifficulty});
+        // socket.emit('REQUEST_MATCH_MAKE', {difficulty: currentDifficulty});
         setLoading(true);
     }
 
