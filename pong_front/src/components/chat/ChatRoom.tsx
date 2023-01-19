@@ -5,50 +5,55 @@ import { Link } from "react-router-dom";
 import { createGlobalStyle }  from "styled-components";
 
 const TableParent = createGlobalStyle`
-  table {
-    width: 100%;
-  }
-
-  tr {
-    width: 100%;
-  }
-
   td  {
-    width: 100%;
     border:1px solid black;
     margin-left:auto;
     margin-right:auto;
-    
   }
 
-  .img-wrapper {
-      position: relative;
-      width: 500px;
-      height: 500px;
-  }
-  .img-wrapper img {
-      position: absolute;
-      top: 0;
-      left: 0;
-      transform: translate(50, 50);
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      margin: auto;
+  .emptySpace {
+    height: 500px;
+    width: 20%;
   }
 
-  .halfDiv {
-    width: 50%;
+  .optionBtn {
+    height: 17%;
+    width: 20%;
+  }
+
+  .chatBackground {
+    height: 720px;
+    width: 1300px;
+  }
+  .chatInputBar {
+    height: 80px;
+    width: 1300px;
+  }
+
+  .otherChatMsg {
+    text-align: right;
+    position: static;
+    // bottom: 0px;
+    right:0px;
+  }
+
+  .myChatMsg {
+    text-align: left;
+    position: static;
+    bottom: 0px;
+    left:0px;
+  }
+
+  .chatMsgBody {
+    position:relative;
+    height:100%
   }
 `;
 
 
-export default function Profile() {
-    const [userName, setUsername] = useState("pinga"); //유저 이름.
-    const [userStatus, setUserStatus] = useState("off"); //접속상태.
-    const [rank, setRank] = useState(0); //랭크.
-    const [odds, setOdds] = useState(0); //승률.
-    const [record, setRecord] = useState([["cheolee",10,"jjeong",2],["cheolee",10,"jjeong",1],["jeyoon",10,"jjeong",5]]); //전적.
+export default function ChatRoom() {
+    const [me, setMe] = useState("jjeong"); //나 자신.
+    const [chat, setChat] = useState([["cheolee","나다 철리"],["jjeong","안녕하세요 철리님!"],["jeyoon","안녕하세요!"]]); //서버에서 가져온 채팅 데이터.
     // useEffect(() => {
     // }, []);
   return (
@@ -56,30 +61,33 @@ export default function Profile() {
       <header className="App-header">
         <div>
           <TableParent />
-            <table>
-                <tr>
-                    <td colSpan={2} className="img-wrapper"><img src="https://cdn.myanimelist.net/images/characters/11/421848.jpg"/></td>
-                    {/* <td colSpan={2} className="img-wrapper"><img src="https://i.ytimg.com/vi/C5UYvLrgUCE/maxresdefault.jpg"/></td> */}
-                </tr>
-                <tr>
-                    <td className='halfDiv'>{userName}</td>
-                    <td className='halfDiv'>Status : {userStatus}</td>
-                </tr>
-                <tr>
-                    <td className='halfDiv'><button>Follow</button></td>
-                    <td className='halfDiv'><button>Edit Profile</button></td>
-                </tr>
-                <tr>
-                    <td className='halfDiv'>Rank : {rank}</td>
-                    <td className='halfDiv'>Odds : {odds}%</td>
-                </tr>
-                <tr>
-                    <td colSpan={2}>
-                    {record.map((item) => <div>{item[0]} {item[1]}:{item[3]} {item[2]}</div>)}
-                    </td>
-                </tr>
+            <table className='chatLobby'>
+              <tr>
+                <td rowSpan={3} className='emptySpace'></td>
+                <td rowSpan={5} className='chatBackground'>
+                  <div className='chatMsgBody'>
+                  {chat.map((item) => {
+                    if (item[0] === me){
+                      return <div className='otherChatMsg'>{item[1]} {"<"}{item[0]}</div>
+                    }else{
+                      return <div className='myChatMsg'>{item[0]}{">"} {item[1]} </div>
+                    }
+                  })}
+                  </div>
+                </td>                
+              </tr>
+              <tr></tr><tr></tr>
+              <tr>
+                <td className='optionBtn'>도전장 도착</td>
+              </tr>
+              <tr>
+                <td className='optionBtn'>비번 변경</td>
+              </tr>
+              <tr>
+                <td className='optionBtn'>EXIT</td>
+                <td className='chatInputBar'><input type="text" placeholder='enter your msg'/><button>SEND</button></td>
+              </tr>
             </table>
-            {/* </TableParent> */}
         </div>
       </header>
     </div>
