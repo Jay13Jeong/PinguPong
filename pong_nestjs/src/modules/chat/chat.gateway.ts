@@ -45,18 +45,21 @@
 
 import { WebSocketGateway, WebSocketServer, SubscribeMessage, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
+import { chatClass } from '../../core/chat/chatClass';
 
 @WebSocketGateway({
   cors: { origin: '*' }, namespace: 'api/chat'
 })
-export class ChatGateway {//implements OnGatewayConnection, OnGatewayDisconnect {
+export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
   users: number = 0;
 
+  rooms : chatClass;
+
   //OnGatewayConnection를 오버라이딩
-  async handleConnection(client : Socket) {
+  async handleConnection(client : Socket) {// 채팅 재 접속시 브라우저 정보를 요청하는 이벤트 요청하기, 채팅방 들어가기 이벤트일때도 똑같이 받는 이벤트 만들기
     this.users++;  //사용자 증가
     this.server.emit('users', this.users);
     console.log(this.users);
