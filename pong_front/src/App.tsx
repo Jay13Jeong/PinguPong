@@ -6,15 +6,6 @@ import { ThemeProvider } from "styled-components";
 import theme from "./styles/Theme";
 import { RecoilRoot } from 'recoil';
 
-import socketIOClient from "socket.io-client";
-
-// const ENDPOINT = "http://localhost:3001";
-
-// export const socket = socketIOClient(ENDPOINT, {
-//     transports: ['websocket'],
-//     withCredentials: true,
-// });
-
 function App() {
   return (
     <div >

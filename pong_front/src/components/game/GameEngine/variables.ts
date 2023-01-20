@@ -9,5 +9,5 @@ export const sizes = {
     canvasWidth: 800,
     canvasHeight: 500,
     lineWidth: 12,
-    paddleSize: 50
+    paddleSize: 100
 };

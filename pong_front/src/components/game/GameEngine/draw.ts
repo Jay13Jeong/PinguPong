@@ -17,7 +17,7 @@ export function drawPaddle(
     ctx.beginPath();
     ctx.strokeStyle = color;
     ctx.lineWidth = sizes.lineWidth;
-    ctx.moveTo(xPos, yPos - sizes.paddleSize);
+    ctx.moveTo(xPos, yPos);
     ctx.lineTo(xPos, yPos + sizes.paddleSize);
     ctx.stroke();
 }
