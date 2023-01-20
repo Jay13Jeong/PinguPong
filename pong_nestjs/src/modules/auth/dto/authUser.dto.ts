@@ -4,4 +4,6 @@ export class AuthUserDto {
   avatar: string;
 
   email: string;
+
+  friendID?: number;
 }
