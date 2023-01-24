@@ -35,6 +35,7 @@ services:
       - DB_DIALECT=postgres
       - JWTKEY=${ACCESS_SECRET}
       - AUTH_CLIENT_ID=${AUTH_CLIENT_ID}
+      - AUTH_CALLBACK_URL=${AUTH_CALLBACK_URL}
       # - TOKEN_EXPIRATION=1d;
     build:
       context: ./pong_nestjs
@@ -46,13 +47,15 @@ services:
       - pong
     volumes:
       - ./pong_nestjs/src:/pong_nestjs/src
+    ports:
+      - '3000:3000'
 
   pong_front:
     container_name: pong_front
     restart: always
     environment:
       - NODE_ENV=development
-      - CHOKIDAR_USEPOLLING=true # App이 수정되었을 경우 Reload이 가능하도록 하는 설정
+      - CHOKIDAR_USEPOLLING=true # App이 수정되었을 경우 Reload 가능하도록 하는 설정
     #   - VITE_BASE_URL=
     build:
       context: ./pong_front
@@ -63,22 +66,24 @@ services:
       - pong
     volumes:
       - ./pong_front/src:/pong_front/src
-
-  pong_proxy:
-    container_name: pong_proxy
-    depends_on:
-      - pong_nestjs
-      - pong_front
-    environment:
-      - SERVER_HOST=${SERVER_HOST}
-    build: ./pong_proxy
     ports:
-      - '80:80'
-    networks:
-      - pong
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - ./pong_proxy/templates:/templates:ro
+      - '80:3000'
+
+  # pong_proxy:
+  #   container_name: pong_proxy
+  #   depends_on:
+  #     - pong_nestjs
+  #     - pong_front
+  #   environment:
+  #     - SERVER_HOST=${SERVER_HOST}
+  #   build: ./pong_proxy
+  #   ports:
+  #     - '80:80'
+  #   networks:
+  #     - pong
+  #   volumes:
+  #     - /etc/localtime:/etc/localtime:ro
+  #     - ./pong_proxy/templates:/templates:ro
 
 
 networks: # 네트워크를 사용하겠다는 선언입니다. 선언하지 않을 경우 기본 네트워크가 사용됩니다.

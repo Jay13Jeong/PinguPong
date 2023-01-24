@@ -1,9 +1,9 @@
 export class AuthUserDto {
-  username: string;
+  id?: number;
 
-  avatar: string;
+  username?: string;
 
-  email: string;
+  avatar?: string;
 
-  friendID?: number;
+  oauthID?: string;
 }
