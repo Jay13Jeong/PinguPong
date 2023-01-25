@@ -40,32 +40,37 @@ function CardList (props: any) {
     //     setLoading(false);
     // }, []);
 
-    let gameList: {p1: string, p2: string, s1: number, s2: number}[] = [
+    let gameList: {id: string, p1: string, p2: string, s1: number, s2: number}[] = [
         {
+            id: "pingpong_kingvsloser",
             p1: "pingpong_king",
             p2: "loser",
             s1: 3,
             s2: 2
         },
         {
+            id: "jeyoonvscheolee",
             p1: "jeyoon",
             p2: "cheolee",
             s1: 1,
             s2: 2
         },
         {
+            id: "jeyoonvsjjeong",
             p1: "jeyoon",
             p2: "jjeong",
             s1: 1,
             s2: 3
         },
         {
+            id: "cheoleevsjjeong",
             p1: "cheolee",
             p2: "jjeong",
             s1: 10,
             s2: 10
         },
         {
+            id: "pingpong_kingvspingpong_master",
             p1: "pingpong_king",
             p2: "pingpong_master",
             s1: 5,
@@ -79,9 +84,9 @@ function CardList (props: any) {
     return (
        <Center>
            <button disabled={currPage <= 1 ? true : false} onClick={() => setCurrPage(currPage - 1)}><FontAwesomeIcon icon={faAngleLeft} /></button>
-           <Stack>
+           <Stack style={{margin: "20px"}}>
            {gameList.slice(offset, offset + cardsPerPage).map((item) => 
-                <GameCard p1={item.p1} p2={item.p2} s1={item.s1} s2={item.s2}/>
+                <GameCard key={item.id} p1={item.p1} p2={item.p2} s1={item.s1} s2={item.s2}/>
            )}
            </Stack>
            <button disabled={currPage >= totalPage ? true : false} onClick={() => setCurrPage(currPage + 1)}><FontAwesomeIcon icon={faAngleRight} /></button>

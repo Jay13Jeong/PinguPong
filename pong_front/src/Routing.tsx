@@ -7,7 +7,7 @@ import ProfilePage from './pages/profile/ProfileModal';
 import EditProfilePage from './pages/profile/EditProfileModal';
 import GameLobbyPage from './pages/game/GameLobbyPage';
 import GameMatchPage from './pages/game/GameMatchPage';
-import GameRoomPage from './pages/game/GameRoomPage';
+import GamePlayRoomPage from './pages/game/GamePlayRoomPage';
 import ChatLobbyPage from './pages/chat/ChatLobbyPage';
 import CreateChatModal from './pages/chat/CreateChatModal';
 import SelectPrivateChatModal from './pages/chat/SelectPrivateChatModal';
@@ -15,6 +15,7 @@ import ChatRoomPage from './pages/chat/ChatRoomPage';
 import EditChatRoomModal from './pages/chat/EditChatRoomModal';
 import ChatManageModal from './pages/chat/ChatManageModal';
 import GameWatchPage from './pages/game/GameWatchPage';
+import GameWatchRoomPage from './pages/game/GameWatchRoomPage'
 
 export default function Routing() {
     return (
@@ -31,11 +32,12 @@ export default function Routing() {
         <Route path="/auth/fa2" element={<FA2Page />} />
         <Route path="/profile/:id" element={<ProfilePage />} />
         <Route path="/profile/edit/:id" element={<EditProfilePage />} />
+        {/* Game */}
         <Route path="/game/" element={<GameLobbyPage/>}></Route>
         <Route path="/game/match" element={<GameMatchPage/>}></Route>
-        <Route path="/game/match/:id" element={<GameRoomPage/>}></Route>
-        {/* Game Watch */}
+        <Route path="/game/match/:id" element={<GamePlayRoomPage/>}></Route>
         <Route path="/game/watch" element={<GameWatchPage/>}></Route>
+        <Route path="/game/watch/:id" element={<GameWatchRoomPage/>}></Route>
         {/* <Route path="/lesson/category" element={<CategoryPage />} />
         <Route path="/lesson/classes" element={<ClassListPage />} />
         <Route path="/lesson/class/:id" element={<ClassPage />} />

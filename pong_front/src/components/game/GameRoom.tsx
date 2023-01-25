@@ -7,7 +7,7 @@ import {drawNet,drawPaddle, drawBall} from "../game/GameEngine/draw";
 import io from "socket.io-client";
 import "./GameCanvas.scss";
 
-const GameRoom = () => {
+const GameRoom = (props: {type: string}) => {
 
     // 참가 유저 정보 // TODO - 게임이 시작되면 프로필 수정 버튼? 을 비활성해야 함 (만약 있다면..)
     const location = useLocation();
@@ -76,7 +76,8 @@ interface gamePosInfo {
 
     useEffect(() => {
         // NOTE - 반드시 한번만 리스너를 등록해줘야 함.
-        window.addEventListener("keydown", keyDownHandler);
+        if (props.type === "player")
+            window.addEventListener("keydown", keyDownHandler);
         // NOTE - 상호 연결 확인 후 초깃값으로 draw하는게 좋을듯?
         socket.on("startGame", (data: any) => {
             drawGame();
@@ -174,9 +175,10 @@ interface gamePosInfo {
                     width={sizes.canvasWidth} 
                     height={sizes.canvasHeight} 
                     style={{background: colors.backgroudColor}}></canvas>
-                <Button className="game-button" onClick={testHandler}>
+                {props.type === "player" ? <Button className="game-button" onClick={testHandler}>
                     게임 시작
-                </Button>
+                </Button> : null}
+                
                 </div>
                 
         </Center>
