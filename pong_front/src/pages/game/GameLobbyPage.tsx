@@ -11,7 +11,7 @@ function GameLobbyPage(props: any) {
                 <Link to="/game/match">
                     <Button>게임 시작</Button>
                 </Link>
-                <Link to="/game/observer">
+                <Link to="/game/watch">
                     <Button>관전 시작</Button>
                 </Link>
             </Stack>
