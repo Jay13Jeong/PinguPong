@@ -7,6 +7,8 @@ import { UsersModule } from '../users/users.module';
 //jwt토큰.
 import { JwtModule } from '@nestjs/jwt';
 import { FtStrategy } from './guard/ft.strategy';
+import { SecondAuthController } from './second-auth/second-auth.controller';
+import { SecondAuthService } from './second-auth/second-auth.service';
 
 @Module({
   imports: [
@@ -25,7 +27,8 @@ import { FtStrategy } from './guard/ft.strategy';
     AuthService,
     // JwtStrategy,
     FtStrategy,
+    SecondAuthService,
   ],
-  controllers: [AuthController]
+  controllers: [AuthController, SecondAuthController]
 })
 export class AuthModule {}

@@ -3,6 +3,8 @@ export class AuthUserDto {
 
   username?: string;
 
+  email?: string;
+
   avatar?: string;
 
   oauthID?: string;
