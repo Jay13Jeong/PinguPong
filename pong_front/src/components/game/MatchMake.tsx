@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Center, Stack } from "../../styles/Layout";
 import { Button } from "../../styles/Inputs";
 import DifficultyButtons from "./DifficultyButtons";
-import LoadingBar from "../util/LoadingBar";
+import Loader from "../util/Loader";
 
 /**
  * NOTE - Socket.io Event
@@ -51,7 +51,7 @@ function MatchMake(props: any) {
         return (
             <Center>
                 <Stack>
-                    <LoadingBar text="매칭 중..."/>
+                    <Loader text="매칭 중..."/>
                 </Stack>
             </Center>
         );

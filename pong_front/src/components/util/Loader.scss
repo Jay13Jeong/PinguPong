@@ -1,0 +1,10 @@
+.loader-box {
+    display: grid;
+    grid-template-rows: repeat(2, minmax(auto, auto));
+    gap: 20px;
+    .msg {
+        font-size: 1rem;
+        margin: auto;
+        grid-row: 1;
+    }
+}

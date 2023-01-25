@@ -164,20 +164,21 @@ interface gamePosInfo {
 
     return (
         <Center>
-                <div className="gameGrid">
-                    <div className="playerName">{player1}</div>
-                    <div className="playerName">{player2}</div>
+                <div className="game-grid">
+                    <div className="player-name">{player1}</div>
+                    <div className="player-name">{player2}</div>
                     <div className="score">{p1Score}</div>
                     <div className="score">{p2Score}</div>
-                <canvas className="gameCanvas" 
+                <canvas className="game-canvas" 
                     ref={canvasRef}
                     width={sizes.canvasWidth} 
                     height={sizes.canvasHeight} 
                     style={{background: colors.backgroudColor}}></canvas>
-                </div>
-                <Button onClick={testHandler}>
-                    테스트용 (게임 시작)
+                <Button className="game-button" onClick={testHandler}>
+                    게임 시작
                 </Button>
+                </div>
+                
         </Center>
     );
 }
