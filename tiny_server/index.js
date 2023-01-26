@@ -20,7 +20,7 @@ io.on("connection", (socket) => {
 
     let counter;
     const goal = 100;
-    const speed = 2;
+    const speed = 1;
 
     /* 게임이 시작되면 게임 시작 메시지를 보내고 게임 함수를 시작한다. */
     function gameStart () {
@@ -31,7 +31,7 @@ io.on("connection", (socket) => {
         canvasWidth: 800,
         canvasHeight: 500,
         lineWidth: 12,
-        paddleSize: 50
+        paddleSize: 100
     };
 
     let game = {
@@ -104,12 +104,16 @@ io.on("connection", (socket) => {
         }
     }
 
-    socket.on("player1Move", (data) => {
-        game.player1 = data.player1;
+    socket.on("player1Move", (offset) => {
+        const newPos = game.player1 + offset;
+        if (newPos >= 0 && newPos <= sizes.canvasHeight - sizes.paddleSize)
+            game.player1 = newPos;
     })
 
-    socket.on("player2Move", (data) => {
-        game.player2 = data.player2;
+    socket.on("player2Move", (offset) => {
+        const newPos = game.player2 + offset;
+        if (newPos >= 0 && newPos <= sizes.canvasHeight - sizes.paddleSize)
+            game.player2 = newPos;
     })
 
     socket.on("requestStart", (data) => {

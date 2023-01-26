@@ -1,8 +1,8 @@
-import GameRoom from "../../components/game/GameRoom"
+import GamePlayRoom from "../../components/game/GamePlayRoom";
 
 function GamePlayRoomPage(props: any) {
     return (
-        <GameRoom type="player"/>
+        <GamePlayRoom/>
     );
 }
 

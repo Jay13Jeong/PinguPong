@@ -7,7 +7,10 @@ function GameCard (props: {p1: string, p2: string, s1: number, s2: number}) {
     
     function clickHandler(e: any) {
         // TODO - 관전 요청 보내주기
-        navigate(`/game/watch/${props.p1}vs${props.p2}`);
+        navigate(`/game/watch/${props.p1}vs${props.p2}`, {state: {
+            player1: props.p1,
+            player2: props.p2
+        }});
     }
 
     return (
