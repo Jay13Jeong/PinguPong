@@ -4,10 +4,11 @@ import { AuthController } from './auth.controller';
 //passport 유저인증 라이브러리.
 import { PassportModule } from '@nestjs/passport';
 import { UsersModule } from '../users/users.module';
-import { LocalStrategy } from './local.strategy';
 //jwt토큰.
 import { JwtModule } from '@nestjs/jwt';
-import { JwtStrategy } from './jwt.strategy';
+import { FtStrategy } from './guard/ft.strategy';
+import { SecondAuthController } from './second-auth/second-auth.controller';
+import { SecondAuthService } from './second-auth/second-auth.service';
 
 @Module({
   imports: [
@@ -19,10 +20,15 @@ import { JwtStrategy } from './jwt.strategy';
     }),
   ],
   providers: [
-      AuthService,
-      LocalStrategy,
-      JwtStrategy
+    {
+			provide: 'AUTH_SERVICE',
+			useClass: AuthService,
+		},
+    AuthService,
+    // JwtStrategy,
+    FtStrategy,
+    SecondAuthService,
   ],
-  controllers: [AuthController]
+  controllers: [AuthController, SecondAuthController]
 })
 export class AuthModule {}

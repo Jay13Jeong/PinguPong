@@ -54,7 +54,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
-  rooms : chatClass;
+  rooms : chatClass = new chatClass();
 
   //OnGatewayConnection를 오버라이딩
   async handleConnection(client : Socket) {// 채팅 재 접속시 브라우저 정보를 요청하는 이벤트 요청하기, 채팅방 들어가기 이벤트일때도 똑같이 받는 이벤트 만들기
@@ -72,32 +72,31 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async getUser(client : Socket, data) {
     let [room, userId] = data;
     console.log('getUser', client.id, data, room, userId);
-    this.rooms.addUser(room, client.id, userId);
+    this.rooms.newRoom(room, client.id, userId, '');
   }
 
-//미완성
   @SubscribeMessage('chat')// 테스트용, 음소거, 차단 유무까지 확인을 해야한다.
   async onChat(client : Socket, data) {
     let [room, userid, msg] = data;
-    console.log(client.rooms);  //현재 클라이언트의 방
+    console.log('chat---', client.rooms);  //현재 클라이언트의 방
     console.log(room, userid, msg);//메시지
-    if (!this.rooms.checkmuteuser(room, client.id))//음소거 상태인지 확인하기
+    if (this.rooms.checkmuteuser(room, client.id))//음소거 상태인지 확인하기
       return ;
-    let sockets = this.rooms.getSocketList(room);
+    const sockets = this.rooms.getSocketList(room);
     const blockuser = this.rooms.getblockuser(room, client.id);
-    for (let id in sockets){
-      if (blockuser.))
-        this.server.to(id).emit('chat', msg);
+    console.log('TESTTEST--', sockets);
+    for (let id of sockets){
+      if (blockuser == undefined)
+        this.server.to(id).emit('chat', userid, msg);
+      else if (!blockuser.includes(id))
+        this.server.to(id).emit('chat', userid, msg);
     }
-
-
-    client.broadcast.emit('chat'+room, msg);  //전체에게 방송함, 나 빼고,따로 만들기
   }
 
   @SubscribeMessage('/api/post/newRoom')//새로운 방 만들기, 이미 있는 방이름이면 false 반환
   async newRoom(client : Socket, data) {
     let [room, userId, secretpw] = data;
-    console.log('test', client.id, data, room, userId, secretpw);
+    console.log('/api/post/newRoom', client.id, data, room, userId, secretpw);
     if (!this.rooms.roomCheck(room)){
       this.rooms.newRoom(room, userId, client.id, secretpw);
       this.server.to(client.id).emit('/api/post/newRoom', true);
@@ -108,7 +107,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('/api/get/RoomList')//브라우저가 채팅방 리스트 요청함
   async getChatList(client : Socket) { 
-    console.log('채팅방 목록 요청', client.id);
+    console.log('/api/get/RoomList', client.id, this.rooms.getRoomList());
     this.server.to(client.id).emit('/api/get/RoomList', this.rooms.getRoomList());// 리스트 보내주기, 클래스 함수 리턴값으로 고치기
   }
 

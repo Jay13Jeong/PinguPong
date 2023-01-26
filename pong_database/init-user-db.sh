@@ -7,8 +7,8 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
 	GRANT ALL PRIVILEGES ON DATABASE docker TO docker;
 	create user $NESTJS_USER password '$NESTJS_PASSWORD';
 	alter user $NESTJS_USER with superuser;
-	create database pong42 owner $NESTJS_USER;
-	grant ALL privileges on database pong42 to $NESTJS_USER;
+	create database pong owner $NESTJS_USER;
+	grant ALL privileges on database pong to $NESTJS_USER;
 EOSQL
 
 	# create user $NESTJS_USER password '$NESTJS_PASSWORD';

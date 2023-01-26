@@ -4,7 +4,7 @@ export interface IDatabaseConfigAttributes {
     database?: string;
     host?: string;
     port?: number | string;
-    dialect?: string;
+    type?: string;
     urlDatabase?: string;
 }
 

@@ -1,33 +1,42 @@
-import { Controller, Body, Post, UseGuards, Request, Res } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { Controller, Body, Post, UseGuards, Res, Get, Req, UseFilters, } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { UserDto } from '../users/dto/user.dto';
-import { DoesUserExist } from '../../core/guards/doesUserExist.guard';
+import { Response, Request } from 'express';
+import { User } from '../users/user.entity';
+import { FtAuthGuard } from './guard/ft.guard';
+import { ViewAuthFilter } from 'src/core/filter/unauth.filter';
 
 @Controller('auth')
 export class AuthController {
-    constructor(private authService: AuthService) {}
+    constructor(
+        private readonly authService: AuthService,
+        // private readonly usersService: UsersService,
+    ) {}
 
-    @UseGuards(AuthGuard('local')) //local.strategy.ts을 사용하도록 정의.
-    @Post('login')
-    async login(@Request() req) {
-        return await this.authService.login(req.user); //디비 확인해서 가입된 유저면 토큰 반환.
-    }
+    private usersMap = new Map(); //{키 : 42권한코드, 값 : 유저 엔티티}
 
-    @UseGuards(DoesUserExist) //중복 가입 방어 가드.
-    @Post('signup')
-    async signUp(@Body() user: UserDto) {
-        return await this.authService.create(user); //유저 디비에 저장하고 토큰 반환.
-    }
+	//42로그인 창을 띄우는 메소드.
+	@Get('42/login')
+	@UseGuards(FtAuthGuard)
+    @UseFilters(ViewAuthFilter)
+	login() {}
 
-    @Post('test') //auth 테스트용 api.
-    async test(@Body() user: UserDto, @Res({ passthrough: true }) res: Response,) {
-        // res.cookie('Authentication', access_token, {
-        //     domain: 'localhost',
-        //     path: '/',
-        //     httpOnly: true,
-        //   });
-        //   return access_token;
-        return;
-    }
+	//42로그인 후 받은 42엑세스 토큰으로 jwt설정 및 응답하는 메소드.
+	@Get('42/callback')
+	@UseGuards(FtAuthGuard)
+    @UseFilters(ViewAuthFilter)
+	callback(@Req() req: Request, @Res() res: Response,) {
+        return this.responseWithJWT(req, res);
+	}
+
+	private responseWithJWT(req: Request, res: Response) {
+		const user = req.user as User;
+		if (!user)
+			return res.redirect('http://localhost/auth/fa2');
+		const token = this.authService.createToken(user, false);
+		res.cookie('jwt', token, { httpOnly: true });
+		res.header('Authorization', 'JWT ' + token);
+		res.redirect('http://localhost/auth/fa2');
+		return { token };
+	}
+
 }

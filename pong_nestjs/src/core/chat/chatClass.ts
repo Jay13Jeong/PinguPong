@@ -20,6 +20,7 @@ class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함, prima
     private muteuser : Set<string>;
 
     public constructor(master:string, userid:string, secretpw:string){
+        console.log('new');
         this.socketuser = new Map<string, string>();
         this.master = master; 
         this.socketuser.set(master,userid);
@@ -50,6 +51,7 @@ class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함, prima
 
     //추가 유저
     public addsocketuser(socketid:string, userid:string){
+        console.log("123",this.socketuser.has(socketid));
         if (!this.socketuser.has(socketid))
             this.socketuser.set(socketid, userid);
         if (!this.usersocket.has(userid))
@@ -130,8 +132,8 @@ class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함, prima
     }
 
     //방의 소켓 리스트 반환
-    public getSocketList():string[]{
-        return Object.keys(this.socketuser);
+    public getSocketList():IterableIterator<string>{
+        return this.socketuser.keys();
     }
 }
 
@@ -144,7 +146,7 @@ export class chatClass {
      }
     
     //방의 현재 인원들 소켓s 반환
-    public getSocketList(roomName: string):string[]{
+    public getSocketList(roomName: string):IterableIterator<string>{
         const room:roomClass = this.rooms.get(roomName);
         return room.getSocketList();
     }
@@ -159,7 +161,7 @@ export class chatClass {
     }
 
     //방 리스트 보내주기
-    public getRoomList():string[]{
+    public getRoomList():string[] | undefined{
         return Object.keys(this.rooms);
     }
 
@@ -169,7 +171,7 @@ export class chatClass {
     }
     
     //방 인원 추가, api로 방 추가가 되면 소켓통신 
-    public addUser(roomName: string, socketid:string, userid:string) {
+    public addUser(roomName: string, socketid:string, userid:string):void {
         const room:roomClass = this.rooms.get(roomName);
         room.addsocketuser(socketid, userid);
     }
@@ -218,9 +220,9 @@ export class chatClass {
     }
 
     //A를 차단한 소켓 id들 리턴하는 함수
-    public getblockuser(roomName: string, socketid:string) {
+    public getblockuser(roomName: string, socketid:string):string[] {
         const room:roomClass = this.rooms.get(roomName);
-        room.getblockuser(socketid);
+        return room.getblockuser(socketid);
     }
 
     //음소거를 하는 함수

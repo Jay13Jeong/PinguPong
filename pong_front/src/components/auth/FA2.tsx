@@ -49,8 +49,14 @@ export default function EditProfile() {
     const [rank, setRank] = useState(0); //랭크.
     const [odds, setOdds] = useState(0); //승률.
     const [record, setRecord] = useState([["cheolee",10,"jjeong",2],["cheolee",10,"jjeong",1],["jeyoon",10,"jjeong",5]]); //전적.
+    const [data, setData] = useState([]);
+
     // useEffect(() => {
+    //   fetch('http://localhost/auth/')
+    //     .then(response => response.json())
+    //     .then(data => setData(data))
     // }, []);
+
   return (
     <div className="App">
       <header className="App-header">
@@ -67,7 +73,7 @@ export default function EditProfile() {
                     <td>CODE : <input type="text" /></td>
                 </tr>
                 <tr>
-                    <td><button>Confirm</button></td>
+                    <td><Link to="/lobby"><button>Confirm</button></Link></td>
                 </tr>
             </table>
             {/* </TableParent> */}
