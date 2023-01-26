@@ -12,6 +12,7 @@ class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함, prima
     //맵 소켓id:유저id로 변경하자, 음소거 때문에 ,둘다 가지자...
     private socketuser : Map<string, string>;//소켓이 키
     private usersocket : Map<string, string>;//유저가 키
+    
     //맵 보낸 소켓 id(A), A를 차단한 소켓 id들 벡터
     private blockuser : Map<string, string[]>;
 
@@ -127,6 +128,11 @@ class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함, prima
     public checkmuteuser(socketid:string):boolean{
         return this.muteuser.has(this.socketuser.get(socketid));
     }
+
+    //방의 소켓 리스트 반환
+    public getSocketList():string[]{
+        return Object.keys(this.socketuser);
+    }
 }
 
 export class chatClass {
@@ -137,6 +143,12 @@ export class chatClass {
         this.rooms = new Map<string, roomClass>();
      }
     
+    //방의 현재 인원들 소켓s 반환
+    public getSocketList(roomName: string):string[]{
+        const room:roomClass = this.rooms.get(roomName);
+        return room.getSocketList();
+    }
+
     // 새로운 채팅방 추가,일단 소켓으로 알려주고 추후 api로 변경 되면 소켓 부분 제거하기
     public newRoom(roomName: string, master:string, userid:string, secretpw:string){
         if (!(this.rooms.has(roomName)))
@@ -226,7 +238,7 @@ export class chatClass {
     //음소거 여부를 확인 후 bool값을 리턴하는 함수
     public checkmuteuser(roomName: string, socketid:string) {
         const room:roomClass = this.rooms.get(roomName);
-        room.checkmuteuser(socketid);
+        return room.checkmuteuser(socketid);
     }
 
 }
