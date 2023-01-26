@@ -5,7 +5,6 @@ import axios from 'axios';
 import GameCard from "./GameCard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
-import { createSecureContext } from "tls";
 
 // props에 따라 다른 데이터들을 불러오는 방법도 괜찮을 것 같다.
 
@@ -79,7 +78,11 @@ function CardList (props: any) {
     ]
 
     if (loading) {
-        return (<Loader text="Loading"/>);
+        return (
+        <Center>
+            <Loader text="게임 목록 로딩 중"/>
+        </Center>
+        );
     }
     return (
        <Center>
