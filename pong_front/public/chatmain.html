@@ -1,0 +1,24 @@
+<html>
+<head>
+    <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"
+        integrity="sha384-KAZ4DtjNhLChOB/hxXuKqhMLYvx3b5MlT55xPEiNmREKRzeEm+RVPlTnAn0ajQNs"
+        crossorigin="anonymous"></script>
+    <script>
+        const socket = io('ws://localhost:3000/api/chat');
+        
+        socket.emit('getchatlist');
+        socket.on('chatlist', function (data) {
+            console.log('list', data);
+        });
+        console.log('111', socket.id);
+    </script>
+</head>
+
+<body>
+    <div>방 리스트(추후 연동)</div>
+    <button>방 입장(추후 연동)</button>
+    <button>방 생성(추후 연동)</button>
+
+</body>
+
+</html>
