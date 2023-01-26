@@ -37,6 +37,10 @@ services:
       - AUTH_CLIENT_ID=${AUTH_CLIENT_ID}
       - AUTH_CALLBACK_URL=${AUTH_CALLBACK_URL}
       # - TOKEN_EXPIRATION=1d;
+      - EMAIL_AUTH_EMAIL={EMAIL_AUTH_EMAIL}
+      - EMAIL_AUTH_PASSWORD={EMAIL_AUTH_PASSWORD}
+      - EMAIL_HOST={EMAIL_HOST}
+      - EMAIL_FROM_USER_NAME={EMAIL_FROM_USER_NAME}
     build:
       context: ./pong_nestjs
       dockerfile: Dockerfile

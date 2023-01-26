@@ -11,7 +11,10 @@ import { User } from './modules/users/user.entity';
 
 @Module({
   imports: [
-    // ConfigModule.forRoot({ isGlobal: true }),
+    // ConfigModule.forRoot({
+    //   isGlobal: true,
+    //   load: [configEmail],
+    // }),
     TypeOrmModule.forRoot({
       type: 'postgres', // Since we are using PostgreSQL.
       host: process.env.DB_HOST, // We are devoloping locally.
