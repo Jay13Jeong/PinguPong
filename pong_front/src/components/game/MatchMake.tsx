@@ -50,9 +50,7 @@ function MatchMake(props: any) {
     if (loading) {
         return (
             <Center>
-                <Stack>
-                    <Loader text="매칭 중..."/>
-                </Stack>
+                <Loader text="게임 매칭 중"/>
             </Center>
         );
     }
