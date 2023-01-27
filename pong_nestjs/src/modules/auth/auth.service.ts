@@ -38,6 +38,15 @@ export class AuthService {
       )
     }
 
+    //토큰의 유효성을 검사하는 메소드. 성공시 페이로드 반환 실패시 null반환.
+    async verifyJWToken(token: string): Promise<any> {
+      const options = { secret: process.env.JWTKEY };
+      try {
+        return await this.jwtService.verify(token, options);
+      } catch (error) {
+        return null;
+      }
+    }
 
     // ////// bcrypt service ////////////////////////////
     // //DB의 패스워드와 입력된 비번이 일치하는지 확인하는 메소드.
