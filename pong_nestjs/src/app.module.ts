@@ -8,10 +8,11 @@ import { AuthModule } from './modules/auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './modules/users/user.entity';
 // import { PostsModule } from './modules/posts/posts.module';
+import { ChatGateway } from './modules/chat/chat.gateway';
 
 @Module({
   imports: [
-    // ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'postgres', // Since we are using PostgreSQL.
       host: process.env.DB_HOST, // We are devoloping locally.
@@ -23,11 +24,11 @@ import { User } from './modules/users/user.entity';
       synchronize: true, // 앱을 실행할 때마다 운영 주체가 데이터베이스와 동기화. 개발모드에서만 써야함.
       entities: [User] //디비가 다룰 엔티티목록.
     }),
-    // DatabaseModule,
+    //DatabaseModule,
     UsersModule,
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ChatGateway],
 })
 export class AppModule {}
