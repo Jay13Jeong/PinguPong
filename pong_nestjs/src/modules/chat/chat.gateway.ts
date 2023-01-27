@@ -65,14 +65,15 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   
   //OnGatewayDisconnect를 오버라이딩
   async handleDisconnect(client : Socket) {
-
+    this.rooms.delUser(client.id);
+    console.log('delUser', client.id);
   }
 
   @SubscribeMessage('getUser')//해당 유저 등록하기
   async getUser(client : Socket, data) {
-    let [room, userId] = data;
-    console.log('getUser', client.id, data, room, userId);
-    this.rooms.newRoom(room, client.id, userId, '');
+    let [room, userId, socretpw] = data;
+    console.log('getUser', client.id, data, room, userId, socretpw);
+    this.rooms.newRoom(room, client.id, userId, socretpw);
   }
 
   @SubscribeMessage('chat')// 테스트용, 음소거, 차단 유무까지 확인을 해야한다.
@@ -84,7 +85,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       return ;
     const sockets = this.rooms.getSocketList(room);
     const blockuser = this.rooms.getblockuser(room, client.id);
-    console.log('TESTTEST--', sockets);
     for (let id of sockets){
       if (blockuser == undefined)
         this.server.to(id).emit('chat', userid, msg);
@@ -107,49 +107,49 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('/api/get/RoomList')//브라우저가 채팅방 리스트 요청함
   async getChatList(client : Socket) { 
-    console.log('/api/get/RoomList', client.id, this.rooms.getRoomList());
-    this.server.to(client.id).emit('/api/get/RoomList', this.rooms.getRoomList());// 리스트 보내주기, 클래스 함수 리턴값으로 고치기
+    console.log('/api/get/RoomList', client.id, Array.from(this.rooms.getRoomList()));
+    this.server.to(client.id).emit('/api/get/RoomList', Array.from(this.rooms.getRoomList()));// 리스트 보내주기, 클래스 함수 리턴값으로 고치기
   }
 
   @SubscribeMessage('/api/post/mandateMaster')//방장위임
   async mandateMaster(client : Socket, data) {
     let [room, userId] = data;//위임할 userId
-    console.log('test', client.id, data, room, userId);
+    console.log('/api/post/mandateMaster', client.id, data, room, userId);
     this.rooms.mandateMaster(room, client.id, userId);
   }
 
   @SubscribeMessage('/api/put/setSecretpw')//비번 변경
-  async setSecretpw(client : Socket, data) {
+  async setSecretpw(client : Socket, data){
     let [room, secretpw, newsecret] = data;
-    console.log('test', client.id, data, room, secretpw, newsecret);
+    console.log('/api/put/setSecretpw', client.id, data, room, secretpw, newsecret);
     this.rooms.setSecretpw(room, secretpw, newsecret);
   }
 
   @SubscribeMessage('/api/put/addblockuser')//차단 유저 추가
   async addblockuser(client : Socket, data) {
     let [room, userId] = data;//차단할 유저 id
-    console.log('test', client.id, data, room, userId);
+    console.log('/api/put/addblockuser', client.id, data, room, userId);
     this.rooms.addblockuser(room, client.id, userId);
   }
 
   @SubscribeMessage('/api/put/freeblockuser')//차단을 해제하는 함수
   async freeblockuser(client : Socket, data) {
     let [room, userId] = data;//차단을 해제할 유저 id
-    console.log('test', client.id, data, room, userId);
+    console.log('/api/put/freeblockuser', client.id, data, room, userId);
     this.rooms.freeblockuser(room, client.id, userId);
   }
 
   @SubscribeMessage('/api/put/addmuteuser')//음소거를 하는 함수
   async addmuteuser(client : Socket, data) {
     let [room, userId] = data;//음소거할 유저id
-    console.log('test', client.id, data, room, userId);
+    console.log('/api/put/addmuteuser', client.id, data, room, userId);
     this.rooms.addmuteuser(room, client.id, userId);
   }
 
   @SubscribeMessage('/api/put/freemuteuser')//음소거를 해제하는 함수
   async freemuteuser(client : Socket, data) {
     let [room, userId] = data;//음소거 해제할 유저id
-    console.log('test', client.id, data, room, userId);
+    console.log('/api/put/freemuteuser', client.id, data, room, userId);
     this.rooms.freemuteuser(room, client.id, userId);
   }
 
