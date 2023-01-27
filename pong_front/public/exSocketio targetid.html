@@ -12,10 +12,10 @@
     <button onclick=getRoomList()>방 리스트 요청</button>
     <button onclick=mandateMaster()>방장 위임 </button>
     <button onclick=setSecretpw()>비밀번호 변경 </button>
-    <button onclick=addBlockUser()>targetid 유저 차단</button>
-    <button onclick=freeBlockUser()>targetid 유저 해제</button>
-    <button onclick=addMuteUser()>targetid 유저 음소거</button>
-    <button onclick=freeMuteUser()>targetid 유저 음소거 해제</button>
+    <button onclick=addBlockUser()>temp 유저 차단</button>
+    <button onclick=freeBlockUser()>temp 유저 해제</button>
+    <button onclick=addMuteUser()>temp 유저 음소거</button>
+    <button onclick=freeMuteUser()>temp 유저 음소거 해제</button>
 
     <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"
     integrity="sha384-KAZ4DtjNhLChOB/hxXuKqhMLYvx3b5MlT55xPEiNmREKRzeEm+RVPlTnAn0ajQNs"
@@ -24,7 +24,7 @@
     const socket = io('http://localhost:3000/api/chat');
     
     const room = 'testRoom';
-    const userId = 'cheolee';
+    const userId = 'targetid';
     const secretpw = '123';
 
     socket.on('room', function (data) {
@@ -57,7 +57,7 @@
     }
 
     function mandateMaster(){
-        socket.emit('/api/post/mandateMaster', room, 'targetid');
+        socket.emit('/api/post/mandateMaster', room, 'tempId');
     }
 
     function setSecretpw(){
@@ -65,19 +65,19 @@
     }
 
     function addBlockUser(){
-        socket.emit('/api/put/addblockuser', room, 'targetid');
+        socket.emit('/api/put/addblockuser', room, 'tempId');
     }
 
     function freeBlockUser(){
-        socket.emit('/api/put/freeblockuser', room, 'targetid');
+        socket.emit('/api/put/freeblockuser', room, 'tempId');
     }
 
     function addMuteUser(){
-        socket.emit('/api/put/addmuteuser', room, 'targetid');
+        socket.emit('/api/put/addmuteuser', room, 'tempId');
     }
 
     function freeMuteUser(){
-        socket.emit('/api/put/freemuteuser', room, 'targetid');
+        socket.emit('/api/put/freemuteuser', room, 'tempId');
     }
 
     var form = document.getElementById('form');

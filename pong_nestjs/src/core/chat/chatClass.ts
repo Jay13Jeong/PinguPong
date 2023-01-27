@@ -27,10 +27,11 @@ class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함, prima
         this.usersocket = new Map<string, string>();
         this.usersocket.set(userid, master);
         
-        if (secretpw != undefined)
-            this.secret = false;
         this.secret = true;
-
+        this.secretpw = secretpw;
+        if (this.secretpw == '')
+            this.secret = false;
+ 
         this.blockuser = new Map<string, string[]>();
         this.muteuser = new Set<string>();
     }
@@ -40,18 +41,20 @@ class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함, prima
     }
     //방장 위임 기능 함수
     public mandateMaster(master:string, userid:string){
-        if (master == this.master)
+        if ((master == this.master)&& this.usersocket.get(userid) != undefined)
             this.master = this.usersocket.get(userid);
     }
 
     //방장 나갈 때 방장 위임 기능 함수 실행
     private newMaster(){
-        this.master = Object.keys(this.socketuser)[0];
+        const newMaster = Array.from(this.socketuser.keys())
+        console.log('before master', this.master, newMaster, newMaster[0]);
+        this.master = newMaster[0];
+        console.log('after master', this.master);
     }
 
     //추가 유저
-    public addsocketuser(socketid:string, userid:string){
-        console.log("123",this.socketuser.has(socketid));
+    public addsocketuser(socketid:string, userid:string) {
         if (!this.socketuser.has(socketid))
             this.socketuser.set(socketid, userid);
         if (!this.usersocket.has(userid))
@@ -140,9 +143,11 @@ class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함, prima
 export class chatClass {
     //방이름:해당 방 정보 클래스
     private rooms : Map<string, roomClass>;
+    private socketid : Map<string, string>;
 
     public constructor(){
         this.rooms = new Map<string, roomClass>();
+        this.socketid = new Map<string, string>();
      }
     
     //방의 현재 인원들 소켓s 반환
@@ -153,16 +158,19 @@ export class chatClass {
 
     // 새로운 채팅방 추가,일단 소켓으로 알려주고 추후 api로 변경 되면 소켓 부분 제거하기
     public newRoom(roomName: string, master:string, userid:string, secretpw:string){
-        if (!(this.rooms.has(roomName)))
+        if (!(this.rooms.has(roomName))){
             this.rooms.set(roomName, new roomClass(master, userid, secretpw));
+            this.socketid.set(master, roomName);
+        }
         else{
             this.addUser(roomName, master, userid);
+            this.socketid.set(master, roomName);
         }
     }
 
     //방 리스트 보내주기
-    public getRoomList():string[] | undefined{
-        return Object.keys(this.rooms);
+    public getRoomList():IterableIterator<string>{
+        return this.rooms.keys();
     }
 
     // 기존의 방이 있는지 확인, 브라우저에서 방이 있는지 보내주기
@@ -171,17 +179,19 @@ export class chatClass {
     }
     
     //방 인원 추가, api로 방 추가가 되면 소켓통신 
-    public addUser(roomName: string, socketid:string, userid:string):void {
+    private addUser(roomName: string, socketid:string, userid:string):void {
         const room:roomClass = this.rooms.get(roomName);
         room.addsocketuser(socketid, userid);
     }
 
     //방 인원 나감, 소켓 연결이 끊어지면 방에서 유저 삭제
-    public delUser(roomName: string, socketid:string) {
+    public delUser(socketid:string) {
+        const roomName:string = this.socketid.get(socketid);
         const room:roomClass = this.rooms.get(roomName);
-        room.delsocketuser(socketid);
 
+        room.delsocketuser(socketid);
         this.roomDel(roomName);
+        this.rooms.delete(socketid);
     }
 
     //방 삭제, 소켓 연결이 해제될 때, 방에 아무도 없으면 방 삭제
@@ -204,7 +214,7 @@ export class chatClass {
     //비번 변경 함수
     public setSecretpw(roomName: string, secretpw:string, newsecret:string) {
         const room:roomClass = this.rooms.get(roomName);
-        room.setSecretpw(secretpw, newsecret);
+        console.log(room.setSecretpw(secretpw, newsecret));
     }
 
     //차단의 경우 추가하는 함수
