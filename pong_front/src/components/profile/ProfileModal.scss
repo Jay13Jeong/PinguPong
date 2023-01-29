@@ -1,0 +1,51 @@
+.profile-wrapper {
+    box-sizing: content-box;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(350px, 350px));
+    grid-template-rows: 90px, 30px, 30px, 30px;
+    row-gap: 10px;
+    font-size: 1.5rem;
+    place-items: center;
+    .profile-box {
+        width: 90px;
+        height: 90px; 
+        border-radius: 30%;
+        overflow: hidden;
+        grid-column: 1 / 2;
+        grid-row: 1 / 2;
+    }
+    .profile-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .profile-button {
+        font-size: 1.1rem;
+        width: fit-content;
+        height: fit-content;
+        grid-column: 2 / 3;
+        grid-row: 1 / 2;
+    }
+    .profile-name {
+        grid-column: 1 / 2;
+        grid-row: 2 / 3;
+    }
+    .profile-status {
+        grid-column: 2 / 3;
+        grid-row: 2 / 3;
+    }
+    .profile-rank {
+        grid-column: 1 / 2;
+        grid-row: 3 / 4;
+    }
+    .profile-odds {
+        grid-column: 2 / 3;
+        grid-row: 3 / 4;
+    }
+    .record-title {
+        text-align: center;
+        border-top: 2px solid #000;
+        grid-column: 1 / 3;
+        grid-row: 4 / 5;
+    }
+}
