@@ -5,6 +5,8 @@ import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from "styled-components";
 import theme from "./styles/Theme";
 import { RecoilRoot } from 'recoil';
+import GlobalStyle from './GlobalStyles';
+import TopMenuBar from './components/TopMenuBar';
 
 function App() {
   return (
@@ -12,6 +14,8 @@ function App() {
     <ThemeProvider theme={theme}>
       <BrowserRouter>
         <RecoilRoot>
+        <GlobalStyle />
+        <TopMenuBar/>
         <Routing />
         </RecoilRoot>
       </BrowserRouter>
