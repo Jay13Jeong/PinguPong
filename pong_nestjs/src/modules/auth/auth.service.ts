@@ -17,6 +17,7 @@ export class AuthService {
         @InjectRepository(User) private readonly userRepository: Repository<User>,
     ) { }
 
+    //유저가 있다면 유저 정보 반환, 없다면 디비에 새로 유저를 넣고 유저 정보 반환. 
     async validateUser(details: AuthUserDto) {
       // console.log("AuthService-validateUser------");
       const user = await this.userRepository.findOneBy({
@@ -30,6 +31,7 @@ export class AuthService {
       return this.userRepository.save(newUser);
     }
 
+    //토큰을 생성하는 서비스.
     createToken(user: User, twofa_verified: boolean) {		
       return (
         // expiresIn: 3600,
