@@ -12,6 +12,7 @@ import { SecondAuthService } from './second-auth/second-auth.service';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
 import { UsersService } from '../users/users.service';
+import { JwtStrategy } from './guard/jwt.strategy';
 
 @Module({
   imports: [
@@ -51,7 +52,7 @@ import { UsersService } from '../users/users.service';
 			useClass: AuthService,
 		},
     AuthService,
-    // JwtStrategy,
+    JwtStrategy,
     FtStrategy,
     SecondAuthService,
     UsersService,

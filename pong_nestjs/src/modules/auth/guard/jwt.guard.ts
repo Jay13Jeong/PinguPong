@@ -15,19 +15,23 @@ export class JwtAuthGuard implements CanActivate {
 	async canActivate(context: ExecutionContext): Promise<boolean> {
 		const request = context.switchToHttp().getRequest();
 
+		// console.log(request);
+		if (request.cookies == undefined) {
+			throw new UnauthorizedException('쿠키 정보 없음.');
+		}
 		const token = request.cookies.jwt;
 		if (token == undefined || token == '') {
-			throw new UnauthorizedException('No token provided');
+			throw new UnauthorizedException('토큰이 존재하지 않음.');
 		}
 		const obj = await this.authService.verifyJWToken(token);
 		if (!obj)
-			throw new UnauthorizedException('Object is undefined');
+			throw new UnauthorizedException('토큰에 정보 없음.');
 
 		const user = await this.userRepository.findOneBy({
 			oauthID: obj.oauthID
 		});
 		if (!user)
-			throw new UnauthorizedException('No User Found');
+			throw new UnauthorizedException('토큰에 유저 정보 없음');
 		if (!user.username || user.username === '')
 			throw new ImATeapotException("username");
 		if (user.twofa && !obj.twofa_verified)
@@ -49,13 +53,16 @@ export class Jwt2faGuard implements CanActivate {
 	async canActivate(context: ExecutionContext): Promise<boolean> {
 		const request = context.switchToHttp().getRequest();
 
+		if (request.cookies == undefined) {
+			throw new UnauthorizedException('쿠키 정보 없음.');
+		}
 		const token = request.cookies.jwt;
 		if (token == undefined || token == '') {
-			throw new UnauthorizedException('토큰 없음.');
+			throw new UnauthorizedException('토큰이 존재하지 않음.');
 		}
 		const obj = await this.authService.verifyJWToken(token);
 		if (!obj)
-			throw new UnauthorizedException('토큰 정보 없음.');
+			throw new UnauthorizedException('토큰에 정보 없음.');
 		const user = await this.userRepository.findOneBy({
 			oauthID: obj.oauthID
 		});
