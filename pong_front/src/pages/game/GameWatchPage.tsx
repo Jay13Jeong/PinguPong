@@ -1,8 +1,8 @@
-import CardList from "../../components/game/CardList";
+import GameWatchList from "../../components/game/GameWatchList";
 
 function GameWatchPage (props: any) {
     return (
-        <CardList/>
+        <GameWatchList/>
     );
 }
 
