@@ -10,11 +10,11 @@
     position: relative;
     width: 100%;
     overflow: hidden;
-}
-.pingu {
-    position: fixed;
-    width: 300px;
-    height: auto;
-    bottom: 0;
-    animation: move 2.5s linear infinite;
+    .pingu {
+        position: fixed;
+        width: 300px;
+        height: auto;
+        bottom: 0;
+        animation: move 2s cubic-bezier(0,.5,1,.5) infinite;
+    }
 }
