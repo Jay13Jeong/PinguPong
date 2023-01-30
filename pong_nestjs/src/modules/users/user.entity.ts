@@ -1,4 +1,5 @@
 import { Column, BeforeInsert, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Friend } from "../friend/friend.entity";
 // import { GameHistory } from "./GameHistory.entity";
 // import { Friend } from "./Friend.entity";
 // import { ApiProperty } from '@nestjs/swagger';
@@ -53,12 +54,12 @@ export class User {
 	// games_lost: GameHistory[]; //패배 게임기록 리스트.
 
 	// @ApiProperty({ description: 'List of friends that the user has sent', type: () => Friend })
-	// @OneToMany(() => Friend, (friend) => friend.sender) // Applicant
-	// sentFriendRequests: Friend[]; //초대한 사용자목록 리스트.
+	@OneToMany(() => Friend, (friend) => friend.sender) // Applicant
+	sentFriendRequests: Friend[]; //초대한 사용자목록 리스트.
 	
 	// @ApiProperty({ description: 'List of friends that the user has recieved', type: () => Friend })
-	// @OneToMany(() => Friend, (friend) => friend.reciever) // Recipient
-	// receivedFriendRequests: Friend[]; //초대한 사용자 목록 리스트.
+	@OneToMany(() => Friend, (friend) => friend.reciever) // Recipient
+	receivedFriendRequests: Friend[]; //초대한 사용자 목록 리스트.
 
 	// @ApiProperty({ description: 'List of chats connected to the user', type: () => Chat })
 	// @ManyToMany(() => Chat, (chat) => chat.users)
@@ -67,7 +68,7 @@ export class User {
 	// @ApiProperty({ description: 'the id of the oath parent', example: 216532132 })
 	@Column({ default: '', unique: true })
 	oauthID: string; //인트라api에서 부여한 고유 id
-	
+
 	// @ApiProperty({ description: 'Creation Date epoch', example: '1669318644507' })
 	@Column()
 	createdAt: string; //핑구퐁 아이디 생성일.

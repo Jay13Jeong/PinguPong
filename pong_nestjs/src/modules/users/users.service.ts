@@ -149,31 +149,31 @@ export class UsersService {
 	}
 
 	// patch user
-	// async updateUser(userID: number, dto: updateUserDto) {
-	// 	const user = await this.findUserById(userID);
-	// 	if (!user) {
-	// 		throw new UserNotFoundException();
-	// 	}
-	// 	if (dto.username) {
-	// 		if (user.username == dto.username) {
-	// 			throw new NotModifiedException('Username is already set to ' + dto.username);
-	// 		}
-	// 		user.username = dto.username;
-	// 	}
-	// 	if (dto.twofa) {
-	// 		if (user.twofa == dto.twofa) {
-	// 			throw new NotModifiedException('twofa is already set to ' + dto.twofa);
-	// 		}
-	// 		user.twofa = dto.twofa;
-	// 	}
-	// 	await this.userRepository.save(user)
-	// 	.catch((err) => {
-	// 		if (err.code === '23505') {
-	// 			throw new BadRequestException('Username already exists');
-	// 		}
-	// 	});
-	// 	return { msg: "OK" };
-	// }
+	async updateUser(user: User) {
+		// const user = await this.findUserById(userID);
+		// if (!user) {
+		// 	throw new UserNotFoundException();
+		// }
+		// if (dto.username) {
+		// 	if (user.username == dto.username) {
+		// 		throw new NotModifiedException('Username is already set to ' + dto.username);
+		// 	}
+		// 	user.username = dto.username;
+		// }
+		// if (dto.twofa) {
+		// 	if (user.twofa == dto.twofa) {
+		// 		throw new NotModifiedException('twofa is already set to ' + dto.twofa);
+		// 	}
+		// 	user.twofa = dto.twofa;
+		// }
+		await this.userRepository.save(user)
+		// .catch((err) => {
+		// 	if (err.code === '23505') {
+		// 		throw new BadRequestException('Username already exists');
+		// 	}
+		// });
+		return { msg: "user info update OK" };
+	}
 
 	/* Helper functions */
 	async deleteFile(filePath: string) {

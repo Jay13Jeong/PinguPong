@@ -22,7 +22,7 @@ export class SecondAuthController {
     callMail(@Req() req: Request){
         let user = req.user as User;
         const email : string = user.email;
-        const code2fa : string = "5432"; //랜덤한 값(string)을 주도록 바꿔야함.
+        const code2fa : string = Math.random().toString(36).slice(2,6); //랜덤한 값(string)을 주도록 바꿔야함.
         // this.secondAuthServices.sendCode('42.4.jjeong@gmail.com', code2fa);
         this.secondAuthServices.sendCode(email, code2fa);
         user.twofa_secret = code2fa;
