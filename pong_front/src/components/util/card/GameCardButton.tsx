@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import {CardButton} from "../game/Card";
+import {CardButton} from "./Card";
 
 function GameCardButton (props: {p1: string, p2: string, s1: number, s2: number}) {
     const navigate = useNavigate();

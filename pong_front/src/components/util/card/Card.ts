@@ -17,6 +17,13 @@ const CardBase = css`
     .score {
         min-width: 100px;
     }
+
+    .user-id {
+        min-width: 400px;
+    }
+    .status {
+        min-width: 100px;
+    }
 `
 
 export const Card = styled.div`
