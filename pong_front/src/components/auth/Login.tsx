@@ -10,7 +10,7 @@ export default function Login() {
     <div className="App">
       
       <header className="App-header">
-      <button onClick={()=>{window.location.href = "http://localhost:3000/api/auth/42/login"}}>
+      <button style={{backgroundColor: "lightgrey"}} onClick={()=>{window.location.href = "http://localhost:3000/api/auth/42/login"}}>
       .-----------.<br/>
       | <b>LOGIN</b> |<br/>
       '-----------'
