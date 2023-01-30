@@ -1,0 +1,20 @@
+@keyframes move {
+    0% {
+        left: -300px;
+    }
+    100% {
+        left: 100%;
+    }
+}
+.pingu-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+.pingu {
+    position: fixed;
+    width: 300px;
+    height: auto;
+    bottom: 0;
+    animation: move 2.5s linear infinite;
+}
