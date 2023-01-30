@@ -46,6 +46,7 @@
     "passport-local": "^1.0.0",
     "pg": "^8.8.0",
     "pg-hstore": "^2.3.4",
+    "pug": "^3.0.2",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
     "socket.io": "^4.5.4",

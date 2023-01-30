@@ -1,8 +1,8 @@
-import GameRoom from "../../components/game/GameRoom"
+import GameWatchRoom from "../../components/game/GameWatchRoom"
 
 function GameWatchRoomPage(props: any) {
     return (
-        <GameRoom type="watcher"/>
+        <GameWatchRoom/>
     );
 }
 

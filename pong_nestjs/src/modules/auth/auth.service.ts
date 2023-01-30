@@ -17,6 +17,7 @@ export class AuthService {
         @InjectRepository(User) private readonly userRepository: Repository<User>,
     ) { }
 
+    //유저가 있다면 유저 정보 반환, 없다면 디비에 새로 유저를 넣고 유저 정보 반환. 
     async validateUser(details: AuthUserDto) {
       // console.log("AuthService-validateUser------");
       const user = await this.userRepository.findOneBy({
@@ -30,6 +31,7 @@ export class AuthService {
       return this.userRepository.save(newUser);
     }
 
+    //토큰을 생성하는 서비스.
     createToken(user: User, twofa_verified: boolean) {		
       return (
         // expiresIn: 3600,
@@ -38,6 +40,15 @@ export class AuthService {
       )
     }
 
+    //토큰의 유효성을 검사하는 메소드. 성공시 페이로드 반환 실패시 null반환.
+    async verifyJWToken(token: string): Promise<any> {
+      const options = { secret: process.env.JWTKEY };
+      try {
+        return await this.jwtService.verify(token, options);
+      } catch (error) {
+        return null;
+      }
+    }
 
     // ////// bcrypt service ////////////////////////////
     // //DB의 패스워드와 입력된 비번이 일치하는지 확인하는 메소드.
