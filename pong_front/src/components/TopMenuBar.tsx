@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEnvelope, faUser, faPeopleGroup } from "@fortawesome/free-solid-svg-icons";
+import { faEnvelope, faCircleUser, faPeopleGroup } from "@fortawesome/free-solid-svg-icons";
 import { useSetRecoilState } from "recoil";
 import * as modalState from "../states/recoilModalState"
 import DMModal from "./profile/DMModal";
@@ -45,7 +45,7 @@ function TopMenuBar() {
           <FontAwesomeIcon icon={faPeopleGroup}/>
         </button>
         <button onClick={showProfileModal}>
-          <FontAwesomeIcon icon={faUser}/>
+          <FontAwesomeIcon icon={faCircleUser}/>
         </button>
       </div>
     </div>
