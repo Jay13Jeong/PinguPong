@@ -19,18 +19,22 @@
         height: 100%;
         object-fit: cover;
     }
+    .profile-button-wrapper {
+        grid-column: 2 / 3;
+        grid-row: 1 / 2;
+    }
     .profile-button {
+        margin: 20px;
         font-size: 1.1rem;
         width: fit-content;
         height: fit-content;
-        grid-column: 2 / 3;
-        grid-row: 1 / 2;
     }
     .profile-name {
         grid-column: 1 / 2;
         grid-row: 2 / 3;
     }
     .profile-status {
+        font-size: 1.5rem;
         grid-column: 2 / 3;
         grid-row: 2 / 3;
     }
