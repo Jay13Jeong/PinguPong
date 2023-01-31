@@ -1,7 +1,7 @@
 // import { useState, useEffect } from 'react';
 // import logo from '../logo.svg';
 import '../../App.css';
-import pingu from "./Pingu3D.png"
+import pingu from "../../assets/Pingu3D.png"
 import "./Login.scss"
 
 export default function Login() {

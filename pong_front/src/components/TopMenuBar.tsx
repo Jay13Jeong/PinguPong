@@ -8,7 +8,7 @@ import DMModal from "./profile/DMModal";
 import ProfileModal from "./profile/ProfileModal";
 import FriendModal from "./profile/FriendModal"
 import ProfileEditModal from "./profile/ProfileEditModal";
-import logo from "./logo.png";
+import logo from "../assets/logo.png";
 import "./TopMenuBar.scss";
 
 function TopMenuBar() {
