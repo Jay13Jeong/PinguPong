@@ -2,8 +2,8 @@ import React, {useState, useEffect} from "react";
 import Loader from "../util/Loader";
 import {Center} from "../../styles/Layout"
 import axios from 'axios';
-import GameCardButton from "./GameCardButton";
-import CardList from "./CardList";
+import GameCardButton from "../util/card/GameCardButton";
+import CardList from "../util/card/CardList";
 
 function GameWatchList (props: any) {
     // 상태 정의

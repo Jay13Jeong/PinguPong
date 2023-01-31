@@ -1,7 +1,7 @@
 import React, {useState} from "react";
-import CardList from "../game/CardList";
-import GameCard from "../game/GameCard";
-import * as types from "./User"
+import CardList from "./CardList";
+import GameCard from "./GameCard";
+import * as types from "../../profile/User"
 
 function GameRecordList(props: {record: types.record[]}) {
     const [currPage, setCurrPage] = useState<number>(1);
