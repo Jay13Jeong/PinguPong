@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from "styled-components";
 import theme from "./styles/Theme";
 import { RecoilRoot } from 'recoil';
+import {SocketContext, socket} from './states/contextSocket'
 import GlobalStyle from './GlobalStyles';
 import TopMenuBar from './components/TopMenuBar';
 
@@ -14,9 +15,11 @@ function App() {
     <ThemeProvider theme={theme}>
       <BrowserRouter>
         <RecoilRoot>
-        <GlobalStyle />
-        <TopMenuBar/>
-        <Routing />
+          <GlobalStyle />
+          <SocketContext.Provider value={socket}>
+            <TopMenuBar/>
+            <Routing />
+          </SocketContext.Provider>
         </RecoilRoot>
       </BrowserRouter>
     </ThemeProvider>

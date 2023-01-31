@@ -1,9 +1,9 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
+import { SocketContext } from "../../states/contextSocket";
 import {useLocation} from "react-router-dom";
 import {useSetRecoilState} from "recoil";
 import {gameState} from "../../states/recoilGameState"
 import { sizes } from "./GameEngine/variables";
-import io from "socket.io-client";
 import { Center, Stack } from "../../styles/Layout";
 import { Button } from "../../styles/Inputs";
 import GameRoom from "./GameRoom";
@@ -28,15 +28,10 @@ function GamePlayRoom(props: any) {
     /* 변수들 */
     const playerSpeed = 10;
 
-    /* socket */ // TODO - 나중에 적당한 곳으로 옮겨줘야 함.
-    const ENDPOINT = "http://localhost:3001";
-    const socket = io(ENDPOINT, {
-        transports: ['websocket'],
-        withCredentials: true,
-    });
+    /* socket */
+    const socket = useContext(SocketContext);
 
     /* Event Handler */
-
     const keyDownHandler = (e: KeyboardEvent) => {
         if (e.key === "ArrowUp") {
             if (isP1) { // 1번을 위로

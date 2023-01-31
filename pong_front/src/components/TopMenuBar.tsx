@@ -1,24 +1,31 @@
 import React, {useState} from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEnvelope, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faEnvelope, faCircleUser, faPeopleGroup } from "@fortawesome/free-solid-svg-icons";
+import { useSetRecoilState } from "recoil";
+import * as modalState from "../states/recoilModalState"
 import DMModal from "./profile/DMModal";
 import ProfileModal from "./profile/ProfileModal";
+import FriendModal from "./profile/FriendModal"
 import logo from "./logo.png";
 import "./TopMenuBar.scss";
 
 function TopMenuBar() {
-  const [dmModalOpen, setDmModalOpen] = useState(false);
-  const [profileModalOpen, setProfileModalOpen] = useState(false);
+  
+  const dmState = useSetRecoilState(modalState.dmModalState);
+  const profileState = useSetRecoilState(modalState.profileModalState);
+  const friendState = useSetRecoilState(modalState.friendModalState);
 
   const showDmModal = () => {
-    setProfileModalOpen(false);
-    setDmModalOpen(true);
+    dmState(true);
   }
 
   const showProfileModal = () => {
-    setDmModalOpen(false);
-    setProfileModalOpen(true);
+    profileState({userId: 0, show: true}); // TODO : 현재 로그인된 user의 id로 userId 바꾸어 줄 것
+  }
+
+  const showFriendModal = () => {
+    friendState(true);
   }
 
   return (
@@ -33,13 +40,18 @@ function TopMenuBar() {
           <span>Pingu Pong</span>
       </span>
       </Link>
-      
-      <button onClick={showProfileModal} className="navi-right-button">
-        <FontAwesomeIcon icon={faUser}/>
-      </button>
+      <div className="navi-right-button">
+        <button onClick={showFriendModal} >
+          <FontAwesomeIcon icon={faPeopleGroup}/>
+        </button>
+        <button onClick={showProfileModal}>
+          <FontAwesomeIcon icon={faCircleUser}/>
+        </button>
+      </div>
     </div>
-    {dmModalOpen && <DMModal setter={setDmModalOpen}/>}
-    {profileModalOpen && <ProfileModal setter={setProfileModalOpen}/>}
+    <FriendModal/>
+    <DMModal />
+    <ProfileModal/>
     </>
   );
 }
