@@ -7,6 +7,11 @@ import { UsersService } from "./users.service";
 export class UsersController {
     constructor(private readonly usersService: UsersService,) {}
 
+    @Get('test') //테스트용 메소드. 유저 디비조회용.
+    async findA(): Promise<User[]>{
+        return await this.usersService.findAll();
+    }
+
     //나의 유저 정보를 반환하는 api.
     @Get() 
     @UseGuards(JwtAuthGuard)
@@ -37,10 +42,5 @@ export class UsersController {
         let user = req.user as User;
         user.avatar = body.avatar
         return await this.usersService.updateUser(user);
-    }
-
-    @Get('all') //테스트용 메소드. 유저 디비조회용.
-    findAll(): Promise<User[]>{
-        return this.usersService.findAll();
     }
 }

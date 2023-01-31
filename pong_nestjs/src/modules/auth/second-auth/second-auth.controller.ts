@@ -18,7 +18,7 @@ export class SecondAuthController {
     //jwt토큰 속 이메일로 인증코드 메시지를 전송하는 메소드.
     //동시에 디비에 메일로 보낸 2fa인증코드를 업데이트한다.
     @Get()
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(Jwt2faGuard)
     callMail(@Req() req: Request){
         let user = req.user as User;
         const email : string = user.email;
@@ -32,11 +32,11 @@ export class SecondAuthController {
 
     //2단계 인증이 켜져있는지 확인하는 메소드.√
     @Get('status')
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(Jwt2faGuard)
     is2faOn(@Req() req: Request){
         //시나리오 : 2fa페이지 접속시 먼저 이 api로 상태를 검사한다.
         const user = req.user as User;
-        return { msg : (user.twofa? 'ON' : 'OFF') };
+        return { twofa : user.twofa };
     }
 
     //2단계 인증을 활성화하는 메소드.
