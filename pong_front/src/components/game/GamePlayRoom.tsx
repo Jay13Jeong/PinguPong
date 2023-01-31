@@ -1,12 +1,12 @@
 import React, {useState, useEffect, useContext} from "react";
 import { SocketContext } from "../../states/contextSocket";
-import {useLocation} from "react-router-dom";
+import {useLocation, Link} from "react-router-dom";
 import {useSetRecoilState} from "recoil";
 import {gameState} from "../../states/recoilGameState"
-import { sizes } from "./GameEngine/variables";
 import { Center, Stack } from "../../styles/Layout";
 import { Button } from "../../styles/Inputs";
 import GameRoom from "./GameRoom";
+import { OverLay, Wrapper } from "../../styles/Modal";
 import * as types from "./Game";
 
 function GamePlayRoom(props: any) {
@@ -20,6 +20,9 @@ function GamePlayRoom(props: any) {
     const currentPlayer = "pingpong_king"; // TODO - 실제로 받아올 것
     const isP1 = player1 === currentPlayer;
     const gameRoomName = `${player1}vs${player2}`;
+
+    /* state */
+    const [winner, setWinner] = useState<string>();
 
     /* 게임 정보 setter */
     const setGame = useSetRecoilState<types.gamePosInfo>(gameState);
@@ -63,8 +66,7 @@ function GamePlayRoom(props: any) {
                 setGame(data);
             })
             socket.on("endGame", (data) => {
-                // TODO - 게임 종료 이벤트 발생시 종료 화면 띄우기
-                console.log(data);
+                setWinner(data.winner);
             })
         })
     }, []);
@@ -77,6 +79,22 @@ function GamePlayRoom(props: any) {
                     게임 시작
                 </Button>
             </Stack>
+            {winner ? 
+            <OverLay z_index={100}>
+                <Wrapper>
+                {winner === currentPlayer ? 
+                <div>
+                    <div>Win!!</div>
+                    {/* 이미지 추가 */}
+                </div> : 
+                <div>
+                    <div>Lose!!</div>
+                    {/* 이미지 추가 */}
+                </div>
+                }
+                <Link to="/lobby"><Button>Go To Lobby</Button></Link>
+            </Wrapper>
+        </OverLay> : null}
         </Center>
     );
 }

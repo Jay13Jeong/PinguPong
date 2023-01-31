@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-export const OverLay = styled.div`
+export const OverLay = styled.div<{ z_index?: number }>`
     position: fixed;
     width: 100%;
     height: 100%;
@@ -9,10 +9,10 @@ export const OverLay = styled.div`
     left: 0;
     right: 0;
     background: rgba(0, 0, 0, 0.5);
-    z-index: 100;
+    z-index: ${props => props.z_index || 200};
 `
 
-export const Wrapper = styled.div<{z_index?: number}>`
+export const Wrapper = styled.div`
     box-sizing: border-box;
     min-width: 700px;
     height: fit-content;
@@ -22,9 +22,6 @@ export const Wrapper = styled.div<{z_index?: number}>`
     position: absolute;
     top: 50%;
     left: 50%;
-    ${({ z_index }) => {
-        return z_index ? `z-index: ${z_index}` : null;
-    }}
     transform: translate(-50%, -50%);
     .close-button {
         font-size: 20px;
