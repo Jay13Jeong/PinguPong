@@ -7,6 +7,7 @@ import * as modalState from "../states/recoilModalState"
 import DMModal from "./profile/DMModal";
 import ProfileModal from "./profile/ProfileModal";
 import FriendModal from "./profile/FriendModal"
+import ProfileEditModal from "./profile/ProfileEditModal";
 import logo from "./logo.png";
 import "./TopMenuBar.scss";
 
@@ -52,6 +53,7 @@ function TopMenuBar() {
     <FriendModal/>
     <DMModal />
     <ProfileModal/>
+    <ProfileEditModal/>
     </>
   );
 }

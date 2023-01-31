@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import ModalBase from "./ModalBase";
 import GameRecordList from "../util/card/GameRecordList";
-import { useRecoilState } from "recoil"
-import { profileModalState } from "../../states/recoilModalState";
+import { useSetRecoilState , useRecoilState } from "recoil"
+import { profileEditModalState, profileModalState } from "../../states/recoilModalState";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircle, faUserPen, faUserPlus, faUserMinus, faUser, faUserSlash } from "@fortawesome/free-solid-svg-icons";
 import "./ProfileModal.scss"
@@ -19,36 +19,37 @@ import * as types from "./User"
 
 function ProfileModal() {
     const  [showModal, setShowModal] = useRecoilState(profileModalState);
-
-    // const [userInfo, setUserInfo] = useState<types.user>({
-    //     userName: "pinga",
-    //     myProfile: true,    // TODO - 더 좋은 방법이 있을지 생각해보기
-    //     userStatus: "on",
-    //     rank: 0,
-    //     odds: 0,
-    //     record: [
-    //         {idx: 1, p1: "cheolee", p2: "jjeong", p1Score: 10, p2Score: 2},
-    //         {idx: 2, p1: "cheolee", p2: "jjeong", p1Score: 10, p2Score: 1},
-    //         {idx: 3, p1: "cheolee", p2: "jjeong", p1Score: 10, p2Score: 10},
-    //         {idx: 4, p1: "cheolee", p2: "jjeong", p1Score: 1, p2Score: 10},
-    //         {idx: 5, p1: "cheolee", p2: "jjeong", p1Score: 10, p2Score: 10},
-    //         {idx: 6, p1: "jeyoon", p2: "jjeong", p1Score: 10, p2Score: 5}
-    //     ]
-    // });    // 유저 정보
+    const setProfileEditState = useSetRecoilState(profileEditModalState);
 
     const [userInfo, setUserInfo] = useState<types.user>({
-        userName: "pingi",
-        myProfile: false,    // TODO - 더 좋은 방법이 있을지 생각해보기
-        userStatus: "game",
+        userName: "pinga",
+        myProfile: true,    // TODO - 더 좋은 방법이 있을지 생각해보기
+        userStatus: "on",
         rank: 0,
         odds: 0,
         record: [
             {idx: 1, p1: "cheolee", p2: "jjeong", p1Score: 10, p2Score: 2},
-            {idx: 2, p1: "cheolee", p2: "jjeong", p1Score: 10, p2Score: 1}
-        ],
-        following: false,
-        block: false,
+            {idx: 2, p1: "cheolee", p2: "jjeong", p1Score: 10, p2Score: 1},
+            {idx: 3, p1: "cheolee", p2: "jjeong", p1Score: 10, p2Score: 10},
+            {idx: 4, p1: "cheolee", p2: "jjeong", p1Score: 1, p2Score: 10},
+            {idx: 5, p1: "cheolee", p2: "jjeong", p1Score: 10, p2Score: 10},
+            {idx: 6, p1: "jeyoon", p2: "jjeong", p1Score: 10, p2Score: 5}
+        ]
     });    // 유저 정보
+
+    // const [userInfo, setUserInfo] = useState<types.user>({
+    //     userName: "pingi",
+    //     myProfile: false,    // TODO - 더 좋은 방법이 있을지 생각해보기
+    //     userStatus: "game",
+    //     rank: 0,
+    //     odds: 0,
+    //     record: [
+    //         {idx: 1, p1: "cheolee", p2: "jjeong", p1Score: 10, p2Score: 2},
+    //         {idx: 2, p1: "cheolee", p2: "jjeong", p1Score: 10, p2Score: 1}
+    //     ],
+    //     following: false,
+    //     block: false,
+    // });    // 유저 정보
 
     useEffect(() => {
         // TODO: 유저 정보를 받아온다.
@@ -86,7 +87,8 @@ function ProfileModal() {
         if (userInfo.myProfile) {
             return (
                 <div className="profile-button-wrapper">
-                    <button className="profile-button">
+                    <button className="profile-button"
+                        onClick={(e) => setProfileEditState(true)}>
                         <FontAwesomeIcon icon={faUserPen}/> Edit Profile
                     </button>
                 </div>
