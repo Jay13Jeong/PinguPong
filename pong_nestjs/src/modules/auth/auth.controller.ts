@@ -18,7 +18,9 @@ export class AuthController {
 	@Get('42/login')
 	@UseGuards(FtAuthGuard)
     @UseFilters(ViewAuthFilter)
-	login() {}
+	login() {
+		return { msg : 'login ok'};
+	}
 
 	//42로그인 후 받은 42엑세스 토큰으로 jwt설정 및 응답하는 메소드.
 	@Get('42/callback')
@@ -37,6 +39,12 @@ export class AuthController {
 		res.header('Authorization', 'JWT ' + token);
 		res.redirect('http://localhost/auth/fa2');
 		return { token };
+	}
+
+	@Get('logout')
+	logout(@Res() res) {
+		res.clearCookie('jwt');
+		res.json({ msg: 'logout ok' });
 	}
 
 }

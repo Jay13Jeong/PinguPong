@@ -11,7 +11,7 @@ export class JwtAuthGuard implements CanActivate {
 			@InjectRepository(User) private readonly userRepository: Repository<User>,
 		) { }
 
-	//리퀘스트의 토큰정보를 유효성 확인하고, 2fa검사 후 유저 정보를 컨트롤러에게 전달 할 수 있도록 하는 메소드.
+	//리퀘스트의 토큰정보를 유효성 확인하고, 2fa검사하는 메소드.
 	async canActivate(context: ExecutionContext): Promise<boolean> {
 		const request = context.switchToHttp().getRequest();
 
@@ -26,7 +26,6 @@ export class JwtAuthGuard implements CanActivate {
 		const obj = await this.authService.verifyJWToken(token);
 		if (!obj)
 			throw new UnauthorizedException('토큰에 정보 없음.');
-
 		const user = await this.userRepository.findOneBy({
 			oauthID: obj.oauthID
 		});
@@ -36,7 +35,8 @@ export class JwtAuthGuard implements CanActivate {
 			throw new ImATeapotException("username");
 		if (user.twofa && !obj.twofa_verified)
 			throw new ImATeapotException('twofa');
-		request.user = user;
+		// request.user = user;
+		// request.fa2 = obj.twofa_verified;
 		return true;
 	}
 }

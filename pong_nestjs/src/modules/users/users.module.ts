@@ -17,6 +17,11 @@ import { UsersController } from './users.controller';
 	],
   providers: [
     UsersService,
+    JwtService,
+    {
+			provide: 'AUTH_SERVICE',
+			useClass: AuthService,
+		},
   ],
   exports: [TypeOrmModule],
 })
