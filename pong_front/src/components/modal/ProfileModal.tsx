@@ -7,7 +7,7 @@ import { profileEditModalState, profileModalState } from "../../states/recoilMod
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircle, faUserPen, faUserPlus, faUserMinus, faUser, faUserSlash, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import "./ProfileModal.scss"
-import * as types from "./User"
+import * as types from "../profile/User"
 
 /**
  * profileModalState
