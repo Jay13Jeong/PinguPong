@@ -17,10 +17,9 @@ function GamePlayRoom(props: any) {
     // const player2 = location.state.player2;
     const player1 = "pingpong_king"; // TODO - 소켓 연결되면 주석처리
     const player2 = "loser";
-    // const currentPlayer = "pingpong_king"; // TODO - 실제로 받아올 것
-    const currentPlayer = "pingpong_king";
+    const currentPlayer = "pingpong_king"; // TODO - 실제로 받아올 것
     const isP1 = player1 === currentPlayer;
-    // const isP1 = false;
+    const gameRoomName = `${player1}vs${player2}`;
 
     /* 게임 정보 setter */
     const setGame = useSetRecoilState<types.gamePosInfo>(gameState);
@@ -35,24 +34,24 @@ function GamePlayRoom(props: any) {
     const keyDownHandler = (e: KeyboardEvent) => {
         if (e.key === "ArrowUp") {
             if (isP1) { // 1번을 위로
-                socket.emit("player1Move", -playerSpeed);
+                socket.emit("player1Move", -playerSpeed, gameRoomName);
             }
             else { // 2번을 위로
-                socket.emit("player2Move", -playerSpeed);
+                socket.emit("player2Move", -playerSpeed, gameRoomName);
             }
         }
         else if (e.key === "ArrowDown") {
             if (isP1) { // 1번을 아래로
-                socket.emit("player1Move", playerSpeed);            
+                socket.emit("player1Move", playerSpeed, gameRoomName);            
             }
             else { // 2번을 아래로
-                socket.emit("player2Move", playerSpeed);    
+                socket.emit("player2Move", playerSpeed, gameRoomName);    
             }
         }
     }
 
     function testHandler(e: any) {
-        socket.emit("requestStart");
+        socket.emit("requestStart", gameRoomName);
     }
 
     useEffect(() => {
