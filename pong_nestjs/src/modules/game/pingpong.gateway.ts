@@ -4,7 +4,7 @@ import { GameService } from './game.service';
 import { Inject } from '@nestjs/common';
 
 
-@WebSocketGateway({
+@WebSocketGateway( {
     cors: { origin: '*' }, namespace: 'api/ping'
   })
   export class pingGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -35,7 +35,8 @@ import { Inject } from '@nestjs/common';
     //들어올 때마다 확인하고 if문으로 emit 문자 다르게 보내기
     @SubscribeMessage('requestMatchMake')
     async requestMatchMake(client : Socket, data) {
-       let [difficulty, player] = data;
+       let difficulty = data.difficulty;
+       let player = data.player;
        console.log('requestMatchMake', client.id, data, difficulty, player);
 
        if (this.gameService.matchMake(difficulty, player, client.id)){
