@@ -1,15 +1,22 @@
 import { WebSocketGateway, WebSocketServer, SubscribeMessage, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
-import { pingpongClass } from './pingpongClass';
+import { GameService } from './game.service';
+import { Inject } from '@nestjs/common';
+
 
 @WebSocketGateway({
     cors: { origin: '*' }, namespace: 'api/ping'
   })
-  export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
+  export class pingGateway implements OnGatewayConnection, OnGatewayDisconnect {
+     constructor(@Inject(GameService) private readonly gameService:GameService)
+     {
+
+     }
+    
     @WebSocketServer()
     server: Server;
 
-    pingpong : pingpongClass = new pingpongClass();
+    //pingpong : GameService = new GameService();
 
     //OnGatewayConnection를 오버라이딩
     async handleConnection(client : Socket) {
@@ -31,7 +38,7 @@ import { pingpongClass } from './pingpongClass';
        let [difficulty, player] = data;
        console.log('requestMatchMake', client.id, data, difficulty, player);
 
-       if (this.pingpong.matchMake(difficulty, player, client.id)){
+       if (this.gameService.matchMake(difficulty, player, client.id)){
         // 1. 같은 난이도를 요청한 플레이어가 큐에 있을 경우 게임 매치
 
         //???방이름, 소켓id 문제, 룸 설정은 언제 해주어야 하는가? 반환값을 언제 받아야 하는가. 
@@ -46,7 +53,7 @@ import { pingpongClass } from './pingpongClass';
       let [roomName] = data;
       console.log('player1Move', client.id, data, roomName);
       //플레이어가 준비완료인지 확인하기
-      this.pingpong.requestStart(roomName, client.id);
+      this.gameService.requestStart(roomName, client, client.id);
         //클래스 안에서 소켓메세지 보내기
         this.server.emit('startGame');//api: 시작 신호 보내기. 서버에서 쓰레드 돌리기 시작, if문으로 구별해서 보내기
         //gameStart();//게임 실행 함수 호출
@@ -54,6 +61,10 @@ import { pingpongClass } from './pingpongClass';
         //api : 스레드가 안되면 브라우저에서 요청이 계속 오도록 해서 답변하는 식으로 하자.
     }
 
+
+    public putBallPos(socket:string, data){
+      this.server.to(socket).emit("ballPos", data);
+    }
     /**
      * player1Move - p1이 움직임
      * offset : 움직인 거리
@@ -65,7 +76,7 @@ import { pingpongClass } from './pingpongClass';
       let [offset, roomName] = data;
       console.log('player1Move', client.id, data, roomName, offset);
 
-      this.pingpong.playerMove('1', roomName, offset);
+      this.gameService.playerMove('1', roomName, offset);
     }
 
     /**
@@ -78,7 +89,7 @@ import { pingpongClass } from './pingpongClass';
       let [offset, roomName] = data;
       console.log('player2Move', client.id, data, roomName, offset);
 
-      this.pingpong.playerMove('2', roomName, offset);
+      this.gameService.playerMove('2', roomName, offset);
     }
 
     /**

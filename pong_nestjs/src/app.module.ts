@@ -9,6 +9,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './modules/users/user.entity';
 // import { PostsModule } from './modules/posts/posts.module';
 import { ChatGateway } from './modules/chat/chat.gateway';
+import { GameModule } from './modules/game/game.module';
+
 
 @Module({
   imports: [
@@ -27,6 +29,7 @@ import { ChatGateway } from './modules/chat/chat.gateway';
     //DatabaseModule,
     UsersModule,
     AuthModule,
+    GameModule,
   ],
   controllers: [AppController],
   providers: [AppService, ChatGateway],

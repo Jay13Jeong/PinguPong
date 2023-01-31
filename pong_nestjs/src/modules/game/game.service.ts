@@ -1,10 +1,16 @@
+import { Injectable, Inject } from '@nestjs/common';
+import { pingGateway } from './pingpong.gateway';
+import { Socket } from 'socket.io';
 
 class BattleClass{
     private player1Id:string;//socketid
     private player2Id:string;
+    private player1socket:Socket;
+    private player2socket:Socket;
     private roomName:string;
     private player1Ready:boolean;
     private player2Ready:boolean;
+
 
     private sizes = {
         canvasWidth: 800,
@@ -34,10 +40,11 @@ class BattleClass{
 
     //게임마다 고유키
         //각 게임마다 가지고 있어야 할 것들, 공, 플레이어1,2 좌표
-    public constructor(roomName:string, player1Id:string, player2Id:string){
+    public constructor(roomName:string, player1Id:string, player2Id:string){//, pingGateway: pingGateway){
         this.player1Id = player1Id;
         this.player2Id = player2Id;
         this.roomName = roomName;
+        //this.pingGateway = pingGateway;
 
         this.player1Ready = false;
         this.player2Ready = false;
@@ -57,14 +64,17 @@ class BattleClass{
         // 1. 공 움직이고 (방향전환, 점수 검사)
         this.ballMove();
         // 2. 바뀐 게임 정보들 보내준다. (플레이어와 관전자 모두에게 보내주기)
-        //socket.emit("ballPos", this.game);
+        //this.pingGateway.putBallPos(this.player1Id, this.game);
+        this.player1socket.to(this.player1Id).emit("ballPos", this.game);
+        this.player2socket.to(this.player2Id).emit("ballPos", this.game);
         // 3. 공 움직이기 (위치 변화)
         this.game.ball.y += this.game.ball.dy * this.speed;
         this.game.ball.x += this.game.ball.dx * this.speed;
         // 4. 게임 종료 여부도 확인해서 보내주기
         if (this.goal === this.game.score.player1 || this.goal === this.game.score.player2) {
             // 이긴 사람만 winner에 넣어서 보내줍니다.
-            //socket.emit("endGame", {winner: this.goal === this.game.score.player1 ? this.game.score.player1 : this.game.score.player2});
+            this.player1socket.to(this.player1Id).emit("endGame", {winner: this.goal === this.game.score.player1 ? this.game.score.player1 : this.game.score.player2});
+            this.player2socket.to(this.player2Id).emit("endGame", {winner: this.goal === this.game.score.player1 ? this.game.score.player1 : this.game.score.player2});
             // TODO - 🌟 전적 정보를 저장해야 한다면 여기서 저장하기 🌟
             clearInterval(this.counter); // 반복 종료
         }
@@ -110,18 +120,20 @@ class BattleClass{
     }
 
     //사용자가 레디 눌렀는지 확인하기
-    public requestStart(socketid:string){
-        if (this.player1Id == socketid)
+    public requestStart(socket:Socket, socketid:string){
+        if (this.player1Id == socketid){
             this.player1Ready = true;
-        if (this.player2Id == socketid)
-            this.player2Ready = true;
-        
-        if (this.player1Ready && this.player2Ready){
-            //this.server.emit('startGame');//여기서 소켓 메시지보내기
-            //this.gameStart()
+            this.player1socket = socket;
         }
-
-
+        if (this.player2Id == socketid){
+            this.player2Ready = true;
+            this.player2socket = socket;
+        }
+        if (this.player1Ready && this.player2Ready){
+            this.player1socket.to(this.player1Id).emit('startGame');//여기서 소켓 메시지보내기
+            this.player2socket.to(this.player2Id).emit('startGame');
+            this.gameStart()
+        }
     }
 
     //플레이어 이동시에 값 반영
@@ -140,8 +152,8 @@ class BattleClass{
     }
 }
 
-
-export class pingpongClass{
+@Injectable()
+export class GameService {
     private vs : Map<string, BattleClass>;
     private socketid : Map<string, string>;//소켓id : 유저Id
     private easyLvUserList : Set<string>;
@@ -194,10 +206,10 @@ export class pingpongClass{
 
     //해당 유저가 준비완료를 했는지 확인하는 함수
     //방이름 유저소켓id를 받아서 둘다 준비완료이면 메세지 보내기
-    public requestStart(roomName:string, socketid:string) {
+    public requestStart(roomName:string, socket:Socket, socketid:string) {
         const vs:BattleClass = this.vs.get(roomName);
 
-        vs.requestStart(socketid);
+        vs.requestStart(socket, socketid);
     }
 
     //플레이어의 게임동작을 확인하는 함수 만들기
@@ -208,5 +220,4 @@ export class pingpongClass{
         vs.playerMove(whoplayer, offset);
         
     }
-
 }
