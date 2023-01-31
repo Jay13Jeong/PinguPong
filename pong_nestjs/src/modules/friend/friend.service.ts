@@ -49,7 +49,7 @@ export class FriendService {
 				reciever: reciever,
 			});
 		}
-		/* If friendship is accepted create a chat */
+		/* 소켓으로 수락됨을 알린다. */
 		// if (friendship.status == 'accepted') {
 		// 	const payload: createChatDto = {
 		// 		type: ChatType.PRIVATE,
@@ -61,5 +61,76 @@ export class FriendService {
 		// 	this.chatService.createChat(friendship.sender.id, payload);
 		// }
 		return this.repo.save(friendship);
+	}
+
+	async  delete(sender: User, recieverID: number): Promise<Friend> {
+		if (sender.id == recieverID)
+			throw new BadRequestException('본인 친구삭제 불가.');
+		const reciever = await this.userService.findUserById(recieverID);
+		const friendship = await this.repo.findOne({
+			relations: ['sender', 'reciever'],
+			where: [
+				{ sender:  { id: sender.id }, reciever: { id: reciever.id } },
+				{ sender:  { id: reciever.id }, reciever: { id: sender.id } },
+			], 
+		});
+		if (!friendship)
+			throw new NotFoundException('끊을 친구 대상 없음.');
+		// if (friendship.status == 'accepted') {
+		// 	const chatID = await this.chatService.getPrivateChat(sender.id, reciever.id)
+		// 	if (chatID)
+		// 		this.chatService.leaveChat(friendship.sender.id, chatID.id);
+		// }
+		return await this.repo.remove(friendship);
+	}
+
+	async block(sender: User, recieverID: number): Promise<Friend> {
+		if (sender.id == recieverID)
+			throw new BadRequestException('본인 차단 불가.');
+		const reciever = await this.userService.findUserById(recieverID); //차단대상의 정보를 얻어온다.
+			if (!reciever)
+				throw new NotFoundException('차단 대상이 존재하지 않음.');
+		var friendship = await this.repo.findOne({
+			relations: ['sender', 'reciever'],
+			where: [
+				{ sender:  { id: sender.id }, reciever: { id: reciever.id } },
+				{ sender:  { id: reciever.id }, reciever: { id: sender.id } },
+			],
+		});
+		// if (friendship) {
+		// 	const chatID = await this.chatService.getPrivateChat(sender.id, reciever.id)
+		// 	if (chatID)
+		// 		this.chatService.leaveChat(friendship.sender.id, chatID.id);
+		// }
+		if (friendship) { //차단 대상이 친구목록 테이블에 있을 때.
+				friendship.status = 'blocked';
+		}
+		else { //차단 대상이 친구목록 테이블에 없을 때.
+			friendship = this.repo.create({
+				sender: sender,
+				reciever: reciever,
+				status: 'blocked'
+			});
+		}
+		return this.repo.save(friendship);
+	}
+
+	async unblock(senderID: number, recieverID: number): Promise<Friend> {
+		if (senderID == recieverID)
+			throw new BadRequestException('잘못된 대상(본인)');
+		const sender = await this.userService.findUserById(senderID);
+		const reciever = await this.userService.findUserById(recieverID);
+		const friendship = await this.repo.findOne({
+			relations: ['sender', 'reciever'],
+			where: [
+				{ sender:  { id: sender.id }, reciever: { id: reciever.id } },
+				{ sender:  { id: reciever.id }, reciever: { id: sender.id } },
+			],
+		});
+		if (!friendship)
+			throw new NotFoundException('차단해제 대상 없음.');
+		if (friendship.status != 'blocked')
+			throw new BadRequestException('이미 차단 되지 않은 대상.');
+		return await this.repo.remove(friendship);
 	}
 }

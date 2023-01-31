@@ -23,6 +23,8 @@ export class FriendController {
     @UseGuards(JwtAuthGuard)
     async deleteFriend(@Req() req, @Body('otherID', ParseIntPipe) otherID: number){
         let user = req.user as User;
+        const raw = await this.friendServices.delete(user, otherID);
+        return raw;
         //친구 끊기.
     }
 
@@ -32,6 +34,8 @@ export class FriendController {
     async block(@Req() req, @Body('otherID', ParseIntPipe) otherID: number){
         let user = req.user as User;
         //친구를 차단한다.
+        const raw = await this.friendServices.block(user, otherID);
+        return raw;
     };
 
     //친구 블락해제
@@ -40,5 +44,7 @@ export class FriendController {
     async unblock(@Req() req, @Body('otherID', ParseIntPipe) otherID: number){
         let user = req.user as User;
         //친구 차단 해제.
+        const raw = await this.friendServices.unblock(user.id, otherID);
+        return raw;
     }
 }
