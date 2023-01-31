@@ -93,7 +93,7 @@ function GameWatchList (props: any) {
     const [loading, setLoading] = useState<boolean>(false);
     const [currPage, setCurrPage] = useState<number>(1)
     // 변수 정의
-    const cardsPerPage = 10; // 한 페이지에 보여줄 카드
+    const cardsPerPage = 8; // 한 페이지에 보여줄 카드
     const offset = (currPage - 1) * cardsPerPage;
     let totalPage = Math.ceil(gameList.length / cardsPerPage);      // 전체 페이지
     

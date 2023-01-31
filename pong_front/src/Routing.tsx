@@ -16,13 +16,15 @@ import EditChatRoomModal from './pages/chat/EditChatRoomModal';
 import ChatManageModal from './pages/chat/ChatManageModal';
 import GameWatchPage from './pages/game/GameWatchPage';
 import GameWatchRoomPage from './pages/game/GameWatchRoomPage'
+import ChatLobby from './pages/chat/ChatLobby';
 
 export default function Routing() {
     return (
       <Routes>
         {/* <Route path="/" element={<Test />} /> */}
         <Route path="/lobby" element={<Lobby />} />
-        <Route path="/chat" element={<ChatLobbyPage />} />
+        <Route path="/chatt" element={<ChatLobbyPage />} />
+        <Route path="/chat" element={<ChatLobby />} />
         <Route path="/chat/create" element={<CreateChatModal />} />
         <Route path="/chat/select/private/:id" element={<SelectPrivateChatModal />} />
         <Route path="/chat/room/:id" element={<ChatRoomPage />} />
