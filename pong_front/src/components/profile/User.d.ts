@@ -15,6 +15,9 @@ export interface user {
     rank: number;           // 랭크
     odds: number;           // 승률
     record: record[];       // 전적
+    // 본인 정보가 아닐 경우에 추가되는 정보
+    following?: boolean;    // 팔로우 중인지
+    block?: boolean;        // 차단했는지
 }
 
 export interface friend {
