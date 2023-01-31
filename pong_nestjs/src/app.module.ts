@@ -11,6 +11,7 @@ import { User } from './modules/users/user.entity';
 import { ChatGateway } from './modules/chat/chat.gateway';
 import { Friend } from './modules/friend/friend.entity';
 import { FriendModule } from './modules/friend/friend.module';
+import { GameModule } from './modules/game/game.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { FriendModule } from './modules/friend/friend.module';
     UsersModule,
     AuthModule,
     FriendModule,
+    GameModule,
   ],
   controllers: [AppController],
   providers: [AppService, ChatGateway],

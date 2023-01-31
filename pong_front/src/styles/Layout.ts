@@ -4,7 +4,7 @@ export const Center = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: calc(100vh - 50px);
 `;
 
 export const Stack = styled.div`
