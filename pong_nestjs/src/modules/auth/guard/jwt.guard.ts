@@ -35,7 +35,7 @@ export class JwtAuthGuard implements CanActivate {
 			throw new ImATeapotException("username");
 		if (user.twofa && !obj.twofa_verified)
 			throw new ImATeapotException('twofa');
-		// request.user = user;
+		request.user = user;
 		// request.fa2 = obj.twofa_verified;
 		return true;
 	}
