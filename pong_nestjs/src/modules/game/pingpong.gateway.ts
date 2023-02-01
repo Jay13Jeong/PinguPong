@@ -5,7 +5,7 @@ import { Inject } from '@nestjs/common';
 
 
 @WebSocketGateway( {
-    cors: { origin: '*' }, namespace: 'api/ping'
+    cors: { origin: '*' }//, namespace: 'api/ping'
   })
   export class pingGateway implements OnGatewayConnection, OnGatewayDisconnect {
      constructor(@Inject(GameService) private readonly gameService:GameService)
@@ -20,7 +20,7 @@ import { Inject } from '@nestjs/common';
 
     //OnGatewayConnection를 오버라이딩
     async handleConnection(client : Socket) {
-      console.log(client.id);//client.rooms와 값이 같다
+      console.log('ping', client.id);//client.rooms와 값이 같다
       console.log(client.rooms);
       //들어온 유저 로그 찍기
 
@@ -28,7 +28,7 @@ import { Inject } from '@nestjs/common';
     
     //OnGatewayDisconnect를 오버라이딩
     async handleDisconnect(client : Socket) {
-      console.log('소켓 끊김 : ', client.id);
+      console.log('ping 소켓 끊김 : ', client.id);
     }
 
     //api:유저의 소켓과 난이도에 따른 배열 3개 만들어서 2개 이상이면 매치시켜주기.
@@ -51,7 +51,7 @@ import { Inject } from '@nestjs/common';
 
     @SubscribeMessage('requestStart')
     async requestStart(client : Socket, data) {
-      let [roomName] = data;
+      let roomName = data;
       console.log('player1Move', client.id, data, roomName);
       //플레이어가 준비완료인지 확인하기
       this.gameService.requestStart(roomName, client, client.id);
@@ -74,7 +74,8 @@ import { Inject } from '@nestjs/common';
     //api:방이름으로 사용자 찾아서 관리할 것
     @SubscribeMessage('player1Move')
     async player1Move(client : Socket, data) {
-      let [offset, roomName] = data;
+      let offset = data.offset;
+      let roomName = data.roomName;
       console.log('player1Move', client.id, data, roomName, offset);
 
       this.gameService.playerMove('1', roomName, offset);
@@ -87,7 +88,8 @@ import { Inject } from '@nestjs/common';
      */
     @SubscribeMessage('player2Move')
     async player2Move(client : Socket, data) {
-      let [offset, roomName] = data;
+      let offset = data.offset;
+      let roomName = data.roomName;
       console.log('player2Move', client.id, data, roomName, offset);
 
       this.gameService.playerMove('2', roomName, offset);

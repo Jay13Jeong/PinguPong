@@ -48,7 +48,7 @@ import { Socket, Server } from 'socket.io';
 import { chatClass } from '../../core/chat/chatClass';
 
 @WebSocketGateway({
-  cors: { origin: '*' }, namespace: 'api/chat'
+  cors: { origin: '*' }//, namespace: 'api/chat'
 })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
@@ -59,7 +59,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   //OnGatewayConnection를 오버라이딩
   async handleConnection(client : Socket) {// 채팅 재 접속시 브라우저 정보를 요청하는 이벤트 요청하기, 채팅방 들어가기 이벤트일때도 똑같이 받는 이벤트 만들기
     this.server.to(client.id).emit('getUser');//해당 클라이언트에게만 보내기
-    console.log(client.id);//client.rooms와 값이 같다
+    console.log('chat', client.id);//client.rooms와 값이 같다
     console.log(client.rooms);
   }
   

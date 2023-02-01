@@ -1,5 +1,4 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { pingGateway } from './pingpong.gateway';
 import { Socket } from 'socket.io';
 
 class BattleClass{
@@ -120,7 +119,7 @@ class BattleClass{
     }
 
     //사용자가 레디 눌렀는지 확인하기
-    public requestStart(socket:Socket, socketid:string){
+    public requestStart(socket:Socket, socketid:string) {
         if (this.player1Id == socketid){
             this.player1Ready = true;
             this.player1socket = socket;
@@ -137,7 +136,7 @@ class BattleClass{
     }
 
     //플레이어 이동시에 값 반영
-    public playerMove(whoplayer:string, offset:string){
+    public playerMove(whoplayer:string, offset:string) {
         
         switch(whoplayer){
         case '1':
