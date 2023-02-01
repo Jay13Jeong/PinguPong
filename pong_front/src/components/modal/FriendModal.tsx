@@ -7,7 +7,7 @@ import ModalBase from "./ModalBase"
 
 function FriendModal() {
     const [showModal, setShowModal] = useRecoilState(friendModalState);
-    const [friendList, setFriendList] = useState<types.friend[]>([
+    const [friendList, setFriendList] = useState<types.Friend[]>([
         {
             userId: 1,
             userName: "pingu",

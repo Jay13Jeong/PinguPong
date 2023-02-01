@@ -7,6 +7,7 @@ import { Center, Stack } from "../../styles/Layout";
 import { Button } from "../../styles/Inputs";
 import GameRoom from "./GameRoom";
 import { OverLay, Wrapper } from "../../styles/Modal";
+import useUser from "../../util/useUser";
 import * as types from "./Game";
 
 function GamePlayRoom(props: any) {
@@ -15,11 +16,17 @@ function GamePlayRoom(props: any) {
     const location = useLocation();
     const player1 = location.state.player1;
     const player2 = location.state.player2;
-    //const player1 = "pingpong_king"; // TODO - 소켓 연결되면 주석처리
-    //const player2 = "loser";
-    const currentPlayer = "pingpong_king"; // TODO - 실제로 받아올 것
+
+    // const player1 = "pingpong_king"; // TODO - 소켓 연결되면 주석처리
+    // const player2 = "loser";
+    const myInfo = useUser();
+    // const currentPlayer = "pingpong_king"; // TODO - 실제로 받아올 것
+    const currentPlayer = myInfo.userName; // TODO - 실제로 받아올 것
+
     const isP1 = player1 === currentPlayer;
     const gameRoomName = `${player1}vs${player2}`;
+
+    console.log(currentPlayer);
 
     /* state */
     const [winner, setWinner] = useState<string>();

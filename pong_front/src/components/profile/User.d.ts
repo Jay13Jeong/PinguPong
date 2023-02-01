@@ -1,4 +1,4 @@
-export interface record {
+export interface Record {
     idx: number;
     p1: string;
     p2: string;
@@ -6,7 +6,8 @@ export interface record {
     p2Score: number;
 }
 
-export interface user {
+export interface User {
+    id: number;
     userName: string;       // 유저 이름
     // TODO - 프로필 이미지?
     myProfile: boolean;     // 내 프로필인지
@@ -14,13 +15,13 @@ export interface user {
     userStatus: string;     // on, off, game // TODO - type을 정의해서 쓰고 싶음..
     rank: number;           // 랭크
     odds: number;           // 승률
-    record: record[];       // 전적
+    record: Record[];       // 전적
     // 본인 정보가 아닐 경우에 추가되는 정보
     following?: boolean;    // 팔로우 중인지
     block?: boolean;        // 차단했는지
 }
 
-export interface friend {
+export interface Friend {
     userId: number;         // TODO - friend 프로필로 들어가기 위한 id
     userName: string;
     // userStatus: boolean;    // TODO - 상태 구체화 필요
