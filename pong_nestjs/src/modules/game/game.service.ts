@@ -11,9 +11,9 @@ class BattleClass{
     private roomName:string;
     private player1Ready:boolean;
     private player2Ready:boolean;
+    private myserver:Server;
 
-
-    private sizes = {
+    private sizes:{canvasWidth:number, canvasHeight: number, lineWidth: number, paddleSize: number} = {
         canvasWidth: 800,
         canvasHeight: 500,
         lineWidth: 12,
@@ -24,7 +24,7 @@ class BattleClass{
     private goal:number;
     private speed:number
 
-    private game = {
+    private game = {//:{player1:number, player2:number, ball:{y:number, x:number, dy:number, dx:number}, score:{player1:number, player2:number}} = {
         player1: this.sizes.canvasHeight / 2,    // p1의 y좌표
         player2: this.sizes.canvasHeight / 2,    // p2의 y좌표
         ball: {
@@ -62,39 +62,70 @@ class BattleClass{
         server.to(this.player2Id).emit('matchMakeSuccess', {p1: this.player1Name, p2: this.player2Name});
     }
 
+    public startGame(server:Server){
+        console.log('startGame');
+        console.log('testtest', this.player1socket.rooms);
+        this.myserver = server;
+        this.gameStart();
+    }
+
+    /* 공 움직이는 함수 - 반사, 점수 획득 */
+    // private ballMove(qwe:string):void {
+    //     console.log('ballMove+++++++++++', qwe);
+    //     const p1PaddleStart = this.game.player1;
+    //     const p1PaddleEnd = this.game.player1 + this.sizes.paddleSize;
+    //     const p2PaddleStart = this.game.player2;
+    //     const p2PaddleEnd = this.game.player2 + this.sizes.paddleSize;
+    //     if (this.game.ball.y < 0 || this.game.ball.y > this.sizes.canvasHeight) {  // 위아래 벽에 튕김
+    //         this.game.ball.dy *= -1;
+    //     }
+    //     if (this.game.ball.x > this.sizes.canvasWidth - this.sizes.lineWidth) {    // 오른쪽(p2네) 벽으로 돌진
+    //         if (this.game.ball.y < p2PaddleStart || this.game.ball.y > p2PaddleEnd) { // 패들 너머로 간 경우
+    //             // 초기화
+    //             this.game.ball.y = this.sizes.canvasHeight / 2;
+    //             this.game.ball.x = this.sizes.canvasWidth / 2;
+    //             this.game.ball.dy = 4;
+    //             this.game.ball.dx = Math.random() > 0.5 ? 4 : -4;
+    //             // p1의 점수를 올린다.
+    //             this.game.score.player1++;
+    //         }
+    //         else {  // p2의 패들에 튕김
+    //             this.game.ball.dx *= -1;
+    //         }
+    //     }
+    //     else if (this.game.ball.x < this.sizes.lineWidth) {   // 왼쪽(p1네) 벽으로 돌진
+    //         if (this.game.ball.y < p1PaddleStart || this.game.ball.y > p1PaddleEnd) { // 패들 너머로 간 경우
+    //             // 초기화
+    //             this.game.ball.y = this.sizes.canvasHeight / 2;
+    //             this.game.ball.x = this.sizes.canvasWidth / 2;
+    //             this.game.ball.dy = 4;
+    //             this.game.ball.dx = Math.random() > 0.5 ? 4 : -4;
+    //             // p2의 점수를 올린다.
+    //             this.game.score.player2++;
+    //         }
+    //         else {  // p1의 패들에 튕김
+    //             this.game.ball.dx *= -1;
+    //         }
+    //     }
+    // }
+
     /* 일정 시간마다 게임 동작 함수 실행 */
-    public gameStart () {
-        this.counter = setInterval(this.gameRun, 1000 * 0.02);
+    private gameStart ():void {
+        console.log('gameStart------------');
+        let me = this.gameRun.bind(this);
+        this.counter = setInterval(me, 1000 * 0.02);
+        
     //api:clearInterval(counter)함수를 쓰면 setInterval를 종료할 수 있다.
     }
 
     /* 게임 동작 함수 */
-    private gameRun() {
+    private gameRun():void {
+        console.log('gameRun');
         // 1. 공 움직이고 (방향전환, 점수 검사)
-        this.ballMove();
-        // 2. 바뀐 게임 정보들 보내준다. (플레이어와 관전자 모두에게 보내주기)
-        //this.pingGateway.putBallPos(this.player1Id, this.game);
-        this.player1socket.to(this.roomName).emit("ballPos", this.game);
-        //this.player2socket.to(this.player2Id).emit("ballPos", this.game);
-        // 3. 공 움직이기 (위치 변화)
-        this.game.ball.y += this.game.ball.dy * this.speed;
-        this.game.ball.x += this.game.ball.dx * this.speed;
-        // 4. 게임 종료 여부도 확인해서 보내주기
-        if (this.goal === this.game.score.player1 || this.goal === this.game.score.player2) {
-            // 이긴 사람만 winner에 넣어서 보내줍니다.
-            this.player1socket.to(this.roomName).emit("endGame", {winner: this.goal === this.game.score.player1 ? this.game.score.player1 : this.game.score.player2});
-            //this.player2socket.to(this.player2Id).emit("endGame", {winner: this.goal === this.game.score.player1 ? this.game.score.player1 : this.game.score.player2});
-            // TODO - 🌟 전적 정보를 저장해야 한다면 여기서 저장하기 🌟
-            clearInterval(this.counter); // 반복 종료
-        }
-    }
-
-/* 공 움직이는 함수 - 반사, 점수 획득 */
-    private ballMove() {
-        const p1PaddleStart = this.game.player1;
-        const p1PaddleEnd = this.game.player1 + this.sizes.paddleSize;
-        const p2PaddleStart = this.game.player2;
-        const p2PaddleEnd = this.game.player2 + this.sizes.paddleSize;
+        const p1PaddleStart:number = this.game.player1;
+        const p1PaddleEnd:number = this.game.player1 + this.sizes.paddleSize;
+        const p2PaddleStart:number = this.game.player2;
+        const p2PaddleEnd:number = this.game.player2 + this.sizes.paddleSize;
         if (this.game.ball.y < 0 || this.game.ball.y > this.sizes.canvasHeight) {  // 위아래 벽에 튕김
             this.game.ball.dy *= -1;
         }
@@ -125,11 +156,29 @@ class BattleClass{
             else {  // p1의 패들에 튕김
                 this.game.ball.dx *= -1;
             }
+        }//여기까지 ballMove함수 내용
+
+        // 2. 바뀐 게임 정보들 보내준다. (플레이어와 관전자 모두에게 보내주기)
+        //this.pingGateway.putBallPos(this.player1Id, this.game);
+        this.myserver.to(this.player1Id).emit("ballPos", this.game);
+        this.myserver.to(this.player2Id).emit("ballPos", this.game);
+        //this.player2socket.to(this.player2Id).emit("ballPos", this.game);
+        // 3. 공 움직이기 (위치 변화)
+        this.game.ball.y += this.game.ball.dy * this.speed;
+        this.game.ball.x += this.game.ball.dx * this.speed;
+        // 4. 게임 종료 여부도 확인해서 보내주기
+        if (this.goal === this.game.score.player1 || this.goal === this.game.score.player2) {
+            // 이긴 사람만 winner에 넣어서 보내줍니다.
+            this.myserver.to(this.roomName).emit("endGame", {winner: this.goal === this.game.score.player1 ? this.game.score.player1 : this.game.score.player2});
+            //this.player2socket.to(this.player2Id).emit("endGame", {winner: this.goal === this.game.score.player1 ? this.game.score.player1 : this.game.score.player2});
+            // TODO - 🌟 전적 정보를 저장해야 한다면 여기서 저장하기 🌟
+            clearInterval(this.counter); // 반복 종료
         }
     }
 
+
     //사용자가 레디 눌렀는지 확인하기
-    public requestStart(socket:Socket, socketid:string) {
+    public requestStart(socket:Socket, socketid:string):boolean {
         if (this.player1Id == socketid){
             this.player1Ready = true;
             this.player1socket = socket;
@@ -145,12 +194,14 @@ class BattleClass{
             console.log('player2sockerRoom22', socket.rooms);
         }
         if (this.player1Ready && this.player2Ready){
-            //this.player1socket.to(this.player1Id).emit('startGame');//여기서 소켓 메시지보내기
+            //this.player1socket.to(this.roomName).emit('startGame');//여기서 소켓 메시지보내기
             //this.player2socket.to(this.player2Id).emit('startGame');
             socket.to(this.roomName).emit('startGame');
             console.log('startGame', socket.rooms);
-            this.gameStart()
+            return true;
+            //this.gameStart()
         }
+        return false;
     }
 
     //플레이어 이동시에 값 반영
@@ -231,10 +282,14 @@ export class GameService {
 
     //해당 유저가 준비완료를 했는지 확인하는 함수
     //방이름 유저소켓id를 받아서 둘다 준비완료이면 메세지 보내기
-    public requestStart(roomName:string, socket:Socket, socketid:string) {
+    public requestStart(roomName:string, socket:Socket, socketid:string):boolean {
         const vs:BattleClass = this.vs.get(roomName);
-        console.log('requestStart22', this.vs.get(roomName), vs);
-        vs.requestStart(socket, socketid);
+        return vs.requestStart(socket, socketid);
+    }
+
+    public startGame(roomName:string, server:Server){
+        const vs:BattleClass = this.vs.get(roomName);
+        vs.startGame(server);
     }
 
     //플레이어의 게임동작을 확인하는 함수 만들기

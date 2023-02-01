@@ -42,7 +42,7 @@ export class User {
 	twofa: boolean; //2단계 인증 활성화 여부.
 
 	// @ApiProperty({description: '2fa secret key'})
-	@Column({unique: true, default: 'dummy_value'})
+	@Column({unique: false, default: 'dummy_value'})
 	twofa_secret: string; //2단계인증 암호화 시크릿 키.
 
 	// @ApiProperty({ description: 'List of games that the user has won', type: () => GameHistory })
