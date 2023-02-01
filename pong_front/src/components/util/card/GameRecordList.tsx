@@ -3,7 +3,7 @@ import CardList from "./CardList";
 import GameCard from "./GameCard";
 import * as types from "../../profile/User"
 
-function GameRecordList(props: {record: types.record[]}) {
+function GameRecordList(props: {record: types.Record[]}) {
     const [currPage, setCurrPage] = useState<number>(1);
     const cardsPerPage = 5; // 한 페이지에 보여줄 카드
     const offset = (currPage - 1) * cardsPerPage;

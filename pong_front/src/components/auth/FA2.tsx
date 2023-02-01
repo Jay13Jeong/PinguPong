@@ -44,14 +44,6 @@ const TableParent = createGlobalStyle`
   }
 `;
 
-interface User {
-	id: number;
-	username: string;
-  email: string;
-	twofa: boolean;
-	avatar: string;
-}
-
 export default function EditProfile() {
     const navigate = useNavigate();
     // const [user, setUser] = useState<User>();

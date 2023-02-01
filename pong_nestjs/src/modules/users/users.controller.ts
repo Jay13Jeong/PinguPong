@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } fro
 import { JwtAuthGuard } from '../auth/guard/jwt.guard';
 import { User } from './user.entity';
 import { UsersService } from "./users.service";
+import { Request, Response } from 'express';
 
 @Controller('user')
 export class UsersController {
@@ -15,8 +16,9 @@ export class UsersController {
     //나의 유저 정보를 반환하는 api.
     @Get() 
     @UseGuards(JwtAuthGuard)
-    getUserInfo(@Req() req){
+    getUserInfo(@Req() req : Request){
         const user = req.user as User;
+        // console.log(user);
         return user;
     }
 
@@ -38,7 +40,7 @@ export class UsersController {
     //프로필 사진을 업데이트하는 api.
     @Patch('avatar')
     @UseGuards(JwtAuthGuard)
-    async create(@Req() req, @Body() body){
+    async create( req : Request, @Body() body){
         let user = req.user as User;
         user.avatar = body.avatar
         return await this.usersService.updateUser(user);
