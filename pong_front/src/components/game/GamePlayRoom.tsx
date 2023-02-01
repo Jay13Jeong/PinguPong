@@ -13,10 +13,10 @@ function GamePlayRoom(props: any) {
     /* 유저 정보 변수들 */
     // TODO - 게임이 시작되면 프로필 수정 버튼? 을 비활성해야 함 (만약 있다면..)
     const location = useLocation();
-    // const player1 = location.state.player1;
-    // const player2 = location.state.player2;
-    const player1 = "pingpong_king"; // TODO - 소켓 연결되면 주석처리
-    const player2 = "loser";
+    const player1 = location.state.player1;
+    const player2 = location.state.player2;
+    //const player1 = "pingpong_king"; // TODO - 소켓 연결되면 주석처리
+    //const player2 = "loser";
     const currentPlayer = "pingpong_king"; // TODO - 실제로 받아올 것
     const isP1 = player1 === currentPlayer;
     const gameRoomName = `${player1}vs${player2}`;
@@ -54,6 +54,7 @@ function GamePlayRoom(props: any) {
     }
 
     function testHandler(e: any) {
+        console.log('0000', gameRoomName);
         socket.emit("requestStart", gameRoomName);
     }
 

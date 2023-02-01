@@ -1,9 +1,11 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { Socket } from 'socket.io';
+import { Socket, Server } from 'socket.io';
 
 class BattleClass{
     private player1Id:string;//socketid
     private player2Id:string;
+    private player1Name:string;
+    private player2Name:string;
     private player1socket:Socket;
     private player2socket:Socket;
     private roomName:string;
@@ -39,10 +41,13 @@ class BattleClass{
 
     //게임마다 고유키
         //각 게임마다 가지고 있어야 할 것들, 공, 플레이어1,2 좌표
-    public constructor(roomName:string, player1Id:string, player2Id:string){//, pingGateway: pingGateway){
+    public constructor(player1Id:string, player1:string, player2Id:string, player2:string){
         this.player1Id = player1Id;
         this.player2Id = player2Id;
-        this.roomName = roomName;
+        this.player1Name = player1;
+        this.player2Name = player2;
+
+        this.roomName = player1 + 'vs' + player2;
         //this.pingGateway = pingGateway;
 
         this.player1Ready = false;
@@ -50,6 +55,11 @@ class BattleClass{
 
         this.goal = 100;
         this.speed = 1;
+    }
+
+    public matchEmit(server:Server){
+        server.to(this.player1Id).emit('matchMakeSuccess', {p1: this.player1Name, p2: this.player2Name});
+        server.to(this.player2Id).emit('matchMakeSuccess', {p1: this.player1Name, p2: this.player2Name});
     }
 
     /* 일정 시간마다 게임 동작 함수 실행 */
@@ -64,16 +74,16 @@ class BattleClass{
         this.ballMove();
         // 2. 바뀐 게임 정보들 보내준다. (플레이어와 관전자 모두에게 보내주기)
         //this.pingGateway.putBallPos(this.player1Id, this.game);
-        this.player1socket.to(this.player1Id).emit("ballPos", this.game);
-        this.player2socket.to(this.player2Id).emit("ballPos", this.game);
+        this.player1socket.to(this.roomName).emit("ballPos", this.game);
+        //this.player2socket.to(this.player2Id).emit("ballPos", this.game);
         // 3. 공 움직이기 (위치 변화)
         this.game.ball.y += this.game.ball.dy * this.speed;
         this.game.ball.x += this.game.ball.dx * this.speed;
         // 4. 게임 종료 여부도 확인해서 보내주기
         if (this.goal === this.game.score.player1 || this.goal === this.game.score.player2) {
             // 이긴 사람만 winner에 넣어서 보내줍니다.
-            this.player1socket.to(this.player1Id).emit("endGame", {winner: this.goal === this.game.score.player1 ? this.game.score.player1 : this.game.score.player2});
-            this.player2socket.to(this.player2Id).emit("endGame", {winner: this.goal === this.game.score.player1 ? this.game.score.player1 : this.game.score.player2});
+            this.player1socket.to(this.roomName).emit("endGame", {winner: this.goal === this.game.score.player1 ? this.game.score.player1 : this.game.score.player2});
+            //this.player2socket.to(this.player2Id).emit("endGame", {winner: this.goal === this.game.score.player1 ? this.game.score.player1 : this.game.score.player2});
             // TODO - 🌟 전적 정보를 저장해야 한다면 여기서 저장하기 🌟
             clearInterval(this.counter); // 반복 종료
         }
@@ -123,14 +133,22 @@ class BattleClass{
         if (this.player1Id == socketid){
             this.player1Ready = true;
             this.player1socket = socket;
+            socket.join(this.roomName);
+            console.log('player1sockerRoom11', this.player1socket.rooms);
+            console.log('player1sockerRoom12', socket.rooms);
         }
         if (this.player2Id == socketid){
             this.player2Ready = true;
             this.player2socket = socket;
+            socket.join(this.roomName);
+            console.log('player2sockerRoom21', this.player2socket.rooms);
+            console.log('player2sockerRoom22', socket.rooms);
         }
         if (this.player1Ready && this.player2Ready){
-            this.player1socket.to(this.player1Id).emit('startGame');//여기서 소켓 메시지보내기
-            this.player2socket.to(this.player2Id).emit('startGame');
+            //this.player1socket.to(this.player1Id).emit('startGame');//여기서 소켓 메시지보내기
+            //this.player2socket.to(this.player2Id).emit('startGame');
+            socket.to(this.roomName).emit('startGame');
+            console.log('startGame', socket.rooms);
             this.gameStart()
         }
     }
@@ -155,9 +173,10 @@ class BattleClass{
 export class GameService {
     private vs : Map<string, BattleClass>;
     private socketid : Map<string, string>;//소켓id : 유저Id
-    private easyLvUserList : Set<string>;
+    private easyLvUserList : Set<string>;//소켓 id
     private normalLvUserList : Set<string>;
     private hardLvUserList : Set<string>;
+    private socketidRoomname : Map<string, string>;//socketid: roomName
 
     public constructor(){
         this.vs = new Map<string, BattleClass>();
@@ -165,6 +184,7 @@ export class GameService {
         this.easyLvUserList = new Set<string>();
         this.normalLvUserList = new Set<string>();
         this.hardLvUserList = new Set<string>();
+        this.socketidRoomname = new Map<string, string>();
     }
 
     //유저를 매칭시키는 함수만들기
@@ -189,25 +209,31 @@ export class GameService {
     //소켓id로 관리를 하자.
     private createCheck(UserList:Set<string>, player1:string):boolean{
         let player2:string;
-
         if (UserList.size >= 2) {//대기열이 2명이상이면 매칭후 방 만들기
             UserList.delete(player1);
-            player2 = UserList[0];
+            player2 = Array.from(UserList)[0];
             UserList.delete(player2);
-            let roomName:string = this.socketid.get(player1) + this.socketid.get(player2);
-            this.vs.set(roomName, new BattleClass(roomName, player1, player2));
-            //여기서 사용자들에게 어떻게 보내줄 것인가?
+            let roomName:string = this.socketid.get(player1) + 'vs' + this.socketid.get(player2);
+            this.vs.set(roomName, new BattleClass(player1, this.socketid.get(player1), player2, this.socketid.get(player2)));
+            this.socketidRoomname.set(player1, roomName);
+            this.socketidRoomname.set(player2, roomName);
+            console.log('createRoom', roomName);
             return true;
         }
         return false;
     }
 
+    public matchEmit(server:Server, socketid:string) {
+        const vs:BattleClass = this.vs.get(this.socketidRoomname.get(socketid));
+
+        vs.matchEmit(server);
+    }
 
     //해당 유저가 준비완료를 했는지 확인하는 함수
     //방이름 유저소켓id를 받아서 둘다 준비완료이면 메세지 보내기
     public requestStart(roomName:string, socket:Socket, socketid:string) {
         const vs:BattleClass = this.vs.get(roomName);
-
+        console.log('requestStart22', this.vs.get(roomName), vs);
         vs.requestStart(socket, socketid);
     }
 
