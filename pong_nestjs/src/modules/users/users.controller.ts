@@ -38,11 +38,12 @@ export class UsersController {
     }
 
     //프로필 사진을 업데이트하는 api.
-    @Patch('avatar')
+    @Patch()
     @UseGuards(JwtAuthGuard)
-    async create( req : Request, @Body() body){
+    async create(@Req() req : Request, @Body() body){
         let user = req.user as User;
-        user.avatar = body.avatar
+        user.avatar = body.avatar;
+        user.username = body.username;
         return await this.usersService.updateUser(user);
     }
 }
