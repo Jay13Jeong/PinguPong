@@ -1,16 +1,25 @@
-.profile-wrapper {
+@mixin profile-box {
+    width: 90px;
+    height: 90px; 
+    border-radius: 30%;
+    overflow: hidden;
+}
+
+@mixin modal-wrapper {
     box-sizing: content-box;
     display: grid;
-    grid-template-columns: repeat(2, minmax(350px, 350px));
-    grid-template-rows: 90px, 30px, 30px, 30px;
     row-gap: 10px;
     font-size: 1.5rem;
     place-items: center;
+}
+
+.profile-wrapper {
+    @include modal-wrapper;
+    grid-template-columns: repeat(2, minmax(350px, 350px));
+    grid-template-rows: 90px, 30px, 30px, 30px;
+    row-gap: 10px;
     .profile-box {
-        width: 90px;
-        height: 90px; 
-        border-radius: 30%;
-        overflow: hidden;
+        @include profile-box;
         grid-column: 1 / 2;
         grid-row: 1 / 2;
     }
@@ -24,7 +33,7 @@
         grid-row: 1 / 2;
     }
     .profile-button {
-        margin: 20px;
+        margin: 5px;
         font-size: 1.1rem;
         width: fit-content;
         height: fit-content;

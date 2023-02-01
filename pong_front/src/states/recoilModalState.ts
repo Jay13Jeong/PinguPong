@@ -22,3 +22,8 @@ export const friendModalState = atom<boolean>({
     key: "friendmodalstate",
     default: false
 })
+
+export const createChatModalState = atom<boolean>({
+    key: "createchatmodalstate",
+    default: false
+})

@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-export const OverLay = styled.div`
+export const OverLay = styled.div<{ z_index?: number }>`
     position: fixed;
     width: 100%;
     height: 100%;
@@ -9,7 +9,7 @@ export const OverLay = styled.div`
     left: 0;
     right: 0;
     background: rgba(0, 0, 0, 0.5);
-    z-index: 9999;
+    z-index: ${props => props.z_index || 200};
 `
 
 export const Wrapper = styled.div`

@@ -1,12 +1,12 @@
 import React, {useState, useEffect, useContext} from "react";
 import { SocketContext } from "../../states/contextSocket";
-import {useLocation} from "react-router-dom";
+import {useLocation, Link} from "react-router-dom";
 import {useSetRecoilState} from "recoil";
 import {gameState} from "../../states/recoilGameState"
-import { sizes } from "./GameEngine/variables";
 import { Center, Stack } from "../../styles/Layout";
 import { Button } from "../../styles/Inputs";
 import GameRoom from "./GameRoom";
+import { OverLay, Wrapper } from "../../styles/Modal";
 import * as types from "./Game";
 
 function GamePlayRoom(props: any) {
@@ -17,10 +17,12 @@ function GamePlayRoom(props: any) {
     // const player2 = location.state.player2;
     const player1 = "pingpong_king"; // TODO - 소켓 연결되면 주석처리
     const player2 = "loser";
-    // const currentPlayer = "pingpong_king"; // TODO - 실제로 받아올 것
-    const currentPlayer = "pingpong_king";
+    const currentPlayer = "pingpong_king"; // TODO - 실제로 받아올 것
     const isP1 = player1 === currentPlayer;
-    // const isP1 = false;
+    const gameRoomName = `${player1}vs${player2}`;
+
+    /* state */
+    const [winner, setWinner] = useState<string>();
 
     /* 게임 정보 setter */
     const setGame = useSetRecoilState<types.gamePosInfo>(gameState);
@@ -35,24 +37,24 @@ function GamePlayRoom(props: any) {
     const keyDownHandler = (e: KeyboardEvent) => {
         if (e.key === "ArrowUp") {
             if (isP1) { // 1번을 위로
-                socket.emit("player1Move", -playerSpeed);
+                socket.emit("player1Move", -playerSpeed, gameRoomName);
             }
             else { // 2번을 위로
-                socket.emit("player2Move", -playerSpeed);
+                socket.emit("player2Move", -playerSpeed, gameRoomName);
             }
         }
         else if (e.key === "ArrowDown") {
             if (isP1) { // 1번을 아래로
-                socket.emit("player1Move", playerSpeed);            
+                socket.emit("player1Move", playerSpeed, gameRoomName);            
             }
             else { // 2번을 아래로
-                socket.emit("player2Move", playerSpeed);    
+                socket.emit("player2Move", playerSpeed, gameRoomName);    
             }
         }
     }
 
     function testHandler(e: any) {
-        socket.emit("requestStart");
+        socket.emit("requestStart", gameRoomName);
     }
 
     useEffect(() => {
@@ -64,8 +66,7 @@ function GamePlayRoom(props: any) {
                 setGame(data);
             })
             socket.on("endGame", (data) => {
-                // TODO - 게임 종료 이벤트 발생시 종료 화면 띄우기
-                console.log(data);
+                setWinner(data.winner);
             })
         })
     }, []);
@@ -78,6 +79,22 @@ function GamePlayRoom(props: any) {
                     게임 시작
                 </Button>
             </Stack>
+            {winner ? 
+            <OverLay z_index={100}>
+                <Wrapper>
+                {winner === currentPlayer ? 
+                <div>
+                    <div>Win!!</div>
+                    {/* 이미지 추가 */}
+                </div> : 
+                <div>
+                    <div>Lose!!</div>
+                    {/* 이미지 추가 */}
+                </div>
+                }
+                <Link to="/lobby"><Button>Go To Lobby</Button></Link>
+            </Wrapper>
+        </OverLay> : null}
         </Center>
     );
 }

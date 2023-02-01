@@ -18,6 +18,9 @@ export default function Lobby() {
         <Link to="/chat">
           <Button>CHAT</Button>
         </Link>
+        <Link to="/chatt">
+          <Button>CHAT_BASIC</Button>
+        </Link>
       </header>
     </div>
   );

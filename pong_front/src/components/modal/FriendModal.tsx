@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import { useRecoilState } from "recoil";
 import { friendModalState } from "../../states/recoilModalState";
 import UserCardButtonList from "../util/card/UserCardButtonList";
-import * as types from "./User"
+import * as types from "../profile/User"
 import ModalBase from "./ModalBase"
 
 function FriendModal() {

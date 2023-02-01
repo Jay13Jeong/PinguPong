@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import ModalBase from "./ModalBase";
 import GameRecordList from "../util/card/GameRecordList";
-import { useRecoilState } from "recoil"
-import { profileModalState } from "../../states/recoilModalState";
+import { useSetRecoilState , useRecoilState } from "recoil"
+import { profileEditModalState, profileModalState } from "../../states/recoilModalState";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircle, faUserPen, faUserPlus, faUserMinus, faUser, faUserSlash } from "@fortawesome/free-solid-svg-icons";
+import { faCircle, faUserPen, faUserPlus, faUserMinus, faUser, faUserSlash, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import "./ProfileModal.scss"
-import * as types from "./User"
+import * as types from "../profile/User"
 
 /**
  * profileModalState
@@ -19,6 +19,7 @@ import * as types from "./User"
 
 function ProfileModal() {
     const  [showModal, setShowModal] = useRecoilState(profileModalState);
+    const setProfileEditState = useSetRecoilState(profileEditModalState);
 
     // const [userInfo, setUserInfo] = useState<types.user>({
     //     userName: "pinga",
@@ -86,7 +87,8 @@ function ProfileModal() {
         if (userInfo.myProfile) {
             return (
                 <div className="profile-button-wrapper">
-                    <button className="profile-button">
+                    <button className="profile-button"
+                        onClick={(e) => setProfileEditState(true)}>
                         <FontAwesomeIcon icon={faUserPen}/> Edit Profile
                     </button>
                 </div>
@@ -108,6 +110,9 @@ function ProfileModal() {
                 <button className="profile-button">
                     <FontAwesomeIcon icon={faUserSlash}/> Block
                 </button>}
+                <button className="profile-button">
+                    <FontAwesomeIcon icon={faPaperPlane}/> DM
+                </button>
             </div>
         )
     }
