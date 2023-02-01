@@ -3,11 +3,16 @@ import { useNavigate } from "react-router-dom";
 import { SocketContext } from "../../states/contextSocket";
 import { Center, Stack } from "../../styles/Layout";
 import { Button } from "../../styles/Inputs";
+import useUser from "../../util/useUser";
+// import { User } from "../profile/User";
+import axios from "axios";
 import DifficultyButtons from "./DifficultyButtons";
 import Loader from "../util/Loader";
 
 function MatchMake(props: any) {
     const [loading, setLoading] = useState<boolean>(false);
+    const myInfo = useUser();
+
     var currentDifficulty: number = 0;
     const navigate = useNavigate();
 
@@ -31,9 +36,10 @@ function MatchMake(props: any) {
 
     // NOTE - 매치 메이킹
     function handleMatchMakeRequest(e: any) {
+        console.log(myInfo.userName);
         socket.emit('requestMatchMake', {
             difficulty: currentDifficulty,
-            player: "pingpong_king" // TODO - 본인 아이디 받아와야 함.
+            player: myInfo.userName // TODO - 본인 아이디 받아와야 함.
         });
         setLoading(true);
     }
