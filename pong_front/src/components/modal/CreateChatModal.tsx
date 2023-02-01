@@ -1,10 +1,13 @@
 import React, {useState, useContext} from "react";
+import { toast } from "react-toastify"
 import { SocketContext } from "../../states/contextSocket";
 import useUser from "../../util/useUser";
 import { useRecoilState } from "recoil";
 import { Button } from "../../styles/Inputs";
 import { createChatModalState } from "../../states/recoilModalState";
 import ModalBase from "./ModalBase";
+import { Stack } from "../../styles/Layout";
+import "./Chat.scss"
 
 function CreateChatModal() {
     const [showModal, setShowModal] = useRecoilState(createChatModalState);
@@ -21,11 +24,12 @@ function CreateChatModal() {
         socket.emit('/api/post/newRoom', values.room, myInfo.userName, values.pw);
         socket.on('/api/post/newRoom', (data: boolean) => {
             if (data) {
-                alert ("채팅방 생성 완료!");
+                toast.success("채팅방 생성에 성공했습니다.");
+                socket.emit('/api/get/RoomList');
                 setShowModal(false);
             }
             else {
-                alert("중복된 이름이 있습니다.");
+                toast.error("중복된 방 이름 입니다.");
             }
         })
         setValues({
@@ -36,23 +40,27 @@ function CreateChatModal() {
 
     if (showModal) {
         return (
-            <ModalBase setter={setShowModal}> 
-                <div>
-                    <div>새 채팅방 생성</div>
+            <ModalBase setter={setShowModal}>
+                <Stack className="chat-form-wrapper">
+                    <div className="title">새 채팅방 만들기</div>
                         <form onSubmit={handler}>
-                            <span>채팅방 이름</span>
-                            <input type="text" 
-                                onChange={(e) => setValues({...values, room: e.target.value})} 
-                                placeholder="채팅방 이름" 
-                                value={values.room}/>
-                            <span>비밀번호</span>
-                            <input type="text" 
-                                onChange={(e) => setValues({...values, pw: e.target.value})} 
-                                placeholder="빈 칸인 경우 공개 채팅방이 됩니다." 
-                                value={values.pw}/>
+                            <div className="wrapper">
+                                <span>채팅방 이름</span>
+                                <input type="text" 
+                                    onChange={(e) => setValues({...values, room: e.target.value})} 
+                                    placeholder="채팅방 이름" 
+                                    value={values.room}/>
+                            </div>
+                            <div className="wrapper">
+                                <span>비밀번호</span>
+                                <input type="text" 
+                                    onChange={(e) => setValues({...values, pw: e.target.value})} 
+                                    placeholder="빈 칸인 경우 공개 채팅방이 됩니다." 
+                                    value={values.pw}/>
+                            </div>
                             <Button type="submit">채팅방 생성</Button>
                         </form>
-                    </div>
+                    </Stack>
             </ModalBase>
         )
     }

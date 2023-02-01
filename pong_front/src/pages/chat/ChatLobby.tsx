@@ -1,4 +1,6 @@
 import React, {useContext} from "react";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import { useSetRecoilState } from "recoil";
 import {createChatModalState} from "../../states/recoilModalState";
 import { SocketContext } from "../../states/contextSocket";
@@ -15,9 +17,20 @@ function ChatLobby() {
 
     return (
     <Center>
+        <ToastContainer
+            position="top-right"
+            autoClose={500}
+            hideProgressBar
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            draggable={false}
+            theme="dark"
+            />
         <Stack>
-            <Button onClick={(e) => {setCreateChatModal(true)}}>새 채팅방 생성</Button>
+            <h1>채팅방 리스트</h1>
             <ChatCardButtonList/>
+            <Button onClick={(e) => {setCreateChatModal(true)}}>새 채팅방 생성</Button>
         </Stack>
     </Center>
     );

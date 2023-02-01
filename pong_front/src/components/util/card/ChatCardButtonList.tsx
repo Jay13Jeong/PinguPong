@@ -36,7 +36,7 @@ function ChatCardButtonList() {
         socket.on('/api/get/RoomList', (data: any) => {
             setChatRooms(data);
         });
-    }, []); // TODO - dependency 고민해보기... (왜안됨.)
+    }, []);
 
     return (
         <CardList currPage={currPage} totalPage={totalPage} setCurrPage={setCurrPage}>
