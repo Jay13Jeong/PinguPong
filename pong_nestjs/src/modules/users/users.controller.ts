@@ -37,7 +37,7 @@ export class UsersController {
         }
     }
 
-    //프로필 사진을 업데이트하는 api.
+    //프로필을 업데이트하는 api.
     @Patch()
     @UseGuards(JwtAuthGuard)
     async create(@Req() req : Request, @Body() body){
