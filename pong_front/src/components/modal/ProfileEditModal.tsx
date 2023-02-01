@@ -16,7 +16,7 @@ function ProfileEditModal() {
     //프로필 아바타 및 이름 변경.
     function handleSubmit(event : any) {
         event.preventDefault();
-        axios.patch('http://localhost:3000/api/user', {code : avatar, username : username}, {withCredentials: true})
+        axios.patch('http://localhost:3000/api/user', {avatar : avatar, username : username}, {withCredentials: true})
         .then(res => {
             // console.log(res.status);
             //변경 성공.
@@ -62,7 +62,12 @@ function ProfileEditModal() {
                     </div>
                 </div> */}
                 <div className="profile-button-wrapper">
-                    Avatar : <input id="avatar" name="avatar" type="text" placeholder="https://cdn.myanimelist.net/images/characters/11/421848.jpg" onChange={event => setAvatar(event.target.value)} value={avatar} />
+                    Avatar : {/* <input id="avatar" name="avatar" type="text" placeholder="https://cdn.myanimelist.net/images/characters/11/421848.jpg" onChange={event => setAvatar(event.target.value)} value={avatar} /> */}
+                    <select onChange={event => setAvatar(event.target.value)} value={avatar}>
+                        <option value="default.jpeg" key="default.jpeg">Pinga</option>
+                        <option value="favicon.ico" key="favicon.ico">Pingu</option>
+                        <option value="logo192.png" key="logo192.png">React</option>
+                    </select>
                     Name : <input id="username" name="username" type="text" placeholder="" onChange={event => setUsername(event.target.value)} value={username} />
                     <button className="profile-button" onClick={handleSubmit}>
                         수정
@@ -74,15 +79,6 @@ function ProfileEditModal() {
                     </button>
                     <button className="profile-button" onClick={handleOff2FASubmit}>
                         2단계 비활성화
-                    </button>
-                </div>
-                <div className="profile-button-wrapper">
-                    [프로필 비공개 구현중...]
-                    <button className="profile-button" >
-                        프로필 공개
-                    </button>
-                    <button className="profile-button" >
-                        프로필 비공개
                     </button>
                 </div>
             </ModalBase>

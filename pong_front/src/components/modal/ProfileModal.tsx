@@ -117,6 +117,56 @@ function ProfileModal() {
         }
     }
 
+    //친추.
+    function handleFollow(event : any) {
+        event.preventDefault();
+        axios.post('http://localhost:3000/api/friend', {otherID : userInfo.id}, {withCredentials: true})
+        .then(res => {
+            if (res.status === 200)
+                console.log('send follow');
+        })
+        .catch(err => {
+            console.log('invalid');
+        })
+    };
+
+    //언팔.
+    function handleUnfollow(event : any) {
+        event.preventDefault();
+        axios.patch('http://localhost:3000/api/friend', {otherID : userInfo.id}, {withCredentials: true})
+        .then(res => {
+            if (res.status === 200)
+                console.log('unfollow ok');
+        })
+        .catch(err => {
+            console.log('invalid');
+        })
+    };
+
+    function handleBlock(event : any) {
+        event.preventDefault();
+        axios.post('http://localhost:3000/api/friend/block', {otherID : userInfo.id}, {withCredentials: true})
+        .then(res => {
+            if (res.status === 200)
+                console.log('target block ok');
+        })
+        .catch(err => {
+            console.log('target block fail');
+        })
+    };
+
+    function handleUnblock(event : any) {
+        event.preventDefault();
+        axios.patch('http://localhost:3000/api/friend/block', {otherID : userInfo.id}, {withCredentials: true})
+        .then(res => {
+            if (res.status === 200)
+                console.log('target unblock ok');
+        })
+        .catch(err => {
+            console.log('target unblock fail');
+        })
+    };
+
     function profileButton () {
         if (userInfo.myProfile) {
             return (
@@ -131,20 +181,20 @@ function ProfileModal() {
         return (
             <div className="profile-button-wrapper">
                 {userInfo.following ? 
-                <button className="profile-button">
+                <button className="profile-button" onClick={handleUnfollow}>
                     <FontAwesomeIcon icon={faUserMinus}/> Unfollow
                 </button> :
-                <button className="profile-button">
+                <button className="profile-button" onClick={handleFollow}>
                     <FontAwesomeIcon icon={faUserPlus}/> Follow
                 </button>}
                 {userInfo.block ? 
-                <button className="profile-button">
+                <button className="profile-button" onClick={handleUnblock}>
                     <FontAwesomeIcon icon={faUser}/> Unblock
                 </button> :
-                <button className="profile-button">
+                <button className="profile-button" onClick={handleBlock}>
                     <FontAwesomeIcon icon={faUserSlash}/> Block
                 </button>}
-                <button className="profile-button">
+                <button className="profile-button" >
                     <FontAwesomeIcon icon={faPaperPlane}/> DM
                 </button>
             </div>
@@ -159,7 +209,7 @@ function ProfileModal() {
                 {/* TODO - 프로필 이미지? */}
                 <div className="profile-wrapper">
                     <div className="profile-box">
-                        <img className="profile-image" src="userInfo.avatar" alt="{userInfo.userName}-profile" />
+                        <img className="profile-image" src={userInfo.avatar} alt={userInfo.userName + '-profile'} />
                     </div>
                     {profileButton()}
                     <div className="profile-name">
