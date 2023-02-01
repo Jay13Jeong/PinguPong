@@ -1,12 +1,7 @@
 import { Column, BeforeInsert, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Chat } from "../chat/chat.entity";
 import { Friend } from "../friend/friend.entity";
-// import { GameHistory } from "./GameHistory.entity";
-// import { Friend } from "./Friend.entity";
-// import { ApiProperty } from '@nestjs/swagger';
-// import { Chat } from "./Chat.entity";
-
-
-// https://www.tutorialspoint.com/typeorm/typeorm_entity.htm
+import { Game } from "../game/game.entity";
 
 @Entity() //유저 엔티티.
 export class User {
@@ -46,12 +41,12 @@ export class User {
 	twofa_secret: string; //2단계인증 암호화 시크릿 키.
 
 	// @ApiProperty({ description: 'List of games that the user has won', type: () => GameHistory })
-	// @OneToMany(() => GameHistory, (gameHistory) => gameHistory.winner)
-	// games_won: GameHistory[]; //이긴 게임기록 리스트.
+	@OneToMany(() => Game, (game) => game.winner)
+	games_won: Game[]; //이긴 게임기록 리스트.
 
 	// @ApiProperty({ description: 'List of games that the user has lost', type: () => GameHistory })
-	// @OneToMany(() => GameHistory, (gameHistory) => gameHistory.loser)
-	// games_lost: GameHistory[]; //패배 게임기록 리스트.
+	@OneToMany(() => Game, (game) => game.loser)
+	games_lost: Game[]; //패배 게임기록 리스트.
 
 	// @ApiProperty({ description: 'List of friends that the user has sent', type: () => Friend })
 	@OneToMany(() => Friend, (friend) => friend.sender) // Applicant
@@ -62,8 +57,8 @@ export class User {
 	receivedFriendRequests: Friend[]; //초대한 사용자 목록 리스트.
 
 	// @ApiProperty({ description: 'List of chats connected to the user', type: () => Chat })
-	// @ManyToMany(() => Chat, (chat) => chat.users)
-	// chats: Chat[]; //참여중인 채팅방 목록 리스트.
+	@ManyToMany(() => Chat, (chat) => chat.users)
+	chats: Chat[]; //참여중인 채팅방 목록 리스트.
 
 	// @ApiProperty({ description: 'the id of the oath parent', example: 216532132 })
 	@Column({ default: '', unique: true })
@@ -78,9 +73,4 @@ export class User {
 		const date = new Date().valueOf() + 3600;
 		this.createdAt = date.toString();
 	}
-
-	// @BeforeInsert()
-	// createSecret() { //2단계인증 암호화용 시크릿 키를 자동으로 생성해서 넣어주는 메소드.
-	// 	this.twofa_secret = authenticator.generateSecret();
-	// }
 }
