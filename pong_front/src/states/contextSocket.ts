@@ -1,7 +1,7 @@
 import React, {createContext} from "react";
 import io, { Socket } from "socket.io-client";
 
-const ENDPOINT = "http://localhost:3000/api/ping"; // TODO - 나중에 환경변수로 빼 주기
+const ENDPOINT = "http://localhost:3000"; // TODO - 나중에 환경변수로 빼 주기
 export const socket = io(ENDPOINT, {
     transports: ['websocket'],
     withCredentials: true,

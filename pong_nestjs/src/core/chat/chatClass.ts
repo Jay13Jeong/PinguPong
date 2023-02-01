@@ -189,6 +189,8 @@ export class chatClass {
         const roomName:string = this.socketid.get(socketid);
         const room:roomClass = this.rooms.get(roomName);
 
+        if (roomName == undefined)
+            return ;
         room.delsocketuser(socketid);
         this.roomDel(roomName);
         this.rooms.delete(socketid);
