@@ -22,7 +22,7 @@ export class User {
 	email?: string; // 이메일
 
 	// @ApiProperty({ description: 'The avatar of the user', example: 'default.jpeg' })
-	@Column({ default: 'default.png' })
+	@Column({ default: 'default.jpeg' })
 	avatar: string; // 프로필사진. 기본 핑아 사진.
 
 	// @ApiProperty({ example: 1 })

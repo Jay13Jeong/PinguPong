@@ -22,9 +22,9 @@ function ProfileModal() {
     const  [showModal, setShowModal] = useRecoilState(profileModalState);
     const setProfileEditState = useSetRecoilState(profileEditModalState);
 
-    const [userInfo, setUserInfo] = useState<types.User>(
-        {
+    const [userInfo, setUserInfo] = useState<types.User>({
         id: 0,
+        avatar: "https://cdn.myanimelist.net/images/characters/11/421848.jpg",
         userName: "pinga",
         myProfile: true,    // TODO - 더 좋은 방법이 있을지 생각해보기
         userStatus: "on",
@@ -38,8 +38,7 @@ function ProfileModal() {
             {idx: 5, p1: "cheolee", p2: "jjeong", p1Score: 10, p2Score: 10},
             {idx: 6, p1: "jeyoon", p2: "jjeong", p1Score: 10, p2Score: 5}
         ]
-    }
-    );    // 유저 정보
+    });    // 유저 정보
 
     // const [userInfo, setUserInfo] = useState<types.User>({
     //     userName: "pingi",
@@ -70,10 +69,11 @@ function ProfileModal() {
         // setUserInfo();
         axios.get('http://localhost:3000/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
         .then(res => {
-            console.log(res.data);
+            // console.log(res.data);
             if (res.data){
                 let myInfo : types.User = {
                     id : res.data.id,
+                    avatar: res.data.avatar,
                     userName : res.data.username as string,
                     myProfile : true,
                     userStatus : 'off',
@@ -88,7 +88,7 @@ function ProfileModal() {
             if (err.response.data.statusCode === 401)
             navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
         })
-    },);
+    }, [userInfo]);
 
     function showStatus(status: string){
         switch(status) {
@@ -159,7 +159,7 @@ function ProfileModal() {
                 {/* TODO - 프로필 이미지? */}
                 <div className="profile-wrapper">
                     <div className="profile-box">
-                        <img className="profile-image" src="https://cdn.myanimelist.net/images/characters/11/421848.jpg" alt="{userInfo.userName}-profile" />
+                        <img className="profile-image" src="userInfo.avatar" alt="{userInfo.userName}-profile" />
                     </div>
                     {profileButton()}
                     <div className="profile-name">
