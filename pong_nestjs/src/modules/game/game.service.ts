@@ -13,7 +13,7 @@ class BattleClass{
     private player2Ready:boolean;
     private myserver:Server;
 
-    private sizes:{canvasWidth:number, canvasHeight: number, lineWidth: number, paddleSize: number} = {
+    private sizes={//:{canvasWidth:number, canvasHeight: number, lineWidth: number, paddleSize: number} = {
         canvasWidth: 800,
         canvasHeight: 500,
         lineWidth: 12,
@@ -41,7 +41,7 @@ class BattleClass{
 
     //게임마다 고유키
         //각 게임마다 가지고 있어야 할 것들, 공, 플레이어1,2 좌표
-    public constructor(player1Id:string, player1:string, player2Id:string, player2:string){
+    public constructor(player1Id:string, player1:string, player2Id:string, player2:string, speed:number){
         this.player1Id = player1Id;
         this.player2Id = player2Id;
         this.player1Name = player1;
@@ -53,8 +53,10 @@ class BattleClass{
         this.player1Ready = false;
         this.player2Ready = false;
 
-        this.goal = 10;
-        this.speed = 1;
+        this.goal = 100;
+        this.speed = speed;
+
+        this.counter = undefined;
     }
 
     public matchEmit(server:Server){
@@ -63,6 +65,8 @@ class BattleClass{
     }
 
     public startGame(server:Server){
+        if (this.counter != undefined)//게임 중인지 확인하기
+            return ;
         console.log('startGame');
         this.myserver = server;
         this.gameStart();
@@ -184,24 +188,25 @@ class BattleClass{
 
     //사용자가 레디 눌렀는지 확인하기
     public requestStart(socket:Socket, server:Server):boolean {
+        if (this.counter != undefined)//게임이 시작중인지 확인하기
+            return ;
         if (this.player1Id == socket.id){
             this.player1Ready = true;
             socket.join(this.roomName);
-            console.log('player1sockerRoom', socket.rooms);
+            //console.log('player1sockerRoom', socket.rooms);
         }
         if (this.player2Id == socket.id){
             this.player2Ready = true;
             socket.join(this.roomName);
-            console.log('player2sockerRoom', socket.rooms);
+            //console.log('player2sockerRoom', socket.rooms);
         }
         if (this.player1Ready && this.player2Ready){
             server.to(this.roomName).emit('startGame');//여기서 소켓 메시지보내기
             //this.player2socket.to(this.player1Id).emit('startGame');소켓이 to로 자기자신에게는 메세지를 못 보낸다.
-            //socket.to(this.roomName).emit('startGame');//2번쨰 누르는 사람은 못 받음,서버가 아닌 소켓이 룸에 보낼때는 브로드캐스팅인가?
+            //socket.to(this.roomName).emit('startGame');//2번쨰 누르는 사람은 못 받음,서버가 아닌 소켓이 룸에 보낼때는 브로드캐스팅인것 같다.
 
             console.log('startGame');
             return true;
-            //this.gameStart()
         }
         return false;
     }
@@ -214,10 +219,12 @@ class BattleClass{
             const newPos1 = this.game.player1 + Number(offset);
             if (newPos1 >= 0 && newPos1 <= this.sizes.canvasHeight - this.sizes.paddleSize)
                 this.game.player1 = newPos1;
+            break;
         case '2':
             const newPos2 = this.game.player2 + Number(offset);
             if (newPos2 >= 0 && newPos2 <= this.sizes.canvasHeight - this.sizes.paddleSize)
                 this.game.player2 = newPos2;
+            break;
         }
     }
 }
@@ -243,18 +250,20 @@ export class GameService {
     public iGamegetout(client:Socket){
         if (!this.socketidRoomname.has(client.id)) {//대결중이 아니면 종료
             this.socketid.delete(client.id);
-            this.easyLvUserList.delete(client.id);
+            this.easyLvUserList.delete(client.id);//매칭중에 새로고침을 할 경우
             this.normalLvUserList.delete(client.id);
             this.hardLvUserList.delete(client.id);
             return ;
         }
+        //대결 중에 한명이 새로고침을 할경우 , but BattleClass이 이미 지웠지만, 다른 사용자가 새로고침할 경우 문제가 생길 수 있다
         const roomName:string = this.socketidRoomname.get(client.id);
         const vs:BattleClass = this.vs.get(roomName);
 
-        console.log('iGamegetout', this.vs.get(roomName));
-        let winner:string = vs.iGameLoser(client.id);//이긴 사람의 소켓 id
-        
-        this.socketidRoomname.delete(winner);
+        console.log('iGamegetout', roomName);
+        if (vs != undefined){//but BattleClass이 이미 지웠지만, 다른 사용자가 새로고침할 경우 문제가 생길 수 있다
+            let winner:string = vs.iGameLoser(client.id);//이긴 사람의 소켓 id
+            this.socketidRoomname.delete(winner);
+        }
         this.socketidRoomname.delete(client.id);
         this.socketid.delete(client.id);
         this.vs.delete(roomName);//방 지우기
@@ -266,28 +275,28 @@ export class GameService {
         this.socketid.set(socketid, player);
         if (difficulty == '0'){
             this.easyLvUserList.add(socketid);
-            return this.createCheck(this.easyLvUserList, socketid);
+            return this.createCheck(this.easyLvUserList, socketid, 1);
         }
         else if (difficulty == '1'){
             this.normalLvUserList.add(socketid);
-            return this.createCheck(this.normalLvUserList, socketid);
+            return this.createCheck(this.normalLvUserList, socketid, 1.5);
         }
         else if (difficulty == '2'){
             this.hardLvUserList.add(socketid);
-            return this.createCheck(this.hardLvUserList, socketid);
+            return this.createCheck(this.hardLvUserList, socketid, 2);
         }
         return false;
     }
 
     //소켓id로 관리를 하자.
-    private createCheck(UserList:Set<string>, player1:string):boolean{
+    private createCheck(UserList:Set<string>, player1:string, speed:number):boolean{
         let player2:string;
         if (UserList.size >= 2) {//대기열이 2명이상이면 매칭후 방 만들기
             UserList.delete(player1);
             player2 = Array.from(UserList)[0];
             UserList.delete(player2);
             let roomName:string = this.socketid.get(player1) + 'vs' + this.socketid.get(player2);
-            this.vs.set(roomName, new BattleClass(player1, this.socketid.get(player1), player2, this.socketid.get(player2)));
+            this.vs.set(roomName, new BattleClass(player1, this.socketid.get(player1), player2, this.socketid.get(player2), speed));
             this.socketidRoomname.set(player1, roomName);
             this.socketidRoomname.set(player2, roomName);
             console.log('createRoom', roomName);
