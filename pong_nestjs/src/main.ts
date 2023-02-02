@@ -12,6 +12,8 @@ async function bootstrap() {
 		origin: [
 			"http://localhost",
 			"http://localhost:3000",
+			"http://10.12.7.8",
+			"http://10.12.7.8:3000",
 		],
 		credentials: true,
 		exposedHeaders: ['randomStringLol', 'X-XSRF-TOKEN', "Authorization"], //csrf token, cors설정.

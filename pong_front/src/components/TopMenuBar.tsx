@@ -6,8 +6,9 @@ import { useSetRecoilState } from "recoil";
 import * as modalState from "../states/recoilModalState"
 import logo from "../assets/logo.png";
 import "./TopMenuBar.scss";
+import { User } from "./profile/User";
 
-function TopMenuBar() {
+function TopMenuBar(props: {user : User}) {
   
   const dmState = useSetRecoilState(modalState.dmModalState);
   const profileState = useSetRecoilState(modalState.profileModalState);

@@ -24,6 +24,9 @@ export interface User {
 
 export interface Friend {
     userId: number;         // TODO - friend 프로필로 들어가기 위한 id
+    me?: User;
+    you?: User;
+    relate?: string; //차단, 친구추가 수락대기, 친구.
     userName: string;
     // userStatus: boolean;    // TODO - 상태 구체화 필요
     userStatus: string;     // on, off, game // TODO - type을 정의해서 쓰고 싶음..
