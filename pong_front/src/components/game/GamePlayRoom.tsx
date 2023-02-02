@@ -16,11 +16,13 @@ function GamePlayRoom(props: any) {
     const location = useLocation();
     const player1 = location.state.player1;
     const player2 = location.state.player2;
+
     // const player1 = "pingpong_king"; // TODO - 소켓 연결되면 주석처리
     // const player2 = "loser";
     const myInfo = useUser();
     // const currentPlayer = "pingpong_king"; // TODO - 실제로 받아올 것
     const currentPlayer = myInfo.userName; // TODO - 실제로 받아올 것
+
     const isP1 = player1 === currentPlayer;
     const gameRoomName = `${player1}vs${player2}`;
 
@@ -59,6 +61,7 @@ function GamePlayRoom(props: any) {
     }
 
     function testHandler(e: any) {
+        console.log('0000', gameRoomName);
         socket.emit("requestStart", gameRoomName);
     }
 

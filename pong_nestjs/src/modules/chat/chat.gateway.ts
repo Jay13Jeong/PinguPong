@@ -93,6 +93,25 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
 
+  //방이름 :보내면, 공개방이면 true, 비밀방이면 false 반환
+  @SubscribeMessage('/api/check/secret')
+  async checksecret(client : Socket, data) { 
+    let roomName = data.roomName;
+    console.log('/api/check/secret', client.id, data, roomName);
+
+    this.server.to(client.id).emit('/api/check/secret', this.rooms.checksecret(roomName));
+   }
+
+  //방이름, 비밀번호: 받아서 맞으면 true. 틀리면 false
+  @SubscribeMessage('/api/post/secretPW')
+  async checksecretPw(client : Socket, data) { 
+    let roomName = data.roomName;
+    let secretPW = data.secret;
+
+    console.log('/api/post/secretPW', client.id, data, roomName, secretPW);
+    this.server.to(client.id).emit('/api/post/secretPW', this.rooms.checksecretPw(roomName, secretPW));
+  }
+
   @SubscribeMessage('/api/post/newRoom')//새로운 방 만들기, 이미 있는 방이름이면 false 반환
   async newRoom(client : Socket, data) {
     let [room, userId, secretpw] = data;
