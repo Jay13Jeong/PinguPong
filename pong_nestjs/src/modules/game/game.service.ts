@@ -6,8 +6,8 @@ class BattleClass{
     private player2Id:string;
     private player1Name:string;
     private player2Name:string;
-    private player1socket:Socket;
-    private player2socket:Socket;
+    //private player1socket:Socket;
+    //private player2socket:Socket;
     private roomName:string;
     private player1Ready:boolean;
     private player2Ready:boolean;
@@ -53,7 +53,7 @@ class BattleClass{
         this.player1Ready = false;
         this.player2Ready = false;
 
-        this.goal = 100;
+        this.goal = 10;
         this.speed = 1;
     }
 
@@ -64,7 +64,6 @@ class BattleClass{
 
     public startGame(server:Server){
         console.log('startGame');
-        console.log('testtest', this.player1socket.rooms);
         this.myserver = server;
         this.gameStart();
     }
@@ -120,7 +119,6 @@ class BattleClass{
 
     /* 게임 동작 함수 */
     private gameRun():void {
-        console.log('gameRun');
         // 1. 공 움직이고 (방향전환, 점수 검사)
         const p1PaddleStart:number = this.game.player1;
         const p1PaddleEnd:number = this.game.player1 + this.sizes.paddleSize;
@@ -160,10 +158,10 @@ class BattleClass{
 
         // 2. 바뀐 게임 정보들 보내준다. (플레이어와 관전자 모두에게 보내주기)
         //this.pingGateway.putBallPos(this.player1Id, this.game);
-        this.myserver.to(this.player1Id).emit("ballPos", this.game);
-        this.myserver.to(this.player2Id).emit("ballPos", this.game);
-        console.log('ballpos', this.player1Id, this.player2Id);
-        //this.player2socket.to(this.player2Id).emit("ballPos", this.game);
+        this.myserver.to(this.roomName).emit("ballPos", this.game);
+        //this.myserver.to(this.player2Id).emit("ballPos", this.game);
+        //console.log('ballpos', this.player1Id, this.player2Id);
+
         // 3. 공 움직이기 (위치 변화)
         this.game.ball.y += this.game.ball.dy * this.speed;
         this.game.ball.x += this.game.ball.dx * this.speed;
@@ -177,28 +175,31 @@ class BattleClass{
         }
     }
 
+    public iGameLoser(loserid:string):string{
+        this.myserver.to(this.roomName).emit("endGame", {winner: this.player1Id === loserid ? this.player1Name : this.player2Name});
+        clearInterval(this.counter);
+        console.log("endGame", this.player1Id === loserid ? this.player1Name : this.player2Name);
+        return this.player1Id === loserid ? this.player1Id : this.player2Id;
+    }
 
     //사용자가 레디 눌렀는지 확인하기
-    public requestStart(socket:Socket, socketid:string):boolean {
-        if (this.player1Id == socketid){
+    public requestStart(socket:Socket, server:Server):boolean {
+        if (this.player1Id == socket.id){
             this.player1Ready = true;
-            this.player1socket = socket;
             socket.join(this.roomName);
-            console.log('player1sockerRoom11', this.player1socket.rooms);
-            console.log('player1sockerRoom12', socket.rooms);
+            console.log('player1sockerRoom', socket.rooms);
         }
-        if (this.player2Id == socketid){
+        if (this.player2Id == socket.id){
             this.player2Ready = true;
-            this.player2socket = socket;
             socket.join(this.roomName);
-            console.log('player2sockerRoom21', this.player2socket.rooms);
-            console.log('player2sockerRoom22', socket.rooms);
+            console.log('player2sockerRoom', socket.rooms);
         }
         if (this.player1Ready && this.player2Ready){
-            //this.player1socket.to(this.roomName).emit('startGame');//여기서 소켓 메시지보내기
-            //this.player2socket.to(this.player2Id).emit('startGame');
-            socket.to(this.roomName).emit('startGame');
-            console.log('startGame', socket.rooms);
+            server.to(this.roomName).emit('startGame');//여기서 소켓 메시지보내기
+            //this.player2socket.to(this.player1Id).emit('startGame');소켓이 to로 자기자신에게는 메세지를 못 보낸다.
+            //socket.to(this.roomName).emit('startGame');//2번쨰 누르는 사람은 못 받음,서버가 아닌 소켓이 룸에 보낼때는 브로드캐스팅인가?
+
+            console.log('startGame');
             return true;
             //this.gameStart()
         }
@@ -237,6 +238,26 @@ export class GameService {
         this.normalLvUserList = new Set<string>();
         this.hardLvUserList = new Set<string>();
         this.socketidRoomname = new Map<string, string>();
+    }
+
+    public iGamegetout(client:Socket){
+        if (!this.socketidRoomname.has(client.id)) {//대결중이 아니면 종료
+            this.socketid.delete(client.id);
+            this.easyLvUserList.delete(client.id);
+            this.normalLvUserList.delete(client.id);
+            this.hardLvUserList.delete(client.id);
+            return ;
+        }
+        const roomName:string = this.socketidRoomname.get(client.id);
+        const vs:BattleClass = this.vs.get(roomName);
+
+        console.log('iGamegetout', this.vs.get(roomName));
+        let winner:string = vs.iGameLoser(client.id);//이긴 사람의 소켓 id
+        
+        this.socketidRoomname.delete(winner);
+        this.socketidRoomname.delete(client.id);
+        this.socketid.delete(client.id);
+        this.vs.delete(roomName);//방 지우기
     }
 
     //유저를 매칭시키는 함수만들기
@@ -283,9 +304,9 @@ export class GameService {
 
     //해당 유저가 준비완료를 했는지 확인하는 함수
     //방이름 유저소켓id를 받아서 둘다 준비완료이면 메세지 보내기
-    public requestStart(roomName:string, socket:Socket, socketid:string):boolean {
+    public requestStart(roomName:string, socket:Socket, server:Server):boolean {
         const vs:BattleClass = this.vs.get(roomName);
-        return vs.requestStart(socket, socketid);
+        return vs.requestStart(socket, server);
     }
 
     public startGame(roomName:string, server:Server){

@@ -59,14 +59,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   //OnGatewayConnection를 오버라이딩
   async handleConnection(client : Socket) {// 채팅 재 접속시 브라우저 정보를 요청하는 이벤트 요청하기, 채팅방 들어가기 이벤트일때도 똑같이 받는 이벤트 만들기
     this.server.to(client.id).emit('getUser');//해당 클라이언트에게만 보내기
-    console.log('chat', client.id);//client.rooms와 값이 같다
-    console.log(client.rooms);
+    //console.log('chat', client.id);//client.rooms와 값이 같다
+    //console.log(client.rooms);
   }
   
   //OnGatewayDisconnect를 오버라이딩
   async handleDisconnect(client : Socket) {
     this.rooms.delUser(client.id);
-    console.log('delUser', client.id);
+    //console.log('delUser', client.id);
   }
 
   @SubscribeMessage('getUser')//해당 유저 등록하기
