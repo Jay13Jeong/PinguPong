@@ -130,13 +130,21 @@ class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함, prima
     }
 
     //음소거 여부를 확인 후 bool값을 리턴하는 함수
-    public checkmuteuser(socketid:string):boolean{
+    public checkmuteuser(socketid:string):boolean {
         return this.muteuser.has(this.socketuser.get(socketid));
     }
 
     //방의 소켓 리스트 반환
-    public getSocketList():IterableIterator<string>{
+    public getSocketList():IterableIterator<string> {
         return this.socketuser.keys();
+    }
+
+    public checksecret():boolean {
+        return !this.secret;//공개방이면 true, 비밀방이면 false 보내주기
+    }
+
+    public checksecretPw(secretPW:string):boolean {
+        return this.secretpw == secretPW;
     }
 }
 
@@ -253,6 +261,18 @@ export class chatClass {
     public checkmuteuser(roomName: string, socketid:string) {
         const room:roomClass = this.rooms.get(roomName);
         return room.checkmuteuser(socketid);
+    }
+
+    //방이 비밀방 여부 확인, 비밀방이면 false
+    public checksecret(roomName:string):boolean{
+        const room:roomClass = this.rooms.get(roomName);
+        return room.checksecret();
+    }
+
+    //비밀방의 비밀번호가 맞는지 확인하기 맞으면 ture, 틀리면 false
+    public checksecretPw(roomName, secretPW){
+        const room:roomClass = this.rooms.get(roomName);
+        return room.checksecretPw(secretPW);
     }
 
 }

@@ -162,6 +162,7 @@ class BattleClass{
         //this.pingGateway.putBallPos(this.player1Id, this.game);
         this.myserver.to(this.player1Id).emit("ballPos", this.game);
         this.myserver.to(this.player2Id).emit("ballPos", this.game);
+        console.log('ballpos', this.player1Id, this.player2Id);
         //this.player2socket.to(this.player2Id).emit("ballPos", this.game);
         // 3. 공 움직이기 (위치 변화)
         this.game.ball.y += this.game.ball.dy * this.speed;
