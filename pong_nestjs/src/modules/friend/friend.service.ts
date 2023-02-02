@@ -145,6 +145,7 @@ export class FriendService {
 				{ reciever: { id: user.id }, status: 'accepted' },
 			],
 		});
+		// console.log(friends);
 		return friends;
 	}
 }
