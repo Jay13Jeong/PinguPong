@@ -1,38 +1,35 @@
 import React, {useState, useEffect, useContext} from "react";
 import { SocketContext } from "../../states/contextSocket";
 import {useLocation, Link} from "react-router-dom";
-import {useSetRecoilState} from "recoil";
+import {useSetRecoilState, useResetRecoilState} from "recoil";
 import {gameState} from "../../states/recoilGameState"
 import { Center, Stack } from "../../styles/Layout";
 import { Button } from "../../styles/Inputs";
 import GameRoom from "./GameRoom";
 import { OverLay, Wrapper } from "../../styles/Modal";
-import useUser from "../../util/useUser";
+// import useUser from "../../util/useUser";
 import * as types from "./Game";
 
-function GamePlayRoom(props: any) {
+function GamePlayRoom() {
     /* 유저 정보 변수들 */
     // TODO - 게임이 시작되면 프로필 수정 버튼? 을 비활성해야 함 (만약 있다면..)
     const location = useLocation();
     const player1 = location.state.player1;
     const player2 = location.state.player2;
-
-    // const player1 = "pingpong_king"; // TODO - 소켓 연결되면 주석처리
-    // const player2 = "loser";
-    const myInfo = useUser();
-    // const currentPlayer = "pingpong_king"; // TODO - 실제로 받아올 것
-    const currentPlayer = myInfo.userName; // TODO - 실제로 받아올 것
-
+    // const myInfo = useUser();
+    // const currentPlayer = myInfo.userName;
+    const currentPlayer = location.state.current;
     const isP1 = player1 === currentPlayer;
     const gameRoomName = `${player1}vs${player2}`;
 
-    console.log(currentPlayer);
+    console.log("gameStart", currentPlayer);
 
     /* state */
     const [winner, setWinner] = useState<string>();
 
     /* 게임 정보 setter */
     const setGame = useSetRecoilState<types.gamePosInfo>(gameState);
+    const resetGame = useResetRecoilState(gameState);
 
     /* 변수들 */
     const playerSpeed = 10;
@@ -42,6 +39,7 @@ function GamePlayRoom(props: any) {
 
     /* Event Handler */
     const keyDownHandler = (e: KeyboardEvent) => {
+        console.log('0000', isP1 , "current" , currentPlayer);
         if (e.key === "ArrowUp") {
             if (isP1) { // 1번을 위로
                 socket.emit("player1Move", -playerSpeed, gameRoomName);
@@ -61,7 +59,7 @@ function GamePlayRoom(props: any) {
     }
 
     function testHandler(e: any) {
-        console.log('0000', gameRoomName);
+        // console.log('0000', gameRoomName);
         socket.emit("requestStart", gameRoomName);
     }
 
@@ -70,14 +68,22 @@ function GamePlayRoom(props: any) {
         window.addEventListener("keydown", keyDownHandler);
         // TODO - 시작 이벤트 듣기
         socket.on("startGame", (data: any) => {
+            // console.log('startGame');
+            socket.off("startGame");
             socket.on("ballPos", (data: types.gamePosInfo) => {
                 setGame(data);
-                console.log('ballPos!!');
+                // console.log('ballPos!!');
             })
             socket.on("endGame", (data) => {
+                socket.off("ballPos");
+                socket.off("endGame");
+                resetGame();
                 setWinner(data.winner);
             })
         })
+        return () => {
+            window.removeEventListener("keydown", keyDownHandler);
+          };
     }, []);
 
     return (

@@ -19,8 +19,10 @@ function useUser(userid?: number) {
     })
 
     useEffect(() => {
+        // console.log("000000");
         axios.get('http://localhost:3000/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
         .then(res => {
+            // console.log("useUser", userInfo.userName);
             if (res.data){
                 let myInfo : User = {
                     id : res.data.id,
@@ -39,7 +41,6 @@ function useUser(userid?: number) {
                 navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
         })
     }, []);
-
     return userInfo;
 
 }
