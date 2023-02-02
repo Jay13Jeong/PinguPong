@@ -10,12 +10,15 @@ function ChatCardButton (props: {roomName: string}) {
     const socket = useContext(SocketContext);
     const setSecretChatModalState = useSetRecoilState(secretChatModalState);
 
-    function clickHandler(e: any) {
+    function clickHandler(e: React.MouseEvent<HTMLElement>) {
         // TODO - 입장 요청 보내주기
         socket.emit('/api/check/secret', props.roomName);
         socket.on('/api/check/secret', (data) => {
             if (data) {
-                navigate(`/chat/room/${props.roomName}`);
+                navigate(`/chat/room/${props.roomName}`, {state: {
+                    roomName: props.roomName,
+                    isSecret: true
+                }});
             }
             // TODO - 비밀방 모달 띄우기
             setSecretChatModalState({roomName: props.roomName, show: true});

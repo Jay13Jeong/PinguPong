@@ -35,3 +35,11 @@ export const secretChatModalState = atom<{roomName: string, show: boolean}>({
         show: false
     }
 })
+
+export const changeChatPwModalState = atom<{roomName: string, show: boolean}>({
+    key: "changechatpwmodalstate",
+    default: {
+        roomName: "",
+        show: false
+    }
+})

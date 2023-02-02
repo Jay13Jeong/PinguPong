@@ -8,10 +8,11 @@ import EditProfilePage from './pages/profile/EditProfileModal';
 import GameLobbyPage from './pages/game/GameLobbyPage';
 import GameMatchPage from './pages/game/GameMatchPage';
 import GamePlayRoomPage from './pages/game/GamePlayRoomPage';
-import ChatLobbyPage from './pages/chat/ChatLobbyPage';
-import CreateChatModal from './pages/chat/CreateChatModal';
-import SelectPrivateChatModal from './pages/chat/SelectPrivateChatModal';
-import ChatRoomPage from './pages/chat/ChatRoomPage';
+// import ChatLobbyPage from './pages/chat/ChatLobbyPage';
+// import CreateChatModal from './pages/chat/CreateChatModal';
+// import SelectPrivateChatModal from './pages/chat/SelectPrivateChatModal';
+// import ChatRoomPage from './pages/chat/ChatRoomPage';
+import ChatRoom from './pages/chat/ChatRoom';
 import EditChatRoomModal from './pages/chat/EditChatRoomModal';
 import ChatManageModal from './pages/chat/ChatManageModal';
 import GameWatchPage from './pages/game/GameWatchPage';
@@ -23,11 +24,12 @@ export default function Routing() {
       <Routes>
         {/* <Route path="/" element={<Test />} /> */}
         <Route path="/lobby" element={<Lobby />} />
-        <Route path="/chatt" element={<ChatLobbyPage />} />
+        {/* <Route path="/chatt" element={<ChatLobbyPage />} /> */}
         <Route path="/chat" element={<ChatLobby />} />
-        <Route path="/chat/create" element={<CreateChatModal />} />
-        <Route path="/chat/select/private/:id" element={<SelectPrivateChatModal />} />
-        <Route path="/chat/room/:id" element={<ChatRoomPage />} />
+        {/* <Route path="/chat/create" element={<CreateChatModal />} />
+        <Route path="/chat/select/private/:id" element={<SelectPrivateChatModal />} /> */}
+        {/* <Route path="/chat/room/:id" element={<ChatRoomPage />} /> */}
+        <Route path="/chat/room/:id" element={<ChatRoom />} />
         <Route path="/chat/room/change" element={<EditChatRoomModal />} />
         <Route path="/chat/manage/:id" element={<ChatManageModal />} />
         <Route path="/" element={<LoginPage />} />

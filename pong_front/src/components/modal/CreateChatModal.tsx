@@ -34,7 +34,10 @@ function CreateChatModal() {
                 socket.emit('/api/get/RoomList');
                 setShowModal(false);
                 socket.off('/api/post/newRoom');
-                navigate(`/chat/room/${values.room}`);
+                navigate(`/chat/room/${values.room}`, {state: {
+                    roomName: values.room,
+                    isSecret: values.pw !== ""
+                }});
             }
             else {
                 toast.error("중복된 방 이름 입니다.");
