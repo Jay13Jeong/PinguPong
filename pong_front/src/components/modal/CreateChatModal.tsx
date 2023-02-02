@@ -1,5 +1,6 @@
 import React, {useState, useContext} from "react";
 import { toast } from "react-toastify"
+import { useNavigate } from "react-router-dom";
 import { SocketContext } from "../../states/contextSocket";
 import useUser from "../../util/useUser";
 import { useRecoilState } from "recoil";
@@ -18,15 +19,19 @@ function CreateChatModal() {
     const myInfo = useUser();
     const socket = useContext(SocketContext);
 
+    const navigate = useNavigate();
+
     function handler(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         // alert(`${values.room} | ${values.pw}`);
+        console.log("hhhhhh");
         socket.emit('/api/post/newRoom', values.room, myInfo.userName, values.pw);
         socket.on('/api/post/newRoom', (data: boolean) => {
             if (data) {
                 toast.success("채팅방 생성에 성공했습니다.");
                 socket.emit('/api/get/RoomList');
                 setShowModal(false);
+                navigate(`/chat/room/${values.room}`);
             }
             else {
                 toast.error("중복된 방 이름 입니다.");

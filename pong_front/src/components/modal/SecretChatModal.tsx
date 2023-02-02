@@ -20,19 +20,21 @@ function SecretChatModal() {
     function handler(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         // TODO - 비밀번호 보냄
-        // TODO - 입장 성공시
-        /**
-         * setShowModal(false);
-         * navigate(`/chat/room/${values.room}`); // 이런 식으로 보내버리기
-         */
-        // TODO - 입장 실패시
-        /**
-         * toast.error("비밀번호가 틀렸습니다.");
-         * setValues("");
-        */
+        socket.emit('/api/post/secretPW', {roomName: showModal.roomName, secretPW: values});
+        socket.on('/api/post/secretPW', (data) => {
+            if (data) {
+                // 입장 성공
+                setShowModal({roomName: "", show: false});
+                navigate(`/chat/room/${showModal.roomName}`);
+            }
+            else {
+                toast.error("비밀번호가 틀렸습니다.");
+                setValues("");
+            };
+        })
     }
 
-    if (showModal) {
+    if (showModal.show) {
         return (
             <ModalBase setter={setShowModal}>
                 <Stack className="chat-form-wrapper">
