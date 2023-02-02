@@ -10,7 +10,6 @@ import { Inject } from '@nestjs/common';
   export class pingGateway implements OnGatewayConnection, OnGatewayDisconnect {
      constructor(@Inject(GameService) private readonly gameService:GameService)
      {
-
      }
     
     @WebSocketServer()
@@ -38,25 +37,25 @@ import { Inject } from '@nestjs/common';
        let difficulty = data.difficulty;
        let player = data.player;
        console.log('requestMatchMake', client.id, data, difficulty, player);
-
+      // 1. 같은 난이도를 요청한 플레이어가 큐에 있을 경우 게임 매치
+      // 2. 같은 난이도를 요청한 플레이어가 큐에 없을 경우 해당 플레이어를 큐에 넣는다.
        if (this.gameService.matchMake(difficulty, player, client.id)){
-        // 1. 같은 난이도를 요청한 플레이어가 큐에 있을 경우 게임 매치
-
-        //???방이름, 소켓id 문제, 룸 설정은 언제 해주어야 하는가? 반환값을 언제 받아야 하는가. 
-        this.server.emit('matchMakeSuccess', {p1: "매치된 플레이어 1", p2: "매치된 플레이어 2"});
-         // 2. 같은 난이도를 요청한 플레이어가 큐에 없을 경우 해당 플레이어를 큐에 넣는다.
-       }
+        this.gameService.matchEmit(this.server, client.id); 
+        console.log('matchMake fin');
+      }
     }
 
 
     @SubscribeMessage('requestStart')
     async requestStart(client : Socket, data) {
       let roomName = data;
-      console.log('player1Move', client.id, data, roomName);
-      //플레이어가 준비완료인지 확인하기
-      this.gameService.requestStart(roomName, client, client.id);
+      console.log('requestStart11', client.id, data, roomName);
+      //플레이어가 준비완료인지 확인하기, 여기서 socket room에 등록을 하자
+      if (this.gameService.requestStart(roomName, client, client.id))
+        this.gameService.startGame(roomName, this.server);
         //클래스 안에서 소켓메세지 보내기
-        this.server.emit('startGame');//api: 시작 신호 보내기. 서버에서 쓰레드 돌리기 시작, if문으로 구별해서 보내기
+     
+        //this.server.emit('startGame');//api: 시작 신호 보내기. 서버에서 쓰레드 돌리기 시작, if문으로 구별해서 보내기
         //gameStart();//게임 실행 함수 호출
         //api: 각각의 방마다 따로 돌아야 한다.이부분을 공부해 보자,, 모듈을 만들어야 한다.
         //api : 스레드가 안되면 브라우저에서 요청이 계속 오도록 해서 답변하는 식으로 하자.
