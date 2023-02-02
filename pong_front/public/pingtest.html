@@ -1,0 +1,45 @@
+<html>
+<head>
+    
+</head>
+<body>
+
+
+    <button onclick=equestMatchMak()>매치 요청 보내기</button>
+    <button onclick=requestStart()>레디</button>
+   
+
+    <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"
+    integrity="sha384-KAZ4DtjNhLChOB/hxXuKqhMLYvx3b5MlT55xPEiNmREKRzeEm+RVPlTnAn0ajQNs"
+    crossorigin="anonymous"></script>
+    <script>
+    const socket = io('http://localhost:3000');
+    
+    let room = 'testRoom';
+    const userId = 'cheolee';
+
+    function equestMatchMak(){
+        socket.emit('requestMatchMake',{difficulty:'0',player:'test'});
+    }
+
+    socket.on('matchMakeSuccess', function(data){
+        console.log('matchMakeSuccess', data);
+        room = data.p1 +'vs' + data.p2;
+    });
+
+    function requestStart(){
+        socket.emit('requestStart', room);
+    }
+
+    socket.on('startGame', function(){
+        console.log('startGame');
+    });
+
+    socket.on('ballPos', function(data){
+        console.log('ballPos');
+    });
+    
+</script>
+</body>
+
+</html>

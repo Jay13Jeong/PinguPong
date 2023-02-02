@@ -266,6 +266,7 @@ export class chatClass {
     //방이 비밀방 여부 확인, 비밀방이면 false
     public checksecret(roomName:string):boolean{
         const room:roomClass = this.rooms.get(roomName);
+        console.log(room.checksecret());
         return room.checksecret();
     }
 

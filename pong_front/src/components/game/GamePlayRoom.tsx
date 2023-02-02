@@ -70,8 +70,10 @@ function GamePlayRoom(props: any) {
         window.addEventListener("keydown", keyDownHandler);
         // TODO - 시작 이벤트 듣기
         socket.on("startGame", (data: any) => {
+            console.log('startGame');
             socket.on("ballPos", (data: types.gamePosInfo) => {
                 setGame(data);
+                console.log('ballPos!!');
             })
             socket.on("endGame", (data) => {
                 setWinner(data.winner);

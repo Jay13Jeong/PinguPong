@@ -19,15 +19,17 @@ import { Inject } from '@nestjs/common';
 
     //OnGatewayConnection를 오버라이딩
     async handleConnection(client : Socket) {
-      console.log('ping', client.id);//client.rooms와 값이 같다
-      console.log(client.rooms);
+      //console.log('ping', client.id);//client.rooms와 값이 같다
+      //console.log(client.rooms);
       //들어온 유저 로그 찍기
 
     }
     
     //OnGatewayDisconnect를 오버라이딩
     async handleDisconnect(client : Socket) {
-      console.log('ping 소켓 끊김 : ', client.id);
+      //console.log('ping 소켓 끊김 : ', client.id);
+      //게임 중인지 파악하고 패배시키기
+      this.gameService.iGamegetout(client);
     }
 
     //api:유저의 소켓과 난이도에 따른 배열 3개 만들어서 2개 이상이면 매치시켜주기.
@@ -51,7 +53,7 @@ import { Inject } from '@nestjs/common';
       let roomName = data;
       console.log('requestStart11', client.id, data, roomName);
       //플레이어가 준비완료인지 확인하기, 여기서 socket room에 등록을 하자
-      if (this.gameService.requestStart(roomName, client, client.id))
+      if (this.gameService.requestStart(roomName, client, this.server))
         this.gameService.startGame(roomName, this.server);
         //클래스 안에서 소켓메세지 보내기
      
@@ -62,9 +64,9 @@ import { Inject } from '@nestjs/common';
     }
 
 
-    public putBallPos(socket:string, data){
-      this.server.to(socket).emit("ballPos", data);
-    }
+    //public putBallPos(socket:string, data){
+    //  this.server.to(socket).emit("ballPos", data);
+    //}
     /**
      * player1Move - p1이 움직임
      * offset : 움직인 거리
@@ -73,8 +75,7 @@ import { Inject } from '@nestjs/common';
     //api:방이름으로 사용자 찾아서 관리할 것
     @SubscribeMessage('player1Move')
     async player1Move(client : Socket, data) {
-      let offset = data.offset;
-      let roomName = data.roomName;
+      let [offset, roomName] = data;
       console.log('player1Move', client.id, data, roomName, offset);
 
       this.gameService.playerMove('1', roomName, offset);
@@ -87,8 +88,7 @@ import { Inject } from '@nestjs/common';
      */
     @SubscribeMessage('player2Move')
     async player2Move(client : Socket, data) {
-      let offset = data.offset;
-      let roomName = data.roomName;
+      let [offset, roomName] = data;
       console.log('player2Move', client.id, data, roomName, offset);
 
       this.gameService.playerMove('2', roomName, offset);
