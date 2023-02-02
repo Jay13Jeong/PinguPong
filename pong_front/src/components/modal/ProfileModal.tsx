@@ -88,7 +88,7 @@ function ProfileModal() {
             if (err.response.data.statusCode === 401)
             navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
         })
-    },);
+    },[]);
 
     function showStatus(status: string){
         switch(status) {
