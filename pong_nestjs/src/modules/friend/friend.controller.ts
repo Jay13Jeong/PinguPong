@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, ParseIntPipe, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, ParseIntPipe, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guard/jwt.guard';
 import { User } from '../users/user.entity';
 import { FriendService } from './friend.service';
@@ -19,7 +19,7 @@ export class FriendController {
     };
 
     //친구 해제
-    @Delete()
+    @Patch()
     @UseGuards(JwtAuthGuard)
     async deleteFriend(@Req() req, @Body('otherID', ParseIntPipe) otherID: number){
         let user = req.user as User;
@@ -39,7 +39,7 @@ export class FriendController {
     };
 
     //친구 블락해제
-    @Delete('block')
+    @Patch('block')
     @UseGuards(JwtAuthGuard)
     async unblock(@Req() req, @Body('otherID', ParseIntPipe) otherID: number){
         let user = req.user as User;

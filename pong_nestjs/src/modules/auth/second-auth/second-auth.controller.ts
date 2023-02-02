@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Patch, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Patch, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { User } from 'src/modules/users/user.entity';
 import { Jwt2faGuard, JwtAuthGuard } from '../guard/jwt.guard';
 import { SecondAuthService } from './second-auth.service';
@@ -42,7 +42,7 @@ export class SecondAuthController {
     //2단계 인증을 활성화하는 메소드.
     @Patch()
     @UseGuards(JwtAuthGuard)
-    activate(@Req() req: Request, @Body() body){
+    activate(@Req() req: Request){
         let user = req.user as User;
         user.twofa = true;
         this.userRepository.save(user);
@@ -50,9 +50,9 @@ export class SecondAuthController {
     }
 
     //2단계 인증을 비활성화하는 메소드.
-    @Patch()
+    @Delete()
     @UseGuards(JwtAuthGuard)
-    deactivate(@Req() req: Request, @Body() body){
+    deactivate(@Req() req: Request){
         let user = req.user as User;
         user.twofa = false;
         this.userRepository.save(user);
