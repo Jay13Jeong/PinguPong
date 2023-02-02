@@ -3,15 +3,17 @@ import { useNavigate } from "react-router-dom";
 import { SocketContext } from "../../states/contextSocket";
 import { Center, Stack } from "../../styles/Layout";
 import { Button } from "../../styles/Inputs";
-import useUser from "../../util/useUser";
-// import { User } from "../profile/User";
+// import useUser from "../../util/useUser";
+import { User } from "../profile/User";
 import axios from "axios";
 import DifficultyButtons from "./DifficultyButtons";
 import Loader from "../util/Loader";
 
 function MatchMake(props: any) {
     const [loading, setLoading] = useState<boolean>(false);
-    const myInfo = useUser();
+    let current: string;
+    // const myInfo = useUser();
+    // const current = myInfo.userName;
 
     var currentDifficulty: number = 0;
     const navigate = useNavigate();
@@ -20,6 +22,18 @@ function MatchMake(props: any) {
     const socket = useContext(SocketContext);
 
     useEffect(() => {
+        axios.get('http://localhost:3000/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
+        .then(res => {
+            // console.log(res.data);
+            if (res.data){
+                current = res.data.username as string;
+            }
+        })
+        .catch(err => {
+            if (err.response.data.statusCode === 401)
+            navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
+        })
+
         socket.on('matchMakeSuccess', (data: any) => {
             console.log('matchMakeSuccess');
             /**
@@ -29,17 +43,18 @@ function MatchMake(props: any) {
              */
             navigate(`/game/match/${data.p1}vs${data.p2}`, {state: {
                 player1: data.p1,
-                player2: data.p2
+                player2: data.p2,
+                current: current
             }});
         });
     }, []);
 
     // NOTE - 매치 메이킹
     function handleMatchMakeRequest(e: any) {
-        console.log(myInfo.userName);
+        console.log(current);
         socket.emit('requestMatchMake', {
             difficulty: currentDifficulty,
-            player: myInfo.userName // TODO - 본인 아이디 받아와야 함.
+            player: current // TODO - 본인 아이디 받아와야 함.
         });
         setLoading(true);
     }
