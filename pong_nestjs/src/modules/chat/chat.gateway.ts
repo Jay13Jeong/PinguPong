@@ -96,7 +96,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   //방이름 :보내면, 공개방이면 true, 비밀방이면 false 반환
   @SubscribeMessage('/api/check/secret')
   async checksecret(client : Socket, data) { 
-    let roomName = data.roomName;
+    let roomName = data;
     console.log('/api/check/secret', client.id, data, roomName);
 
     this.server.to(client.id).emit('/api/check/secret', this.rooms.checksecret(roomName));

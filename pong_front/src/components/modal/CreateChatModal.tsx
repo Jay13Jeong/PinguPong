@@ -23,18 +23,22 @@ function CreateChatModal() {
 
     function handler(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        // alert(`${values.room} | ${values.pw}`);
-        console.log("hhhhhh");
+        if (values.room === "") {
+            toast.error("방 이름을 입력하세요.");
+            return ;
+        }
         socket.emit('/api/post/newRoom', values.room, myInfo.userName, values.pw);
         socket.on('/api/post/newRoom', (data: boolean) => {
             if (data) {
                 toast.success("채팅방 생성에 성공했습니다.");
                 socket.emit('/api/get/RoomList');
                 setShowModal(false);
+                socket.off('/api/post/newRoom');
                 navigate(`/chat/room/${values.room}`);
             }
             else {
                 toast.error("중복된 방 이름 입니다.");
+                socket.off('/api/post/newRoom');
             }
         })
         setValues({

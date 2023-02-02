@@ -20,15 +20,17 @@ function SecretChatModal() {
     function handler(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         // TODO - 비밀번호 보냄
-        socket.emit('/api/post/secretPW', {roomName: showModal.roomName, secretPW: values});
+        socket.emit('/api/post/secretPW', {roomName: showModal.roomName, secret: values});
         socket.on('/api/post/secretPW', (data) => {
             if (data) {
                 // 입장 성공
                 setShowModal({roomName: "", show: false});
+                socket.off('/api/post/secretPW');
                 navigate(`/chat/room/${showModal.roomName}`);
             }
             else {
                 toast.error("비밀번호가 틀렸습니다.");
+                socket.off('/api/post/secretPW');
                 setValues("");
             };
         })
@@ -42,7 +44,7 @@ function SecretChatModal() {
                     <form onSubmit={handler}>
                         <div className="wrapper">
                             <span>비밀번호</span>
-                            <input type="password" placeholder="비밀번호" value={values} onChange={(e) => setValues(e.target.value)} />
+                            <input type="password" autoComplete="off" placeholder="비밀번호" value={values} onChange={(e) => setValues(e.target.value)} />
                         </div>
                         <Button type="submit">입장</Button>
                     </form>
