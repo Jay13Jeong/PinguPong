@@ -17,8 +17,9 @@ import { FriendService } from './friend.service';
     FriendService,
     JwtService,
     UsersService,
+    AuthService,
     {
-			provide: 'AUTH_SERVICE',
+			provide: 'AUTH_SERVICE', //jwt용 프로바이드.
 			useClass: AuthService,
 		},
   ],

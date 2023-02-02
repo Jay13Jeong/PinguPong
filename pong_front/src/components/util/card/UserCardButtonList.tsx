@@ -12,7 +12,7 @@ function UserCardButtonList(props: {friends: types.Friend[]}) {
     return (
         <CardList currPage={currPage} totalPage={totalPage} setCurrPage={setCurrPage}>
             {props.friends.slice(offset, offset + cardsPerPage).map((item) => 
-                <UserCardButton key={item.userId} userID={item.userId} userName={item.userName} userStatus={item.userStatus}/>
+                <UserCardButton friend={item} key={item.userId} userID={item.userId} userName={item.userName} userStatus={item.userStatus} relate={item.relate}/>
            )}
         </CardList>
     )

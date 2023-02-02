@@ -9,8 +9,7 @@ export default function Login() {
     // useEffect(() => {
     // }, []);
   return (
-    <div className="App">
-      
+    <div className="App">  
       <header className="App-header">
       <button style={{backgroundColor: "lightgrey"}} onClick={()=>{window.location.href = "http://localhost:3000/api/auth/42/login"}}>
       .-----------.<br/>
