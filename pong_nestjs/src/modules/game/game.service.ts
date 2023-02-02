@@ -41,7 +41,7 @@ class BattleClass{
 
     //게임마다 고유키
         //각 게임마다 가지고 있어야 할 것들, 공, 플레이어1,2 좌표
-    public constructor(player1Id:string, player1:string, player2Id:string, player2:string){
+    public constructor(player1Id:string, player1:string, player2Id:string, player2:string, speed:number){
         this.player1Id = player1Id;
         this.player2Id = player2Id;
         this.player1Name = player1;
@@ -53,8 +53,8 @@ class BattleClass{
         this.player1Ready = false;
         this.player2Ready = false;
 
-        this.goal = 2;
-        this.speed = 1;
+        this.goal = 100;
+        this.speed = speed;
 
         this.counter = undefined;
     }
@@ -193,12 +193,12 @@ class BattleClass{
         if (this.player1Id == socket.id){
             this.player1Ready = true;
             socket.join(this.roomName);
-            console.log('player1sockerRoom', socket.rooms);
+            //console.log('player1sockerRoom', socket.rooms);
         }
         if (this.player2Id == socket.id){
             this.player2Ready = true;
             socket.join(this.roomName);
-            console.log('player2sockerRoom', socket.rooms);
+            //console.log('player2sockerRoom', socket.rooms);
         }
         if (this.player1Ready && this.player2Ready){
             server.to(this.roomName).emit('startGame');//여기서 소켓 메시지보내기
@@ -219,10 +219,12 @@ class BattleClass{
             const newPos1 = this.game.player1 + Number(offset);
             if (newPos1 >= 0 && newPos1 <= this.sizes.canvasHeight - this.sizes.paddleSize)
                 this.game.player1 = newPos1;
+            break;
         case '2':
             const newPos2 = this.game.player2 + Number(offset);
             if (newPos2 >= 0 && newPos2 <= this.sizes.canvasHeight - this.sizes.paddleSize)
                 this.game.player2 = newPos2;
+            break;
         }
     }
 }
@@ -273,28 +275,28 @@ export class GameService {
         this.socketid.set(socketid, player);
         if (difficulty == '0'){
             this.easyLvUserList.add(socketid);
-            return this.createCheck(this.easyLvUserList, socketid);
+            return this.createCheck(this.easyLvUserList, socketid, 1);
         }
         else if (difficulty == '1'){
             this.normalLvUserList.add(socketid);
-            return this.createCheck(this.normalLvUserList, socketid);
+            return this.createCheck(this.normalLvUserList, socketid, 1.5);
         }
         else if (difficulty == '2'){
             this.hardLvUserList.add(socketid);
-            return this.createCheck(this.hardLvUserList, socketid);
+            return this.createCheck(this.hardLvUserList, socketid, 2);
         }
         return false;
     }
 
     //소켓id로 관리를 하자.
-    private createCheck(UserList:Set<string>, player1:string):boolean{
+    private createCheck(UserList:Set<string>, player1:string, speed:number):boolean{
         let player2:string;
         if (UserList.size >= 2) {//대기열이 2명이상이면 매칭후 방 만들기
             UserList.delete(player1);
             player2 = Array.from(UserList)[0];
             UserList.delete(player2);
             let roomName:string = this.socketid.get(player1) + 'vs' + this.socketid.get(player2);
-            this.vs.set(roomName, new BattleClass(player1, this.socketid.get(player1), player2, this.socketid.get(player2)));
+            this.vs.set(roomName, new BattleClass(player1, this.socketid.get(player1), player2, this.socketid.get(player2), speed));
             this.socketidRoomname.set(player1, roomName);
             this.socketidRoomname.set(player2, roomName);
             console.log('createRoom', roomName);
