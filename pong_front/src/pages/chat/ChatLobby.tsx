@@ -1,10 +1,13 @@
 import React, {useContext} from "react";
+import 'react-toastify/dist/ReactToastify.css';
 import { useSetRecoilState } from "recoil";
-import {createChatModalState} from "../../states/recoilModalState";
+import {createChatModalState, secretChatModalState} from "../../states/recoilModalState";
 import { SocketContext } from "../../states/contextSocket";
 import {Center, Stack} from "../../styles/Layout";
 import {Button} from "../../styles/Inputs";
 import ChatCardButtonList from "../../components/util/card/ChatCardButtonList";
+import CustomToastContainer from "../../components/util/CustomToastContainer";
+
 
 function ChatLobby() {
     /* socket */
@@ -15,9 +18,11 @@ function ChatLobby() {
 
     return (
     <Center>
+        <CustomToastContainer/>
         <Stack>
-            <Button onClick={(e) => {setCreateChatModal(true)}}>새 채팅방 생성</Button>
+            <h1>채팅방 리스트</h1>
             <ChatCardButtonList/>
+            <Button onClick={(e) => {setCreateChatModal(true)}}>새 채팅방 생성</Button>
         </Stack>
     </Center>
     );
