@@ -8,6 +8,7 @@ export interface Record {
 
 export interface User {
     id: number;
+    avatar? : string;
     userName: string;       // 유저 이름
     // TODO - 프로필 이미지?
     myProfile: boolean;     // 내 프로필인지

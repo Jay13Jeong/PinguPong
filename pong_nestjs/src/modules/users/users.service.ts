@@ -48,7 +48,7 @@ export class UsersService {
 			throw new NotFoundException('User not found');
 		}
 
-		if (user.avatar != 'default.png') {
+		if (user.avatar != 'default.jpeg') {
 			this.deleteFile('uploads/' + user.avatar);
 		}
 		user.avatar = filename;
@@ -60,10 +60,10 @@ export class UsersService {
 			throw new NotFoundException('User not found');
 		}
 
-		if (user.avatar != 'default.png') {
+		if (user.avatar != 'default.jpeg') {
 			this.deleteFile('uploads/' + user.avatar);
 		}
-		user.avatar = 'default.png';
+		user.avatar = 'default.jpeg';
 		this.save(user)
 		return 204;
 	}
