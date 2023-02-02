@@ -13,7 +13,7 @@ class BattleClass{
     private player2Ready:boolean;
     private myserver:Server;
 
-    private sizes:{canvasWidth:number, canvasHeight: number, lineWidth: number, paddleSize: number} = {
+    private sizes={//:{canvasWidth:number, canvasHeight: number, lineWidth: number, paddleSize: number} = {
         canvasWidth: 800,
         canvasHeight: 500,
         lineWidth: 12,
@@ -53,8 +53,10 @@ class BattleClass{
         this.player1Ready = false;
         this.player2Ready = false;
 
-        this.goal = 10;
+        this.goal = 2;
         this.speed = 1;
+
+        this.counter = undefined;
     }
 
     public matchEmit(server:Server){
@@ -63,6 +65,8 @@ class BattleClass{
     }
 
     public startGame(server:Server){
+        if (this.counter != undefined)//게임 중인지 확인하기
+            return ;
         console.log('startGame');
         this.myserver = server;
         this.gameStart();
@@ -184,6 +188,8 @@ class BattleClass{
 
     //사용자가 레디 눌렀는지 확인하기
     public requestStart(socket:Socket, server:Server):boolean {
+        if (this.counter != undefined)//게임이 시작중인지 확인하기
+            return ;
         if (this.player1Id == socket.id){
             this.player1Ready = true;
             socket.join(this.roomName);
@@ -197,11 +203,10 @@ class BattleClass{
         if (this.player1Ready && this.player2Ready){
             server.to(this.roomName).emit('startGame');//여기서 소켓 메시지보내기
             //this.player2socket.to(this.player1Id).emit('startGame');소켓이 to로 자기자신에게는 메세지를 못 보낸다.
-            //socket.to(this.roomName).emit('startGame');//2번쨰 누르는 사람은 못 받음,서버가 아닌 소켓이 룸에 보낼때는 브로드캐스팅인가?
+            //socket.to(this.roomName).emit('startGame');//2번쨰 누르는 사람은 못 받음,서버가 아닌 소켓이 룸에 보낼때는 브로드캐스팅인것 같다.
 
             console.log('startGame');
             return true;
-            //this.gameStart()
         }
         return false;
     }
@@ -243,18 +248,20 @@ export class GameService {
     public iGamegetout(client:Socket){
         if (!this.socketidRoomname.has(client.id)) {//대결중이 아니면 종료
             this.socketid.delete(client.id);
-            this.easyLvUserList.delete(client.id);
+            this.easyLvUserList.delete(client.id);//매칭중에 새로고침을 할 경우
             this.normalLvUserList.delete(client.id);
             this.hardLvUserList.delete(client.id);
             return ;
         }
+        //대결 중에 한명이 새로고침을 할경우 , but BattleClass이 이미 지웠지만, 다른 사용자가 새로고침할 경우 문제가 생길 수 있다
         const roomName:string = this.socketidRoomname.get(client.id);
         const vs:BattleClass = this.vs.get(roomName);
 
-        console.log('iGamegetout', this.vs.get(roomName));
-        let winner:string = vs.iGameLoser(client.id);//이긴 사람의 소켓 id
-        
-        this.socketidRoomname.delete(winner);
+        console.log('iGamegetout', roomName);
+        if (vs != undefined){//but BattleClass이 이미 지웠지만, 다른 사용자가 새로고침할 경우 문제가 생길 수 있다
+            let winner:string = vs.iGameLoser(client.id);//이긴 사람의 소켓 id
+            this.socketidRoomname.delete(winner);
+        }
         this.socketidRoomname.delete(client.id);
         this.socketid.delete(client.id);
         this.vs.delete(roomName);//방 지우기

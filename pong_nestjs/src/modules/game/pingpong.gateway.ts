@@ -19,15 +19,15 @@ import { Inject } from '@nestjs/common';
 
     //OnGatewayConnection를 오버라이딩
     async handleConnection(client : Socket) {
-      //console.log('ping', client.id);//client.rooms와 값이 같다
-      //console.log(client.rooms);
+      console.log('ping', client.id);//client.rooms와 값이 같다
+      console.log(client.rooms);
       //들어온 유저 로그 찍기
 
     }
     
     //OnGatewayDisconnect를 오버라이딩
     async handleDisconnect(client : Socket) {
-      //console.log('ping 소켓 끊김 : ', client.id);
+      console.log('ping 소켓 끊김 : ', client.id);
       //게임 중인지 파악하고 패배시키기
       this.gameService.iGamegetout(client);
     }
@@ -39,6 +39,7 @@ import { Inject } from '@nestjs/common';
        let difficulty = data.difficulty;
        let player = data.player;
        console.log('requestMatchMake', client.id, data, difficulty, player);
+       console.log('room', client.id, client.rooms);
       // 1. 같은 난이도를 요청한 플레이어가 큐에 있을 경우 게임 매치
       // 2. 같은 난이도를 요청한 플레이어가 큐에 없을 경우 해당 플레이어를 큐에 넣는다.
        if (this.gameService.matchMake(difficulty, player, client.id)){
