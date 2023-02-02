@@ -61,7 +61,7 @@ function ProfileEditModal(props: {name: string}) {
                     </div>
                 </div> */}
                 <div className="profile-button-wrapper">
-                    Avatar : {/* <input id="avatar" name="avatar" type="text" placeholder="https://cdn.myanimelist.net/images/characters/11/421848.jpg" onChange={event => setAvatar(event.target.value)} value={avatar} /> */}
+                    Avatar : 
                     <select onChange={event => setAvatar(event.target.value)} value={avatar}>
                         <option value="default.jpeg" key="default.jpeg">Pinga</option>
                         <option value="favicon.ico" key="favicon.ico">Pingu</option>

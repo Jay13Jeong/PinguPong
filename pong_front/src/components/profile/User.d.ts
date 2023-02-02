@@ -20,6 +20,7 @@ export interface User {
     // 본인 정보가 아닐 경우에 추가되는 정보
     following?: boolean;    // 팔로우 중인지
     block?: boolean;        // 차단했는지
+    relate?: string; //api에서 받아온 차단 및 친구 상태. accepted, blocked, pending.
 }
 
 export interface Friend {

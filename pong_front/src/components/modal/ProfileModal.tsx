@@ -98,6 +98,10 @@ function ProfileModal(props: {user : types.User}) {
         })
     }, [showModal]);
 
+    // useEffect(() => {
+    //     setUserInfo(userInfo);
+    // }, [userInfo]);
+
     function showStatus(status: string){
         switch(status) {
             case "on":
@@ -189,14 +193,14 @@ function ProfileModal(props: {user : types.User}) {
         }
         return (
             <div className="profile-button-wrapper">
-                {userInfo.following ? 
+                {userInfo.relate === 'accepted' ? 
                 <button className="profile-button" onClick={handleUnfollow}>
                     <FontAwesomeIcon icon={faUserMinus}/> Unfollow
                 </button> :
                 <button className="profile-button" onClick={handleFollow}>
                     <FontAwesomeIcon icon={faUserPlus}/> Follow
                 </button>}
-                {userInfo.block ? 
+                {userInfo.relate == 'blocked' ? 
                 <button className="profile-button" onClick={handleUnblock}>
                     <FontAwesomeIcon icon={faUser}/> Unblock
                 </button> :
