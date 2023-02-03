@@ -124,6 +124,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       this.server.to(client.id).emit('/api/post/newRoom', false);
   }
 
+  @SubscribeMessage('/api/get/master/status')//내가 마스터 이면 true, 아니면 false
+  async getMasterStatus(client : Socket) { 
+    console.log('/api/get/master/status', client.id);
+
+    this.server.to(client.id).emit('/api/get/master/status', this.rooms.getMasterStatus(client.id));// 리스트 보내주기, 클래스 함수 리턴값으로 고치기
+  }
+
   @SubscribeMessage('/api/get/RoomList')//브라우저가 채팅방 리스트 요청함
   async getChatList(client : Socket) { 
     console.log('/api/get/RoomList', client.id, Array.from(this.rooms.getRoomList()));
