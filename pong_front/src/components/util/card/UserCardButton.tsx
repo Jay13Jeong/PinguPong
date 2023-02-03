@@ -67,7 +67,7 @@ function UserCardButton(props: {friend: Friend, userID: number, userName: string
 
     return (
         <CardButton onClick={(e) => clickHandler(props.friend.you, props.userID, e)}>
-            {showRelate(props.relate)}
+            {/* {showRelate(props.relate)} */}
             <span className="user-id">{props.userName}</span>
             {showStatus(props.userStatus)}
         </CardButton>

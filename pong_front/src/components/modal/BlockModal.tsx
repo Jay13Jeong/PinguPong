@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import { useRecoilState } from "recoil";
-import { friendModalState, profileModalState } from "../../states/recoilModalState";
+import { blockModalState, profileModalState } from "../../states/recoilModalState";
 import UserCardButtonList from "../util/card/UserCardButtonList";
 import * as types from "../profile/User"
 import ModalBase from "./ModalBase"
@@ -8,9 +8,9 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 function FriendModal() {
-    const [target, setTarget] = useState('');
+    // const [target, setTarget] = useState('');
     const [showProfileModal, setShowProfileModal] = useRecoilState(profileModalState);
-    const [showModal, setShowModal] = useRecoilState(friendModalState);
+    const [showModal, setShowModal] = useRecoilState(blockModalState);
     const [friendList, setFriendList] = useState<types.Friend[]>([
         {
             userId: 1,
@@ -57,7 +57,7 @@ function FriendModal() {
         axios.get('http://localhost:3000/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
         .then(res2 => {
             /////
-            axios.get('http://localhost:3000/api/friend', {withCredentials: true}) //쿠키와 함께 보내기 true.
+            axios.get('http://localhost:3000/api/friend/block', {withCredentials: true}) //쿠키와 함께 보내기 true.
             .then(res => {
                 if (res.data){
                     let myFriends : types.Friend[] = res.data.map((friend: any) => {
@@ -108,28 +108,29 @@ function FriendModal() {
             // if (err.response.data.statusCode === 401)
             // navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
         })
-    }, [showModal, showProfileModal, handleAddFriendSubmit]);
+        
+    }, [showModal, showProfileModal]);
 
-    function handleAddFriendSubmit(event : any) {
-        event.preventDefault();
-        axios.post('http://localhost:3000/api/friend/name', {username : target}, {withCredentials: true})
-        .then(res => {
-            console.log('follow send to ' + target);
-        })
-        .catch(err => {
-            console.log(err.message);
-            console.log('invalid username');
-        })
-    };
+    // function handleAddFriendSubmit(event : any) {
+    //     event.preventDefault();
+    //     axios.post('http://localhost:3000/api/friend/name', {username : target}, {withCredentials: true})
+    //     .then(res => {
+    //         console.log('block ok');
+    //     })
+    //     .catch(err => {
+    //         console.log(err.message);
+    //         console.log('invalid username');
+    //     })
+    // };
 
     if (showModal) {
         return (
             <ModalBase setter={setShowModal}>
-                <h1>Friend List</h1>
-                <input type="text" placeholder="이름으로 찾기" onChange={event => setTarget(event.target.value)} value={target} />
+                <h1>Block List</h1>
+                {/* <input type="text" placeholder="이름으로 찾기" onChange={event => setTarget(event.target.value)} value={target} />
                 <button className="profile-button" onClick={handleAddFriendSubmit}>
                     친구추가
-                </button>
+                </button> */}
                 <UserCardButtonList friends={friendList}/>
             </ModalBase>
         );

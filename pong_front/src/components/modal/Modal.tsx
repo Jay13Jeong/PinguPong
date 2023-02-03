@@ -5,15 +5,17 @@ import ProfileEditModal from "./ProfileEditModal";
 import CreateChatModal from "./CreateChatModal";
 import SecretChatModal from "./SecretChatModal";
 import * as types from "../profile/User"
+import BlockModal from "./BlockModal";
 
 
-function Modal(props: {user : types.User}) {
+function Modal() {
     return (
         <>
             <CreateChatModal />
             <DMModal />
-            <FriendModal user={props.user} />
-            <ProfileModal user={props.user}/>
+            <BlockModal/>
+            <FriendModal/>
+            <ProfileModal/>
             {/* <ProfileEditModal /> */}
         </>
     );

@@ -57,6 +57,15 @@ export class FriendController {
 		return await this.friendServices.getFriends(user.id);
 	}
 
+    @Get('block')
+    @UseGuards(JwtAuthGuard)
+    async getBlockList(@Req() req)
+	{
+        const user = req.user as User;
+        // console.log("322?");
+		return await this.friendServices.getBlocks(user.id);
+	}
+
     //이름으로 친구초대 또는 수락하는 api.
     @Post('name')
     @UseGuards(JwtAuthGuard)

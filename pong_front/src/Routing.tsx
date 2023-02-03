@@ -18,13 +18,14 @@ import ChatManageModal from './pages/chat/ChatManageModal';
 import GameWatchPage from './pages/game/GameWatchPage';
 import GameWatchRoomPage from './pages/game/GameWatchRoomPage'
 import ChatLobby from './pages/chat/ChatLobby';
+import { SetterOrUpdater } from 'recoil';
 
-export default function Routing() {
+export default function Routing(props: {setter: SetterOrUpdater<any>}) {
     return (
       <Routes>
         {/* <Route path="/" element={<Test />} /> */}
-        <Route path="/lobby" element={<Lobby />} />
-        {/* <Route path="/chatt" element={<ChatLobbyPage />} /> */}
+        <Route path="/lobby" element={<Lobby setter={props.setter}/>} />
+        <Route path="/chatt" element={<ChatLobbyPage />} />
         <Route path="/chat" element={<ChatLobby />} />
         {/* <Route path="/chat/create" element={<CreateChatModal />} />
         <Route path="/chat/select/private/:id" element={<SelectPrivateChatModal />} /> */}
