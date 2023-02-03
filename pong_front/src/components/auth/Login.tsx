@@ -1,17 +1,13 @@
-// import { useState, useEffect } from 'react';
-// import logo from '../logo.svg';
 import '../../App.css';
 import pingu from "../../assets/Pingu3D.png"
 import "./Login.scss"
 
 export default function Login() {
-    // const [test, setTest] = useState(0);
-    // useEffect(() => {
-    // }, []);
   return (
-    <div className="App">  
+    <div className="App">
       <header className="App-header">
-      <button style={{backgroundColor: "lightgrey"}} onClick={()=>{window.location.href = "http://localhost:3000/api/auth/42/login"}}>
+      <img src={require("../../assets/pingu-lollipop.gif")} className='background-pinga'/>
+      <button className='loginbtn' style={{backgroundColor: "skyblue"}} onClick={()=>{window.location.href = "http://localhost:3000/api/auth/42/login"}}>
       .-----------.<br/>
       | <b>LOGIN</b> |<br/>
       '-----------'

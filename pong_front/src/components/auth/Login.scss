@@ -18,3 +18,17 @@
         animation: move 2s cubic-bezier(0,.5,1,.5) infinite;
     }
 }
+
+.background-pinga {
+	position: fixed;
+	z-index: -1;
+	width: 100%;
+	left: 0;
+	top: 0;
+}
+
+.loginbtn {
+    opacity: 70%;
+    font-size: 300%;
+    border-radius: 10px;
+}

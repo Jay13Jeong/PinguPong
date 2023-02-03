@@ -117,8 +117,7 @@ function FriendModal() {
             console.log('follow send to ' + target);
         })
         .catch(err => {
-            console.log(err.message);
-            console.log('invalid username');
+            alert(err.response.data.message);
         })
     };
 
