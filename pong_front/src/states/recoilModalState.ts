@@ -1,13 +1,24 @@
 import { atom } from "recoil"
+import { User } from "../components/profile/User"
 
 export const dmModalState = atom<boolean>({
     key: "dmmodalstate",
     default: false
 })
 
-export const profileModalState = atom<{userId: number, show: boolean}>({
+export const profileModalState = atom<{user?:User, userId: number, show: boolean}>({
     key: "profilemodalstate",
     default: {
+        user: {
+            id: 0,
+            avatar: "test.jpg",
+            userName: "pinga",
+            myProfile: true, 
+            userStatus: "test",
+            rank: 0,
+            odds: 0,
+            record: []
+        },
         userId: 0,
         show: false
     }
@@ -23,6 +34,11 @@ export const friendModalState = atom<boolean>({
     default: false
 })
 
+export const blockModalState = atom<boolean>({
+    key: "blockmodalstate",
+    default: false
+})
+
 export const createChatModalState = atom<boolean>({
     key: "createchatmodalstate",
     default: false
@@ -34,4 +50,9 @@ export const secretChatModalState = atom<{roomName: string, show: boolean}>({
         roomName: "",
         show: false
     }
+})
+
+export const loginState = atom<boolean>({
+    key: "loginstate",
+    default: false
 })

@@ -103,15 +103,14 @@ export class FriendService {
 		// 		this.chatService.leaveChat(friendship.sender.id, chatID.id);
 		// }
 		if (friendship) { //차단 대상이 친구목록 테이블에 있을 때.
-				friendship.status = 'blocked';
+				// friendship.status = 'blocked';
+				await this.repo.remove(friendship)
 		}
-		else { //차단 대상이 친구목록 테이블에 없을 때.
-			friendship = this.repo.create({
-				sender: sender,
-				reciever: reciever,
-				status: 'blocked'
-			});
-		}
+		friendship = this.repo.create({
+			sender: sender,
+			reciever: reciever,
+			status: 'blocked'
+		});
 		return this.repo.save(friendship);
 	}
 
@@ -132,5 +131,34 @@ export class FriendService {
 		if (friendship.status != 'blocked')
 			throw new BadRequestException('이미 차단 되지 않은 대상.');
 		return await this.repo.remove(friendship);
+	}
+
+	async getFriends(id: number): Promise<Friend[]> {
+		const user = await this.userService.findUserById(id);
+		if (!user)
+			throw new NotFoundException('User not found');
+		const friends = await this.repo.find({
+			relations: ['sender', 'reciever'],
+			where: [
+				{ sender: { id: user.id }, status: 'accepted' },
+				{ reciever: { id: user.id }, status: 'accepted' },
+			],
+		});
+		// console.log(friends);
+		return friends;
+	}
+
+	async getBlocks(id: number): Promise<Friend[]> {
+		const user = await this.userService.findUserById(id);
+		if (!user)
+			throw new NotFoundException('User not found');
+		const friends = await this.repo.find({
+			relations: ['sender', 'reciever'],
+			where: [
+				{ sender: { id: user.id }, status: 'blocked' },
+			],
+		});
+		// console.log(friends);
+		return friends;
 	}
 }

@@ -43,14 +43,23 @@
 //   }
 // }
 
+import { Inject } from '@nestjs/common';
 import { WebSocketGateway, WebSocketServer, SubscribeMessage, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
 import { chatClass } from '../../core/chat/chatClass';
+import { AuthService } from '../auth/auth.service';
+import { User } from '../users/user.entity';
+import { UsersService } from '../users/users.service';
 
 @WebSocketGateway({
   cors: { origin: '*' }//, namespace: 'api/chat'
 })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
+  constructor(
+    @Inject('AUTH_SERVICE') private readonly authService: AuthService,
+		private readonly userService: UsersService,
+  ) { }
+
   @WebSocketServer()
   server: Server;
 
@@ -61,6 +70,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.server.to(client.id).emit('getUser');//해당 클라이언트에게만 보내기
     //console.log('chat', client.id);//client.rooms와 값이 같다
     //console.log(client.rooms);
+    const user = await this.findUserBySocket(client);
+    // console.log(user);
   }
   
   //OnGatewayDisconnect를 오버라이딩
@@ -69,6 +80,28 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     //console.log('delUser', client.id);
   }
 
+  //비정제 쿠키 데이터를 파싱하는 메소드.
+  private parseCookie (cookies: string) {
+		const cookieMap = {};
+		cookies && cookies.split(';').forEach((cookie) => {
+			const parts = cookie.split('=');
+			cookieMap[parts.shift().trim()] = decodeURI(parts.join('='));
+		});
+		return cookieMap;
+	}
+
+  //웹소켓의 헤더에서 jwt토큰을 추출하여 해당하는 유저정보를 디비에서 반환하는 메소드.
+  private async findUserBySocket (client: Socket): Promise<User> {
+		const cookies = this.parseCookie(client.handshake.headers.cookie);
+		const payload = await this.authService.verifyJWToken(cookies['jwt'])
+		if (!payload)
+			return null;
+		const user = await this.userService.findUserById(payload.sub)
+		if (!user)
+			return null;
+		return user;
+	}
+  
   @SubscribeMessage('delUser')//해당 유저 지우기, 방에서 나가기 누를 경우
   async delUser(client : Socket) {
     console.log('delUser', client.id);

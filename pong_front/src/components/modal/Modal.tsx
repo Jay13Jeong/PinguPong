@@ -4,6 +4,9 @@ import ProfileModal from "./ProfileModal";
 import ProfileEditModal from "./ProfileEditModal";
 import CreateChatModal from "./CreateChatModal";
 import SecretChatModal from "./SecretChatModal";
+import * as types from "../profile/User"
+import BlockModal from "./BlockModal";
+
 
 function Modal() {
     return (
@@ -11,9 +14,10 @@ function Modal() {
             <CreateChatModal />
             <SecretChatModal />
             <DMModal />
-            <FriendModal />
-            <ProfileModal />
-            <ProfileEditModal />
+            <BlockModal/>
+            <FriendModal/>
+            <ProfileModal/>
+            {/* <ProfileEditModal /> */}
         </>
     );
 }
