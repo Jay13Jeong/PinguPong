@@ -184,6 +184,7 @@ export class chatClass {
             this.socketid.set(master, roomName);
         }
         else{
+            //비번 확인하는 구조 넣기//게이트웨이 단에서 비번 확인할 때 체크함
             this.addUser(roomName, master, userid);
             this.socketid.set(master, roomName);
         }
