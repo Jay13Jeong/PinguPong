@@ -11,13 +11,13 @@ import { User } from './modules/users/user.entity';
 import { ChatGateway } from './modules/chat/chat.gateway';
 import { Friend } from './modules/friend/friend.entity';
 import { FriendModule } from './modules/friend/friend.module';
-import { GameModule } from './modules/game/game.module';
 import { Game } from './modules/game/game.entity';
 import { Ban, Chat } from './modules/chat/chat.entity';
 import { Message } from './modules/chat/msg.entity';
 import { AuthService } from './modules/auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from './modules/users/users.service';
+import { SocketModule } from './modules/socket/socket.module';
 
 @Module({
   imports: [
@@ -37,18 +37,12 @@ import { UsersService } from './modules/users/users.service';
     UsersModule,
     AuthModule,
     FriendModule,
-    GameModule,
+    SocketModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
-    ChatGateway,
-		{
-			provide: 'AUTH_SERVICE',
-			useClass: AuthService,
-		},
-		JwtService,
-		UsersService,
+	
   ],
 })
 export class AppModule {}
