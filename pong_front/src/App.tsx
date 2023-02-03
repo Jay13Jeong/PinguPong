@@ -59,11 +59,9 @@ function App() {
     <ThemeProvider theme={theme}>
       <BrowserRouter>
         <RecoilRoot>
-        
           <GlobalStyle />
           <SocketContext.Provider value={socket}>
-            {loginOk? <TopMenuBar/>
-            : null}
+            {loginOk? <TopMenuBar setter={setLoginOk}/> : null}
             <Modal/>
             <Routing setter={setLoginOk} />
           </SocketContext.Provider>
