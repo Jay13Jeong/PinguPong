@@ -69,6 +69,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     //console.log('delUser', client.id);
   }
 
+  @SubscribeMessage('delUser')//해당 유저 지우기, 방에서 나가기 누를 경우
+  async delUser(client : Socket) {
+    console.log('delUser', client.id);
+    this.rooms.delUser(client.id);
+  }
+
   @SubscribeMessage('getUser')//해당 유저 등록하기
   async getUser(client : Socket, data) {
     let room =data.roomName;
