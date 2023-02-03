@@ -101,12 +101,19 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			return null;
 		return user;
 	}
+  
+  @SubscribeMessage('delUser')//해당 유저 지우기, 방에서 나가기 누를 경우
+  async delUser(client : Socket) {
+    console.log('delUser', client.id);
+    this.rooms.delUser(client.id);
+  }
 
   @SubscribeMessage('getUser')//해당 유저 등록하기
   async getUser(client : Socket, data) {
-    let [room, userId, socretpw] = data;
-    console.log('getUser', client.id, data, room, userId, socretpw);
-    this.rooms.newRoom(room, client.id, userId, socretpw);
+    let room =data.roomName;
+    let userId = data.userId;//비밀번호 안 받음 ''이거로 변경
+    console.log('getUser', client.id, data, room, userId, '');
+    this.rooms.newRoom(room, client.id, userId, '');
   }
 
   @SubscribeMessage('chat')// 테스트용, 음소거, 차단 유무까지 확인을 해야한다.
@@ -117,14 +124,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (this.rooms.checkmuteuser(room, client.id))//음소거 상태인지 확인하기
       return ;
     const sockets = this.rooms.getSocketList(room);
-    const blockuser = this.rooms.getblockuser(room, client.id);
-    for (let id of sockets){
-      if (blockuser == undefined)
+    const blockuser = this.rooms.getblockuser(room, client.id);//나중에 디비에서 값 가져오기
+    for (let id of sockets) {
+      if (blockuser == undefined)//나를 차단한 유저가  없을  경우
         this.server.to(id).emit('chat', userid, msg);
-      else if (!blockuser.includes(id))
+      else if (!blockuser.includes(id))//차단한 유저리스트가 있을 때, 리스트에 없는 사람에게 메세지 보냄
         this.server.to(id).emit('chat', userid, msg);
     }
-  }
+  } 
 
   //방이름 :보내면, 공개방이면 true, 비밀방이면 false 반환
   @SubscribeMessage('/api/check/secret')
@@ -135,14 +142,19 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.server.to(client.id).emit('/api/check/secret', this.rooms.checksecret(roomName));
    }
 
-  //방이름, 비밀번호: 받아서 맞으면 true. 틀리면 false
+  //방이름, 비밀번호: 받아서 맞으면 true. 틀리면 false// 맞으면 바로 등록해주기
   @SubscribeMessage('/api/post/secretPW')
   async checksecretPw(client : Socket, data) { 
     let roomName = data.roomName;
     let secretPW = data.secret;
+    let userId = data.secret;
 
-    console.log('/api/post/secretPW', client.id, data, roomName, secretPW);
-    this.server.to(client.id).emit('/api/post/secretPW', this.rooms.checksecretPw(roomName, secretPW));
+    console.log('/api/post/secretPW', client.id, data, roomName, secretPW, userId);
+    if (this.rooms.checksecretPw(roomName, secretPW)){
+      this.rooms.newRoom(roomName, client.id, userId, '');
+      this.server.to(client.id).emit('/api/post/secretPW', true);
+    }else
+    this.server.to(client.id).emit('/api/post/secretPW', false);
   }
 
   @SubscribeMessage('/api/post/newRoom')//새로운 방 만들기, 이미 있는 방이름이면 false 반환
@@ -150,11 +162,18 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     let [room, userId, secretpw] = data;
     console.log('/api/post/newRoom', client.id, data, room, userId, secretpw);
     if (!this.rooms.roomCheck(room)){
-      this.rooms.newRoom(room, userId, client.id, secretpw);
+      this.rooms.newRoom(room, client.id, userId, secretpw);
       this.server.to(client.id).emit('/api/post/newRoom', true);
     }
     else
       this.server.to(client.id).emit('/api/post/newRoom', false);
+  }
+
+  @SubscribeMessage('/api/get/master/status')//내가 마스터 이면 true, 아니면 false
+  async getMasterStatus(client : Socket) { 
+    console.log('/api/get/master/status', client.id);
+
+    this.server.to(client.id).emit('/api/get/master/status', this.rooms.getMasterStatus(client.id));// 리스트 보내주기, 클래스 함수 리턴값으로 고치기
   }
 
   @SubscribeMessage('/api/get/RoomList')//브라우저가 채팅방 리스트 요청함
