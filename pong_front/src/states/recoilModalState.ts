@@ -56,3 +56,11 @@ export const loginState = atom<boolean>({
     key: "loginstate",
     default: false
 })
+
+export const changeChatPwModalState = atom<{roomName: string, show: boolean}>({
+    key: "changechatpwmodalstate",
+    default: {
+        roomName: "",
+        show: false
+    }
+})
