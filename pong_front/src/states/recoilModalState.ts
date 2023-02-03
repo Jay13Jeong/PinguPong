@@ -34,6 +34,11 @@ export const friendModalState = atom<boolean>({
     default: false
 })
 
+export const blockModalState = atom<boolean>({
+    key: "blockmodalstate",
+    default: false
+})
+
 export const createChatModalState = atom<boolean>({
     key: "createchatmodalstate",
     default: false
@@ -45,4 +50,9 @@ export const secretChatModalState = atom<{roomName: string, show: boolean}>({
         roomName: "",
         show: false
     }
+})
+
+export const loginState = atom<boolean>({
+    key: "loginstate",
+    default: false
 })

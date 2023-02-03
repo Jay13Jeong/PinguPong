@@ -1,18 +1,19 @@
 import React, {useState} from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEnvelope, faCircleUser, faPeopleGroup } from "@fortawesome/free-solid-svg-icons";
+import { faEnvelope, faCircleUser, faPeopleGroup, faUserAltSlash, faUserSlash } from "@fortawesome/free-solid-svg-icons";
 import { useSetRecoilState } from "recoil";
 import * as modalState from "../states/recoilModalState"
 import logo from "../assets/logo.png";
 import "./TopMenuBar.scss";
 import { User } from "./profile/User";
 
-function TopMenuBar(props: {user : User}) {
+function TopMenuBar() {
   
   const dmState = useSetRecoilState(modalState.dmModalState);
   const profileState = useSetRecoilState(modalState.profileModalState);
   const friendState = useSetRecoilState(modalState.friendModalState);
+  const blockState = useSetRecoilState(modalState.blockModalState);
 
   const showDmModal = () => {
     dmState(true);
@@ -24,6 +25,10 @@ function TopMenuBar(props: {user : User}) {
 
   const showFriendModal = () => {
     friendState(true);
+  }
+
+  const showBlockModal = () => {
+    blockState(true);
   }
 
   return (
@@ -39,6 +44,9 @@ function TopMenuBar(props: {user : User}) {
       </span>
       </Link>
       <div className="navi-right-button">
+        <button onClick={showBlockModal} >
+          <FontAwesomeIcon icon={faUserSlash}/>
+        </button>
         <button onClick={showFriendModal} >
           <FontAwesomeIcon icon={faPeopleGroup}/>
         </button>
