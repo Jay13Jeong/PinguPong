@@ -15,6 +15,9 @@ import { GameModule } from './modules/game/game.module';
 import { Game } from './modules/game/game.entity';
 import { Ban, Chat } from './modules/chat/chat.entity';
 import { Message } from './modules/chat/msg.entity';
+import { AuthService } from './modules/auth/auth.service';
+import { JwtService } from '@nestjs/jwt';
+import { UsersService } from './modules/users/users.service';
 
 @Module({
   imports: [
@@ -37,6 +40,15 @@ import { Message } from './modules/chat/msg.entity';
     GameModule,
   ],
   controllers: [AppController],
-  providers: [AppService, ChatGateway],
+  providers: [
+    AppService,
+    ChatGateway,
+		{
+			provide: 'AUTH_SERVICE',
+			useClass: AuthService,
+		},
+		JwtService,
+		UsersService,
+  ],
 })
 export class AppModule {}
