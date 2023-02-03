@@ -19,7 +19,8 @@ import ProfileEditModal from "./ProfileEditModal";
     }
  */
 
-function ProfileModal(props: {user : types.User}) {
+function ProfileModal() {
+    const [showEditModal, setShowEditModal] = useRecoilState(profileEditModalState);
     const  [showModal, setShowModal] = useRecoilState(profileModalState);
     const setProfileEditState = useSetRecoilState(profileEditModalState);
     
@@ -96,7 +97,7 @@ function ProfileModal(props: {user : types.User}) {
             if (err.response.data.statusCode === 401)
             navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
         })
-    }, [showModal]);
+    }, [showModal, showEditModal]);
 
     // useEffect(() => {
     //     setUserInfo(userInfo);
