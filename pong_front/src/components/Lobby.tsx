@@ -45,6 +45,7 @@ export default function Lobby(props: {setter: SetterOrUpdater<any>}) {
     <div className="App">
       
       <header className="App-header">
+      <img src={require("../assets/pingu-lollipop.gif")} className='background-pinga'/>
         <Link to="/game">
           <Button primary>GAME</Button>
         </Link>
