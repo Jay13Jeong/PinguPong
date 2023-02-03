@@ -174,7 +174,7 @@ export class chatClass {
     public getMasterStatus(socketid:string):boolean{//내가 마스터 이면 true, 아니면 false
         const room:roomClass = this.rooms.get(this.socketid.get(socketid));
 
-        return  room.getMasterStatus(socketid);
+        return room.getMasterStatus(socketid);
     }
 
     // 새로운 채팅방 추가,일단 소켓으로 알려주고 추후 api로 변경 되면 소켓 부분 제거하기

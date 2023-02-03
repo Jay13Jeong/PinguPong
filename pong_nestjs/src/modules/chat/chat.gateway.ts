@@ -117,7 +117,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     let [room, userId, secretpw] = data;
     console.log('/api/post/newRoom', client.id, data, room, userId, secretpw);
     if (!this.rooms.roomCheck(room)){
-      this.rooms.newRoom(room, userId, client.id, secretpw);
+      this.rooms.newRoom(room, client.id, userId, secretpw);
       this.server.to(client.id).emit('/api/post/newRoom', true);
     }
     else
