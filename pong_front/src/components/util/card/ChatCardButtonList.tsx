@@ -1,11 +1,16 @@
 import React, {useState, useEffect, useContext} from "react";
 import { SocketContext } from "../../../states/contextSocket";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import CardList from "./CardList";
 import ChatCardButton from "./ChatCardButton";
+import SecretChatModal from "../../modal/SecretChatModal";
 
 function ChatCardButtonList() {
     /* socket */
     const socket = useContext(SocketContext);
+    const [current, setCurrent] = useState<string>("");     // 현재 유저의 id
+    const navigate = useNavigate();
 
     /* state */
     // const [chatRooms, setChatRooms] = useState<IterableIterator<string>>();
@@ -30,20 +35,37 @@ function ChatCardButtonList() {
     let totalPage = Math.ceil(chatRooms.length / cardsPerPage);
 
     useEffect(() => {
+        axios.get('http://localhost:3000/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
+        .then(res => {
+            // console.log(res.data);
+            if (res.data){
+                setCurrent(res.data.username as string);
+            }
+        })
+        .catch(err => {
+            if (err.response.data.statusCode === 401)
+            navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
+        })
         // TODO - 채팅방 목록을 보내달라 요청
         socket.emit('/api/get/RoomList');
         // TODO - 받아온 채팅방 목록을 state에 저장
         socket.on('/api/get/RoomList', (data: any) => {
             setChatRooms(data);
         });
+        return (() => {
+            socket.off('/api/get/RoomList');
+        })
     }, []);
 
     return (
+        <>
+        <SecretChatModal current={current}/>
         <CardList currPage={currPage} totalPage={totalPage} setCurrPage={setCurrPage}>
             {chatRooms.slice(offset, offset + cardsPerPage).map((item, index) => 
-                <ChatCardButton key={index} roomName={item}/>
-           )}
+                <ChatCardButton key={index} roomName={item} current={current}/>
+                )}
         </CardList>
+        </>
     )
 }
 

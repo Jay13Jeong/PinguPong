@@ -11,7 +11,6 @@ function Modal(props: {user : types.User}) {
     return (
         <>
             <CreateChatModal />
-            <SecretChatModal />
             <DMModal />
             <FriendModal user={props.user} />
             <ProfileModal user={props.user}/>
