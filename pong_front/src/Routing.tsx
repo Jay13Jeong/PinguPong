@@ -25,7 +25,7 @@ export default function Routing(props: {setter: SetterOrUpdater<any>}) {
       <Routes>
         {/* <Route path="/" element={<Test />} /> */}
         <Route path="/lobby" element={<Lobby setter={props.setter}/>} />
-        <Route path="/chatt" element={<ChatLobbyPage />} />
+        {/* <Route path="/chatt" element={<ChatLobbyPage />} /> */}
         <Route path="/chat" element={<ChatLobby />} />
         {/* <Route path="/chat/create" element={<CreateChatModal />} />
         <Route path="/chat/select/private/:id" element={<SelectPrivateChatModal />} /> */}

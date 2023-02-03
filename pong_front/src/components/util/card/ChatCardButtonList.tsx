@@ -5,12 +5,18 @@ import axios from "axios";
 import CardList from "./CardList";
 import ChatCardButton from "./ChatCardButton";
 import SecretChatModal from "../../modal/SecretChatModal";
+import useAxios from "../../../util/useAxios";
 
 function ChatCardButtonList() {
     /* socket */
+    const [myInfo, error, isLoading] = useAxios('http://localhost:3000/api/user');
     const socket = useContext(SocketContext);
     const [current, setCurrent] = useState<string>("");     // 현재 유저의 id
     const navigate = useNavigate();
+
+    console.log("myInfo: ", myInfo);
+    console.log("error: ", error);
+    console.log("isLoading: ", isLoading);
 
     /* state */
     // const [chatRooms, setChatRooms] = useState<IterableIterator<string>>();
@@ -35,17 +41,24 @@ function ChatCardButtonList() {
     let totalPage = Math.ceil(chatRooms.length / cardsPerPage);
 
     useEffect(() => {
-        axios.get('http://localhost:3000/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
-        .then(res => {
-            // console.log(res.data);
-            if (res.data){
-                setCurrent(res.data.username as string);
-            }
-        })
-        .catch(err => {
-            if (err.response.data.statusCode === 401)
-            navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
-        })
+        if (myInfo !== null) {
+            console.log('current', current);
+            setCurrent(myInfo.username as string);
+        }
+    }, [error, isLoading]);
+
+    useEffect(() => {
+        // axios.get('http://localhost:3000/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
+        // .then(res => {
+        //     // console.log(res.data);
+        //     if (res.data){
+        //         setCurrent(res.data.username as string);
+        //     }
+        // })
+        // .catch(err => {
+        //     if (err.response.data.statusCode === 401)
+        //     navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
+        // })
         // TODO - 채팅방 목록을 보내달라 요청
         socket.emit('/api/get/RoomList');
         // TODO - 받아온 채팅방 목록을 state에 저장
