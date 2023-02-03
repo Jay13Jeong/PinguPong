@@ -9,6 +9,7 @@ import { faCircle, faUserPen, faUserPlus, faUserMinus, faUser, faUserSlash, faPa
 import "./ProfileModal.scss"
 import * as types from "../profile/User"
 import axios from "axios";
+import ProfileEditModal from "./ProfileEditModal";
 
 /**
  * profileModalState
@@ -18,10 +19,10 @@ import axios from "axios";
     }
  */
 
-function ProfileModal() {
+function ProfileModal(props: {user : types.User}) {
     const  [showModal, setShowModal] = useRecoilState(profileModalState);
     const setProfileEditState = useSetRecoilState(profileEditModalState);
-
+    
     const [userInfo, setUserInfo] = useState<types.User>({
         id: 0,
         avatar: "https://cdn.myanimelist.net/images/characters/11/421848.jpg",
@@ -71,24 +72,35 @@ function ProfileModal() {
         .then(res => {
             // console.log(res.data);
             if (res.data){
-                let myInfo : types.User = {
-                    id : res.data.id,
-                    avatar: res.data.avatar,
-                    userName : res.data.username as string,
-                    myProfile : true,
-                    userStatus : 'off',
-                    rank : 0,
-                    odds : 50,
-                    record : [],
-                };
-                setUserInfo(myInfo);
+                if (showModal.userId !== res.data.id && showModal.userId !== 0){ //id 0은 빈 값.
+                    // console.log(showModal.user);
+                    // console.log("=======");
+                    setUserInfo(showModal.user? showModal.user : userInfo);
+                } else {
+                    let totalGame = res.data.wins + res.data.loses;
+                    let myInfo : types.User = {
+                        id : res.data.id,
+                        avatar: res.data.avatar,
+                        userName : res.data.username as string,
+                        myProfile : true,
+                        userStatus : 'off',
+                        rank : 0,
+                        odds : res.data.wins == 0? 0 : Math.floor(totalGame / res.data.wins),
+                        record : [],
+                    };
+                    setUserInfo(myInfo);
+                }
             }
         })
         .catch(err => {
             if (err.response.data.statusCode === 401)
             navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
         })
-    }, [userInfo]);
+    }, [showModal]);
+
+    // useEffect(() => {
+    //     setUserInfo(userInfo);
+    // }, [userInfo]);
 
     function showStatus(status: string){
         switch(status) {
@@ -168,6 +180,7 @@ function ProfileModal() {
     };
 
     function profileButton () {
+        // console.log("profileModal----");
         if (userInfo.myProfile) {
             return (
                 <div className="profile-button-wrapper">
@@ -180,14 +193,14 @@ function ProfileModal() {
         }
         return (
             <div className="profile-button-wrapper">
-                {userInfo.following ? 
+                {userInfo.relate === 'accepted' ? 
                 <button className="profile-button" onClick={handleUnfollow}>
                     <FontAwesomeIcon icon={faUserMinus}/> Unfollow
                 </button> :
                 <button className="profile-button" onClick={handleFollow}>
                     <FontAwesomeIcon icon={faUserPlus}/> Follow
                 </button>}
-                {userInfo.block ? 
+                {userInfo.relate == 'blocked' ? 
                 <button className="profile-button" onClick={handleUnblock}>
                     <FontAwesomeIcon icon={faUser}/> Unblock
                 </button> :
@@ -206,6 +219,7 @@ function ProfileModal() {
     if (showModal.show) {
         return (
             <ModalBase setter={setShowModal}>
+                <ProfileEditModal name={userInfo.userName}/>
                 {/* TODO - 프로필 이미지? */}
                 <div className="profile-wrapper">
                     <div className="profile-box">

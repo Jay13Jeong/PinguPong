@@ -19,7 +19,7 @@ import { Inject } from '@nestjs/common';
 
     //OnGatewayConnection를 오버라이딩
     async handleConnection(client : Socket) {
-      //console.log('ping', client.id);//client.rooms와 값이 같다
+      console.log('ping', client.id);//client.rooms와 값이 같다
       //console.log(client.rooms);
       //들어온 유저 로그 찍기
 
@@ -27,7 +27,7 @@ import { Inject } from '@nestjs/common';
     
     //OnGatewayDisconnect를 오버라이딩
     async handleDisconnect(client : Socket) {
-      //console.log('ping 소켓 끊김 : ', client.id);
+      console.log('ping 소켓 끊김 : ', client.id);
       //게임 중인지 파악하고 패배시키기
       this.gameService.iGamegetout(client);
     }
@@ -38,7 +38,8 @@ import { Inject } from '@nestjs/common';
     async requestMatchMake(client : Socket, data) {
        let difficulty = data.difficulty;
        let player = data.player;
-       console.log('requestMatchMake', client.id, data, difficulty, player);
+       //console.log('requestMatchMake', client.id, data, difficulty, player);
+       //console.log('room', client.id, client.rooms);
       // 1. 같은 난이도를 요청한 플레이어가 큐에 있을 경우 게임 매치
       // 2. 같은 난이도를 요청한 플레이어가 큐에 없을 경우 해당 플레이어를 큐에 넣는다.
        if (this.gameService.matchMake(difficulty, player, client.id)){
@@ -51,7 +52,7 @@ import { Inject } from '@nestjs/common';
     @SubscribeMessage('requestStart')
     async requestStart(client : Socket, data) {
       let roomName = data;
-      console.log('requestStart11', client.id, data, roomName);
+      //console.log('requestStart11', client.id, data, roomName);
       //플레이어가 준비완료인지 확인하기, 여기서 socket room에 등록을 하자
       if (this.gameService.requestStart(roomName, client, this.server))
         this.gameService.startGame(roomName, this.server);
@@ -76,7 +77,7 @@ import { Inject } from '@nestjs/common';
     @SubscribeMessage('player1Move')
     async player1Move(client : Socket, data) {
       let [offset, roomName] = data;
-      console.log('player1Move', client.id, data, roomName, offset);
+      //console.log('player1Move', client.id, data, roomName, offset);
 
       this.gameService.playerMove('1', roomName, offset);
     }
@@ -89,7 +90,7 @@ import { Inject } from '@nestjs/common';
     @SubscribeMessage('player2Move')
     async player2Move(client : Socket, data) {
       let [offset, roomName] = data;
-      console.log('player2Move', client.id, data, roomName, offset);
+      //console.log('player2Move', client.id, data, roomName, offset);
 
       this.gameService.playerMove('2', roomName, offset);
     }

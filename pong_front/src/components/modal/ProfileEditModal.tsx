@@ -7,10 +7,10 @@ import { useNavigate } from "react-router-dom";
 // import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import {  } from "@fortawesome/free-solid-svg-icons";
 
-function ProfileEditModal() {
+function ProfileEditModal(props: {name: string}) {
     const [showModal, setShowModal] = useRecoilState(profileEditModalState);
     const [avatar, setAvatar] = useState("https://cdn.myanimelist.net/images/characters/11/421848.jpg");
-    const [username, setUsername] = useState("Pinga");
+    const [username, setUsername] = useState(props.name);
     // const navigate = useNavigate();
 
     //프로필 아바타 및 이름 변경.
@@ -25,7 +25,6 @@ function ProfileEditModal() {
           console.log('invalid');
         })
     };
-
     //2단계 켜기.
     function handle2FASubmit(event : any) {
         event.preventDefault();
@@ -62,7 +61,7 @@ function ProfileEditModal() {
                     </div>
                 </div> */}
                 <div className="profile-button-wrapper">
-                    Avatar : {/* <input id="avatar" name="avatar" type="text" placeholder="https://cdn.myanimelist.net/images/characters/11/421848.jpg" onChange={event => setAvatar(event.target.value)} value={avatar} /> */}
+                    Avatar : 
                     <select onChange={event => setAvatar(event.target.value)} value={avatar}>
                         <option value="default.jpeg" key="default.jpeg">Pinga</option>
                         <option value="favicon.ico" key="favicon.ico">Pingu</option>
