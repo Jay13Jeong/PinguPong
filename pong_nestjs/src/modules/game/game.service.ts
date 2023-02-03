@@ -11,12 +11,15 @@ class BattleClass{
     private player2Id:string;
     private player1Name:string;
     private player2Name:string;
-    //private player1socket:Socket;
-    //private player2socket:Socket;
+    private player1socket:Socket;
+    private player2socket:Socket;
     private roomName:string;
     private player1Ready:boolean;
     private player2Ready:boolean;
     private myserver:Server;
+    
+    private watchUser:Set<Socket>;
+
 
     private sizes={//:{canvasWidth:number, canvasHeight: number, lineWidth: number, paddleSize: number} = {
         canvasWidth: 800,
@@ -55,10 +58,11 @@ class BattleClass{
         this.roomName = player1 + 'vs' + player2;
         //this.pingGateway = pingGateway;
 
+        this.watchUser= new Set<Socket>();
         this.player1Ready = false;
         this.player2Ready = false;
 
-        this.goal = 100;
+        this.goal = 15;
         this.speed = speed;
 
         this.counter = undefined;
@@ -180,6 +184,10 @@ class BattleClass{
             this.myserver.to(this.roomName).emit("endGame", {winner: this.goal === this.game.score.player1 ? this.game.score.player1 : this.game.score.player2});
             //this.player2socket.to(this.player2Id).emit("endGame", {winner: this.goal === this.game.score.player1 ? this.game.score.player1 : this.game.score.player2});
             // TODO - 🌟 전적 정보를 저장해야 한다면 여기서 저장하기 🌟
+            this.player1socket.leave(this.roomName);
+            this.player2socket.leave(this.roomName);
+            for (let socket of this.watchUser.keys())
+                socket.leave(this.roomName);
             clearInterval(this.counter); // 반복 종료
         }
     }
@@ -197,11 +205,13 @@ class BattleClass{
             return ;
         if (this.player1Id == socket.id){
             this.player1Ready = true;
+            this.player1socket = socket;
             socket.join(this.roomName);
             //console.log('player1sockerRoom', socket.rooms);
         }
         if (this.player2Id == socket.id){
             this.player2Ready = true;
+            this.player2socket = socket;
             socket.join(this.roomName);
             //console.log('player2sockerRoom', socket.rooms);
         }
@@ -235,6 +245,14 @@ class BattleClass{
 
     public getUsers():p1p2{
         return {p1:this.player1Name, p2:this.player2Name};
+    }
+
+    public watchGame(client:Socket) {
+        this.watchUser.add(client);
+    }
+
+    public stopwatchGame(client:Socket) {
+        this.watchUser.delete(client);
     }
 }
 
@@ -349,5 +367,18 @@ export class GameService {
         vs.playerMove(whoplayer, offset);
         
     }
+
+    public watchGame(roomName:string, client:Socket) {
+        const vs:BattleClass = this.vs.get(roomName);
+
+        vs.watchGame(client);
+    }
+
+    public stopwatchGame(roomName:string, client:Socket) {
+        const vs:BattleClass = this.vs.get(roomName);
+
+        vs.stopwatchGame(client);
+    }
+    
 }
 

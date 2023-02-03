@@ -9,15 +9,26 @@
     <button onclick=requestStart()>레디</button>
     <button onclick=getRoomList()>룸 리스트</button>
 
+    <button onclick=watchGame()>관전</button>
+    <button onclick=stopwatchGame()>관전그만</button>
+
     <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"
     integrity="sha384-KAZ4DtjNhLChOB/hxXuKqhMLYvx3b5MlT55xPEiNmREKRzeEm+RVPlTnAn0ajQNs"
     crossorigin="anonymous"></script>
     <script>
     const socket = io('http://localhost:3000');
     
-    let room = 'testRoom';
+    let room = 'jjeongvscheolee';
     const userId = 'cheolee';
 
+    function watchGame(){
+        socket.emit('watchGame',room);
+    }
+
+    function stopwatchGame()
+    {
+        socket.emit('stopwatchGame', room);
+    }
     function equestMatchMak(){
         socket.emit('requestMatchMake',{difficulty:'0',player:'test'});
     }
@@ -46,6 +57,7 @@
     socket.on('api/get/roomlist', (data) =>{
         console.log('api/get/roomlist', data);
     })
+    
     
 </script>
 </body>
