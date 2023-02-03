@@ -8,6 +8,7 @@ import { useSetRecoilState } from "recoil";
 import { changeChatPwModalState } from "../../states/recoilModalState"
 import CustomToastContainer from "../../components/util/CustomToastContainer";
 import ChangeChatPwModal from "../../components/modal/ChangeChatPwModal";
+import ChatField from "../../components/chat/ChatField";
 import "../../components/chat/ChatRoom.scss"
 
 function ChatRoom () {
@@ -16,7 +17,7 @@ function ChatRoom () {
     const location = useLocation();
     
     const [msg, setMsg] = useState<string>("");
-    const [current, setCurrent] = useState<string>("");     // 현재 유저의 id
+    const [current, setCurrent] = useState<string>("pinga");     // 현재 유저의 id
     const [master, setMaster] = useState<boolean>(true);    // 현재 유저의 방장 여부
     const isSecret = location.state.isSecret;               // 현재 방의 비밀방 여부
     const roomName = location.state.roomName;               // 현재 방의 이름
@@ -41,7 +42,7 @@ function ChatRoom () {
     useEffect(() => {
         // TODO - 방장 여부 확인해야 함.
         // TODO - 현재 유저의 ID 알아오기
-    }, [])
+    }, []);
 
     /**
      * NOTE 
@@ -60,7 +61,7 @@ function ChatRoom () {
                 {isSecret && master ? <button onClick={(e) => {setChangeChatPwModalState({roomName: roomName, show: true})}} id="change-pw-btn">비밀번호 변경</button> : null}
                 <button onClick={fightHandler} id="fight-btn">도전장 도착</button>
                 <button onClick={exitHandler} id="exit-chat-btn">채팅방 나가기</button>
-                <div id="chat-field">뭔가 채팅 리스트</div>
+                <ChatField roomName={roomName} current={current}/>
                 <form onSubmit={msgHandler} id="chat-input">
                     <input type="text" autoComplete="off" id="message" placeholder="메시지를 입력하세요" value={msg} onChange={(e) => setMsg(e.target.value)}/>
                     <button type="submit"><FontAwesomeIcon icon={faPaperPlane}/></button>
