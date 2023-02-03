@@ -32,6 +32,12 @@ import { Inject } from '@nestjs/common';
       this.gameService.iGamegetout(client);
     }
 
+
+    @SubscribeMessage('api/get/roomlist')//게임 리스트
+    async getRoomList(client : Socket) {
+      this.server.to(client.id).emit('api/get/roomlist', this.gameService.getRoomList());
+    }
+
     //api:유저의 소켓과 난이도에 따른 배열 3개 만들어서 2개 이상이면 매치시켜주기.
     //들어올 때마다 확인하고 if문으로 emit 문자 다르게 보내기
     @SubscribeMessage('requestMatchMake')

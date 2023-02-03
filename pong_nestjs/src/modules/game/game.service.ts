@@ -1,6 +1,11 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
 
+type p1p2 ={
+    p1:string,
+    p2:string
+}
+
 class BattleClass{
     private player1Id:string;//socketid
     private player2Id:string;
@@ -227,24 +232,44 @@ class BattleClass{
             break;
         }
     }
+
+    public getUsers():p1p2{
+        return {p1:this.player1Name, p2:this.player2Name};
+    }
 }
 
 @Injectable()
 export class GameService {
-    private vs : Map<string, BattleClass>;
+    private vs : Map<string, BattleClass>;//rooms
     private socketid : Map<string, string>;//소켓id : 유저Id
     private easyLvUserList : Set<string>;//소켓 id
     private normalLvUserList : Set<string>;
     private hardLvUserList : Set<string>;
     private socketidRoomname : Map<string, string>;//socketid: roomName
 
-    public constructor(){
+    public constructor() {
         this.vs = new Map<string, BattleClass>();
         this.socketid = new Map<string, string>();
         this.easyLvUserList = new Set<string>();
         this.normalLvUserList = new Set<string>();
         this.hardLvUserList = new Set<string>();
         this.socketidRoomname = new Map<string, string>();
+
+        ///더미
+        // this.vs.set('dog1vscat1', new BattleClass('111111', 'dog1', '122222', 'cat1', 1));
+        // this.vs.set('dog2vscat2', new BattleClass('211111', 'dog2', '222222', 'cat2', 1));
+        // this.vs.set('dog3vscat3', new BattleClass('311111', 'dog3', '322222', 'cat3', 1));
+        // this.vs.set('dog4vscat4', new BattleClass('411111', 'dog4', '422222', 'cat4', 1));
+        // this.vs.set('dog5vscat5', new BattleClass('511111', 'dog5', '522222', 'cat5', 1));
+    }
+
+    public getRoomList():Array<p1p2>{
+        let arr:p1p2[]= [];
+
+        for (let room of Array.from(this.vs.keys()))
+            arr.push(this.vs.get(room).getUsers());
+
+        return arr;
     }
 
     public iGamegetout(client:Socket){
