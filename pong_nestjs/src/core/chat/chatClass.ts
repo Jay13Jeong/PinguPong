@@ -1,7 +1,7 @@
 class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함, primary key는 소켓 id이다.
     //유저의 키값을 어떤것으로 할 것인가? A:소켓이 계속 유지가 된다. 리액트 페이지 라우팅 때문? 리액트 기능이 있다.
     //방장 변수
-    private master:string;
+    private master:string;//소켓id
     
     //비밀방 여부
     private secret:boolean;
@@ -39,6 +39,13 @@ class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함, prima
     public userCount():number{
         return this.socketuser.size;
     }
+
+    public getMasterStatus(socketid:string): boolean{
+        if (this.master == socketid)
+            return true;
+        return false;
+    }
+
     //방장 위임 기능 함수
     public mandateMaster(master:string, userid:string){
         if ((master == this.master)&& this.usersocket.get(userid) != undefined)
@@ -151,7 +158,7 @@ class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함, prima
 export class chatClass {
     //방이름:해당 방 정보 클래스
     private rooms : Map<string, roomClass>;
-    private socketid : Map<string, string>;
+    private socketid : Map<string, string>;//socketid : 방이름
 
     public constructor(){
         this.rooms = new Map<string, roomClass>();
@@ -162,6 +169,12 @@ export class chatClass {
     public getSocketList(roomName: string):IterableIterator<string>{
         const room:roomClass = this.rooms.get(roomName);
         return room.getSocketList();
+    }
+
+    public getMasterStatus(socketid:string):boolean{//내가 마스터 이면 true, 아니면 false
+        const room:roomClass = this.rooms.get(this.socketid.get(socketid));
+
+        return room.getMasterStatus(socketid);
     }
 
     // 새로운 채팅방 추가,일단 소켓으로 알려주고 추후 api로 변경 되면 소켓 부분 제거하기
