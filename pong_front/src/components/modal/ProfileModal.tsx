@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ModalBase from "./ModalBase";
 import GameRecordList from "../util/card/GameRecordList";
-import { useSetRecoilState , useRecoilState } from "recoil"
+import { useSetRecoilState , useRecoilState, useResetRecoilState, useRecoilValue } from "recoil"
 import { profileEditModalState, profileModalState } from "../../states/recoilModalState";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircle, faUserPen, faUserPlus, faUserMinus, faUser, faUserSlash, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
@@ -20,9 +20,12 @@ import ProfileEditModal from "./ProfileEditModal";
  */
 
 function ProfileModal() {
-    const [showEditModal, setShowEditModal] = useRecoilState(profileEditModalState);
-    const  [showModal, setShowModal] = useRecoilState(profileModalState);
+    // const [showEditModal, setShowEditModal] = useRecoilState(profileEditModalState);
+    const showEditModal = useRecoilValue(profileEditModalState);
+    // const  [showModal, setShowModal] = useRecoilState(profileModalState);
+    const showModal = useRecoilValue(profileModalState);
     const setProfileEditState = useSetRecoilState(profileEditModalState);
+    const resetState = useResetRecoilState(profileModalState);
     
     const [userInfo, setUserInfo] = useState<types.User>({
         id: 0,
@@ -219,7 +222,7 @@ function ProfileModal() {
 
     if (showModal.show) {
         return (
-            <ModalBase setter={setShowModal}>
+            <ModalBase reset={resetState}>
                 <ProfileEditModal name={userInfo.userName}/>
                 {/* TODO - 프로필 이미지? */}
                 <div className="profile-wrapper">

@@ -2,13 +2,13 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import * as Modal from "../../styles/Modal";
-import { SetterOrUpdater } from "recoil";
+import { SetterOrUpdater, Resetter } from "recoil";
 
-function ModalBase (props: {setter: SetterOrUpdater<any>, children: React.ReactNode}) {
+function ModalBase (props: {reset:Resetter, children: React.ReactNode}) {
   return (
     <Modal.OverLay>
       <Modal.Wrapper>
-        <button className="close-button" onClick={() => props.setter(false)}>
+        <button className="close-button" onClick={() => props.reset()}>
           <FontAwesomeIcon icon={faXmark} />
         </button>
         {props.children}

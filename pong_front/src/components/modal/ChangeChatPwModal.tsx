@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { SocketContext } from '../../states/contextSocket';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import { changeChatPwModalState } from "../../states/recoilModalState"
 import { Button } from '../../styles/Inputs';
 import ModalBase from './ModalBase';
@@ -10,7 +10,9 @@ import { Stack } from '../../styles/Layout';
 import './Chat.scss';
 
 function ChangeChatPwModal() {
-    const [showModal, setShowModal] = useRecoilState(changeChatPwModalState);
+    // const [showModal, setShowModal] = useRecoilState(changeChatPwModalState);
+    const showModal = useRecoilValue(changeChatPwModalState);
+    const resetState = useResetRecoilState(changeChatPwModalState);
     const [values, setValues] = useState<string>("");
     const socket = useContext(SocketContext);
 
@@ -37,7 +39,7 @@ function ChangeChatPwModal() {
 
     if (showModal.show) {
         return (
-            <ModalBase setter={setShowModal}>
+            <ModalBase reset={resetState}>
                 <Stack className="chat-form-wrapper">
                     <div className="title">비밀번호 변경</div>
                     <form onSubmit={handler}>

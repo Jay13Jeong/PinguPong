@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
 import { friendModalState, profileModalState } from "../../states/recoilModalState";
 import UserCardButtonList from "../util/card/UserCardButtonList";
 import * as types from "../profile/User"
@@ -9,8 +9,11 @@ import { useNavigate } from "react-router-dom";
 
 function FriendModal() {
     const [target, setTarget] = useState('');
-    const [showProfileModal, setShowProfileModal] = useRecoilState(profileModalState);
-    const [showModal, setShowModal] = useRecoilState(friendModalState);
+    // const [showProfileModal, setShowProfileModal] = useRecoilState(profileModalState);
+    const showProfileModal = useRecoilValue(profileModalState);
+    // const [showModal, setShowModal] = useRecoilState(friendModalState);
+    const showModal = useRecoilValue(friendModalState);
+    const resetState = useResetRecoilState(friendModalState);
     const [friendList, setFriendList] = useState<types.Friend[]>([
         {
             userId: 1,
@@ -123,7 +126,7 @@ function FriendModal() {
 
     if (showModal) {
         return (
-            <ModalBase setter={setShowModal}>
+            <ModalBase reset={resetState}>
                 <h1>Friend List</h1>
                 <input type="text" placeholder="이름으로 찾기" onChange={event => setTarget(event.target.value)} value={target} />
                 <button className="profile-button" onClick={handleAddFriendSubmit}>

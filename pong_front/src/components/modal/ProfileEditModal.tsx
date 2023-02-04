@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ModalBase from "./ModalBase";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
 import { profileEditModalState } from "../../states/recoilModalState";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -9,7 +9,9 @@ import { faL } from "@fortawesome/free-solid-svg-icons";
 // import {  } from "@fortawesome/free-solid-svg-icons";
 
 function ProfileEditModal(props: {name: string}) {
-    const [showModal, setShowModal] = useRecoilState(profileEditModalState);
+    // const [showModal, setShowModal] = useRecoilState(profileEditModalState);
+    const showModal = useRecoilValue(profileEditModalState);
+    const resetState = useResetRecoilState(profileEditModalState);
     const [avatar, setAvatar] = useState("https://cdn.myanimelist.net/images/characters/11/421848.jpg");
     const [username, setUsername] = useState(props.name);
     const [status2fa, setStatus2fa] = useState(false);
@@ -39,7 +41,8 @@ function ProfileEditModal(props: {name: string}) {
         .then(res => {
             // console.log(res.status);
             //변경 성공.
-            setShowModal(false);
+            // setShowModal(false);
+            resetState();
         })
         .catch(err => {
             alert("Name in use");
@@ -75,7 +78,7 @@ function ProfileEditModal(props: {name: string}) {
 
     if (showModal) {
         return (
-            <ModalBase setter={setShowModal}>
+            <ModalBase reset={resetState}>
                 <h1>Profile Edit Modal</h1>
                 {/* <div className="profile-edit-wrapper">
                     <div className="profile-edit-box">

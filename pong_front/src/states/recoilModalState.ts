@@ -2,12 +2,12 @@ import { atom } from "recoil"
 import { User } from "../components/profile/User"
 
 export const dmModalState = atom<boolean>({
-    key: "dmmodalstate",
+    key: "dmModalState",
     default: false
 })
 
 export const profileModalState = atom<{user?:User, userId: number, show: boolean}>({
-    key: "profilemodalstate",
+    key: "profileModalState",
     default: {
         user: {
             id: 0,
@@ -25,27 +25,27 @@ export const profileModalState = atom<{user?:User, userId: number, show: boolean
 })
 
 export const profileEditModalState = atom<boolean>({
-    key: "profileeditmodalstate",
+    key: "profileEditModalState",
     default: false
 })
 
 export const friendModalState = atom<boolean>({
-    key: "friendmodalstate",
+    key: "friendModalState",
     default: false
 })
 
 export const blockModalState = atom<boolean>({
-    key: "blockmodalstate",
+    key: "blockModalState",
     default: false
 })
 
 export const createChatModalState = atom<boolean>({
-    key: "createchatmodalstate",
+    key: "createChatModalState",
     default: false
 })
 
 export const secretChatModalState = atom<{roomName: string, show: boolean}>({
-    key: "secretchatmodalstate",
+    key: "secretChatModalState",
     default: {
         roomName: "",
         show: false
@@ -53,14 +53,19 @@ export const secretChatModalState = atom<{roomName: string, show: boolean}>({
 })
 
 export const loginState = atom<boolean>({
-    key: "loginstate",
+    key: "loginState",
     default: false
 })
 
 export const changeChatPwModalState = atom<{roomName: string, show: boolean}>({
-    key: "changechatpwmodalstate",
+    key: "changeChatPwModalState",
     default: {
         roomName: "",
         show: false
     }
+})
+
+export const chatMenuModalState = atom<{user: string, show: boolean}>({
+    key: "chatMenuModalState",
+    default: {user: "", show: false}
 })
