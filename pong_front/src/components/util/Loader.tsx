@@ -9,7 +9,7 @@ import "./Loader.scss"
  * - text : 로딩 효과 위의 메시지 / 없을 경우 null
  */
 
-function Loader(props: any) {
+function Loader(props: {text?: string, type?: string}) {
   // props로 
   return (
     <div className="loader-box">

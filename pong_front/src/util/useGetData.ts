@@ -1,12 +1,12 @@
 import {useState, useEffect, useCallback} from 'react';
 import axios from 'axios';
 
-function useAxios(requestUrl: string) {
+function useGetData(requestUrl: string) {
     const [data, setData] = useState<any>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<any>(null);
 
-    const fetchData = useCallback(async () => {
+    const getData = useCallback(async () => {
         try {
             await axios.get(requestUrl, {withCredentials: true})
             .then(res => {
@@ -21,14 +21,14 @@ function useAxios(requestUrl: string) {
     }, [requestUrl]);
 
     useEffect(() => {
-        fetchData();
-    }, [requestUrl]);
+        getData();
+    }, [requestUrl, getData]);
     
     if (isLoading || error !== null) {
-        fetchData();
+        getData();
     }
 
     return [ data, error, isLoading ];
 }
 
-export default useAxios;
+export default useGetData;

@@ -6,10 +6,11 @@ import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { Center } from "../../styles/Layout";
 import { useSetRecoilState } from "recoil";
 import { changeChatPwModalState } from "../../states/recoilModalState"
-import CustomToastContainer from "../../components/util/CustomToastContainer";
 import ChangeChatPwModal from "../../components/modal/ChangeChatPwModal";
 import ChatField from "../../components/chat/ChatField";
-import axios from "axios";
+// import axios from "axios";
+import useGetData from "../../util/useGetData";
+import ChatMenuModal from "../../components/modal/ChatMenuModal";
 import "../../components/chat/ChatRoom.scss"
 
 function ChatRoom () {
@@ -17,18 +18,14 @@ function ChatRoom () {
     const socket = useContext(SocketContext);
     const location = useLocation();
     
+    const [myInfo, error, isLoading] = useGetData('http://localhost:3000/api/user');
     const [msg, setMsg] = useState<string>("");
     const [current, setCurrent] = useState<string>("");     // 현재 유저의 id
-    const [master, setMaster] = useState<boolean>(true);    // 현재 유저의 방장 여부
+    const [master, setMaster] = useState<boolean>(false);    // 현재 유저의 방장 여부
     const isSecret = location.state.isSecret;               // 현재 방의 비밀방 여부
     const roomName = location.state.roomName;               // 현재 방의 이름
 
     const navigate = useNavigate();
-
-    function fightHandler (e: React.MouseEvent<HTMLElement>) {
-        // TODO - 도전장 기능
-        alert("무슨 일을 하는 버튼인가요?");
-    }
 
     function exitHandler(e: React.MouseEvent<HTMLElement>) {
         socket.emit('delUser');
@@ -37,6 +34,7 @@ function ChatRoom () {
 
     function msgHandler(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
+        /* 빈 메시지는 보내지 않습니다. */
         if (msg !== "") {
             socket.emit('chat', roomName, current, msg);
             setMsg("");
@@ -44,50 +42,41 @@ function ChatRoom () {
     }
 
     useEffect(() => {
-        // TODO - 현재 유저의 ID 알아오기
-        axios.get('http://localhost:3000/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
-        .then(res => {
-            // console.log(res.data);
-            if (res.data){
-                setCurrent(res.data.username as string);
-            }
-        })
-        .catch(err => {
-            if (err.response.data.statusCode === 401)
-            navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
-        })
-        // TODO - 방장 여부 확인해야 함.
-        socket.on('getUser', (data) => {
-            socket.emit('getUser', {roomName: roomName, userId: current});
-        })
-        socket.emit('/api/get/master/status');
-        socket.on('/api/get/master/status', (data: boolean) => {
-            setMaster(data);   // 방장이면 true / 아니면 false
-        });
+        /* 방에 재 등록 */
+        if (current !== '') {
+            socket.on('getUser', (data) => {
+                socket.emit('getUser', {roomName: roomName, userId: current});
+                    /* 방장 여부 확인 */
+                socket.emit('/api/get/master/status');
+                socket.on('/api/get/master/status', (data: boolean) => {
+                    setMaster(data);   // 방장이면 true / 아니면 false
+                });
+            })
+        }
 
         return () => {
-            // 이벤트 해제
+            /* 이벤트 해제 */
             socket.off('/api/get/master/status');
             socket.off('getUser');
         };
-    }, [navigate, socket]);
+    }, [socket, current, roomName]);
 
-    /**
-     * NOTE 
-     * - socket.on은 chat-field에서 해 주기
-     * - getUser의 시점?
-     * - chat-field 에서 채팅 목록을 관리하고 있어야 함. (ㅎㅅㅎ)
-     */
+    useEffect(() => {
+        /* 현재 유저의 userName */
+        if (myInfo !== null) {
+            setCurrent(myInfo.username as string);
+        }
+    }, [myInfo, error, isLoading]);
 
     return (
         <>
         <ChangeChatPwModal/>
-        {/* TODO 채팅용 유저 프로필 모달 - 방장기능 / 방장 아닌 경우에 대해서 고민해보기 */}
-        <CustomToastContainer/>
+        <ChatMenuModal isMaster={master}/>
         <Center>
             <div id="chat-room">
                 {isSecret && master ? <button onClick={(e) => {setChangeChatPwModalState({roomName: roomName, show: true})}} id="change-pw-btn">비밀번호 변경</button> : null}
-                <button onClick={fightHandler} id="fight-btn">도전장 도착</button>
+                {/* <button onClick={fightHandler} id="fight-btn">도전장 도착</button> */}
+                {master ? <div id="fight-btn">👑 나는 방장 👑</div> : null}
                 <button onClick={exitHandler} id="exit-chat-btn">채팅방 나가기</button>
                 <ChatField roomName={roomName} current={current}/>
                 <form onSubmit={msgHandler} id="chat-input">
