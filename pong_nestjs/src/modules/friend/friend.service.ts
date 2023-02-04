@@ -90,11 +90,13 @@ export class FriendService {
 		const reciever = await this.userService.findUserById(recieverID); //차단대상의 정보를 얻어온다.
 			if (!reciever)
 				throw new NotFoundException('차단 대상이 존재하지 않음.');
-		var friendship = await this.repo.findOne({
+		var friendship = await this.repo.findOne({ //기존 우호적 친구관계가 있는지 찾는다.
 			relations: ['sender', 'reciever'],
 			where: [
-				{ sender:  { id: sender.id }, reciever: { id: reciever.id } },
-				{ sender:  { id: reciever.id }, reciever: { id: sender.id } },
+				{ sender:  { id: sender.id }, reciever: { id: reciever.id }, status: 'pending' },
+				{ sender:  { id: reciever.id }, reciever: { id: sender.id }, status: 'pending' },
+				{ sender:  { id: sender.id }, reciever: { id: reciever.id }, status: 'accepted' },
+				{ sender:  { id: reciever.id }, reciever: { id: sender.id }, status: 'accepted' },
 			],
 		});
 		// if (friendship) {
@@ -102,7 +104,7 @@ export class FriendService {
 		// 	if (chatID)
 		// 		this.chatService.leaveChat(friendship.sender.id, chatID.id);
 		// }
-		if (friendship) { //차단 대상이 친구목록 테이블에 있을 때.
+		if (friendship) { //차단 대상이 친구목록 테이블에 있을 때 관계를 끊음.
 				// friendship.status = 'blocked';
 				await this.repo.remove(friendship)
 		}
@@ -123,13 +125,13 @@ export class FriendService {
 			relations: ['sender', 'reciever'],
 			where: [
 				{ sender:  { id: sender.id }, reciever: { id: reciever.id } },
-				{ sender:  { id: reciever.id }, reciever: { id: sender.id } },
+				// { sender:  { id: reciever.id }, reciever: { id: sender.id } },
 			],
 		});
 		if (!friendship)
 			throw new NotFoundException('차단해제 대상 없음.');
 		if (friendship.status != 'blocked')
-			throw new BadRequestException('이미 차단 되지 않은 대상.');
+			throw new BadRequestException('차단 되지 않은 대상.');
 		return await this.repo.remove(friendship);
 	}
 

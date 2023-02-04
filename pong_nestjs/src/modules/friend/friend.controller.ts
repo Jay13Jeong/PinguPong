@@ -46,6 +46,8 @@ export class FriendController {
         await this.friendServices.invite(user2, 1); //친구됨
         await this.friendServices.invite(user3, 1); //친구됨
         await this.friendServices.invite(user4, 1); //상대가 나에게 친추 검.
+        await this.friendServices.block(user, 4);
+        await this.friendServices.block(user4, 1);
 	}
 
     @Get()

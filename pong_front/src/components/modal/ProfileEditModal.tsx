@@ -42,7 +42,8 @@ function ProfileEditModal(props: {name: string}) {
             setShowModal(false);
         })
         .catch(err => {
-          console.log('invalid');
+            alert("Name in use");
+        //   console.log('invalid');
         })
     };
     //2단계 켜기.
