@@ -27,4 +27,5 @@ export const Message = styled.span`
   width: fit-content;
   padding: 12px;
   border-radius: 0.5rem;
+  border: 1px solid black;
 `;

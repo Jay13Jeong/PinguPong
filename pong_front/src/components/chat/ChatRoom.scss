@@ -24,5 +24,10 @@
     #chat-input {
         grid-column: 2/3;
         grid-row: 4/5;
+        display: grid;
+        grid-template-columns: 9fr 1fr;
+        input {
+            margin: 0.5rem;
+        }
     }
 }

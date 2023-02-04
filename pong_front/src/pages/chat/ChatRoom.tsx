@@ -52,6 +52,7 @@ function ChatRoom () {
                     setMaster(data);   // 방장이면 true / 아니면 false
                 });
             })
+            // TODO - 본인이 추방당했는지 듣고 있어야 함.
         }
 
         return () => {
@@ -71,7 +72,7 @@ function ChatRoom () {
     return (
         <>
         <ChangeChatPwModal/>
-        <ChatMenuModal isMaster={master}/>
+        <ChatMenuModal isMaster={master} roomName={roomName}/>
         <Center>
             <div id="chat-room">
                 {isSecret && master ? <button onClick={(e) => {setChangeChatPwModalState({roomName: roomName, show: true})}} id="change-pw-btn">비밀번호 변경</button> : null}

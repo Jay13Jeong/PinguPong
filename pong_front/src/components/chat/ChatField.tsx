@@ -25,7 +25,9 @@ function ChatField (props: {roomName: string, current: string}) {
       }, [chatList.length]);
 
     useEffect(() => {
-        chat && setChatList((prev) => [...prev, chat]);
+        if (chat && chat.msg !== "") {
+            chat && setChatList((prev) => [...prev, chat]);
+        }
     }, [chat]);
     useEffect(() => {
         socket.on('chat', (user, msg) => {
