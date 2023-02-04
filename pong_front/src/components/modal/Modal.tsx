@@ -12,7 +12,6 @@ function Modal() {
     return (
         <>
             <CreateChatModal />
-            <SecretChatModal />
             <DMModal />
             <BlockModal/>
             <FriendModal/>

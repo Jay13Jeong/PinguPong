@@ -3,7 +3,7 @@ import { toast } from "react-toastify"
 import { useNavigate } from "react-router-dom";
 import { SocketContext } from "../../states/contextSocket";
 import useUser from "../../util/useUser";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
 import { Button } from "../../styles/Inputs";
 import { createChatModalState } from "../../states/recoilModalState";
 import ModalBase from "./ModalBase";
@@ -11,7 +11,9 @@ import { Stack } from "../../styles/Layout";
 import "./Chat.scss"
 
 function CreateChatModal() {
-    const [showModal, setShowModal] = useRecoilState(createChatModalState);
+    // const [showModal, setShowModal] = useRecoilState(createChatModalState);
+    const showModal = useRecoilValue(createChatModalState);
+    const resetState = useResetRecoilState(createChatModalState);
     const [values, setValues] = useState({ 
         room: "",
         pw: "",
@@ -32,9 +34,12 @@ function CreateChatModal() {
             if (data) {
                 toast.success("채팅방 생성에 성공했습니다.");
                 socket.emit('/api/get/RoomList');
-                setShowModal(false);
+                resetState();
                 socket.off('/api/post/newRoom');
-                navigate(`/chat/room/${values.room}`);
+                navigate(`/chat/room/${values.room}`, {state: {
+                    roomName: values.room,
+                    isSecret: values.pw !== ""
+                }});
             }
             else {
                 toast.error("중복된 방 이름 입니다.");
@@ -49,7 +54,7 @@ function CreateChatModal() {
 
     if (showModal) {
         return (
-            <ModalBase setter={setShowModal}>
+            <ModalBase reset={resetState}>
                 <Stack className="chat-form-wrapper">
                     <div className="title">새 채팅방 만들기</div>
                         <form onSubmit={handler}>
