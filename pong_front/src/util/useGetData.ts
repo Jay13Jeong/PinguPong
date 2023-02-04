@@ -24,7 +24,7 @@ function useGetData(requestUrl: string) {
         getData();
     }, [requestUrl, getData]);
     
-    if (isLoading || error !== null) {
+    if (isLoading) {
         getData();
     }
 
