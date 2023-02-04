@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guard/jwt.guard';
 import { User } from './user.entity';
 import { UsersService } from "./users.service";
@@ -11,6 +11,22 @@ export class UsersController {
     @Get('test') //테스트용 메소드. 유저 디비조회용.
     async findA(): Promise<User[]>{
         return await this.usersService.findAll();
+    }
+
+    @Get('name') //이름으로 조회.
+    @UseGuards(JwtAuthGuard)
+    async findName(@Query('username') username: string){
+        const targetUser = await this.usersService.findUserByUsername(username);
+        if (!targetUser)
+            throw new BadRequestException('해당 유저 없음.');
+        return {
+            id : targetUser.id,
+            username : targetUser.username,
+            avatar : targetUser.avatar,
+            email : targetUser.email,
+            wins : targetUser.wins,
+            loses : targetUser.loses,
+        }
     }
 
     //나의 유저 정보를 반환하는 api.
