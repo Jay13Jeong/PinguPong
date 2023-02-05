@@ -4,30 +4,33 @@ import { Button } from "../styles/Inputs"
 import { SetterOrUpdater, useRecoilState } from 'recoil';
 import { useEffect } from 'react';
 import axios from 'axios';
+import { REACT_APP_HOST } from '../util/configData';
 
 export default function Lobby(props: {setter: SetterOrUpdater<any>}) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('http://localhost:3000/api/user/init/status', {withCredentials: true})
-    .then(res => {
-      if (res.data && res.data.msg === false)
-        navigate('/profile/init')
-    })
-    .catch(err => {
-        props.setter(false);
-        navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
-    })
-    axios.get('http://localhost:3000/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
-    .then(res => {
-        if (res.data && res.data.id){
-            props.setter(true);
-        }
-    })
-    .catch(err => {
-        props.setter(false);
-        navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
-    })
+      axios.get('http://' + REACT_APP_HOST + ':3000/api/user/init/status', {withCredentials: true})
+      .then(res => {
+          if (res.data && res.data.msg === false){
+            props.setter(false);
+            navigate('/profile/init')
+            return ;
+          }
+          axios.get('http://' + REACT_APP_HOST + ':3000/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
+          .then(res => {
+              if (res.data && res.data.id)
+                  props.setter(true);
+          })
+          .catch(err => {
+              props.setter(false);
+              navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
+          })
+      })
+      .catch(err => {
+          props.setter(false);
+          navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
+      })
   }, []);
 
   return (

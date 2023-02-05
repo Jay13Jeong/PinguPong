@@ -9,48 +9,8 @@ import {SocketContext, socket} from './states/contextSocket'
 import GlobalStyle from './GlobalStyles';
 import TopMenuBar from './components/TopMenuBar';
 import Modal from './components/modal/Modal';
-import axios from 'axios';
-import * as types from "./components/profile/User"
-import { loginState } from './states/recoilModalState';
 
 function App() {
-  // const [userInfo, setUserInfo] = useState<types.User>({
-  //   id: 0,
-  //   avatar: "https://cdn.myanimelist.net/images/characters/11/421848.jpg",
-  //   userName: "pinga",
-  //   myProfile: true,    // TODO - 더 좋은 방법이 있을지 생각해보기
-  //   userStatus: "test",
-  //   rank: 0,
-  //   odds: 0,
-  //   record: []
-  // });
-  // useEffect(() => {
-  //   // TODO: 유저 정보를 받아온다.
-  //   // setUserInfo();
-  //   axios.get('http://localhost:3000/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
-  //   .then(res => {
-  //       // console.log(res.data);
-  //       if (res.data){
-  //           let totalGame = res.data.wins + res.data.loses;
-  //           let myInfo : types.User = {
-  //               id : res.data.id,
-  //               avatar: res.data.avatar,
-  //               userName : res.data.username as string,
-  //               myProfile : true,
-  //               userStatus : 'off',
-  //               rank : 0,
-  //               odds : res.data.wins == 0? 0 : Math.floor(totalGame / res.data.wins),
-  //               record : [],
-  //           };
-  //           setUserInfo(myInfo);
-  //       }
-  //   })
-  //   .catch(err => {})
-  // }, []);
-
-  // useEffect(() => {
-  //   setLoginOk(true);
-  // }, [loginOk]);
 
   const [loginOk, setLoginOk] = useState(false);
 
@@ -61,8 +21,10 @@ function App() {
         <RecoilRoot>
           <GlobalStyle />
           <SocketContext.Provider value={socket}>
-            {loginOk? <TopMenuBar setter={setLoginOk}/> : null}
-            <Modal/>
+            {loginOk?
+            <TopMenuBar setter={setLoginOk}/> : null}
+            {loginOk?
+            <Modal/> : null}
             <Routing setter={setLoginOk} />
           </SocketContext.Provider>
         </RecoilRoot>
@@ -71,5 +33,4 @@ function App() {
     </div>
   );
 }
-
 export default App;

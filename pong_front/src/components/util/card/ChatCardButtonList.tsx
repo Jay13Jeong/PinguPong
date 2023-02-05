@@ -4,10 +4,11 @@ import CardList from "./CardList";
 import ChatCardButton from "./ChatCardButton";
 import SecretChatModal from "../../modal/SecretChatModal";
 import useGetData from "../../../util/useGetData";
+import { REACT_APP_HOST } from "../../../util/configData";
 
 function ChatCardButtonList() {
     /* socket */
-    const [myInfo, error, isLoading] = useGetData('http://localhost:3000/api/user');
+    const [myInfo, error, isLoading] = useGetData('http://' + REACT_APP_HOST + ':3000/api/user');
     const socket = useContext(SocketContext);
     const [current, setCurrent] = useState<string>('');     // 현재 유저의 id
 

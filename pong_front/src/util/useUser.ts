@@ -2,6 +2,7 @@ import React, {useState, useEffect} from "react";
 import { useNavigate } from "react-router-dom";
 import {User} from "../components/profile/User"
 import axios from "axios";
+import { REACT_APP_HOST } from "./configData";
 
 // userID : 검색하려는 유저 ID
 
@@ -20,7 +21,7 @@ function useUser(userid?: number) {
 
     useEffect(() => {
         // console.log("000000");
-        axios.get('http://localhost:3000/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
+        axios.get('http://' + REACT_APP_HOST + ':3000/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
         .then(res => {
             // console.log("useUser", userInfo.userName);
             if (res.data){

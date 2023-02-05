@@ -10,6 +10,7 @@ import "./ProfileModal.scss"
 import * as types from "../profile/User"
 import axios from "axios";
 import ProfileEditModal from "./ProfileEditModal";
+import { REACT_APP_HOST } from "../../util/configData";
 
 /**
  * profileModalState
@@ -72,7 +73,7 @@ function ProfileModal() {
     useEffect(() => {
         // TODO: 유저 정보를 받아온다.
         // setUserInfo();
-        axios.get('http://localhost:3000/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
+        axios.get('http://' + REACT_APP_HOST + ':3000/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
         .then(res => {
             // console.log(res.data);
             if (res.data){
@@ -136,55 +137,54 @@ function ProfileModal() {
     //친추.
     function handleFollow(event : any) {
         event.preventDefault();
-        axios.post('http://localhost:3000/api/friend', {otherID : userInfo.id}, {withCredentials: true})
+        axios.post('http://' + REACT_APP_HOST + ':3000/api/friend', {otherID : userInfo.id}, {withCredentials: true})
         .then(res => {
             if (res.status === 200)
-                console.log('send follow');
+                alert('send follow');
         })
         .catch(err => {
-            console.log('invalid');
+            alert('invalid');
         })
     };
 
     //언팔.
     function handleUnfollow(event : any) {
         event.preventDefault();
-        axios.patch('http://localhost:3000/api/friend', {otherID : userInfo.id}, {withCredentials: true})
+        axios.patch('http://' + REACT_APP_HOST + ':3000/api/friend', {otherID : userInfo.id}, {withCredentials: true})
         .then(res => {
             if (res.status === 200)
-                console.log('unfollow ok');
+                alert('unfollow ok');
         })
         .catch(err => {
-            console.log('invalid');
+            alert('invalid');
         })
     };
 
     function handleBlock(event : any) {
         event.preventDefault();
-        axios.post('http://localhost:3000/api/friend/block', {otherID : userInfo.id}, {withCredentials: true})
+        axios.post('http://' + REACT_APP_HOST + ':3000/api/friend/block', {otherID : userInfo.id}, {withCredentials: true})
         .then(res => {
             if (res.status === 200)
-                console.log('target block ok');
+                alert('target block ok');
         })
         .catch(err => {
-            console.log('target block fail');
+            alert('target block fail');
         })
     };
 
     function handleUnblock(event : any) {
         event.preventDefault();
-        axios.patch('http://localhost:3000/api/friend/block', {otherID : userInfo.id}, {withCredentials: true})
+        axios.patch('http://' + REACT_APP_HOST + ':3000/api/friend/block', {otherID : userInfo.id}, {withCredentials: true})
         .then(res => {
             if (res.status === 200)
-                console.log('target unblock ok');
+                alert('target unblock ok');
         })
         .catch(err => {
-            console.log('target unblock fail');
+            alert('target unblock fail');
         })
     };
 
     function profileButton () {
-        // console.log("profileModal----");
         if (userInfo.myProfile) {
             return (
                 <div className="profile-button-wrapper">

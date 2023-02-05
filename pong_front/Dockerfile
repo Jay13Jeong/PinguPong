@@ -8,11 +8,5 @@ WORKDIR /pong_front
 COPY package.json .
 RUN npm i
 COPY . .
-# RUN npm install react-scripts@3.0.1 -g
 
 CMD ["npm", "start"]
-
-# COPY . .
-# RUN npm i esbuild
-# RUN npm i
-# CMD [ "npm", "run" ]

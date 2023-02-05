@@ -8,6 +8,7 @@ import logo from "../assets/logo.png";
 import "./TopMenuBar.scss";
 import { User } from "./profile/User";
 import axios from "axios";
+import { REACT_APP_HOST } from "../util/configData";
 
 function TopMenuBar(props: {setter: SetterOrUpdater<any>}) {
   
@@ -33,7 +34,7 @@ function TopMenuBar(props: {setter: SetterOrUpdater<any>}) {
   }
   const navigate = useNavigate();
   const logout = () => {
-      axios.get('http://localhost:3000/api/auth/logout', {withCredentials: true}) //쿠키와 함께 보내기 true.
+      axios.get('http://' + REACT_APP_HOST + ':3000/api/auth/logout', {withCredentials: true}) //쿠키와 함께 보내기 true.
       .then(res => {
           // console.log(res.data);
           if (res.data && res.data.msg === 'logout ok'){
