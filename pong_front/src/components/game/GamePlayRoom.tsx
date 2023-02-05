@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from "react";
+import {useState, useEffect, useContext} from "react";
 import { SocketContext } from "../../states/contextSocket";
 import {useLocation, Link} from "react-router-dom";
 import {useSetRecoilState, useResetRecoilState} from "recoil";
@@ -7,7 +7,6 @@ import { Center, Stack } from "../../styles/Layout";
 import { Button } from "../../styles/Inputs";
 import GameRoom from "./GameRoom";
 import { OverLay, Wrapper } from "../../styles/Modal";
-// import useUser from "../../util/useUser";
 import * as types from "./Game";
 
 function GamePlayRoom() {
@@ -16,8 +15,6 @@ function GamePlayRoom() {
     const location = useLocation();
     const player1 = location.state.player1;
     const player2 = location.state.player2;
-    // const myInfo = useUser();
-    // const currentPlayer = myInfo.userName;
     const currentPlayer = location.state.current;
     const isP1 = player1 === currentPlayer;
     const gameRoomName = `${player1}vs${player2}`;

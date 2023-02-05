@@ -13,7 +13,7 @@ import { REACT_APP_HOST } from "../../util/configData";
 function MatchMake(props: any) {
     const [loading, setLoading] = useState<boolean>(true);
     const [current, setCurrent] = useState<string>("");
-    const [myInfo, error, isLoading] = useGetData('http://localhost:3000/api/user');
+    const [myInfo, error, isLoading] = useGetData('http://' + REACT_APP_HOST + ':3000/api/user');
     const navigate = useNavigate();
 
     /* socket */

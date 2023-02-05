@@ -1,7 +1,4 @@
-import React, {useState, useEffect, useRef} from "react";
-import { useLocation } from "react-router-dom";
-import { Center } from "../../styles/Layout";
-import { Button } from "../../styles/Inputs"
+import { useEffect, useRef} from "react";
 import {colors, sizes} from "../game/GameEngine/variables";
 import {drawNet,drawPaddle, drawBall} from "../game/GameEngine/draw";
 import {useRecoilValue} from "recoil";
