@@ -26,7 +26,7 @@ export class AuthService {
   
       if (user)
         return user;
-      
+      details.username = 'no_init_' + details.oauthID;
       const newUser = this.userRepository.create(details);
       return this.userRepository.save(newUser);
     }
