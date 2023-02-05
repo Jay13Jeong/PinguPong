@@ -29,6 +29,20 @@ export class UsersController {
         }
     }
 
+    //초기화가 되어 있는지 상태를 반환하는 api.
+    @Get('init/status')
+    @UseGuards(JwtAuthGuard)
+    getUserInit(@Req() req : Request){
+        const user = req.user as User;
+        if (!user)
+            return {msg : false};
+        // console.log("123");
+        if (user.username.slice(0,8) !== 'no_init_')
+            return {msg : true}
+            // console.log("234");
+        return {msg : false};
+    }
+
     //나의 유저 정보를 반환하는 api.
     @Get() 
     @UseGuards(JwtAuthGuard)
@@ -58,6 +72,8 @@ export class UsersController {
     @UseGuards(JwtAuthGuard)
     async create(@Req() req : Request, @Body() body){
         let user = req.user as User;
+        if (!user || body.avatar === '' || body.username === '')
+            throw new BadRequestException('잘못된 유저 요청.');
         user.avatar = body.avatar;
         user.username = body.username;
         return await this.usersService.updateUser(user);
