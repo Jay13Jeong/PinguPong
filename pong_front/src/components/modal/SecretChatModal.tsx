@@ -26,7 +26,6 @@ function SecretChatModal(props: {current: string}) {
         // TODO - 비밀번호 보냄
         socket.emit('/api/post/secretPW', {roomName: showModal.roomName, secret: values, userId: props.current});
         socket.on('/api/post/secretPW', (data) => {
-            console.log(data);
             if (data) {
                 // 입장 성공
                 resetState();

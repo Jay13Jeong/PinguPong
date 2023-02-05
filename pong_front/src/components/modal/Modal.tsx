@@ -11,7 +11,6 @@ import BlockModal from "./BlockModal";
 function Modal() {
     return (
         <>
-            <CreateChatModal />
             <DMModal />
             <BlockModal/>
             <FriendModal/>
