@@ -164,8 +164,7 @@ function ProfileModal() {
         event.preventDefault();
         axios.post('http://' + REACT_APP_HOST + ':3000/api/friend/block', {otherID : userInfo.id}, {withCredentials: true})
         .then(res => {
-            if (res.status === 200)
-                alert('target block ok');
+            alert('target block ok');
         })
         .catch(err => {
             alert('target block fail');
