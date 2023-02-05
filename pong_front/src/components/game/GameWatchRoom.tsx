@@ -7,6 +7,7 @@ import { Center, Stack } from "../../styles/Layout";
 import { Button } from "../../styles/Inputs";
 import GameRoom from "./GameRoom";
 import * as types from "./Game";
+import { REACT_APP_HOST } from "../../util/configData";
 
 function GamePlayRoom(props: any) {
     /* 유저 정보 변수들 */
@@ -21,7 +22,7 @@ function GamePlayRoom(props: any) {
     const setGame = useSetRecoilState<types.gamePosInfo>(gameState);
 
     /* socket */ // TODO - 나중에 적당한 곳으로 옮겨줘야 함.
-    const ENDPOINT = "http://localhost:3001";
+    const ENDPOINT = "http://" + REACT_APP_HOST + ":3001";
     const socket = io(ENDPOINT, {
         transports: ['websocket'],
         withCredentials: true,

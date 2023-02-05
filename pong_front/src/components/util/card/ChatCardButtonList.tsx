@@ -4,6 +4,7 @@ import CardList from "./CardList";
 import ChatCardButton from "./ChatCardButton";
 import SecretChatModal from "../../modal/SecretChatModal";
 import useGetData from "../../../util/useGetData";
+import { REACT_APP_HOST } from "../../../util/configData";
 
 function ChatCardButtonList(props: {current: string}) {
     /* socket */

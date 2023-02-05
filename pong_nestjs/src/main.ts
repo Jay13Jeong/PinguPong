@@ -10,10 +10,8 @@ async function bootstrap() {
   app.use(cookieParser()); //리퀘스트에서 jwt토큰 추출용 파서.
   app.enableCors({
 		origin: [
-			"http://localhost",
-			"http://localhost:3000",
-			"http://10.12.7.8",
-			"http://10.12.7.8:3000",
+			"http://" + process.env.SERVER_HOST,
+			"http://" + process.env.SERVER_HOST + ":3000",
 		],
 		credentials: true,
 		exposedHeaders: ['randomStringLol', 'X-XSRF-TOKEN', "Authorization"], //csrf token, cors설정.

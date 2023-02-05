@@ -3,7 +3,7 @@ import LoginPage from './pages/auth/LoginPage';
 import FA2Page from './pages/auth/FA2Page';
 import Test from './pages/TestPage';
 import Lobby from './pages/LobbyPage';
-import ProfilePage from './pages/profile/ProfileModal';
+import ProfileInitPage from './pages/profile/ProfileInitPage';
 import EditProfilePage from './pages/profile/EditProfileModal';
 import GameLobbyPage from './pages/game/GameLobbyPage';
 import GameMatchPage from './pages/game/GameMatchPage';
@@ -35,8 +35,8 @@ export default function Routing(props: {setter: SetterOrUpdater<any>}) {
         <Route path="/chat/manage/:id" element={<ChatManageModal />} />
         <Route path="/" element={<LoginPage />} />
         <Route path="/auth/fa2" element={<FA2Page />} />
-        <Route path="/profile/:id" element={<ProfilePage />} />
-        <Route path="/profile/edit/:id" element={<EditProfilePage />} />
+        <Route path="/profile/init" element={<ProfileInitPage setter={props.setter}/>} />
+        {/* <Route path="/profile/edit/:id" element={<EditProfilePage />} /> */}
         {/* Game */}
         <Route path="/game/" element={<GameLobbyPage/>}></Route>
         <Route path="/game/match" element={<GameMatchPage/>}></Route>

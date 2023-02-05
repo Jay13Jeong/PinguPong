@@ -8,6 +8,7 @@ import { User } from "../profile/User";
 import axios from "axios";
 import DifficultyButtons from "./DifficultyButtons";
 import Loader from "../util/Loader";
+import { REACT_APP_HOST } from "../../util/configData";
 
 function MatchMake(props: any) {
     const [loading, setLoading] = useState<boolean>(true);
