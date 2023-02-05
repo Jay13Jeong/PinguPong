@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import {CardButton} from "./Card";
 
-function GameCardButton (props: {p1: string, p2: string, s1: number, s2: number}) {
+function GameCardButton (props: {p1: string, p2: string}) {
     const navigate = useNavigate();
     
     function clickHandler(e: any) {
@@ -16,7 +16,7 @@ function GameCardButton (props: {p1: string, p2: string, s1: number, s2: number}
     return (
         <CardButton onClick={clickHandler}>
             <span className="player">{props.p1} ⚔️ {props.p2}</span>
-            <span className="score">{props.s1} : {props.s2}</span>
+            {/* <span className="score">{props.s1} : {props.s2}</span> */}
         </CardButton>
     )
 }
