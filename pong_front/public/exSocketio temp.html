@@ -23,7 +23,7 @@
     <script>
     const socket = io('http://localhost:3000');
     
-    const room = 'testRoom2';
+    const room = 'testRoom';
     const userId = 'tempId';
     const secretpw = '123';
 
@@ -33,7 +33,7 @@
 
     socket.on('getUser', function (data) {
         console.log('getUesr');
-        socket.emit('getUser', room, userId, secretpw);
+        socket.emit('getUser', {roomName:room, userId:userId, secretpw:secretpw});
     });
 
     socket.on('chat', function(data, msg){

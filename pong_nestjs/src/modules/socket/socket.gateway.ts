@@ -234,7 +234,7 @@ import { GameService } from '../game/game.service';
        let difficulty = data.difficulty;
        let player = data.player;
        //console.log('requestMatchMake', client.id, data, difficulty, player);
-       //console.log('room', client.id, client.rooms);
+       //console.log('requestMatchMake', client.id, client.rooms);
       // 1. 같은 난이도를 요청한 플레이어가 큐에 있을 경우 게임 매치
       // 2. 같은 난이도를 요청한 플레이어가 큐에 없을 경우 해당 플레이어를 큐에 넣는다.
        if (this.gameService.matchMake(difficulty, player, client.id)){
@@ -243,16 +243,29 @@ import { GameService } from '../game/game.service';
       }
     }
 
+    @SubscribeMessage('watchGame')//관전하기
+    async watchGame(client : Socket, data) {
+      let roomName = data;
+      client.join(roomName);
+      this.gameService.watchGame(roomName, client);
+    }
+
+    @SubscribeMessage('stopwatchGame')//관전 그만두기
+    async stopwatchGame(client : Socket, data) {
+      let roomName = data;
+      client.leave(roomName);
+      this.gameService.stopwatchGame(roomName, client);
+    }
 
     @SubscribeMessage('requestStart')
     async requestStart(client : Socket, data) {
       let roomName = data;
-      //console.log('requestStart11', client.id, data, roomName);
+      
       //플레이어가 준비완료인지 확인하기, 여기서 socket room에 등록을 하자
       if (this.gameService.requestStart(roomName, client, this.server))
         this.gameService.startGame(roomName, this.server);
         //클래스 안에서 소켓메세지 보내기
-     
+        //console.log('requestStart11', client.id, client.rooms);
         //this.server.emit('startGame');//api: 시작 신호 보내기. 서버에서 쓰레드 돌리기 시작, if문으로 구별해서 보내기
         //gameStart();//게임 실행 함수 호출
         //api: 각각의 방마다 따로 돌아야 한다.이부분을 공부해 보자,, 모듈을 만들어야 한다.

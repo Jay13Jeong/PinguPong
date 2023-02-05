@@ -33,7 +33,7 @@
 
     socket.on('getUser', function (data) {
         console.log('getUesr');
-        socket.emit('getUser', room, userId, secretpw);
+        socket.emit('getUser', {roomName:room, userId:userId, secretpw:secretpw});
     });
 
     socket.on('chat', function(data, msg){
