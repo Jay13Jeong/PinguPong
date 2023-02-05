@@ -8,6 +8,7 @@ import { User } from "../profile/User";
 import axios from "axios";
 import DifficultyButtons from "./DifficultyButtons";
 import Loader from "../util/Loader";
+import { REACT_APP_HOST } from "../../util/configData";
 
 function MatchMake(props: any) {
     const [loading, setLoading] = useState<boolean>(false);
@@ -22,7 +23,7 @@ function MatchMake(props: any) {
     const socket = useContext(SocketContext);
 
     useEffect(() => {
-        axios.get('http://localhost:3000/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
+        axios.get('http://' + REACT_APP_HOST + ':3000/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
         .then(res => {
             if (res.data){
                 current = res.data.username as string;

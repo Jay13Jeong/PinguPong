@@ -6,6 +6,7 @@ import * as types from "../profile/User"
 import ModalBase from "./ModalBase"
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { REACT_APP_HOST } from "../../util/configData";
 
 function FriendModal() {
     // const [target, setTarget] = useState('');
@@ -57,10 +58,10 @@ function FriendModal() {
     useEffect(() => {
         // TODO: 친구 정보를 받아온다.
         // setFriendList();
-        axios.get('http://localhost:3000/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
+        axios.get('http://' + REACT_APP_HOST + ':3000/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
         .then(res2 => {
             /////
-            axios.get('http://localhost:3000/api/friend/block', {withCredentials: true}) //쿠키와 함께 보내기 true.
+            axios.get('http://' + REACT_APP_HOST + ':3000/api/friend/block', {withCredentials: true}) //쿠키와 함께 보내기 true.
             .then(res => {
                 if (res.data){
                     let myFriends : types.Friend[] = res.data.map((friend: any) => {

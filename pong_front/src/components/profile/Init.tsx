@@ -4,6 +4,7 @@ import '../../App.css';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { SetterOrUpdater } from 'recoil';
+import { REACT_APP_HOST } from '../../util/configData';
 
 export default function InitProfile(props: {setter: SetterOrUpdater<any>}) {
     const [avatar, setAvatar] = useState("default.jpeg");
@@ -12,7 +13,7 @@ export default function InitProfile(props: {setter: SetterOrUpdater<any>}) {
 
     useEffect(() => {
       props.setter(false);
-      axios.get('http://localhost:3000/api/user/init/status', {withCredentials: true})
+      axios.get('http://' + REACT_APP_HOST + ':3000/api/user/init/status', {withCredentials: true})
       .then(res => {
         if (res.data && res.data.msg === true)
           navigate('/lobby');
@@ -25,7 +26,7 @@ export default function InitProfile(props: {setter: SetterOrUpdater<any>}) {
     //프로필 아바타 및 이름 변경.
     function handleInitSubmit(event : any) {
         event.preventDefault();
-        axios.patch('http://localhost:3000/api/user', {avatar : avatar, username : username}, {withCredentials: true})
+        axios.patch('http://' + REACT_APP_HOST + ':3000/api/user', {avatar : avatar, username : username}, {withCredentials: true})
         .then(res => {
             navigate('/lobby'); 
         })
@@ -53,7 +54,8 @@ export default function InitProfile(props: {setter: SetterOrUpdater<any>}) {
                         <option value="favicon.ico" key="favicon.ico">Pingu</option>
                         <option value="logo192.png" key="logo192.png">React</option>
                     </select>
-                    Name : <input onKeyDown={handleInitKey} type="text" placeholder="" onChange={event => setUsername(event.target.value)} value={username} />
+                    <br/>
+                    Name : <input onKeyDown={handleInitKey} type="text" placeholder="사용 할 이름" onChange={event => setUsername(event.target.value)} value={username} />
                     <button className="profile-button" onClick={handleInitSubmit}>
                         입장
                     </button>

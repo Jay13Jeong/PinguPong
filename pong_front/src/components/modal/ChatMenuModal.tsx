@@ -6,12 +6,13 @@ import { SocketContext } from "../../states/contextSocket";
 import useGetData from "../../util/useGetData";
 import ModalBase from "./ModalBase";
 import Loader from "../util/Loader";
+import { REACT_APP_HOST } from "../../util/configData";
 
 function ChatMenuModal (props: {roomName: string, isMaster: boolean}) {
     const socket = useContext(SocketContext);
     const modalState = useRecoilValue(chatMenuModalState);
     const resetState = useResetRecoilState(chatMenuModalState);
-    const [info, error, isLoading] = useGetData(`http://localhost:3000/api/user/name?username=${modalState.user}`);
+    const [info, error, isLoading] = useGetData(`http://` + REACT_APP_HOST + `:3000/api/user/name?username=${modalState.user}`);
     const [menuLoading, isMenuLoading] = useState<boolean>(true);
     const [targetID, setTargetID] = useState<number>();
     const [isMuted, setIsMuted] = useState<boolean>(); // TODO - 이 유저가 음소거인지 아닌지 확인해야 함.

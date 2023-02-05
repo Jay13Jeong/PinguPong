@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import '../../App.css';
 import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
+import { REACT_APP_HOST } from '../../util/configData';
 
 export default function EditProfile() {
     const navigate = useNavigate();
@@ -10,14 +11,14 @@ export default function EditProfile() {
 
     useEffect(() => {
       //2단계인증이 켜져있는지 검사.
-      axios.get('http://localhost:3000/api/fa2/status', {withCredentials: true}) //쿠키와 함께 보내기 true.
+      axios.get('http://' + REACT_APP_HOST + ':3000/api/fa2/status', {withCredentials: true}) //쿠키와 함께 보내기 true.
       .then(res => {
         // axios.get('http://localhost:3000/api/fa2',{withCredentials: true});
         if (res.data.twofa === false){
           navigate('/lobby');
         } else {
           //켜져있다며 메일을 요청한다.
-          axios.get('http://localhost:3000/api/fa2',{withCredentials: true});
+          axios.get('http://' + REACT_APP_HOST + ':3000/api/fa2',{withCredentials: true});
         }
       })
       .catch(err => {
@@ -28,7 +29,7 @@ export default function EditProfile() {
   
     function handleSubmit(event : any) {
       event.preventDefault();
-      axios.post('http://localhost:3000/api/fa2', {code : code}, {withCredentials: true})
+      axios.post('http://' + REACT_APP_HOST + ':3000/api/fa2', {code : code}, {withCredentials: true})
       .then(res => {
         if (res.status === 200)
           navigate('/lobby');
