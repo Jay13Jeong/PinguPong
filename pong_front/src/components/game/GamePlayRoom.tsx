@@ -83,6 +83,8 @@ function GamePlayRoom() {
         })
         return () => {
             window.removeEventListener("keydown", keyDownHandler);
+            socket.off("ballPos");
+            socket.off("endGame");
           };
     }, []);
 

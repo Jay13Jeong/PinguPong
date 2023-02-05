@@ -57,8 +57,8 @@ function ChatRoom () {
 
         return () => {
             /* 이벤트 해제 */
-            socket.off('/api/get/master/status');
             socket.off('getUser');
+            socket.off('/api/get/master/status');
         };
     }, [socket, current, roomName]);
 

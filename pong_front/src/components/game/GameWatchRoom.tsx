@@ -36,6 +36,10 @@ function GamePlayRoom(props: any) {
             // TODO - 게임 종료 이벤트 발생시 종료 화면 띄우기
             console.log(data);
         })
+        return (() => {
+            socket.off("ballPos");
+            socket.off("endGame");
+        })
     }, []);
 
     return (
