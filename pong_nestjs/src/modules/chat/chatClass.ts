@@ -1,3 +1,5 @@
+import { Socket, Server } from 'socket.io';
+
 class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함, primary key는 소켓 id이다.
     //유저의 키값을 어떤것으로 할 것인가? A:소켓이 계속 유지가 된다. 리액트 페이지 라우팅 때문? 리액트 기능이 있다.
     //방장 변수
@@ -13,11 +15,14 @@ class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함, prima
     private socketuser : Map<string, string>;//소켓이 키
     private usersocket : Map<string, string>;//유저가 키
     
-    //맵 보낸 소켓 id(A), A를 차단한 소켓 id들 벡터
+    //맵 보낸 소켓 id(A), A를 차단한 소켓 id들 maps
     private blockuser : Map<string, string[]>;
 
-    //방장에게 음소거 당한 소켓 io 벡터
+    //방장에게 음소거 당한 userid Set
     private muteuser : Set<string>;
+
+    //방장에게 밴 당한 userid Set
+    private banList : Set<string>;
 
     public constructor(master:string, userid:string, secretpw:string){
         console.log('new');
@@ -34,6 +39,7 @@ class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함, prima
  
         this.blockuser = new Map<string, string[]>();
         this.muteuser = new Set<string>();
+        this.banList = new Set<string>();
     }
 
     public userCount():number{
@@ -82,11 +88,13 @@ class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함, prima
     }
 
     //비번 변경 함수
-    public setSecretpw(secretpw:string, newsecret:string):boolean{
-        if (!this.secret)
-            return false;
-        if (this.secretpw == secretpw){
+    public setSecretpw(socketid:string, newsecret:string):boolean{
+        if (this.master == socketid){
             this.secretpw = newsecret;
+            if (this.secretpw == '')
+                this.secret= false;
+            else
+                this.secret= true;
             return true;
         }
         return false;
@@ -104,6 +112,7 @@ class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함, prima
             }
         }
     }
+
     //차단을 해제하는 함수
     public freeblockuser(socketid:string, targetuserid:string){
         const targetsocketid:string = this.usersocket.get(targetuserid);
@@ -115,6 +124,7 @@ class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함, prima
             }
         }
     }
+
     //A를 차단한 소켓 id들 리턴하는 함수
     public getblockuser(socketid:string):string[]{
         return this.blockuser.get(socketid);//key값이 없으면 undefined를 반환
@@ -141,6 +151,11 @@ class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함, prima
         return this.muteuser.has(this.socketuser.get(socketid));
     }
 
+    //상대의 음소거 여부를 확인 후 bool값을 리턴하는 함수
+    public checkmuteYou(target:string):boolean {
+        return this.muteuser.has(target);
+    }
+
     //방의 소켓 리스트 반환
     public getSocketList():IterableIterator<string> {
         return this.socketuser.keys();
@@ -153,6 +168,26 @@ class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함, prima
     public checksecretPw(secretPW:string):boolean {
         return this.secretpw == secretPW;
     }
+
+    public kickUser(server:Server, socketid:string, targetUser:string) {
+        if (socketid != this.master)
+            return ;
+        this.delsocketuser(this.usersocket.get(targetUser));
+        server.to(this.usersocket.get(targetUser)).emit('youKick');
+    }
+
+    public banUser(server:Server, socketid:string, targetUser:string){
+        if (socketid != this.master)
+            return ;
+        this.kickUser(server, socketid, targetUser);
+        this.banList.add(targetUser);
+    }
+
+    //내가 밴인지 체크
+    public banCheck(userid:string):boolean {
+        return this.banList.has(userid);
+    }
+
 }
 
 export class chatClass {
@@ -236,9 +271,9 @@ export class chatClass {
     }
 
     //비번 변경 함수
-    public setSecretpw(roomName: string, secretpw:string, newsecret:string) {
-        const room:roomClass = this.rooms.get(roomName);
-        console.log(room.setSecretpw(secretpw, newsecret));
+    public setSecretpw(socketid:string, newsecret:string) {
+        const room:roomClass = this.rooms.get(this.socketid.get(socketid));
+        console.log(room.setSecretpw(socketid, newsecret));
     }
 
     //차단의 경우 추가하는 함수
@@ -272,10 +307,17 @@ export class chatClass {
     }
 
     //음소거 여부를 확인 후 bool값을 리턴하는 함수
-    public checkmuteuser(roomName: string, socketid:string) {
-        const room:roomClass = this.rooms.get(roomName);
+    public checkMuteUser(socketid:string) {
+        const room:roomClass = this.rooms.get(this.socketid.get(socketid));
         return room.checkmuteuser(socketid);
     }
+
+    //음소거 여부를 확인 후 bool값을 리턴하는 함수
+    public checkMuteYou(socketid:string, target:string):boolean {
+        const room:roomClass = this.rooms.get(this.socketid.get(socketid));
+        return room.checkmuteYou(target);
+    }
+
 
     //방이 비밀방 여부 확인, 비밀방이면 false
     public checksecret(roomName:string):boolean{
@@ -285,9 +327,24 @@ export class chatClass {
     }
 
     //비밀방의 비밀번호가 맞는지 확인하기 맞으면 ture, 틀리면 false
-    public checksecretPw(roomName, secretPW){
+    public checksecretPw(roomName:string, secretPW:string){
         const room:roomClass = this.rooms.get(roomName);
         return room.checksecretPw(secretPW);
+    }
+
+    public kickUser(server:Server, socketid:string, targetUser:string) {
+        const room:roomClass = this.rooms.get(this.socketid.get(socketid));
+        room.kickUser(server, socketid, targetUser);
+    }
+
+    public banUser(server:Server, socketid:string, targetUser:string) {
+        const room:roomClass = this.rooms.get(this.socketid.get(socketid));
+        room.banUser(server, socketid, targetUser);
+    }
+
+    public banCheck(roomName:string, userid:string):boolean{
+        const room:roomClass = this.rooms.get(roomName);
+        return room.banCheck(userid);
     }
 
 }

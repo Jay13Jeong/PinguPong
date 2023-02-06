@@ -46,7 +46,7 @@
 import { Inject } from '@nestjs/common';
 import { WebSocketGateway, WebSocketServer, SubscribeMessage, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
-import { chatClass } from '../../core/chat/chatClass';
+import { chatClass } from './chatClass';
 import { AuthService } from '../auth/auth.service';
 import { User } from '../users/user.entity';
 import { UsersService } from '../users/users.service';
@@ -121,7 +121,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     let [room, userid, msg] = data;
     console.log('chat---', client.rooms);  //현재 클라이언트의 방
     console.log(room, userid, msg);//메시지
-    if (this.rooms.checkmuteuser(room, client.id))//음소거 상태인지 확인하기
+    if (this.rooms.checkMuteUser(client.id))//음소거 상태인지 확인하기
       return ;
     const sockets = this.rooms.getSocketList(room);
     const blockuser = this.rooms.getblockuser(room, client.id);//나중에 디비에서 값 가져오기
@@ -193,7 +193,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async setSecretpw(client : Socket, data){
     let [room, secretpw, newsecret] = data;
     console.log('/api/put/setSecretpw', client.id, data, room, secretpw, newsecret);
-    this.rooms.setSecretpw(room, secretpw, newsecret);
+    this.rooms.setSecretpw(client.id, newsecret);
   }
 
   @SubscribeMessage('/api/put/addblockuser')//차단 유저 추가
