@@ -6,10 +6,10 @@ const SelectedDifficultyButton = styled(Button)`
         background: teal
     `;
 
-function DifficultyButtons (props: any) {
+function DifficultyButtons (props: {difficulty: number, setDifficulty: Function}) {
     const [current_difficulty, setCurrentDifficulty] = useState<number>(props.difficulty);
     
-    function handleDifficultyChange(value: number, e: any) {
+    function handleDifficultyChange(value: number, e: React.MouseEvent<HTMLElement>) {
         props.setDifficulty(value);   // parent component의 Difficulty를 변경하는 함수
         setCurrentDifficulty(value);    // 현재 component의 Difficulty를 변경하는 함수
     }

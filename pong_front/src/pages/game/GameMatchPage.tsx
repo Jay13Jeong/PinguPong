@@ -1,7 +1,7 @@
 import React from "react";
 import MatchMake from "../../components/game/MatchMake";
 
-function GameMatchPage(props: any) {
+function GameMatchPage() {
     return (
         <div>
             <MatchMake/>

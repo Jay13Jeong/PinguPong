@@ -7,36 +7,45 @@ import { Center, Stack } from "../../styles/Layout";
 import { Button } from "../../styles/Inputs";
 import GameRoom from "./GameRoom";
 import { OverLay, Wrapper } from "../../styles/Modal";
-// import useUser from "../../util/useUser";
 import * as types from "./Game";
 
 function GamePlayRoom() {
-    /* 유저 정보 변수들 */
-    // TODO - 게임이 시작되면 프로필 수정 버튼? 을 비활성해야 함 (만약 있다면..)
+    const [winner, setWinner] = useState<string>();
+    const setGame = useSetRecoilState<types.gamePosInfo>(gameState);
+    const resetGame = useResetRecoilState(gameState);
+    const socket = useContext(SocketContext);
     const location = useLocation();
+
+    useEffect(() => {
+        // TODO - 핸들러 달아주기
+        window.addEventListener("keydown", keyDownHandler);
+        // TODO - 시작 이벤트 듣기
+        socket.on("startGame", () => {
+            socket.off("startGame");
+            socket.on("ballPos", (data: types.gamePosInfo) => {
+                setGame(data);
+            })
+            socket.on("endGame", (data: {winner: string}) => {
+                socket.off("ballPos");
+                socket.off("endGame");
+                setWinner(data.winner);
+            })
+        })
+        return () => {
+            window.removeEventListener("keydown", keyDownHandler);
+            socket.off("ballPos");
+            socket.off("endGame");
+            resetGame();
+        };
+    }, []);
+    
     const player1 = location.state.player1;
     const player2 = location.state.player2;
-    // const myInfo = useUser();
-    // const currentPlayer = myInfo.userName;
     const currentPlayer = location.state.current;
     const isP1 = player1 === currentPlayer;
     const gameRoomName = `${player1}vs${player2}`;
-
-    console.log("gameStart", currentPlayer);
-
-    /* state */
-    const [winner, setWinner] = useState<string>();
-
-    /* 게임 정보 setter */
-    const setGame = useSetRecoilState<types.gamePosInfo>(gameState);
-    const resetGame = useResetRecoilState(gameState);
-
-    /* 변수들 */
     const playerSpeed = 10;
-
-    /* socket */
-    const socket = useContext(SocketContext);
-
+    
     /* Event Handler */
     const keyDownHandler = (e: KeyboardEvent) => {
         console.log('0000', isP1 , "current" , currentPlayer);
@@ -58,40 +67,16 @@ function GamePlayRoom() {
         }
     }
 
-    function testHandler(e: any) {
-        // console.log('0000', gameRoomName);
+    function readyHandler(e: React.MouseEvent<HTMLElement>) {
         socket.emit("requestStart", gameRoomName);
     }
-
-    useEffect(() => {
-        // TODO - 핸들러 달아주기
-        window.addEventListener("keydown", keyDownHandler);
-        // TODO - 시작 이벤트 듣기
-        socket.on("startGame", (data: any) => {
-            // console.log('startGame');
-            socket.off("startGame");
-            socket.on("ballPos", (data: types.gamePosInfo) => {
-                setGame(data);
-                // console.log('ballPos!!');
-            })
-            socket.on("endGame", (data) => {
-                socket.off("ballPos");
-                socket.off("endGame");
-                resetGame();
-                setWinner(data.winner);
-            })
-        })
-        return () => {
-            window.removeEventListener("keydown", keyDownHandler);
-          };
-    }, []);
 
     return (
         <Center>
             <Stack>
                 <GameRoom p1={player1} p2={player2}/>
-                <Button className="game-button" onClick={testHandler}>
-                    게임 시작
+                <Button className="game-button" onClick={readyHandler}>
+                    게임 준비
                 </Button>
             </Stack>
             {winner ? 
@@ -100,11 +85,9 @@ function GamePlayRoom() {
                 {winner === currentPlayer ? 
                 <div>
                     <div>Win!!</div>
-                    {/* 이미지 추가 */}
                 </div> : 
                 <div>
                     <div>Lose!!</div>
-                    {/* 이미지 추가 */}
                 </div>
                 }
                 <Link to="/lobby"><Button>Go To Lobby</Button></Link>
