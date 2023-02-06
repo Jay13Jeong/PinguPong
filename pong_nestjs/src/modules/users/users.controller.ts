@@ -1,8 +1,9 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, MaxFileSizeValidator, Param, ParseFilePipe, Patch, Post, Query, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guard/jwt.guard';
 import { User } from './user.entity';
 import { UsersService } from "./users.service";
 import { Request, Response } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('user')
 export class UsersController {
@@ -52,6 +53,13 @@ export class UsersController {
         return user;
     }
 
+	@Get('/avatar')
+	@UseGuards(JwtAuthGuard)
+	async getUserAvatar(@Req() req : Request, @Res() res){
+        const user = req.user as User;
+		return await this.usersService.getAvatar(user, res);
+	}
+
     //선택한 유저 정보를 반환하는 api
     @Get(':id')
     @UseGuards(JwtAuthGuard)
@@ -78,4 +86,23 @@ export class UsersController {
         user.username = body.username;
         return await this.usersService.updateUser(user);
     }
+
+    @Post('avatar') //아바타 이미지 업로드 api.
+	@UseGuards(JwtAuthGuard)
+	@UseInterceptors(FileInterceptor('file'))
+	async setUserAvatar(
+        @Req() req : Request,
+		@UploadedFile(
+			new ParseFilePipe({
+				validators: [
+					new MaxFileSizeValidator({ maxSize: ( 1 << 20 ) * 4 }), //사진최대 크기 4mb.
+				]
+			})
+		)
+		file: Express.Multer.File
+	){
+        // console.log(file);
+        const user = req.user as User;
+		return this.usersService.postAvatar(user, file.originalname);
+	}
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import ModalBase from "./ModalBase";
 import { useRecoilValue, useResetRecoilState } from "recoil";
 import { profileEditModalState, profileModalState } from "../../states/recoilModalState";
@@ -14,6 +14,8 @@ function ProfileEditModal(props: {name: string}) {
     const [avatar, setAvatar] = useState("https://cdn.myanimelist.net/images/characters/11/421848.jpg");
     const [username, setUsername] = useState(props.name);
     const [status2fa, setStatus2fa] = useState(false);
+    const [avatarFile, setAvatarFile] = useState('');
+    const inputRef = useRef<HTMLInputElement | null> (null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -76,6 +78,27 @@ function ProfileEditModal(props: {name: string}) {
         })
     };
 
+    //파일 업로드.
+    function handleFileSubmit(event : any) {
+        event.preventDefault();
+        if (inputRef.current && inputRef.current.value)
+		{
+			//update Avatar here
+			axios.post('http://' + REACT_APP_HOST + ':3000/api/user/avatar', {file: inputRef.current.files![0]}, {withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' }})
+			.then((res) => {
+				alert("upload success");
+			})
+			.catch((err) => {
+				alert("upload fail");
+			})
+		}
+    };
+
+    function onAvatar(e: ChangeEvent<HTMLInputElement>) {
+		const image: File = e.target.files![0];
+		setAvatarFile(URL.createObjectURL(image));
+	}
+
     if (showModal) {
         return (
             <ModalBase reset={resetState}>
@@ -100,6 +123,12 @@ function ProfileEditModal(props: {name: string}) {
                     <button className="profile-button" onClick={handleOff2FASubmit}>
                     2단계 비활성화
                     </button>}
+                </div>
+                <div className="profile-button-wrapper">
+                    <input ref={inputRef} type="file" id="img" name="img" accept="image/*" onChange={onAvatar}/>
+                    <button className="profile-button" onClick={handleFileSubmit}>
+                        업로드
+                    </button>
                 </div>
             </ModalBase>
         )
