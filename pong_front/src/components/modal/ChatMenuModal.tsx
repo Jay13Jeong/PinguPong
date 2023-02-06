@@ -1,17 +1,18 @@
 import React, {useState, useContext, useEffect} from "react";
-import { Socket } from "socket.io-client";
-import { useRecoilValue, useResetRecoilState } from "recoil";
-import { chatMenuModalState } from "../../states/recoilModalState";
+import { useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
+import { chatMenuModalState, profileModalState } from "../../states/recoilModalState";
 import { SocketContext } from "../../states/contextSocket";
 import useGetData from "../../util/useGetData";
 import ModalBase from "./ModalBase";
 import Loader from "../util/Loader";
 import { REACT_APP_HOST } from "../../util/configData";
+import { toast } from "react-toastify";
 
 function ChatMenuModal (props: {roomName: string, isMaster: boolean}) {
     const socket = useContext(SocketContext);
     const modalState = useRecoilValue(chatMenuModalState);
     const resetState = useResetRecoilState(chatMenuModalState);
+    const profileState = useSetRecoilState(profileModalState);
     const [info, error, isLoading] = useGetData(`http://` + REACT_APP_HOST + `:3000/api/user/name?username=${modalState.user}`);
     const [menuLoading, isMenuLoading] = useState<boolean>(true);
     const [targetID, setTargetID] = useState<number>();
@@ -24,38 +25,54 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean}) {
     }, [info, error, isLoading]);
 
     useEffect(() => {
-        // TODO - 음소거 여부 알아야 함!!!!!
-        return(() => {
-            // 이벤트 리스너 제거하기.
+        socket.emit('api/get/muteuser', modalState.user);
+        socket.on('api/get/muteuser', (data: boolean) => {
+            setIsMuted(data);
         })
-    }, [socket]);
+        return(() => {
+            socket.off('api/get/muteuser');
+        })
+    }, [socket, modalState.user]);
 
     useEffect(() => {
-        if (targetID !== undefined && isMuted !== undefined)
+        if (targetID !== undefined && isMuted !== undefined) {
             isMenuLoading(false);
-    }, [targetID, isMuted])
+        }
+    }, [targetID, isMuted]);
 
     /* 추방 (현재 채팅방을 강제로 나가게 함) */
     function kickHandler(e: React.MouseEvent<HTMLElement>) {
-        // 추방  기능
+        // 추방 기능
+        socket.emit('kickUser', modalState.user);
+        toast("👟 kick completed!");
+        resetState();
     }
 
     /* 채팅방에 못들어오게 함 */
     function banHandler(e: React.MouseEvent<HTMLElement>) {
         // 밴 기능
+        socket.emit('banUser', modalState.user);
+        toast("🔥 ban completed!");
+        resetState();
     }
 
     /* 음소거 (target 유저가 말하는 것은 누구에게도 표시되지 않는다.) */
     function muteHandler(e: React.MouseEvent<HTMLElement>) {
         socket.emit('/api/put/addmuteuser', props.roomName, modalState.user);
+        toast("🔇 mute completed!");
+        resetState();
     }
 
     function freemuteHandler(e: React.MouseEvent<HTMLElement>) {
         socket.emit('/api/put/freemuteuser', props.roomName, modalState.user);
+        toast("🔈 unmute completed!");
+        resetState();
     }
 
     function setMasterHandler(e: React.MouseEvent<HTMLElement>) {
         socket.emit('/api/post/mandateMaster', props.roomName, modalState.user);
+        toast("👑 master set up completed!");
+        resetState();
     }
 
     function inviteHandler(e: React.MouseEvent<HTMLElement>) {
@@ -67,11 +84,12 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean}) {
          * - 소켓 이벤트 off
          * - 게임 화면으로 전환 (로딩)
          */
+        // TODO - 처리 후 toast, 모달 닫기
     }
 
     if (modalState.show) {
         return (
-            <ModalBase reset={resetState}>
+            <ModalBase reset={resetState} z_index={100}>
                 <h2>Chat Menu</h2>
                 {menuLoading ? <Loader/> : 
                     <>
@@ -83,7 +101,7 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean}) {
                     </div> : null}
                     <div>
                         <button onClick={inviteHandler}>도전장 보내기</button>
-                        <button onClick={(e) => {}}>프로필 보기</button>
+                        <button onClick={(e) => {targetID && profileState({userId: targetID, show: true})}}>프로필 보기</button>
                     </div>
                     </>
                 }

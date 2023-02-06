@@ -14,6 +14,7 @@ import ChatMenuModal from "../../components/modal/ChatMenuModal";
 import "../../components/chat/ChatRoom.scss"
 import { REACT_APP_HOST } from "../../util/configData";
 import CustomToastContainer from "../../components/util/CustomToastContainer";
+import { toast } from "react-toastify";
 
 function ChatRoom () {
     const setChangeChatPwModalState = useSetRecoilState(changeChatPwModalState);
@@ -44,7 +45,12 @@ function ChatRoom () {
                     setMaster(data);   // 방장이면 true / 아니면 false
                 });
             })
-            // TODO - 본인이 추방당했는지 듣고 있어야 함.
+            /* 추방 여부 듣기 */
+            socket.on('youKick', ()=>{
+                socket.off('youKick');
+                toast("🔥 추방당했습니다!");
+                navigate('/lobby');
+            });
             // TODO - 방장 위임 결과 제대로 반영되는지 확인해 볼 것.
         }
 
@@ -52,6 +58,7 @@ function ChatRoom () {
             /* 이벤트 해제 */
             socket.off('getUser');
             socket.off('/api/get/master/status');
+            socket.off('youKick');
         };
     }, [socket, current, roomInfo.id]);
 
