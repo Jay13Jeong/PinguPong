@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { SocketContext } from '../../states/contextSocket';
@@ -16,6 +16,12 @@ function SecretChatModal(props: {current: string}) {
     const socket = useContext(SocketContext);
     const navigate = useNavigate();
 
+    useEffect(() => {
+        return (() => {
+            resetState();
+        })
+    }, [resetState]);
+
     function handler(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         // TODO - 비밀번호 보냄
@@ -26,8 +32,7 @@ function SecretChatModal(props: {current: string}) {
                 resetState();
                 socket.off('/api/post/secretPW');
                 navigate(`/chat/room/${showModal.roomName}`, {state: {
-                    roomName: showModal.roomName,
-                    isSecret: true
+                    isMaster: false
                 }});
             }
             else {

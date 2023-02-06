@@ -43,8 +43,7 @@ function CreateChatModal(props: {current: string}) {
                 resetState();
                 socket.off('/api/post/newRoom');
                 navigate(`/chat/room/${values.room}`, {state: {
-                    roomName: values.room,
-                    isSecret: values.pw !== ""
+                    isMaster: true
                 }});
             }
             else {
