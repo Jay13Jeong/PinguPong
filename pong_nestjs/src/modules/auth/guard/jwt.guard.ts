@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, ImATeapotException, Inject, Injectable, UnauthorizedException } from "@nestjs/common";
+import { CanActivate, ExecutionContext, Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/modules/users/user.entity";
 import { Repository } from "typeorm";
@@ -32,9 +32,9 @@ export class JwtAuthGuard implements CanActivate {
 		if (!user)
 			throw new UnauthorizedException('토큰에 유저 정보 없음');
 		if (!user.username || user.username === '')
-			throw new ImATeapotException("username");
+			throw new UnauthorizedException("username");
 		if (user.twofa && !obj.twofa_verified)
-			throw new ImATeapotException('twofa');
+			throw new UnauthorizedException('twofa');
 		request.user = user;
 		// request.fa2 = obj.twofa_verified;
 		return true;
@@ -69,7 +69,7 @@ export class Jwt2faGuard implements CanActivate {
 		if (!user)
 			throw new UnauthorizedException('토큰 유저 정보 없음');
 		if (!user.username || user.username === '') //유저이름 정보 없음.
-			throw new ImATeapotException("username");
+			throw new UnauthorizedException("username");
 		request.user = user; //리퀘스트에 유저 정보 전달.
 		return true;
 	}
