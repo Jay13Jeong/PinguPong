@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ModalBase from "./ModalBase";
 import { useRecoilValue, useResetRecoilState } from "recoil";
-import { profileEditModalState } from "../../states/recoilModalState";
+import { profileEditModalState, profileModalState } from "../../states/recoilModalState";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { REACT_APP_HOST } from "../../util/configData";
@@ -10,6 +10,7 @@ function ProfileEditModal(props: {name: string}) {
     // const [showModal, setShowModal] = useRecoilState(profileEditModalState);
     const showModal = useRecoilValue(profileEditModalState);
     const resetState = useResetRecoilState(profileEditModalState);
+    const resetParentState = useResetRecoilState(profileModalState);
     const [avatar, setAvatar] = useState("https://cdn.myanimelist.net/images/characters/11/421848.jpg");
     const [username, setUsername] = useState(props.name);
     const [status2fa, setStatus2fa] = useState(false);
@@ -53,8 +54,11 @@ function ProfileEditModal(props: {name: string}) {
             setStatus2fa(true);
         })
         .catch(err => {
-          alert('invalid');
+        //   alert('invalid : 2fa on');
         })
+        navigate('/');
+        resetState();
+        resetParentState();
     };
 
     //2단계 끄기.
@@ -66,7 +70,9 @@ function ProfileEditModal(props: {name: string}) {
             setStatus2fa(false);
         })
         .catch(err => {
-          alert('invalid');
+            navigate('/');
+            resetState();
+            resetParentState();
         })
     };
 
