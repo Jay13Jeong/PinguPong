@@ -10,7 +10,7 @@ import DifficultyButtons from "./DifficultyButtons";
 import Loader from "../util/Loader";
 import { REACT_APP_HOST } from "../../util/configData";
 
-function MatchMake(props: any) {
+function MatchMake() {
     const [loading, setLoading] = useState<boolean>(true);
     const [current, setCurrent] = useState<string>("");
     const [myInfo, error, isLoading] = useGetData('http://' + REACT_APP_HOST + ':3000/api/user');
@@ -32,7 +32,7 @@ function MatchMake(props: any) {
     }, [current]);
 
     useEffect(() => {
-        socket.on('matchMakeSuccess', (data: any) => {
+        socket.on('matchMakeSuccess', (data: {p1: string, p2: string}) => {
             socket.off('matchMakeSuccess');
             navigate(`/game/match/${data.p1}vs${data.p2}`, {state: {
                 player1: data.p1,
@@ -48,7 +48,7 @@ function MatchMake(props: any) {
     let currentDifficulty: number = 0;
 
     /* 매치 메이킹 */
-    function handleMatchMakeRequest(e: any) {
+    function handleMatchMakeRequest(e: React.MouseEvent<HTMLElement>) {
         // console.log(current);
         socket.emit('requestMatchMake', {
             difficulty: currentDifficulty,

@@ -5,7 +5,7 @@ import { SocketContext } from "../../states/contextSocket";
 import GameCardButton from "../util/card/GameCardButton";
 import CardList from "../util/card/CardList";
 
-function GameWatchList (props: any) {
+function GameWatchList () {
     const [loading, setLoading] = useState<boolean>(true);
     const [currPage, setCurrPage] = useState<number>(1)
     const [gameList, setGameList] = useState<{p1: string, p2: string}[]>([]);

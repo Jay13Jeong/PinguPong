@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import React, { useContext } from "react";
 import { SocketContext } from "../../../states/contextSocket";
 import { useNavigate } from "react-router-dom";
 import {CardButton} from "./Card";
@@ -7,7 +7,7 @@ function GameCardButton (props: {p1: string, p2: string}) {
     const navigate = useNavigate();
     const socket = useContext(SocketContext);
     
-    function clickHandler(e: any) {
+    function clickHandler(e: React.MouseEvent<HTMLElement>) {
         /* 관전 요청 */
         socket.emit('watchGame', `${props.p1}vs${props.p2}`);
         navigate(`/game/watch/${props.p1}vs${props.p2}`, {state: {

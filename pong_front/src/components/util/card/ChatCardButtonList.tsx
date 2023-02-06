@@ -7,7 +7,7 @@ import SecretChatModal from "../../modal/SecretChatModal";
 function ChatCardButtonList(props: {current: string}) {
     /* socket */
     const socket = useContext(SocketContext);
-
+ 
     /* state */
     const [chatRooms, setChatRooms] = useState<string[]>([]);
     const [currPage, setCurrPage] = useState<number>(1)
@@ -17,7 +17,7 @@ function ChatCardButtonList(props: {current: string}) {
             // TODO - 채팅방 목록을 보내달라 요청
             socket.emit('/api/get/RoomList');
             // TODO - 받아온 채팅방 목록을 state에 저장
-            socket.on('/api/get/RoomList', (data: any) => {
+            socket.on('/api/get/RoomList', (data: string[]) => {
                 setChatRooms(data);
             });
         }
