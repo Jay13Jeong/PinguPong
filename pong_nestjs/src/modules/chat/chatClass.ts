@@ -172,8 +172,9 @@ class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함, prima
     public kickUser(server:Server, socketid:string, targetUser:string) {
         if (socketid != this.master)
             return ;
-        this.delsocketuser(this.usersocket.get(targetUser));
         server.to(this.usersocket.get(targetUser)).emit('youKick');
+        this.delsocketuser(this.usersocket.get(targetUser));
+        
     }
 
     public banUser(server:Server, socketid:string, targetUser:string){

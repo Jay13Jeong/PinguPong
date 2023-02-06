@@ -6,6 +6,7 @@ import { UsersService } from '../users/users.service';
 import { chatClass } from 'src/modules/chat/chatClass';
 import { User } from '../users/user.entity';
 import { GameService } from '../game/game.service';
+import { dmClass } from '../chat/chatDmClass';
 
 
 @WebSocketGateway( {
@@ -190,20 +191,20 @@ import { GameService } from '../game/game.service';
     this.rooms.freemuteuser(room, client.id, userId);
   }
 
-  @SubscribeMessage('api/get/muteuser')
+  @SubscribeMessage('api/get/muteuser')//상대가 음소거인지 확인
   async checkMuteYou(client: Socket, data) {
     let targetUser = data;
    this.server.to(client.id).emit('api/get/muteuser', this.rooms.checkMuteYou(client.id, targetUser));
   }
 
-  @SubscribeMessage('kickUser')
+  @SubscribeMessage('kickUser')//넌 킥
   async kickuser(client: Socket, data) {
     let targetUserId = data;
   
     this.rooms.kickUser(this.server, client.id, targetUserId);
   }
 
-  @SubscribeMessage('banUser')
+  @SubscribeMessage('banUser')//너 영구밴
   async banUser(client: Socket, data) {
     let targetUserId = data;
   
@@ -214,7 +215,47 @@ import { GameService } from '../game/game.service';
 
 
 
+  dmRooms : dmClass = new dmClass();
 
+  @SubscribeMessage('dmList')//디엠 기능 첫 입장, 처음이면 DM 디비 만들기
+  async dmList(client:Socket){
+    const user = await this.findUserBySocket(client);
+    
+    this.dmRooms.setUsers(client.id, user.id);
+    let userIds:number[] = this.dmRooms.getdmList(client.id);
+    let userName:string[];
+    for (let id of userIds){
+      let name = await (await this.userService.findUserById(id)).username;
+      userName.push(name);
+    }
+    this.server.to(client.id).emit('dmList', userName);//유저 네임 리스트 보내주기
+  }
+
+  //메시지를 보냄
+  //data = {targetId:11111, msg:'안녕하세요~!'}
+  @SubscribeMessage('sendDm')
+  async sendDm(client:Socket, data){
+    let targetId = data.targetId;
+    let msg = data.msg;
+    //dm msg 저장 하는 곳 만들 것
+    this.server.to(client.id).emit('receiveDm', msg);
+    //단일 메세지 보냄
+  }
+
+  //1대1 대화방 입장시 여태까지 받은 Dm 보내주기
+  @SubscribeMessage('connectDm')
+  async connectDm(client:Socket, data){//userId
+    let targetId = data;
+    this.server.to(client.id).emit('receiveDms', 'msgs');
+    //msgs = {{user:'lee',msg:'qwe'},{user:'lee',msg:'123'}, ...}
+  }
+
+  //1대1 디엠방 나감
+  @SubscribeMessage('closeDm')
+  async closeDm(client:Socket, data){
+    let targetId = data;
+    this.dmRooms.closeDm(client, targetId);
+  }
 
 
 
