@@ -44,9 +44,6 @@ export default function Lobby(props: {setter: SetterOrUpdater<any>}) {
         <Link to="/chat">
           <Button>CHAT</Button>
         </Link>
-        <Link to="/chatt">
-          <Button>CHAT_BASIC</Button>
-        </Link>
       </header>
     </div>
   );

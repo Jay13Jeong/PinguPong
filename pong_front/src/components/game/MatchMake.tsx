@@ -3,93 +3,74 @@ import { useNavigate } from "react-router-dom";
 import { SocketContext } from "../../states/contextSocket";
 import { Center, Stack } from "../../styles/Layout";
 import { Button } from "../../styles/Inputs";
-// import useUser from "../../util/useUser";
+import useGetData from "../../util/useGetData";
 import { User } from "../profile/User";
 import axios from "axios";
 import DifficultyButtons from "./DifficultyButtons";
 import Loader from "../util/Loader";
 import { REACT_APP_HOST } from "../../util/configData";
 
-function MatchMake(props: any) {
-    const [loading, setLoading] = useState<boolean>(false);
-    let current: string;
-    // const myInfo = useUser();
-    // const current = myInfo.userName;
-
-    var currentDifficulty: number = 0;
+function MatchMake() {
+    const [loading, setLoading] = useState<boolean>(true);
+    const [current, setCurrent] = useState<string>("");
+    const [myInfo, error, isLoading] = useGetData('http://' + REACT_APP_HOST + ':3000/api/user');
     const navigate = useNavigate();
 
     /* socket */
     const socket = useContext(SocketContext);
 
     useEffect(() => {
-        axios.get('http://' + REACT_APP_HOST + ':3000/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
-        .then(res => {
-            if (res.data){
-                current = res.data.username as string;
-            }
-        })
-        .catch(err => {
-            if (err.response.data.statusCode === 401)
-            navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
-        })
+        if (myInfo) {
+            setCurrent(myInfo.username);
+        }
+    }, [myInfo, error, isLoading]);
 
-        socket.on('matchMakeSuccess', (data: any) => {
-            console.log('matchMakeSuccess');
-            /**
-             * NOTE
-             * /game/match/뒤는 그냥 방을 구분할 수 있는 어떤 것이어도 됩니다.
-             * 지금은 (p1닉네임)vs(p2닉네임
-             */
+    useEffect(() => {
+        if (current !== "") {
+            setLoading(false);
+        }
+    }, [current]);
+
+    useEffect(() => {
+        socket.on('matchMakeSuccess', (data: {p1: string, p2: string}) => {
+            socket.off('matchMakeSuccess');
             navigate(`/game/match/${data.p1}vs${data.p2}`, {state: {
                 player1: data.p1,
                 player2: data.p2,
                 current: current
             }});
         });
-    }, []);
+        return (() => {
+            socket.off('matchMakeSuccess');
+        })
+    }, [current, socket, navigate]);
 
-    // NOTE - 매치 메이킹
-    function handleMatchMakeRequest(e: any) {
-        console.log(current);
+    let currentDifficulty: number = 0;
+
+    /* 매치 메이킹 */
+    function handleMatchMakeRequest(e: React.MouseEvent<HTMLElement>) {
+        // console.log(current);
         socket.emit('requestMatchMake', {
             difficulty: currentDifficulty,
-            player: current // TODO - 본인 아이디 받아와야 함.
+            player: current
         });
         setLoading(true);
     }
 
-    // NOTE - test button용 핸들러 (매칭 이후 단순 플레이만 테스트 할 수 있음.)
-    function handleTest(e: any) {
-        navigate(`/game/match/hh`, {state: {
-            player1: "pingpong_king",
-            player2: "loser"
-        }});
-    }
-
     function setDifficulty(difficulty: number) {
         currentDifficulty = difficulty;
-        // console.log(currentDifficulty);
     }
 
-    if (loading) {
-        return (
-            <Center>
-                <Loader text="게임 매칭 중"/>
-            </Center>
-        );
-    }
-    else {
-        return (
-            <Center>
-                <Stack>
-                    <DifficultyButtons difficulty={currentDifficulty} setDifficulty={setDifficulty}/>
-                    <Button onClickCapture={handleMatchMakeRequest}> 게임 매칭 요청 </Button>
-                    <Button onClickCapture={handleTest}> 테스트 입장 </Button>
-                </Stack>
-            </Center>
-        );
-    }
+    return (
+        <Center>
+            {loading ? <Loader text="로딩중"/> : 
+            <Stack>
+                <DifficultyButtons difficulty={currentDifficulty} setDifficulty={setDifficulty}/>
+                <Button onClickCapture={handleMatchMakeRequest}> 게임 매칭 요청 </Button>
+            </Stack>
+            }
+        </Center>
+    )
 }
 
 export default MatchMake;

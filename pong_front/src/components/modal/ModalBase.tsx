@@ -2,7 +2,7 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import * as Modal from "../../styles/Modal";
-import { SetterOrUpdater, Resetter } from "recoil";
+import { Resetter } from "recoil";
 
 function ModalBase (props: {reset:Resetter, children: React.ReactNode}) {
   return (

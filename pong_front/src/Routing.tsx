@@ -1,17 +1,11 @@
 import { Route, Routes } from 'react-router';
 import LoginPage from './pages/auth/LoginPage';
 import FA2Page from './pages/auth/FA2Page';
-import Test from './pages/TestPage';
 import Lobby from './pages/LobbyPage';
 import ProfileInitPage from './pages/profile/ProfileInitPage';
-import EditProfilePage from './pages/profile/EditProfileModal';
 import GameLobbyPage from './pages/game/GameLobbyPage';
 import GameMatchPage from './pages/game/GameMatchPage';
 import GamePlayRoomPage from './pages/game/GamePlayRoomPage';
-// import ChatLobbyPage from './pages/chat/ChatLobbyPage';
-// import CreateChatModal from './pages/chat/CreateChatModal';
-// import SelectPrivateChatModal from './pages/chat/SelectPrivateChatModal';
-// import ChatRoomPage from './pages/chat/ChatRoomPage';
 import ChatRoom from './pages/chat/ChatRoom';
 import EditChatRoomModal from './pages/chat/EditChatRoomModal';
 import ChatManageModal from './pages/chat/ChatManageModal';

@@ -1,8 +1,7 @@
-import React, {useState, useContext} from "react";
+import React, {useState, useContext, useEffect} from "react";
 import { toast } from "react-toastify"
 import { useNavigate } from "react-router-dom";
 import { SocketContext } from "../../states/contextSocket";
-import useUser from "../../util/useUser";
 import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
 import { Button } from "../../styles/Inputs";
 import { createChatModalState } from "../../states/recoilModalState";
@@ -10,7 +9,7 @@ import ModalBase from "./ModalBase";
 import { Stack } from "../../styles/Layout";
 import "./Chat.scss"
 
-function CreateChatModal() {
+function CreateChatModal(props: {current: string}) {
     // const [showModal, setShowModal] = useRecoilState(createChatModalState);
     const showModal = useRecoilValue(createChatModalState);
     const resetState = useResetRecoilState(createChatModalState);
@@ -18,10 +17,17 @@ function CreateChatModal() {
         room: "",
         pw: "",
     })
-    const myInfo = useUser();
     const socket = useContext(SocketContext);
-
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        if (props.current !== "") {
+            setLoading(false);
+        }
+        else
+            setLoading(true);
+    }, [props]);
 
     function handler(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -29,7 +35,7 @@ function CreateChatModal() {
             toast.error("방 이름을 입력하세요.");
             return ;
         }
-        socket.emit('/api/post/newRoom', values.room, myInfo.userName, values.pw);
+        socket.emit('/api/post/newRoom', values.room, props.current, values.pw);
         socket.on('/api/post/newRoom', (data: boolean) => {
             if (data) {
                 toast.success("채팅방 생성에 성공했습니다.");
@@ -37,8 +43,7 @@ function CreateChatModal() {
                 resetState();
                 socket.off('/api/post/newRoom');
                 navigate(`/chat/room/${values.room}`, {state: {
-                    roomName: values.room,
-                    isSecret: values.pw !== ""
+                    isMaster: true
                 }});
             }
             else {

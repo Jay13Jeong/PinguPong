@@ -1,6 +1,6 @@
 import GameWatchList from "../../components/game/GameWatchList";
 
-function GameWatchPage (props: any) {
+function GameWatchPage () {
     return (
         <GameWatchList/>
     );

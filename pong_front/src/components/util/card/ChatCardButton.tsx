@@ -17,8 +17,7 @@ function ChatCardButton (props: {roomName: string, current: string}) {
             if (data) {
                 socket.emit('getUser', {roomName: props.roomName, userId: props.current})
                 navigate(`/chat/room/${props.roomName}`, {state: {
-                    roomName: props.roomName,
-                    isSecret: false
+                    isMaster: false
                 }});
             }
             // TODO - 비밀방 모달 띄우기

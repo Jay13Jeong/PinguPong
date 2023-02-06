@@ -3,7 +3,7 @@ import { Socket, Server } from 'socket.io';
 import { Inject } from '@nestjs/common';
 import { AuthService } from '../auth/auth.service';
 import { UsersService } from '../users/users.service';
-import { chatClass } from 'src/core/chat/chatClass';
+import { chatClass } from 'src/modules/chat/chatClass';
 import { User } from '../users/user.entity';
 import { GameService } from '../game/game.service';
 
@@ -75,6 +75,10 @@ import { GameService } from '../game/game.service';
     let room =data.roomName;
     let userId = data.userId;//비밀번호 안 받음 ''이거로 변경
     console.log('getUser', client.id, data, room, userId, '');
+    if (this.rooms.banCheck(room, userId)){
+      this.server.to(client.id).emit('youBan');
+      return ;
+    }
     this.rooms.newRoom(room, client.id, userId, '');
   }
 
@@ -83,7 +87,7 @@ import { GameService } from '../game/game.service';
     let [room, userid, msg] = data;
     console.log('chat---', client.rooms);  //현재 클라이언트의 방
     console.log(room, userid, msg);//메시지
-    if (this.rooms.checkmuteuser(room, client.id))//음소거 상태인지 확인하기
+    if (this.rooms.checkMuteUser(client.id))//음소거 상태인지 확인하기
       return ;
     const sockets = this.rooms.getSocketList(room);
     const blockuser = this.rooms.getblockuser(room, client.id);//나중에 디비에서 값 가져오기
@@ -151,11 +155,11 @@ import { GameService } from '../game/game.service';
     this.rooms.mandateMaster(room, client.id, userId);
   }
 
-  @SubscribeMessage('/api/put/setSecretpw')//비번 변경
+  @SubscribeMessage('/api/put/setSecretpw')//비번 변경, ''이면 공개방으로 전환
   async setSecretpw(client : Socket, data){
-    let [room, secretpw, newsecret] = data;
-    console.log('/api/put/setSecretpw', client.id, data, room, secretpw, newsecret);
-    this.rooms.setSecretpw(room, secretpw, newsecret);
+    let newsecret = data;
+    console.log('/api/put/setSecretpw', client.id, data, newsecret);
+    this.rooms.setSecretpw(client.id, newsecret);
   }
 
   @SubscribeMessage('/api/put/addblockuser')//차단 유저 추가
@@ -186,9 +190,25 @@ import { GameService } from '../game/game.service';
     this.rooms.freemuteuser(room, client.id, userId);
   }
 
+  @SubscribeMessage('api/get/muteuser')
+  async checkMuteYou(client: Socket, data) {
+    let targetUser = data;
+   this.server.to(client.id).emit('api/get/muteuser', this.rooms.checkMuteYou(client.id, targetUser));
+  }
 
+  @SubscribeMessage('kickUser')
+  async kickuser(client: Socket, data) {
+    let targetUserId = data;
+  
+    this.rooms.kickUser(this.server, client.id, targetUserId);
+  }
 
-
+  @SubscribeMessage('banUser')
+  async banUser(client: Socket, data) {
+    let targetUserId = data;
+  
+    this.rooms.banUser(this.server, client.id, targetUserId);
+  }
 
 
 

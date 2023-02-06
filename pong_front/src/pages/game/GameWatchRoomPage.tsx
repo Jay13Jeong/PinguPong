@@ -1,6 +1,6 @@
 import GameWatchRoom from "../../components/game/GameWatchRoom"
 
-function GameWatchRoomPage(props: any) {
+function GameWatchRoomPage() {
     return (
         <GameWatchRoom/>
     );

@@ -40,7 +40,7 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean}) {
         // 추방  기능
     }
 
-    /* 채팅방에 못들어오게 함 (구현 미정) */
+    /* 채팅방에 못들어오게 함 */
     function banHandler(e: React.MouseEvent<HTMLElement>) {
         // 밴 기능
     }
