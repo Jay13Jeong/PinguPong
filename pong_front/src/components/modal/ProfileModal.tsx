@@ -27,6 +27,7 @@ function ProfileModal() {
     const showModal = useRecoilValue(profileModalState);
     const setProfileEditState = useSetRecoilState(profileEditModalState);
     const resetState = useResetRecoilState(profileModalState);
+    const [avatarFile, setAvatarFile] = useState('');
     
     const [userInfo, setUserInfo] = useState<types.User>({
         id: 0,
@@ -95,10 +96,22 @@ function ProfileModal() {
                     };
                     setUserInfo(myInfo);
                 }
+                axios.get('http://' + REACT_APP_HOST + ':3000/api/user/avatar/' + res.data.id, {withCredentials: true, responseType: 'blob'}) //blob : 파일전송용 큰 객체타입.
+                .then(res2 => {
+                    // console.log(res2.data);
+                    setAvatarFile(URL.createObjectURL(res2.data));
+                })
+                .catch(err => {
+                    // alert("111");
+                    navigate('/');
+                })
+            } else {
+                // alert("222");
+                navigate('/');
             }
         })
         .catch(err => {
-            if (err.response.data.statusCode === 401)
+            // alert("333");
             navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
         })
     }, [showModal, showEditModal]);
@@ -226,7 +239,9 @@ function ProfileModal() {
                 {/* TODO - 프로필 이미지? */}
                 <div className="profile-wrapper">
                     <div className="profile-box">
-                        <img className="profile-image" src={userInfo.avatar} alt={userInfo.userName + '-profile'} />
+                        {avatarFile !== '' ?
+                        <img className="profile-image" src={avatarFile} alt={userInfo.userName + '-profile'} />
+                        : <img className="profile-image" src="/favicon.ico" alt={userInfo.userName + '-profile'} />}
                     </div>
                     {profileButton()}
                     <div className="profile-name">

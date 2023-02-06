@@ -29,14 +29,15 @@ export class UsersService {
     }
 
 	/* Avatar */
-	async getAvatar(user : User, res: any) {
+	async getAvatar(id : number, res: any) {
+		const user = await this.findUserById(id);
 		if (!user) {
 			throw new NotFoundException('User not found');
 		}
 		res.set({
 			'Content-Type': `image/png`
 		});
-		return res.sendFile(user.avatar, { root: 'src/avatars' });
+		return res.sendFile(user.avatar, { root: 'avatars' });
 	}
 
 	async postAvatar(user : User, filename: string) {
@@ -44,7 +45,7 @@ export class UsersService {
 			throw new NotFoundException('User not found');
 		}
 		if (user.avatar != 'default.jpeg') {
-			this.deleteFile('src/avatars/' + user.avatar);
+			this.deleteFile('avatars/' + user.avatar);
 		}
 		user.avatar = filename;
 		// console.log(user);
@@ -58,7 +59,7 @@ export class UsersService {
 		}
 
 		if (user.avatar != 'default.jpeg') {
-			this.deleteFile('src/avatars/' + user.avatar);
+			this.deleteFile('avatars/' + user.avatar);
 		}
 		user.avatar = 'default.jpeg';
 		this.save(user)

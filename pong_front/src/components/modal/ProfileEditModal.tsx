@@ -38,7 +38,7 @@ function ProfileEditModal(props: {name: string}) {
     //프로필 아바타 및 이름 변경.
     function handleSubmit(event : any) {
         event.preventDefault();
-        axios.patch('http://' + REACT_APP_HOST + ':3000/api/user', {avatar : avatar, username : username}, {withCredentials: true})
+        axios.patch('http://' + REACT_APP_HOST + ':3000/api/user', {username : username}, {withCredentials: true})
         .then(res => {
             //변경 성공.
             resetState();
@@ -91,7 +91,9 @@ function ProfileEditModal(props: {name: string}) {
 			.catch((err) => {
 				alert("upload fail");
 			})
-		}
+            return ;
+        }
+        alert("can not send empty file");
     };
 
     function onAvatar(e: ChangeEvent<HTMLInputElement>) {
@@ -104,31 +106,31 @@ function ProfileEditModal(props: {name: string}) {
             <ModalBase reset={resetState}>
                 <h1>Profile Edit Modal</h1>
                 <div className="profile-button-wrapper">
-                    Avatar : 
-                    <select onChange={event => setAvatar(event.target.value)} value={avatar}>
+                    Avatar :
+                    <input ref={inputRef} type="file" id="img" name="img" accept="image/*" onChange={onAvatar}/>
+                    <button id="profile-btn" className="profile-button" onClick={handleFileSubmit}>
+                        아바타 변경
+                    </button>
+                </div>
+                <div className="profile-button-wrapper">
+                    {/* <select onChange={event => setAvatar(event.target.value)} value={avatar}>
                         <option value="default.jpeg" key="default.jpeg">Pinga</option>
                         <option value="favicon.ico" key="favicon.ico">Pingu</option>
                         <option value="logo192.png" key="logo192.png">React</option>
-                    </select>
+                    </select> */}
                     Name : <input id="username" name="username" type="text" placeholder="" onChange={event => setUsername(event.target.value)} value={username} />
-                    <button className="profile-button" onClick={handleSubmit}>
-                        수정
+                    <button id="profile-btn" className="profile-button" onClick={handleSubmit}>
+                        이름수정
                     </button>
                 </div>
                 <div className="profile-button-wrapper">
                     {!status2fa?
-                    <button className="profile-button" onClick={handle2FASubmit}>
+                    <button id="profile-btn" className="profile-button" onClick={handle2FASubmit}>
                         2단계 활성화
                     </button> :
-                    <button className="profile-button" onClick={handleOff2FASubmit}>
+                    <button id="profile-btn" className="profile-button" onClick={handleOff2FASubmit}>
                     2단계 비활성화
                     </button>}
-                </div>
-                <div className="profile-button-wrapper">
-                    <input ref={inputRef} type="file" id="img" name="img" accept="image/*" onChange={onAvatar}/>
-                    <button className="profile-button" onClick={handleFileSubmit}>
-                        업로드
-                    </button>
                 </div>
             </ModalBase>
         )
