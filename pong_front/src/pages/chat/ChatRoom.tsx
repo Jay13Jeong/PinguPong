@@ -22,8 +22,8 @@ function ChatRoom () {
     const [myInfo, error, isLoading] = useGetData('http://' + REACT_APP_HOST + ':3000/api/user');
     const [msg, setMsg] = useState<string>("");
     const [current, setCurrent] = useState<string>("");     // 현재 유저의 id
-    const [master, setMaster] = useState<boolean>(false);    // 현재 유저의 방장 여부
-    const roomInfo = useParams() as { id: string };     // undefined 해결용 type assersion
+    const [master, setMaster] = useState<boolean>(false);   // 현재 유저의 방장 여부
+    const roomInfo = useParams() as { id: string };         // undefined 해결용 type assersion
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -45,6 +45,7 @@ function ChatRoom () {
                 });
             })
             // TODO - 본인이 추방당했는지 듣고 있어야 함.
+            // TODO - 방장 위임 결과 제대로 반영되는지 확인해 볼 것.
         }
 
         return () => {
@@ -83,9 +84,7 @@ function ChatRoom () {
         <ChatMenuModal isMaster={master} roomName={roomInfo.id}/>
         <Center>
             <div id="chat-room">
-                {master ? <button onClick={(e) => {setChangeChatPwModalState({roomName: roomInfo.id, show: true})}} id="change-pw-btn">비밀번호 변경</button> : null}
-                {/* <button onClick={fightHandler} id="fight-btn">도전장 도착</button> */}
-                {master ? <div id="fight-btn">👑 나는 방장 👑</div> : null}
+                {master ? <button onClick={(e) => {setChangeChatPwModalState({roomName: roomInfo.id, show: true})}} id="change-pw-btn">비밀번호 설정</button> : null}
                 <button onClick={exitHandler} id="exit-chat-btn">채팅방 나가기</button>
                 <ChatField roomName={roomInfo.id} current={current}/>
                 <form onSubmit={msgHandler} id="chat-input">
