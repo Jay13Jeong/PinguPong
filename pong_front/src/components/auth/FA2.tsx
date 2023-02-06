@@ -54,7 +54,7 @@ export default function EditProfile() {
                       /></td>
                   </tr>
                   <tr>
-                      <td><button onClick={handleSubmit} className="confirmBtn">Confirm</button></td>
+                      <td><button onClick={handleSubmit} className="confirmBtn">OK</button></td>
                   </tr>
               </table>
           </div>
