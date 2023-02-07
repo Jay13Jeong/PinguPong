@@ -24,6 +24,9 @@ import { dmClass } from '../chat/chatDmClass';
 
     //pingpong : GameService = new GameService();
     rooms : chatClass = new chatClass();
+    socketUserid : Map<string, number> = new Map<string, number>();
+    useridStatus : Map<number, string> = new Map<number, string>();
+
 
     //OnGatewayConnection를 오버라이딩
     async handleConnection(client : Socket) {
@@ -234,20 +237,23 @@ import { dmClass } from '../chat/chatDmClass';
   //메시지를 보냄
   //data = {targetId:11111, msg:'안녕하세요~!'}
   @SubscribeMessage('sendDm')
-  async sendDm(client:Socket, data){
+  async sendDm(client:Socket, data) {
     let targetId = data.targetId;
     let msg = data.msg;
-    //dm msg 저장 하는 곳 만들 것
-    this.server.to(client.id).emit('receiveDm', msg);
-    //단일 메세지 보냄
+ 
+    this.dmRooms.sendDm(this.server, client, targetId, msg);
   }
 
   //1대1 대화방 입장시 여태까지 받은 Dm 보내주기
   @SubscribeMessage('connectDm')
-  async connectDm(client:Socket, data){//userId
+  async connectDm(client:Socket, data){//targetuserId
     let targetId = data;
-    this.server.to(client.id).emit('receiveDms', 'msgs');
-    //msgs = {{user:'lee',msg:'qwe'},{user:'lee',msg:'123'}, ...}
+
+    this.dmRooms.connectDm(client, targetId);
+    let user = await this.findUserBySocket(client);
+    let target = await this.userService.findUserById(targetId);
+    let msgs = this.dmRooms.getMsgs(user, target);
+    this.server.to(client.id).emit('receiveDms', msgs);
   }
 
   //1대1 디엠방 나감
