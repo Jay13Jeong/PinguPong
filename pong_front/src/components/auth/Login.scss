@@ -41,7 +41,13 @@
 }
 
 .confirmBtn {
-    font-size: 100%;
+    font-size: 80%;
+    background-color: pink;
+    border-radius: 5px;
+}
+
+.confirmBtn:hover {
+    background-color: white;
 }
 
 .initForm {
@@ -53,4 +59,23 @@
 
 .initForm .profile-button {
     background-color: skyblue;
+    border-radius: 5px;
+}
+
+.initForm .profile-button:hover {
+    background-color: yellow;
+}
+
+.profile-button-wrapper #profile-btn {
+    background-color: skyblue;
+    border-radius: 5px;
+}
+
+.profile-button-wrapper #profile-btn:hover {
+    background-color: yellow;
+}
+
+.initForm .profile-image {
+    height: 200px;
+    width: 200px;
 }

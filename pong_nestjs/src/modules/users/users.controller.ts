@@ -1,8 +1,9 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, MaxFileSizeValidator, Param, ParseFilePipe, ParseIntPipe, Patch, Post, Query, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guard/jwt.guard';
 import { User } from './user.entity';
 import { UsersService } from "./users.service";
 import { Request, Response } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('user')
 export class UsersController {
@@ -52,6 +53,13 @@ export class UsersController {
         return user;
     }
 
+    //선택한 유저의 아바타를 가져오는 api.
+	@Get('avatar/:id')
+	@UseGuards(JwtAuthGuard)
+	async getUserAvatar(@Param('id', ParseIntPipe) id: number, @Res() res){
+		return await this.usersService.getAvatar(id, res);
+	}
+
     //선택한 유저 정보를 반환하는 api
     @Get(':id')
     @UseGuards(JwtAuthGuard)
@@ -72,10 +80,28 @@ export class UsersController {
     @UseGuards(JwtAuthGuard)
     async create(@Req() req : Request, @Body() body){
         let user = req.user as User;
-        if (!user || body.avatar === '' || body.username === '')
+        if (!user || body.username === '')
             throw new BadRequestException('잘못된 유저 요청.');
-        user.avatar = body.avatar;
+        // user.avatar = body.avatar;
         user.username = body.username;
         return await this.usersService.updateUser(user);
     }
+
+    @Post('avatar') //아바타 이미지 업로드 api.
+	@UseGuards(JwtAuthGuard)
+	@UseInterceptors(FileInterceptor('file'))
+	async setUserAvatar(
+        @Req() req : Request,
+		@UploadedFile(
+			new ParseFilePipe({
+				validators: [
+					new MaxFileSizeValidator({ maxSize: ( 1 << 20 ) * 4 }), //사진최대 크기 4mb.
+				]
+			})
+		)
+		file: Express.Multer.File
+	){
+        const user = req.user as User;
+		return this.usersService.postAvatar(user, file.filename);
+	}
 }
