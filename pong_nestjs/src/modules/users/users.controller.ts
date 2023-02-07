@@ -101,8 +101,7 @@ export class UsersController {
 		)
 		file: Express.Multer.File
 	){
-        // console.log(file);
         const user = req.user as User;
-		return this.usersService.postAvatar(user, file.originalname);
+		return this.usersService.postAvatar(user, file.filename);
 	}
 }

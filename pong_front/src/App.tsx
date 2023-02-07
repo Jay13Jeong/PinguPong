@@ -11,8 +11,11 @@ import TopMenuBar from './components/TopMenuBar';
 import Modal from './components/modal/Modal';
 
 function App() {
-
   const [loginOk, setLoginOk] = useState(false);
+
+  useEffect(() => {
+    setLoginOk(false);
+  }, []);
 
   return (
     <div >
