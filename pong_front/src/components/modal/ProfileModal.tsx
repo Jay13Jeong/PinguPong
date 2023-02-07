@@ -81,8 +81,6 @@ function ProfileModal() {
             // console.log(res.data);
             if (res.data){
                 if (showModal.userId !== res.data.id && showModal.userId !== 0){ //id 0은 빈 값.
-                    // console.log(showModal.user);
-                    // console.log("=======");
                     setUserInfo(showModal.user? showModal.user : userInfo);
                 } else {
                     let totalGame = res.data.wins + res.data.loses;
@@ -98,14 +96,19 @@ function ProfileModal() {
                     };
                     setUserInfo(myInfo);
                 }
-                axios.get('http://' + REACT_APP_HOST + ':3000/api/user/avatar/' + res.data.id, {withCredentials: true, responseType: 'blob'}) //blob : 파일전송용 큰 객체타입.
+                let targetId = res.data.id;
+                if (showModal.userId !== res.data.id && showModal.userId !== 0){
+                    targetId = showModal.userId;
+                }
+                axios.get('http://' + REACT_APP_HOST + ':3000/api/user/avatar/' + targetId, {withCredentials: true, responseType: 'blob'}) //blob : 파일전송용 큰 객체타입.
                 .then(res2 => {
                     // console.log(res2.data);
                     setAvatarFile(URL.createObjectURL(res2.data));
                 })
                 .catch(err => {
                     // alert("111");
-                    navigate('/');
+                    // console.log(showModal.user);
+                    // navigate('/');
                 })
             } else {
                 // alert("222");

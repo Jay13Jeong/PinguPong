@@ -11,7 +11,7 @@ import { UsersController } from './users.controller';
 @Module({
   imports: [
 		TypeOrmModule.forFeature([User]),
-    // MulterModule.registerAsync({ useFactory: () => ({ dest: './avatars' }) }),
+    MulterModule.registerAsync({ useFactory: () => ({ dest: './avatars' }) }),
   ], 
 	controllers: [
 		UsersController,
