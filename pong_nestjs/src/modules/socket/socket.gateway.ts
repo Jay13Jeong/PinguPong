@@ -10,7 +10,7 @@ import { dmClass } from '../chat/chatDmClass';
 
 
 @WebSocketGateway( {
-    cors: { origin: '*' }//, namespace: 'api/ping'
+    cors: { origin: '*' }//, credentials: true,}//, namespace: 'api/ping'
   })
   export class socketGateway implements OnGatewayConnection, OnGatewayDisconnect {
      constructor(@Inject(GameService) private readonly gameService:GameService,
@@ -30,7 +30,7 @@ import { dmClass } from '../chat/chatDmClass';
 
     //OnGatewayConnection를 오버라이딩
     async handleConnection(client : Socket) {
-      console.log('ping', client.id);//client.rooms와 값이 같다
+      console.log('ping', client, client.id);//client.rooms와 값이 같다
       //console.log(client.rooms);
       //들어온 유저 로그 찍기
       this.server.to(client.id).emit('getUser');//해당 클라이언트에게만 보내기//채팅
@@ -220,13 +220,14 @@ import { dmClass } from '../chat/chatDmClass';
 
 
 
-  
+
   dmRooms : dmClass = new dmClass();
 
   @SubscribeMessage('dmList')//디엠 기능 첫 입장, 처음이면 DM 디비 만들기
   async dmList(client:Socket){
+    console.log('111111', client);
     const user = await this.findUserBySocket(client);
-    
+    console.log('dmList', client.id, user);
     this.dmRooms.setUsers(client.id, user.id);
     let userIds:number[] = this.dmRooms.getdmList(client.id);
     let userName:string[];

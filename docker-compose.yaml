@@ -60,6 +60,7 @@ services:
       - REACT_APP_HOST=${SERVER_HOST} # REACT_APP_이 붙어야만 인식가능
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=true # App이 수정되었을 경우 Reload 가능하도록 하는 설정
+      - WDS_SOCKET_PORT=0 # 문제 해결용 WebSocket connection to 'ws://localhost:3000/ws' failed:
     #   - VITE_BASE_URL=
     build:
       context: ./pong_front
