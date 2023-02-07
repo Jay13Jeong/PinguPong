@@ -129,9 +129,9 @@ function FriendModal() {
         return (
             <ModalBase reset={resetState}>
                 <h1>Friend List</h1>
-                <input type="text" placeholder="이름으로 찾기" onChange={event => setTarget(event.target.value)} value={target} />
+                <input type="text" placeholder="이름으로 요청" onChange={event => setTarget(event.target.value)} value={target} />
                 <button className="profile-button" onClick={handleAddFriendSubmit}>
-                    친구추가
+                    친구요청
                 </button>
                 <UserCardButtonList friends={friendList}/>
             </ModalBase>
