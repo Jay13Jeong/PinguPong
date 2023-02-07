@@ -218,6 +218,9 @@ import { dmClass } from '../chat/chatDmClass';
 
 
 
+
+
+  
   dmRooms : dmClass = new dmClass();
 
   @SubscribeMessage('dmList')//디엠 기능 첫 입장, 처음이면 DM 디비 만들기
