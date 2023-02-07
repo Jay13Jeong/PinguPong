@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom'
 import {Center, Stack} from "../../styles/Layout"
 import {Button} from "../../styles/Inputs"
 
-function GameLobbyPage(props: any) {
+function GameLobbyPage() {
     return (
         <Center>
             <Stack>

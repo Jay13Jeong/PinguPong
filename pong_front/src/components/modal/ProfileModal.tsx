@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { SocketContext } from "../../states/contextSocket";
 import { Link, useNavigate } from "react-router-dom";
 import ModalBase from "./ModalBase";
 import GameRecordList from "../util/card/GameRecordList";
@@ -27,6 +28,8 @@ function ProfileModal() {
     const showModal = useRecoilValue(profileModalState);
     const setProfileEditState = useSetRecoilState(profileEditModalState);
     const resetState = useResetRecoilState(profileModalState);
+    const [avatarFile, setAvatarFile] = useState('');
+    const socket = useContext(SocketContext);
     
     const [userInfo, setUserInfo] = useState<types.User>({
         id: 0,
@@ -78,8 +81,6 @@ function ProfileModal() {
             // console.log(res.data);
             if (res.data){
                 if (showModal.userId !== res.data.id && showModal.userId !== 0){ //id 0은 빈 값.
-                    // console.log(showModal.user);
-                    // console.log("=======");
                     setUserInfo(showModal.user? showModal.user : userInfo);
                 } else {
                     let totalGame = res.data.wins + res.data.loses;
@@ -90,15 +91,32 @@ function ProfileModal() {
                         myProfile : true,
                         userStatus : 'off',
                         rank : 0,
-                        odds : res.data.wins == 0? 0 : Math.floor(totalGame / res.data.wins),
+                        odds : res.data.wins === 0? 0 : Math.floor(totalGame / res.data.wins),
                         record : [],
                     };
                     setUserInfo(myInfo);
                 }
+                let targetId = res.data.id;
+                if (showModal.userId !== res.data.id && showModal.userId !== 0){
+                    targetId = showModal.userId;
+                }
+                axios.get('http://' + REACT_APP_HOST + ':3000/api/user/avatar/' + targetId, {withCredentials: true, responseType: 'blob'}) //blob : 파일전송용 큰 객체타입.
+                .then(res2 => {
+                    // console.log(res2.data);
+                    setAvatarFile(URL.createObjectURL(res2.data));
+                })
+                .catch(err => {
+                    // alert("111");
+                    // console.log(showModal.user);
+                    // navigate('/');
+                })
+            } else {
+                // alert("222");
+                navigate('/');
             }
         })
         .catch(err => {
-            if (err.response.data.statusCode === 401)
+            // alert("333");
             navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
         })
     }, [showModal, showEditModal]);
@@ -123,9 +141,11 @@ function ProfileModal() {
                 );
             case "game":
                 return (
-                    // TODO 게임으로 가야 함.
-                    // TODO 게임중인 본인이 게임 화면으로 이동하는 경우 문제 발생할 수 있음...
-                    <button className="profile-status">
+                    userInfo.myProfile ? 
+                    <div className="profile-status">
+                        <FontAwesomeIcon style={{color: "#400082"}} icon={faCircle}/> In Game
+                    </div> : 
+                    <button className="profile-status" onClick={watchHandler}>
                         <FontAwesomeIcon style={{color: "#400082"}} icon={faCircle}/> In Game
                     </button>
                 );
@@ -135,7 +155,7 @@ function ProfileModal() {
     }
 
     //친추.
-    function handleFollow(event : any) {
+    function handleFollow(event: React.MouseEvent<HTMLElement>) {
         event.preventDefault();
         axios.post('http://' + REACT_APP_HOST + ':3000/api/friend', {otherID : userInfo.id}, {withCredentials: true})
         .then(res => {
@@ -148,7 +168,7 @@ function ProfileModal() {
     };
 
     //언팔.
-    function handleUnfollow(event : any) {
+    function handleUnfollow(event: React.MouseEvent<HTMLElement>) {
         event.preventDefault();
         axios.patch('http://' + REACT_APP_HOST + ':3000/api/friend', {otherID : userInfo.id}, {withCredentials: true})
         .then(res => {
@@ -160,7 +180,8 @@ function ProfileModal() {
         })
     };
 
-    function handleBlock(event : any) {
+    // 차단
+    function handleBlock(event: React.MouseEvent<HTMLElement>) {
         event.preventDefault();
         axios.post('http://' + REACT_APP_HOST + ':3000/api/friend/block', {otherID : userInfo.id}, {withCredentials: true})
         .then(res => {
@@ -171,7 +192,8 @@ function ProfileModal() {
         })
     };
 
-    function handleUnblock(event : any) {
+    // 차단 해제
+    function handleUnblock(event: React.MouseEvent<HTMLElement>) {
         event.preventDefault();
         axios.patch('http://' + REACT_APP_HOST + ':3000/api/friend/block', {otherID : userInfo.id}, {withCredentials: true})
         .then(res => {
@@ -182,6 +204,44 @@ function ProfileModal() {
             alert('target unblock fail');
         })
     };
+
+    // 게임 관전 이동
+    function watchHandler(event: React.MouseEvent<HTMLElement>) {
+        /**
+         * NOTE
+         * - 게임 목록 받아오기
+         * - 게임 목록에서 사용자 ID 찾기
+         * - 모달 클리어
+         * - 그 게임으로 이동
+         */
+        /* 게임 목록 받아오기 */
+        socket.emit('api/get/roomlist');
+        socket.on('api/get/roomlist', (data: {p1: string, p2: string}[]) => {
+            let target: {p1: string, p2: string} = {p1: "", p2: ""};
+            /* 게임 목록에서 사용자 ID 찾기 */
+            if (data.some((game) => {
+                if (game.p1 === userInfo.userName || game.p2 === userInfo.userName) {
+                    target = {...game};
+                    return true;
+                }
+                else
+                    return false;
+            })) {
+                // 게임에 유저가 존재하니 이동이 가능하다.
+                socket.off('api/get/roomlist');
+                socket.emit('watchGame', `${target.p1}vs${target.p2}`);
+                resetState();
+                navigate(`/game/watch/${target.p1}vs${target.p2}`, {state: {
+                    player1: target.p1,
+                    player2: target.p2
+                }});
+            }
+            socket.off('api/get/roomlist');
+            resetState();
+            // TODO - 만약에 목록에 동일한 이름의 유저가 없는 경우 (그 찰나에 게임이 종료됨) 어떻게 처리할지 확인해보기
+        })
+        // TODO - 이미 종료된 게임의 경우 어떻게 되는지 확인해보기
+    }
 
     function profileButton () {
         if (userInfo.myProfile) {
@@ -226,7 +286,9 @@ function ProfileModal() {
                 {/* TODO - 프로필 이미지? */}
                 <div className="profile-wrapper">
                     <div className="profile-box">
-                        <img className="profile-image" src={userInfo.avatar} alt={userInfo.userName + '-profile'} />
+                        {avatarFile !== '' ?
+                        <img className="profile-image" src={avatarFile} alt={userInfo.userName + '-profile'} />
+                        : <img className="profile-image" src="/favicon.ico" alt={userInfo.userName + '-profile'} />}
                     </div>
                     {profileButton()}
                     <div className="profile-name">

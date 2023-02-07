@@ -1,6 +1,6 @@
 import GamePlayRoom from "../../components/game/GamePlayRoom";
 
-function GamePlayRoomPage(props: any) {
+function GamePlayRoomPage() {
     return (
         <GamePlayRoom/>
     );
