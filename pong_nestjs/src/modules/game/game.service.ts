@@ -62,7 +62,7 @@ class BattleClass{
         this.player1Ready = false;
         this.player2Ready = false;
 
-        this.goal = 15;
+        this.goal = 10;
         this.speed = speed;
 
         this.counter = undefined;
@@ -181,7 +181,7 @@ class BattleClass{
         // 4. 게임 종료 여부도 확인해서 보내주기
         if (this.goal === this.game.score.player1 || this.goal === this.game.score.player2) {
             // 이긴 사람만 winner에 넣어서 보내줍니다.
-            this.myserver.to(this.roomName).emit("endGame", {winner: this.goal === this.game.score.player1 ? this.game.score.player1 : this.game.score.player2});
+            this.myserver.to(this.roomName).emit("endGame", {winner: this.goal === this.game.score.player1 ? this.player1Name : this.player2Name});
             //this.player2socket.to(this.player2Id).emit("endGame", {winner: this.goal === this.game.score.player1 ? this.game.score.player1 : this.game.score.player2});
             // TODO - 🌟 전적 정보를 저장해야 한다면 여기서 저장하기 🌟
             this.player1socket.leave(this.roomName);
@@ -193,7 +193,7 @@ class BattleClass{
     }
 
     public iGameLoser(loserid:string):string{
-        this.myserver.to(this.roomName).emit("endGame", {winner: this.player1Id === loserid ? this.player1Name : this.player2Name});
+        this.myserver.to(this.roomName).emit("endGame", {winner: this.player1Id !== loserid ? this.player1Name : this.player2Name});
         clearInterval(this.counter);
         console.log("endGame", this.player1Id === loserid ? this.player1Name : this.player2Name);
         return this.player1Id === loserid ? this.player1Id : this.player2Id;
