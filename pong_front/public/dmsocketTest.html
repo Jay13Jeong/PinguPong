@@ -1,0 +1,62 @@
+<html>
+<head>
+    
+</head>
+<body>
+    <ul id="messages"></ul>
+    <form id="form" action="">
+      <input id="input" autocomplete="off" /><button>temp에게 Send</button>
+    </form>
+
+    <button onclick=dmList()>디엠 리스트 최초 접속</button>
+    <button onclick=connectDm()>temp랑 1대1 대화 하기</button>
+    <button onclick=closeDm()>temp랑 1대1 대화 끝내기</button>
+
+    <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"
+    integrity="sha384-KAZ4DtjNhLChOB/hxXuKqhMLYvx3b5MlT55xPEiNmREKRzeEm+RVPlTnAn0ajQNs"
+    crossorigin="anonymous"></script>
+    <script>
+    const socket = io('http://localhost:3000');
+    
+    let room = '';
+    const userName = 'cheolee';
+    const targetId = 22222;
+    const targetuser = 'temp';
+
+    socket.on('dmList', function (data) {
+        console.log('dmList', data);
+    });
+
+    socket.on('receiveDm', function (data) {
+        console.log('receiveDm', data);
+    });
+
+    socket.on('receiveDm', function (data) {
+        console.log('receiveDms', data);
+    });
+
+    function dmList(){
+        socket.emit('dmList');
+    }
+
+    function connectDm(){
+        socket.emit('connectDm', targetId);
+    }
+
+    function closeDm(){
+        socket.emit('closeDm', targetId);
+    }
+
+    var form = document.getElementById('form');
+    var input = document.getElementById('input');
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (input.value) {
+        socket.emit('sendDm', targetId, input.value);
+        input.value = '';
+        }
+    });
+</script>
+</body>
+
+</html>
