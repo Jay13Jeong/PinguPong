@@ -225,9 +225,8 @@ import { dmClass } from '../chat/chatDmClass';
 
   @SubscribeMessage('dmList')//디엠 기능 첫 입장, 처음이면 DM 디비 만들기
   async dmList(client:Socket){
-    console.log('111111', client);
     const user = await this.findUserBySocket(client);
-    console.log('dmList', client.id, user);
+    //console.log('dmList', client.id, user);
     this.dmRooms.setUsers(client.id, user.id);
     let userIds:number[] = this.dmRooms.getdmList(client.id);
     let userName:string[];
