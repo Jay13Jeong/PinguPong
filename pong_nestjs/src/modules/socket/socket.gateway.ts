@@ -30,7 +30,6 @@ import { dmClass } from '../chat/chatDmClass';
 
     //OnGatewayConnection를 오버라이딩
     async handleConnection(client : Socket) {
-      console.log('ping', client, client.id);//client.rooms와 값이 같다
       //console.log(client.rooms);
       //들어온 유저 로그 찍기
       this.server.to(client.id).emit('getUser');//해당 클라이언트에게만 보내기//채팅
