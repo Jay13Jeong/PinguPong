@@ -8,6 +8,7 @@
       <input id="input" autocomplete="off" /><button>Send</button>
     </form>
 
+    <button onclick=enterRoom()>방 123에 입장</button>
     <button onclick=newRoom()>방 만들기</button>
     <button onclick=getRoomList()>방 리스트 요청</button>
     <button onclick=mandateMaster()>방장 위임 </button>
@@ -23,8 +24,9 @@
     <script>
     const socket = io('http://localhost:3000');
     
+    const existRoom = "123";
     const room = 'testRoom';
-    const userId = 'cheolee';
+    const userId = 'no_init_99987';
     const secretpw = '123';
 
     socket.on('room', function (data) {
@@ -35,6 +37,10 @@
         console.log('getUesr');
         socket.emit('getUser', {roomName:room, userId:userId, secretpw:secretpw});
     });
+
+    socket.on('youKick', () => {
+        console.log("강퇴당함!");
+    })
 
     socket.on('chat', function(data, msg){
         console.log('onchat', data, msg);
@@ -48,6 +54,10 @@
         socket.emit('/api/post/newRoom', room, userId, secretpw);
     }
 
+    function enterRoom() {
+        socket.emit('getUser', {roomName: existRoom, userId: userId});
+    }
+
     socket.on('/api/get/RoomList', function(data){
         console.log('/api/get/RoomList', data);
     });
@@ -57,7 +67,7 @@
     }
 
     function mandateMaster(){
-        socket.emit('/api/post/mandateMaster', room, 'targetid');
+        socket.emit('/api/post/mandateMaster', room, 'jeyoon');
     }
 
     function setSecretpw(){
@@ -85,7 +95,7 @@
     form.addEventListener('submit', function(e) {
         e.preventDefault();
         if (input.value) {
-        socket.emit('chat', room, userId, input.value);
+        socket.emit('chat', existRoom, userId, input.value);
         input.value = '';
         }
     });
