@@ -12,17 +12,18 @@ import { Game } from '../game/game.entity';
 import { GameModule } from '../game/game.module';
 import { FriendModule } from '../friend/friend.module';
 import { FriendService } from '../friend/friend.service';
+import { Friend } from '../friend/friend.entity';
 
 @Module({
 	imports:[
 		UsersModule,
 		GameModule,
-		TypeOrmModule.forFeature([Game]),
+		TypeOrmModule.forFeature([Game, Friend]),
 	],
 	providers: [
 		SocketService,
 		socketGateway,
-  	{
+		{
 			provide: 'AUTH_SERVICE',
 			useClass: AuthService,
 		},
