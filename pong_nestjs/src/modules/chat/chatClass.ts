@@ -49,9 +49,12 @@ class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함, prima
     }
 
     //방장 위임 기능 함수
-    public mandateMaster(master:number, userId:number){
-        if ((master == this.master)&& this.userIds.has(userId) == true)
+    public mandateMaster(master:number, userId:number):boolean{
+        if ((master == this.master)&& this.userIds.has(userId) == true){
             this.master = userId;
+            return true;
+        }
+        return false;
     }
 
     //방장 나갈 때 방장 위임 기능 함수 실행
@@ -237,7 +240,7 @@ export class chatClass {
         else{
             //비번 확인하는 구조 넣기//게이트웨이 단에서 비번 확인할 때 체크함
             this.addUser(roomName, socketId, userId);
-            if (this.userIdRooms.has(userId))
+            if (!this.userIdRooms.has(userId))
                 this.userIdRooms.set(userId, new Set<string>());
             this.userIdRooms.get(userId).add(roomName);
         }
@@ -279,9 +282,10 @@ export class chatClass {
 
 
     //방장 위임 기능 함수
-    public mandateMaster(roomName: string, userid:number, targetid:number) {
+    public mandateMaster(server:Server, roomName: string, userid:number, targetid:number) {
         const room:roomClass = this.rooms.get(roomName);
-        room.mandateMaster(userid, targetid);
+        if (room.mandateMaster(userid, targetid))
+            server.to(this.userIdsocketId.get(targetid)).emit('youMaster');
     }
 
     //비번 변경 함수
