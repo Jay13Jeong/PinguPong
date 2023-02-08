@@ -83,7 +83,7 @@ export class dmClass{
         const myDmList = this.userDmList.get(this.socketidUser.get(socket.id));
         let roomName = myDmList.getTargetRoom(targetId)
         server.to(roomName).emit('receiveDm', userName, msg);
-
+        //console.log('receiveDm', roomName, userName, msg);
         this.saveDmRoomdb(roomName, this.socketidUser.get(socket.id), msg);//메세지 저장
     }
 
@@ -96,17 +96,17 @@ export class dmClass{
     //대화 저장을 위한 디비클래스도 만들기
     public connectDm(socket:Socket, targetId:number) {
         const myDmList = this.userDmList.get(this.socketidUser.get(socket.id));
-
+        //console.log('디엠방 생성 여부체크', 'dm'+this.roomNumber, !myDmList.checkCreateDM(targetId))
         if (!myDmList.checkCreateDM(targetId)){
+            console.log('새로운 디엠방 생성', 'dm'+this.roomNumber);
             myDmList.pushDm(targetId, 'dm'+this.roomNumber);
             this.roomDB.set('dm'+this.roomNumber, new roomMsgDb());//디비 클래스 생성
             if (!this.userDmList.has(targetId))
                 this.userDmList.set(targetId, new userDmList());
-            this.userDmList.get(targetId).pushDm(targetId, 'dm'+this.roomNumber);
+            this.userDmList.get(targetId).pushDm(this.socketidUser.get(socket.id), 'dm'+this.roomNumber);
             this.roomNumber++;
         }
         socket.join(myDmList.getTargetRoom(targetId));
-        //여태까지 받은 대화들 반환
     }
 
     public getMsgs(user:User, target:User): receiveMsg[] {
@@ -129,5 +129,6 @@ export class dmClass{
         const myDmList = this.userDmList.get(this.socketidUser.get(socket.id));
 
         socket.leave(myDmList.getTargetRoom(targetId));
+        //console.log('closeDm roomName: ', myDmList.getTargetRoom(targetId), targetId);
     }
 }
