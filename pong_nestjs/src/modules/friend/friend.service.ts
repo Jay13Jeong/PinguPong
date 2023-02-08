@@ -163,4 +163,18 @@ export class FriendService {
 		// console.log(friends);
 		return friends;
 	}
+
+	async getReversBlocks(id: number): Promise<Friend[]> {
+		const user = await this.userService.findUserById(id);
+		if (!user)
+			throw new NotFoundException('User not found');
+		const friends = await this.repo.find({
+			relations: ['sender', 'reciever'],
+			where: [
+				{ reciever: { id: user.id }, status: 'blocked' },
+			],
+		});
+		// console.log(friends);
+		return friends;
+	}
 }
