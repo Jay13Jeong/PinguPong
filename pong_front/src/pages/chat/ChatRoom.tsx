@@ -49,6 +49,7 @@ function ChatRoom () {
 
             /* 방장 여부 확인 */
             // socket.emit('/api/get/master/status');
+            console.log("listen!!");
             socket.emit('/api/get/master/status', roomInfo.id); // NOTE - 방 이름까지 함께 보내주기
             socket.on('/api/get/master/status', (data: boolean) => {
                 // console.log('isMaster: ', data);
@@ -61,10 +62,14 @@ function ChatRoom () {
                 toast("🔥 추방당했습니다!");
                 navigate('/lobby');
             });
-            // TODO - 방장 위임 결과 제대로 반영되는지 확인해 볼 것.
+            socket.on('youMaster', ()=> {
+                console.log("youMaster!!");
+                setMaster(true);
+            })
         }
 
         return () => {
+            console.log("return!!");
             /* 이벤트 해제 */
             socket.off('getUser');
             socket.off('/api/get/master/status');
@@ -101,7 +106,7 @@ function ChatRoom () {
         <>
         <ChangeChatPwModal roomName={roomInfo.id}/>
         <CustomToastContainer/>
-        <ChatMenuModal isMaster={master} roomName={roomInfo.id}/>
+        <ChatMenuModal isMaster={master} roomName={roomInfo.id} setMaster={setMaster}/>
         <Center>
             <div id="chat-room">
                 {master ? <button onClick={(e) => {setChangeChatPwModalState({roomName: roomInfo.id, show: true})}} id="change-pw-btn">비밀번호 설정</button> : null}

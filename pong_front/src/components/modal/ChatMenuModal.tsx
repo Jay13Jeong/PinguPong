@@ -8,7 +8,7 @@ import Loader from "../util/Loader";
 import { REACT_APP_HOST } from "../../util/configData";
 import { toast } from "react-toastify";
 
-function ChatMenuModal (props: {roomName: string, isMaster: boolean}) {
+function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster: Function}) {
     const socket = useContext(SocketContext);
     const modalState = useRecoilValue(chatMenuModalState);
     const resetState = useResetRecoilState(chatMenuModalState);
@@ -75,6 +75,7 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean}) {
     function setMasterHandler(e: React.MouseEvent<HTMLElement>) {
         socket.emit('/api/post/mandateMaster', props.roomName, targetID);
         toast("👑 master set up completed!");
+        props.setMaster(false);
         resetState();
     }
 
