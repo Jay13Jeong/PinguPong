@@ -199,13 +199,15 @@ export class chatClass {
         let sockets:string[] = [];
 
         let block:number[] = [];//날 차단한 사람들 id 만 추출
-        for (let id of BlockedMe)
-            block.push(id.reciever.id);
+        for (let id of BlockedMe) {
+            block.push(id.sender.id);
+            // console.log("id.sender.username: ", id.sender.username);
+        }
         
         
         let sendId:number[] = [];//날 차단하지 않은 사람들의 id
         for (let id of userIds){
-            if (block.includes(id))//id 값이 포함되어 있으면.
+            if (!block.includes(id)) //id 값이 포함되어 있으면.
                 sendId.push(id);
         }
          
@@ -226,8 +228,10 @@ export class chatClass {
     public newRoom(roomName: string, socketId:string, userId:number, secretpw:string=''){
         if (!(this.rooms.has(roomName))){
             this.rooms.set(roomName, new roomClass(socketId, userId, secretpw));
-            if (this.userIdRooms.has(userId))
+            if (!this.userIdRooms.has(userId))
                 this.userIdRooms.set(userId, new Set<string>());
+            // console.log(userId);
+            // console.log(this.userIdRooms.get(userId));
             this.userIdRooms.get(userId).add(roomName);
         }
         else{
@@ -326,8 +330,10 @@ export class chatClass {
 
     public kickUser(server:Server, roomName:string, userId:number, targetId:number) {
         const room:roomClass = this.rooms.get(roomName);
-        if (room.kickUser(userId, targetId))
+        if (room.kickUser(userId, targetId)) {
+            // console.log("kick");
             server.to(this.userIdsocketId.get(targetId)).emit('youKick');
+        }
     }
 
     public banUser(server:Server, roomName:string, userId:number, targetId:number) {
