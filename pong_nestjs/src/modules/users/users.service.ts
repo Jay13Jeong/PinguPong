@@ -127,4 +127,13 @@ export class UsersService {
 	async all(): Promise<User[]> {
 		return this.userRepository.find();
 	}
+
+	async getSortByRank(): Promise<User[]> {
+		return this.userRepository.find({
+			order: {
+				wins: "DESC",
+				loses: "ASC",
+			}
+		});
+	}
 }

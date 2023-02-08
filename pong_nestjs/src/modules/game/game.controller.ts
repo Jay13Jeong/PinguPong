@@ -15,7 +15,7 @@ export class GameController {
     @UseGuards(JwtAuthGuard)
 	async getTest(@Req() req : Request,) {
         const user = req.user as User;
-		return await this.gameService.getTest(user.id);
+		return await this.gameService.getAll();
 	}
 
     //선택한 유저의 전적을 가져오는 api.
