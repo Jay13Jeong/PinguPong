@@ -8,7 +8,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './modules/users/user.entity';
 // import { PostsModule } from './modules/posts/posts.module';
-import { ChatGateway } from './modules/chat/chat.gateway';
+// import { ChatGateway } from './modules/chat/chat.gateway';
 import { Friend } from './modules/friend/friend.entity';
 import { FriendModule } from './modules/friend/friend.module';
 import { Game } from './modules/game/game.entity';

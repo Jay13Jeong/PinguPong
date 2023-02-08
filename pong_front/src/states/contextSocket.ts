@@ -7,5 +7,4 @@ export const socket = io(ENDPOINT, {
     transports: ['websocket'],
     withCredentials: true,
 });
-
 export const SocketContext = createContext<Socket>({} as Socket);
