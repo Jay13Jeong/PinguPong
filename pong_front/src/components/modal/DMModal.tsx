@@ -13,15 +13,17 @@ function DMModal() {
     const socket = useContext(SocketContext);
     const [dmList, setDmList] = useState<string[]>();
     useEffect(() => {
-        socket.emit('dmList');
-        socket.on('dmList', (data) => {
-             //console.log("dmList : ", data);
-            setDmList([...data]);
-        })
+        if (showModal) {
+            socket.emit('dmList')
+            socket.on('dmList', (data) => {
+                // console.log("dmList : ", data);
+                setDmList([...data]);
+            })
+        }
         return (() => {
             socket.off('dmList');
         })
-    }, [socket]);
+    }, [socket, showModal]);
 
     if (showModal) {
         return (
