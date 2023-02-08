@@ -9,7 +9,7 @@ export class Game {
 	id: number; //게임 방 아이디.
 
 	// @ApiProperty({ description: 'Type of game', example: '1v1', default: '1v1' })
-	@Column()
+	@Column({ nullable: true })
 	mode: string; // 난이도.
 
     /*

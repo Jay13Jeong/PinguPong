@@ -29,6 +29,7 @@ function ProfileModal() {
     const setProfileEditState = useSetRecoilState(profileEditModalState);
     const resetState = useResetRecoilState(profileModalState);
     const [avatarFile, setAvatarFile] = useState('');
+    const [record, setRecord] = useState<types.Record[]>([]);
     const socket = useContext(SocketContext);
     
     const [userInfo, setUserInfo] = useState<types.User>({
@@ -122,8 +123,45 @@ function ProfileModal() {
     }, [showModal, showEditModal]);
 
     // useEffect(() => {
-    //     setUserInfo(userInfo);
-    // }, [userInfo]);
+    //     // TODO: 유저 게임기록을 받아온다.
+    //     axios.get('http://' + REACT_APP_HOST + ':3000/api/game/' + userInfo.id , {withCredentials: true}) //쿠키와 함께 보내기 true.
+    //     .then(res => {
+    //         // console.log(res.data);
+    //         if (res.data){
+    //             let records : types.Record[] = res.data.map((rec: any) => {
+    //                 return {
+    //                     idx: rec.id,
+    //                     p1: rec.winner.username,
+    //                     p2: rec.loser.username,
+    //                     p1Score: rec.winnerScore,
+    //                     p2Score: rec.loserScore,
+    //                 }
+    //             })
+    //             // if (userInfo.record === records)
+    //             //     return ;
+    //             const temp: types.User = {
+    //                 id: userInfo.id,
+    //                 avatar: userInfo.avatar,
+    //                 userName: userInfo.userName,
+    //                 myProfile: userInfo.myProfile,
+    //                 userStatus: userInfo.userStatus,
+    //                 rank: userInfo.rank,
+    //                 odds: userInfo.odds,
+    //                 record: [...records],
+    //             }
+    //             // let temp = userInfo;
+    //             // temp.record = records;
+    //             setUserInfo(temp);
+    //             console.log("00000", temp);
+    //             console.log(111111111, userInfo);
+    //             console.log(2222, records);
+    //         }
+    //     })
+    //     .catch(err => {
+    //         // alert("333");
+    //         navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
+    //     })
+    // }, [showModal]);
 
     function showStatus(status: string){
         switch(status) {
@@ -310,7 +348,7 @@ function ProfileModal() {
                     </div>
                     <div className="record-title">최근 10경기 전적</div>
                 </div>
-                <GameRecordList record={userInfo.record}/>
+                <GameRecordList user={userInfo}/>
             </ModalBase>
         )
     }

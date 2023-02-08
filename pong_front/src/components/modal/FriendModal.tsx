@@ -103,8 +103,8 @@ function FriendModal() {
                 }
             })
             .catch(err => {
-                if (err.response.data.statusCode === 401)
-                navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
+                // if (err.response.data.statusCode === 401)
+                // navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
             })
         ////
         })
@@ -112,7 +112,11 @@ function FriendModal() {
             // if (err.response.data.statusCode === 401)
             // navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
         })
-    }, [showModal, showProfileModal, handleAddFriendSubmit]);
+    }, [
+        showModal,
+        showProfileModal,
+        // handleAddFriendSubmit
+    ]);
 
     function handleAddFriendSubmit(event : any) {
         event.preventDefault();
