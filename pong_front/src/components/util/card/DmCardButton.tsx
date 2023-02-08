@@ -30,7 +30,7 @@ function DmCardButton(props: {userName: string}) {
         <CardButton onClick={loading ? undefined : clickHandler}>
             {loading ? <Loader/> : 
             <span>
-                props.userName
+                {props.userName}
             </span>}
         </CardButton>
     )

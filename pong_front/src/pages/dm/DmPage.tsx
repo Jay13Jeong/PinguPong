@@ -32,13 +32,14 @@ function DmPage() {
         /* 빈 메시지는 보내지 않습니다. */
         if (msg !== "") {
             // socket.emit('sendDm', targetId, current, msg);
+            // console.log("sendDM : ", targetId, msg);
             socket.emit('sendDm', {targetId: targetId, msg: msg});
             setMsg("");
         }
     }
 
     function exitHandler(e: React.MouseEvent<HTMLElement>) {
-        socket.emit('closeDm');
+        socket.emit('closeDm', targetId);
         navigate("/lobby");
     }
 
@@ -47,7 +48,7 @@ function DmPage() {
             {current === "" ? <Loader/> :
             <div id="chat-room">
                 <button onClick={exitHandler} id="exit-chat-btn">DM 나가기</button>
-                <DmField current={current}/>
+                <DmField current={current} targetId={targetId}/>
                 <form onSubmit={msgHandler} id="chat-input">
                     <input type="text" autoComplete="off" id="message" placeholder="메시지를 입력하세요" value={msg} onChange={(e) => setMsg(e.target.value)}/>
                     <button type="submit"><FontAwesomeIcon icon={faPaperPlane}/></button>

@@ -15,12 +15,13 @@ function DMModal() {
     useEffect(() => {
         socket.emit('dmList');
         socket.on('dmList', (data) => {
+            // console.log("dmList : ", data);
             setDmList([...data]);
         })
         return (() => {
             socket.off('dmList');
         })
-    }, []);
+    }, [socket]);
 
     if (showModal) {
         return (
