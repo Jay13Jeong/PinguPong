@@ -226,14 +226,14 @@ export class chatClass {
     public newRoom(roomName: string, socketId:string, userId:number, secretpw:string=''){
         if (!(this.rooms.has(roomName))){
             this.rooms.set(roomName, new roomClass(socketId, userId, secretpw));
-            if (this.userIdRooms.has(userId))
+            if (!this.userIdRooms.has(userId))
                 this.userIdRooms.set(userId, new Set<string>());
             this.userIdRooms.get(userId).add(roomName);
         }
         else{
             //비번 확인하는 구조 넣기//게이트웨이 단에서 비번 확인할 때 체크함
             this.addUser(roomName, socketId, userId);
-            if (this.userIdRooms.has(userId))
+            if (!this.userIdRooms.has(userId))
                 this.userIdRooms.set(userId, new Set<string>());
             this.userIdRooms.get(userId).add(roomName);
         }

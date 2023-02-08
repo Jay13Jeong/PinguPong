@@ -37,6 +37,7 @@ import { Friend } from '../friend/friend.entity';
       //들어온 유저 로그 찍기
       //this.server.to(client.id).emit('getUser');//해당 클라이언트에게만 보내기//채팅
       const user = await this.findUserBySocket(client);
+
       if (user != undefined){
         this.socketUserid.set(client.id, user.id);
         this.rooms.socketSave(user.id, client.id);//소켓통신을 하고 있는 채팅이용자 및 예정자들;
@@ -97,6 +98,7 @@ import { Friend } from '../friend/friend.entity';
       this.server.to(client.id).emit('youBan');
       return ;
     }
+    this.server.to(client.id).emit('youPass');
     this.rooms.newRoom(room, client.id, userId);
   }
 
@@ -348,7 +350,7 @@ import { Friend } from '../friend/friend.entity';
       
       //플레이어가 준비완료인지 확인하기, 여기서 socket room에 등록을 하자
       if (this.gameService.requestStart(roomName, client, this.server))
-        this.gameService.startGame(roomName, this.server);
+        await this.gameService.startGame(roomName, this.server);
         //클래스 안에서 소켓메세지 보내기
         //console.log('requestStart11', client.id, client.rooms);
         //this.server.emit('startGame');//api: 시작 신호 보내기. 서버에서 쓰레드 돌리기 시작, if문으로 구별해서 보내기
