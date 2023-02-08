@@ -63,7 +63,7 @@ export class UsersController {
     //선택한 유저 정보를 반환하는 api
     @Get(':id')
     @UseGuards(JwtAuthGuard)
-    async findOne(@Param('id')id: number){
+    async findOne(@Param('id', ParseIntPipe) id: number){
         const targetUser = await this.usersService.findOne(id);
         return {
             id : targetUser.id,

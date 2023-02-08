@@ -31,7 +31,7 @@ function ProfileEditModal(props: {name: string}) {
         })
         .catch(err => {
             console.log(err.response);
-            navigate('/');
+            // navigate('/');
         })
     }, []);
 
