@@ -12,6 +12,7 @@ import ChatManageModal from './pages/chat/ChatManageModal';
 import GameWatchPage from './pages/game/GameWatchPage';
 import GameWatchRoomPage from './pages/game/GameWatchRoomPage'
 import ChatLobby from './pages/chat/ChatLobby';
+import DmPage from './pages/dm/DmPage';
 import { SetterOrUpdater } from 'recoil';
 
 export default function Routing(props: {setter: SetterOrUpdater<any>}) {
@@ -37,6 +38,8 @@ export default function Routing(props: {setter: SetterOrUpdater<any>}) {
         <Route path="/game/match/:id" element={<GamePlayRoomPage/>}></Route>
         <Route path="/game/watch" element={<GameWatchPage/>}></Route>
         <Route path="/game/watch/:id" element={<GameWatchRoomPage/>}></Route>
+        {/* DM */}
+        <Route path='/dm/:id' element={<DmPage/>}></Route>
         {/* <Route path="/lesson/category" element={<CategoryPage />} />
         <Route path="/lesson/classes" element={<ClassListPage />} />
         <Route path="/lesson/class/:id" element={<ClassPage />} />
