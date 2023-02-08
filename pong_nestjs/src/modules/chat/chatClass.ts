@@ -1,4 +1,5 @@
 import { Socket, Server } from 'socket.io';
+import { Friend } from '../friend/friend.entity';
 
 class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함, primary key는 소켓 id이다.
     //유저의 키값을 어떤것으로 할 것인가? A:소켓이 계속 유지가 된다. 리액트 페이지 라우팅 때문? 리액트 기능이 있다.
@@ -15,8 +16,6 @@ class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함, prima
     //최종: 프라이머리 키는 디비의 유저 Id 값이다
     private userIds : Set<number>;
     
-    //맵 보낸 소켓 id(A), A를 차단한 소켓 id들 maps
-    private blockuser : Map<number, number[]>;
 
     //방장에게 음소거 당한 userid Set
     private muteuser : Set<number>;
@@ -35,7 +34,6 @@ class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함, prima
         if (this.secretpw == '')
             this.secret = false;
  
-        this.blockuser = new Map<number, number[]>();
         this.muteuser = new Set<number>();
         this.banList = new Set<number>();
     }
@@ -94,34 +92,6 @@ class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함, prima
         return false;
     }
 
-    //차단의 경우 추가하는 함수
-    public addblockuser(userId:number, targetId:number){
-        if (!this.blockuser.has(targetId)){
-            this.blockuser.set(targetId,[userId]);
-        }
-        else{
-            if(!this.blockuser.get(targetId).includes(userId)){
-                this.blockuser.set(targetId, [...this.blockuser.get(targetId) ,userId ]);
-            }
-        }
-    }
-
-    //차단을 해제하는 함수
-    public freeblockuser(userId:number, targetId:number){
-        if (this.blockuser.has(targetId)){
-            if(this.blockuser.get(targetId).includes(userId)){
-                this.blockuser.set(targetId, this.blockuser.get(targetId).filter(function (data){
-                    return data != userId;
-                }));
-            }
-        }
-    }
-
-    //A를 차단한 소켓 id들 리턴하는 함수
-    public getblockuser(userId:number):number[]{
-        return this.blockuser.get(userId);//key값이 없으면 undefined를 반환
-    }
-
     //음소거를 하는 함수
     public addmuteuser(userId:number, targetId:number){
         if (this.master != userId)
@@ -149,7 +119,7 @@ class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함, prima
     }
 
     //방의 유저Id 리스트 반환
-    public getSocketList():IterableIterator<number> {
+    public getUserIdList():IterableIterator<number> {
         return this.userIds.keys();
     }
 
@@ -223,11 +193,23 @@ export class chatClass {
     }
     
     //방의 현재 인원들 소켓s 반환
-    public getSocketList(roomName: string):Array<string>{
+    public getSocketList(roomName: string, BlockedMe:Friend[]):Array<string>{
         const room:roomClass = this.rooms.get(roomName);
-        let userIds = room.getSocketList();
+        let userIds = room.getUserIdList();
         let sockets:string[] = [];
-        for(let id of userIds){//방 인원 중 현재 접속한 사람들 소켓리스트만 반환
+
+        let block:number[] = [];//날 차단한 사람들 id 만 추출
+        for (let id of BlockedMe)
+            block.push(id.reciever.id);
+        
+        
+        let sendId:number[] = [];//날 차단하지 않은 사람들의 id
+        for (let id of userIds){
+            if (block.includes(id))//id 값이 포함되어 있으면.
+                sendId.push(id);
+        }
+         
+        for(let id of sendId){//방 인원 중 현재 접속한 사람들 소켓리스트만 반환
             if (this.userIdsocketId.has(id))
                 sockets.push(this.userIdsocketId.get(id));
         }
@@ -304,24 +286,6 @@ export class chatClass {
         console.log(room.setSecretpw(userId, newsecret));
     }
 
-    //차단의 경우 추가하는 함수
-    public addblockuser(roomName: string, userId:number, targetId:number) {
-        const room:roomClass = this.rooms.get(roomName);
-        room.addblockuser(userId, targetId);
-    }
-
-    //차단을 해제하는 함수
-    public freeblockuser(roomName: string, userId:number, targetId:number) {
-        const room:roomClass = this.rooms.get(roomName);
-        room.freeblockuser(userId, targetId);
-    }
-
-    //A를 차단한 소켓 id들 리턴하는 함수
-    public getblockuser(roomName: string, userId:number):number[] {
-        const room:roomClass = this.rooms.get(roomName);
-        return room.getblockuser(userId);
-    }
-
     //음소거를 하는 함수
     public addmuteuser(roomName: string, userId:number, targetId:number) {
         const room:roomClass = this.rooms.get(roomName);
@@ -372,6 +336,7 @@ export class chatClass {
         room.banUser(userId, targetId);
     }
 
+    //밴 당한 방인지 체크할 때 사용
     public banCheck(roomName:string, userId:number):boolean{
         const room:roomClass = this.rooms.get(roomName);
         return room.banCheck(userId);

@@ -7,6 +7,8 @@ import { chatClass } from 'src/modules/chat/chatClass';
 import { User } from '../users/user.entity';
 import { GameService } from '../game/game.service';
 import { dmClass } from '../chat/chatDmClass';
+import { FriendService } from '../friend/friend.service';
+import { Friend } from '../friend/friend.entity';
 
 
 @WebSocketGateway( {
@@ -15,7 +17,8 @@ import { dmClass } from '../chat/chatDmClass';
   export class socketGateway implements OnGatewayConnection, OnGatewayDisconnect {
      constructor(@Inject(GameService) private readonly gameService:GameService,
      @Inject('AUTH_SERVICE') private readonly authService: AuthService,
-		private readonly userService: UsersService,)
+		private readonly userService: UsersService,
+    private readonly friendService: FriendService,)
     {
     }
     
@@ -33,10 +36,10 @@ import { dmClass } from '../chat/chatDmClass';
       console.log('ping', client.id);//client.rooms와 값이 같다
       //console.log(client.rooms);
       //들어온 유저 로그 찍기
-      this.server.to(client.id).emit('getUser');//해당 클라이언트에게만 보내기//채팅
+      //this.server.to(client.id).emit('getUser');//해당 클라이언트에게만 보내기//채팅
       const user = await this.findUserBySocket(client);
-
-      this.socketUserid.set(client.id, user.id);
+      if (user != undefined)
+        this.socketUserid.set(client.id, user.id);
 
       this.rooms.socketSave(user.id, client.id);//소켓통신을 하고 있는 채팅이용자 및 예정자들;
     }
@@ -108,17 +111,15 @@ import { dmClass } from '../chat/chatDmClass';
     
     if (this.rooms.checkMuteUser(room, userId))//음소거 상태인지 확인하기
       return ;
-    const sockets = this.rooms.getSocketList(room);
+    //나를 블록한 유저 리스트
+    let blockedMe:Friend[] = await this.friendService.getReversBlocks(userId);
+    //console.log('qqqqq', blockedMe);
+    //메세지를 보내야할 소켓id
+    const sockets = this.rooms.getSocketList(room, blockedMe);
 
+    for (let id of sockets)
+      this.server.to(id).emit('chat', (await user).username, msg);
 
-    //number[]
-    const blockuser = this.rooms.getblockuser(room, userId);//나중에 디비에서 값 가져오기
-    for (let id of sockets) {
-      if (blockuser == undefined)//나를 차단한 유저가  없을  경우
-        this.server.to(id).emit('chat', (await user).username, msg);
-      else if (!blockuser.includes(id))//차단한 유저리스트가 있을 때, 리스트에 없는 사람에게 메세지 보냄
-        this.server.to(id).emit('chat', (await user).username, msg);
-    }
   } 
 
   //방이름 :보내면, 공개방이면 true, 비밀방이면 false 반환
@@ -189,21 +190,6 @@ import { dmClass } from '../chat/chatDmClass';
     this.rooms.setSecretpw(roomName, userId, newsecret);
   }
 
-  @SubscribeMessage('/api/put/addblockuser')//차단 유저 추가
-  async addblockuser(client : Socket, data) {//차단할 유저 id
-    let [roomName, targetId] = data;//차단할 유저 id
-    console.log('/api/put/addblockuser', client.id, data, roomName, targetId);
-    let userId = this.socketUserid.get(client.id);
-    this.rooms.addblockuser(roomName, userId, targetId);
-  }
-
-  @SubscribeMessage('/api/put/freeblockuser')//차단을 해제하는 함수
-  async freeblockuser(client : Socket, data) {//차단한 유저 id
-    let [roomName, targetId] = data;//차단을 해제할 유저 id
-    console.log('/api/put/freeblockuser', client.id, data, roomName, targetId);
-    let userId = this.socketUserid.get(client.id);
-    this.rooms.freeblockuser(roomName, userId, targetId);
-  }
 
   @SubscribeMessage('/api/put/addmuteuser')//음소거를 하는 함수
   async addmuteuser(client : Socket, data) {//음소거할 유저id

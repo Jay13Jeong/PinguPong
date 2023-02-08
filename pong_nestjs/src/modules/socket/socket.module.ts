@@ -7,9 +7,11 @@ import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { GameService } from '../game/game.service';
 import { UsersModule } from '../users/users.module';
+import { FriendModule } from '../friend/friend.module';
+import { FriendService } from '../friend/friend.service';
 
 @Module({
-	imports:[UsersModule],
+	imports:[UsersModule, FriendModule],
   providers: [SocketService, socketGateway,
   	{
 			provide: 'AUTH_SERVICE',
@@ -17,7 +19,8 @@ import { UsersModule } from '../users/users.module';
 		},
 		JwtService,
 		UsersService,
-		GameService,],
+		GameService,
+		FriendService,],
   controllers: [SocketController]
 })
 export class SocketModule {}
