@@ -16,8 +16,8 @@ import { dmClass } from '../chat/chatDmClass';
      constructor(@Inject(GameService) private readonly gameService:GameService,
      @Inject('AUTH_SERVICE') private readonly authService: AuthService,
 		private readonly userService: UsersService,)
-     {
-     }
+    {
+    }
     
     @WebSocketServer()
     server: Server;
@@ -35,6 +35,10 @@ import { dmClass } from '../chat/chatDmClass';
       //들어온 유저 로그 찍기
       this.server.to(client.id).emit('getUser');//해당 클라이언트에게만 보내기//채팅
       const user = await this.findUserBySocket(client);
+
+      this.socketUserid.set(client.id, user.id);
+
+      this.rooms.socketSave(user.id, client.id);//소켓통신을 하고 있는 채팅이용자 및 예정자들;
     }
     
     //OnGatewayDisconnect를 오버라이딩
@@ -42,7 +46,11 @@ import { dmClass } from '../chat/chatDmClass';
       console.log('ping 소켓 끊김 : ', client.id);
       //게임 중인지 파악하고 패배시키기
       this.gameService.iGamegetout(client);// 핑퐁
-      this.rooms.delUser(client.id);//채팅
+      //this.rooms.delUser(client.id);//채팅 소켓 자료 지우는 걸로 변경
+
+      this.socketUserid.delete(client.id);
+      let userId = this.socketUserid.get(client.id);
+      this.rooms.socketDelete(userId);//소켓통신이 끊긴 채팅이용자 및 예정자들;
     }
 
 
@@ -68,38 +76,48 @@ import { dmClass } from '../chat/chatDmClass';
 		return user;
 	}
   
-  @SubscribeMessage('delUser')//해당 유저 지우기, 방에서 나가기 누를 경우
-  async delUser(client : Socket) {
-    console.log('delUser', client.id);
-    this.rooms.delUser(client.id);
+  @SubscribeMessage('delUser')//방에서 나가기 누를 경우
+  async delUser(client : Socket, data) {
+    let roomName = data;
+    let userId = this.socketUserid.get(client.id);
+    console.log('delUser', client.id, data, roomName);
+
+    this.rooms.delUser(roomName, userId);
   }
 
   @SubscribeMessage('getUser')//해당 유저 등록하기
-  async getUser(client : Socket, data) {
+  async getUser(client : Socket, data) {//userId 보내 주는 것 뺴기
     let room =data.roomName;
-    let userId = data.userId;//비밀번호 안 받음 ''이거로 변경
-    console.log('getUser', client.id, data, room, userId, '');
+    //let userId = data.userId;//비밀번호 안 받음 ''이거로 변경
+    let userId = this.socketUserid.get(client.id);
+    console.log('getUser', client.id, data, room);
     if (this.rooms.banCheck(room, userId)){
       this.server.to(client.id).emit('youBan');
       return ;
     }
-    this.rooms.newRoom(room, client.id, userId, '');
+    this.rooms.newRoom(room, client.id, userId);
   }
 
   @SubscribeMessage('chat')// 테스트용, 음소거, 차단 유무까지 확인을 해야한다.
-  async onChat(client : Socket, data) {
-    let [room, userid, msg] = data;
-    console.log('chat---', client.rooms);  //현재 클라이언트의 방
-    console.log(room, userid, msg);//메시지
-    if (this.rooms.checkMuteUser(client.id))//음소거 상태인지 확인하기
+  async onChat(client : Socket, data) {//userid 빼기
+    let [room, msg] = data;
+    let userId = this.socketUserid.get(client.id);
+    let user = this.userService.findUserById(userId);
+    console.log('chat', client.rooms);  //현재 클라이언트의 방
+   // console.log(room, user.id, msg);//메시지
+    
+    if (this.rooms.checkMuteUser(room, userId))//음소거 상태인지 확인하기
       return ;
     const sockets = this.rooms.getSocketList(room);
-    const blockuser = this.rooms.getblockuser(room, client.id);//나중에 디비에서 값 가져오기
+
+
+    //number[]
+    const blockuser = this.rooms.getblockuser(room, userId);//나중에 디비에서 값 가져오기
     for (let id of sockets) {
       if (blockuser == undefined)//나를 차단한 유저가  없을  경우
-        this.server.to(id).emit('chat', userid, msg);
+        this.server.to(id).emit('chat', (await user).username, msg);
       else if (!blockuser.includes(id))//차단한 유저리스트가 있을 때, 리스트에 없는 사람에게 메세지 보냄
-        this.server.to(id).emit('chat', userid, msg);
+        this.server.to(id).emit('chat', (await user).username, msg);
     }
   } 
 
@@ -114,23 +132,24 @@ import { dmClass } from '../chat/chatDmClass';
 
   //방이름, 비밀번호: 받아서 맞으면 true. 틀리면 false// 맞으면 바로 등록해주기
   @SubscribeMessage('/api/post/secretPW')
-  async checksecretPw(client : Socket, data) { 
+  async checksecretPw(client : Socket, data) { //userid 안 보내줘도 됨.
     let roomName = data.roomName;
     let secretPW = data.secret;
-    let userId = data.secret;
+    let userId = this.socketUserid.get(client.id);
 
     console.log('/api/post/secretPW', client.id, data, roomName, secretPW, userId);
     if (this.rooms.checksecretPw(roomName, secretPW)){
-      this.rooms.newRoom(roomName, client.id, userId, '');
+      this.rooms.newRoom(roomName, client.id, userId);
       this.server.to(client.id).emit('/api/post/secretPW', true);
     }else
     this.server.to(client.id).emit('/api/post/secretPW', false);
   }
 
   @SubscribeMessage('/api/post/newRoom')//새로운 방 만들기, 이미 있는 방이름이면 false 반환
-  async newRoom(client : Socket, data) {
-    let [room, userId, secretpw] = data;
-    console.log('/api/post/newRoom', client.id, data, room, userId, secretpw);
+  async newRoom(client : Socket, data) {//userid 안줘도 됨
+    let [room, secretpw] = data;
+    let userId = this.socketUserid.get(client.id);
+    console.log('/api/post/newRoom', client.id, data, room, (await userId), secretpw);
     if (!this.rooms.roomCheck(room)){
       this.rooms.newRoom(room, client.id, userId, secretpw);
       this.server.to(client.id).emit('/api/post/newRoom', true);
@@ -140,10 +159,12 @@ import { dmClass } from '../chat/chatDmClass';
   }
 
   @SubscribeMessage('/api/get/master/status')//내가 마스터 이면 true, 아니면 false
-  async getMasterStatus(client : Socket) { 
-    console.log('/api/get/master/status', client.id);
+  async getMasterStatus(client : Socket, data) { //방이름 보내주기
+    let roomName = data;
+    console.log('/api/get/master/status', client.id, roomName);
+    let userid = this.socketUserid.get(client.id);
 
-    this.server.to(client.id).emit('/api/get/master/status', this.rooms.getMasterStatus(client.id));// 리스트 보내주기, 클래스 함수 리턴값으로 고치기
+    this.server.to(client.id).emit('/api/get/master/status', this.rooms.getMasterStatus(roomName, userid));// 클래스 함수 리턴값으로 고치기
   }
 
   @SubscribeMessage('/api/get/RoomList')//브라우저가 채팅방 리스트 요청함
@@ -153,65 +174,71 @@ import { dmClass } from '../chat/chatDmClass';
   }
 
   @SubscribeMessage('/api/post/mandateMaster')//방장위임
-  async mandateMaster(client : Socket, data) {
-    let [room, userId] = data;//위임할 userId
-    console.log('/api/post/mandateMaster', client.id, data, room, userId);
-    this.rooms.mandateMaster(room, client.id, userId);
+  async mandateMaster(client : Socket, data) {//targetid 보내주기
+    let [room, targetId] = data;//위임할 targetId
+    console.log('/api/post/mandateMaster', client.id, data, room, targetId);
+    let userId = this.socketUserid.get(client.id);
+    this.rooms.mandateMaster(room, userId, targetId);
   }
 
   @SubscribeMessage('/api/put/setSecretpw')//비번 변경, ''이면 공개방으로 전환
-  async setSecretpw(client : Socket, data){
-    let newsecret = data;
-    console.log('/api/put/setSecretpw', client.id, data, newsecret);
-    this.rooms.setSecretpw(client.id, newsecret);
+  async setSecretpw(client : Socket, data){//방이름도 추가로 받기
+    let [roomName, newsecret] = data;
+    console.log('/api/put/setSecretpw', client.id, data, roomName, newsecret);
+    let userId = this.socketUserid.get(client.id);
+    this.rooms.setSecretpw(roomName, userId, newsecret);
   }
 
   @SubscribeMessage('/api/put/addblockuser')//차단 유저 추가
-  async addblockuser(client : Socket, data) {
-    let [room, userId] = data;//차단할 유저 id
-    console.log('/api/put/addblockuser', client.id, data, room, userId);
-    this.rooms.addblockuser(room, client.id, userId);
+  async addblockuser(client : Socket, data) {//차단할 유저 id
+    let [roomName, targetId] = data;//차단할 유저 id
+    console.log('/api/put/addblockuser', client.id, data, roomName, targetId);
+    let userId = this.socketUserid.get(client.id);
+    this.rooms.addblockuser(roomName, userId, targetId);
   }
 
   @SubscribeMessage('/api/put/freeblockuser')//차단을 해제하는 함수
-  async freeblockuser(client : Socket, data) {
-    let [room, userId] = data;//차단을 해제할 유저 id
-    console.log('/api/put/freeblockuser', client.id, data, room, userId);
-    this.rooms.freeblockuser(room, client.id, userId);
+  async freeblockuser(client : Socket, data) {//차단한 유저 id
+    let [roomName, targetId] = data;//차단을 해제할 유저 id
+    console.log('/api/put/freeblockuser', client.id, data, roomName, targetId);
+    let userId = this.socketUserid.get(client.id);
+    this.rooms.freeblockuser(roomName, userId, targetId);
   }
 
   @SubscribeMessage('/api/put/addmuteuser')//음소거를 하는 함수
-  async addmuteuser(client : Socket, data) {
-    let [room, userId] = data;//음소거할 유저id
-    console.log('/api/put/addmuteuser', client.id, data, room, userId);
-    this.rooms.addmuteuser(room, client.id, userId);
+  async addmuteuser(client : Socket, data) {//음소거할 유저id
+    let [roomName, targetId] = data;//음소거할 유저id
+    console.log('/api/put/addmuteuser', client.id, data, roomName, targetId);
+    let userId = this.socketUserid.get(client.id)
+    this.rooms.addmuteuser(roomName, userId, targetId);
   }
 
   @SubscribeMessage('/api/put/freemuteuser')//음소거를 해제하는 함수
-  async freemuteuser(client : Socket, data) {
-    let [room, userId] = data;//음소거 해제할 유저id
-    console.log('/api/put/freemuteuser', client.id, data, room, userId);
-    this.rooms.freemuteuser(room, client.id, userId);
+  async freemuteuser(client : Socket, data) {//음소거 해제할 유저id
+    let [room, targetId] = data;//음소거 해제할 유저id
+    console.log('/api/put/freemuteuser', client.id, data, room, targetId);
+    let userId = this.socketUserid.get(client.id)
+    this.rooms.freemuteuser(room, userId, targetId);
   }
 
   @SubscribeMessage('api/get/muteuser')//상대가 음소거인지 확인
-  async checkMuteYou(client: Socket, data) {
-    let targetUser = data;
-   this.server.to(client.id).emit('api/get/muteuser', this.rooms.checkMuteYou(client.id, targetUser));
+  async checkMuteYou(client: Socket, data) {//타겟 id 값 보내주기//room 보내주기
+    let [roomName, targetId] = data;//음소거 체크할 유저id
+   this.server.to(client.id).emit('api/get/muteuser', this.rooms.checkMuteYou(roomName, targetId));
   }
 
   @SubscribeMessage('kickUser')//넌 킥
-  async kickuser(client: Socket, data) {
-    let targetUserId = data;
-  
-    this.rooms.kickUser(this.server, client.id, targetUserId);
+  async kickuser(client: Socket, data) {//room 정보도 받기
+    let [roomName, targetId] = data;
+    let userId = this.socketUserid.get(client.id);
+    this.rooms.kickUser(this.server, roomName, userId, targetId);
   }
 
   @SubscribeMessage('banUser')//너 영구밴
-  async banUser(client: Socket, data) {
-    let targetUserId = data;
-  
-    this.rooms.banUser(this.server, client.id, targetUserId);
+  async banUser(client: Socket, data) {//room 정보도 받기
+    let [roomName, targetId] = data;
+    let userId = this.socketUserid.get(client.id);
+    this.rooms.banUser(this.server, roomName, userId, targetId);
   }
 
 
@@ -241,8 +268,8 @@ import { dmClass } from '../chat/chatDmClass';
   //data = {targetId:11111, msg:'안녕하세요~!'}
   @SubscribeMessage('sendDm')
   async sendDm(client:Socket, data) {
-    let targetId = data.targetId;
-    let msg = data.msg;
+    let targetId:number = data.targetId;
+    let msg:string = data.msg;
     let user = await this.findUserBySocket(client);
     this.dmRooms.sendDm(this.server, client, user.username, targetId, msg);
   }
