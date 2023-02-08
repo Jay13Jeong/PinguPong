@@ -98,7 +98,7 @@ export class dmClass{
         const myDmList = this.userDmList.get(this.socketidUser.get(socket.id));
         //console.log('디엠방 생성 여부체크', 'dm'+this.roomNumber, !myDmList.checkCreateDM(targetId))
         if (!myDmList.checkCreateDM(targetId)){
-            console.log('새로운 디엠방 생성', 'dm'+this.roomNumber);
+            //console.log('새로운 디엠방 생성', 'dm'+this.roomNumber);
             myDmList.pushDm(targetId, 'dm'+this.roomNumber);
             this.roomDB.set('dm'+this.roomNumber, new roomMsgDb());//디비 클래스 생성
             if (!this.userDmList.has(targetId))
