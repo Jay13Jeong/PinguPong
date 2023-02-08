@@ -73,7 +73,8 @@ export class dmClass{
     
     //디엠 리스트 주기, 처음 입장이거나 받은 디엠이 없으면 디엠 룸 만들어 주기
     public getdmList(socketid:string):number[]{
-        let userid = this.socketidUser.get(socketid)
+        let userid = this.socketidUser.get(socketid);
+        console.log('dmList 초기', !this.userDmList.has(userid),  userid);
         if (!this.userDmList.has(userid))
             this.userDmList.set(userid, new userDmList());
         return this.userDmList.get(userid).getUsers();
@@ -95,8 +96,11 @@ export class dmClass{
     //1대1 대화방 입장, 단 상대방이 한번도 디엠방 이용이 없으면 만들어 주기.여태까지 주고받은 대화 반환
     //대화 저장을 위한 디비클래스도 만들기
     public connectDm(socket:Socket, targetId:number) {
+        if (this.userDmList.get(this.socketidUser.get(socket.id)) == undefined)//userDmList 없으면 생성하기
+            this.getdmList(socket.id);
         const myDmList = this.userDmList.get(this.socketidUser.get(socket.id));
-        //console.log('디엠방 생성 여부체크', 'dm'+this.roomNumber, !myDmList.checkCreateDM(targetId))
+        console.log('유저아이디', this.socketidUser.get(socket.id), targetId);
+        console.log('디엠방 생성 여부체크', 'dm'+this.roomNumber, !myDmList.checkCreateDM(targetId))
         if (!myDmList.checkCreateDM(targetId)){
             //console.log('새로운 디엠방 생성', 'dm'+this.roomNumber);
             myDmList.pushDm(targetId, 'dm'+this.roomNumber);
@@ -111,6 +115,7 @@ export class dmClass{
 
     public getMsgs(user:User, target:User): receiveMsg[] {
         const myDmList = this.userDmList.get(user.id);
+        console.log('getMsgs', user.id, target.id, this.userDmList)
         const roomName = myDmList.getTargetRoom(target.id);
         let msgs =  this.roomDB.get(roomName).getMsg();
 
