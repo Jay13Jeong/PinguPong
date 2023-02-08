@@ -38,9 +38,10 @@ import { Friend } from '../friend/friend.entity';
       //this.server.to(client.id).emit('getUser');//해당 클라이언트에게만 보내기//채팅
       const user = await this.findUserBySocket(client);
       if (user != undefined)
+      {
         this.socketUserid.set(client.id, user.id);
-
-      this.rooms.socketSave(user.id, client.id);//소켓통신을 하고 있는 채팅이용자 및 예정자들;
+        this.rooms.socketSave(user.id, client.id);//소켓통신을 하고 있는 채팅이용자 및 예정자들;
+      }
     }
     
     //OnGatewayDisconnect를 오버라이딩
