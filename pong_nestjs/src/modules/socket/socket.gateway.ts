@@ -30,7 +30,7 @@ import { dmClass } from '../chat/chatDmClass';
 
     //OnGatewayConnection를 오버라이딩
     async handleConnection(client : Socket) {
-      console.log('ping', client, client.id);//client.rooms와 값이 같다
+      // console.log('ping', client, client.id);//client.rooms와 값이 같다
       //console.log(client.rooms);
       //들어온 유저 로그 찍기
       this.server.to(client.id).emit('getUser');//해당 클라이언트에게만 보내기//채팅
@@ -333,7 +333,7 @@ import { dmClass } from '../chat/chatDmClass';
       
       //플레이어가 준비완료인지 확인하기, 여기서 socket room에 등록을 하자
       if (this.gameService.requestStart(roomName, client, this.server))
-        this.gameService.startGame(roomName, this.server);
+        await this.gameService.startGame(roomName, this.server);
         //클래스 안에서 소켓메세지 보내기
         //console.log('requestStart11', client.id, client.rooms);
         //this.server.emit('startGame');//api: 시작 신호 보내기. 서버에서 쓰레드 돌리기 시작, if문으로 구별해서 보내기

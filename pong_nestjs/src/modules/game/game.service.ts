@@ -1,5 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, ConsoleLogger, Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Socket, Server } from 'socket.io';
+import { Repository } from 'typeorm';
+import { User } from '../users/user.entity';
+import { UsersService } from '../users/users.service';
+import { GameDto } from './game.dto';
+import { Game } from './game.entity';
 
 type p1p2 ={
     p1:string,
@@ -17,6 +23,8 @@ class BattleClass{
     private player1Ready:boolean;
     private player2Ready:boolean;
     private myserver:Server;
+    // private userService: UsersService;
+    // private create;
     
     private watchUser:Set<Socket>;
 
@@ -46,14 +54,25 @@ class BattleClass{
             player2: 0
         }
     }
-
     //게임마다 고유키
         //각 게임마다 가지고 있어야 할 것들, 공, 플레이어1,2 좌표
-    public constructor(player1Id:string, player1:string, player2Id:string, player2:string, speed:number){
+    public constructor(
+        player1Id: string,
+        player1: string,
+        player2Id: string,
+        player2: string,
+        speed: number,
+        private gameRepo: Repository<Game>,
+        private readonly usersService: UsersService,
+        ){
         this.player1Id = player1Id;
         this.player2Id = player2Id;
         this.player1Name = player1;
         this.player2Name = player2;
+        // this.create = create;
+        // this.userService = userService;
+        // console.log("123", this.usersService, userService);
+
 
         this.roomName = player1 + 'vs' + player2;
         //this.pingGateway = pingGateway;
@@ -68,17 +87,55 @@ class BattleClass{
         this.counter = undefined;
     }
 
+    //디비에 전적을 저장하는 메소드.
+    private async create(gameDTO: GameDto) : Promise<Game> {
+        if (gameDTO.winner == gameDTO.loser) {
+            throw new BadRequestException('승자와 패자가 동일');
+        }
+        const winner = await this.usersService.findUserById(gameDTO.winner);
+        const loser = await this.usersService.findUserById(gameDTO.loser);
+
+        if (!winner || !loser) {
+            throw new NotFoundException('처리 할 대상이 존재하지 않음');
+        }
+        if (gameDTO.winnerScore < 0 || gameDTO.loserScore < 0) {
+            throw new BadRequestException('양수가 아닌 점수');
+        }
+        //소켓이 끊긴 게임은 dto에서 승자에게 매우 큰점 수를 주도록 한다.
+        if (gameDTO.loserScore > gameDTO.winnerScore)
+            throw new BadRequestException('패자의 점수가 더 큼');
+
+        //전적기록을 디비에 저장.
+        const game = this.gameRepo.create({
+            loser: loser,
+            winner: winner,
+            draw: (gameDTO.winnerScore == gameDTO.loserScore),
+            loserScore: gameDTO.loserScore,
+            winnerScore: gameDTO.winnerScore,
+            mode: gameDTO.mode,
+        });
+
+        //승패를 디비에 갱신.
+        if (game.draw == false) {
+            ++loser.loses;
+            ++winner.wins;
+            this.usersService.save(loser);
+            this.usersService.save(winner);
+        }
+        return this.gameRepo.save(game);
+    }
+
     public matchEmit(server:Server){
         server.to(this.player1Id).emit('matchMakeSuccess', {p1: this.player1Name, p2: this.player2Name});
         server.to(this.player2Id).emit('matchMakeSuccess', {p1: this.player1Name, p2: this.player2Name});
     }
 
-    public startGame(server:Server){
+    public async startGame(server:Server): Promise<void>{
         if (this.counter != undefined)//게임 중인지 확인하기
             return ;
         console.log('startGame');
         this.myserver = server;
-        this.gameStart();
+        await this.gameStart();
     }
 
     /* 공 움직이는 함수 - 반사, 점수 획득 */
@@ -122,16 +179,16 @@ class BattleClass{
     // }
 
     /* 일정 시간마다 게임 동작 함수 실행 */
-    private gameStart ():void {
+    private async gameStart ():Promise<void> {
         console.log('gameStart------------');
-        let me = this.gameRun.bind(this);
+        let me = await this.gameRun.bind(this);
         this.counter = setInterval(me, 1000 * 0.02);
         
     //api:clearInterval(counter)함수를 쓰면 setInterval를 종료할 수 있다.
     }
 
     /* 게임 동작 함수 */
-    private gameRun():void {
+    private async gameRun(): Promise<void> {
         // 1. 공 움직이고 (방향전환, 점수 검사)
         const p1PaddleStart:number = this.game.player1;
         const p1PaddleEnd:number = this.game.player1 + this.sizes.paddleSize;
@@ -182,6 +239,16 @@ class BattleClass{
         if (this.goal === this.game.score.player1 || this.goal === this.game.score.player2) {
             // 이긴 사람만 winner에 넣어서 보내줍니다.
             this.myserver.to(this.roomName).emit("endGame", {winner: this.goal === this.game.score.player1 ? this.player1Name : this.player2Name});
+            const winner : User = await this.usersService.findUserByUsername(this.goal === this.game.score.player1 ? this.player1Name : this.player2Name);
+            const loser : User = await this.usersService.findUserByUsername(this.goal !== this.game.score.player1 ? this.player1Name : this.player2Name);
+            // console.log("444", winner);
+            const history : GameDto = { //전적 기록.
+                winner : winner.id,
+                loser : loser.id,
+                winnerScore : this.goal === this.game.score.player1 ? this.game.score.player1 : this.game.score.player2,
+                loserScore : this.goal !== this.game.score.player1 ? this.game.score.player1 : this.game.score.player2
+            };
+            await this.create(history);// 디비에 전적 저장.
             //this.player2socket.to(this.player2Id).emit("endGame", {winner: this.goal === this.game.score.player1 ? this.game.score.player1 : this.game.score.player2});
             // TODO - 🌟 전적 정보를 저장해야 한다면 여기서 저장하기 🌟
             this.player1socket.leave(this.roomName);
@@ -265,13 +332,21 @@ export class GameService {
     private hardLvUserList : Set<string>;
     private socketidRoomname : Map<string, string>;//socketid: roomName
 
-    public constructor() {
+    public constructor(
+        @InjectRepository(Game) private gameRepo: Repository<Game>,
+		private usersService: UsersService,
+    ) {
         this.vs = new Map<string, BattleClass>();
         this.socketid = new Map<string, string>();
         this.easyLvUserList = new Set<string>();
         this.normalLvUserList = new Set<string>();
         this.hardLvUserList = new Set<string>();
         this.socketidRoomname = new Map<string, string>();
+    }
+
+    async test(){
+        // console.log(this.usersService);
+        return await this.usersService.findUserById(1);
     }
 
     public getRoomList():Array<p1p2>{
@@ -307,7 +382,7 @@ export class GameService {
 
     //유저를 매칭시키는 함수만들기
         //유저가 플레이어 몇인지 이때 할당하기
-    public matchMake(difficulty:string, player:string, socketid:string):boolean{
+    public matchMake(difficulty:string, player:string, socketid:string): boolean{
         this.socketid.set(socketid, player);
         if (difficulty == '0'){
             this.easyLvUserList.add(socketid);
@@ -325,14 +400,15 @@ export class GameService {
     }
 
     //소켓id로 관리를 하자.
-    private createCheck(UserList:Set<string>, player1:string, speed:number):boolean{
+    private createCheck(UserList:Set<string>, player1:string, speed:number): boolean{
         let player2:string;
         if (UserList.size >= 2) {//대기열이 2명이상이면 매칭후 방 만들기
             UserList.delete(player1);
             player2 = Array.from(UserList)[0];
             UserList.delete(player2);
             let roomName:string = this.socketid.get(player1) + 'vs' + this.socketid.get(player2);
-            this.vs.set(roomName, new BattleClass(player1, this.socketid.get(player1), player2, this.socketid.get(player2), speed));
+            // console.log("333", await this.usersService.findUserById(1));
+            this.vs.set(roomName, new BattleClass(player1, this.socketid.get(player1), player2, this.socketid.get(player2), speed, this.gameRepo, this.usersService));
             this.socketidRoomname.set(player1, roomName);
             this.socketidRoomname.set(player2, roomName);
             console.log('createRoom', roomName);
@@ -354,9 +430,9 @@ export class GameService {
         return vs.requestStart(socket, server);
     }
 
-    public startGame(roomName:string, server:Server){
+    public async startGame(roomName:string, server:Server){
         const vs:BattleClass = this.vs.get(roomName);
-        vs.startGame(server);
+        await vs.startGame(server);
     }
 
     //플레이어의 게임동작을 확인하는 함수 만들기
@@ -380,5 +456,52 @@ export class GameService {
         vs.stopwatchGame(client);
     }
     
+    //디비에 전적을 저장하는 서비스.
+    async create(gameDTO: GameDto) : Promise<Game> {
+		if (gameDTO.winner == gameDTO.loser) {
+			throw new BadRequestException('승자와 패자가 동일');
+		}
+		const winner = await this.usersService.findUserById(gameDTO.winner);
+		const loser = await this.usersService.findUserById(gameDTO.loser);
+
+		if (!winner || !loser) {
+			throw new NotFoundException('처리 할 대상이 존재하지 않음');
+		}
+		if (gameDTO.winnerScore < 0 || gameDTO.loserScore < 0) {
+			throw new BadRequestException('양수가 아닌 점수');
+		}
+        //소켓이 끊긴 게임은 dto에서 승자에게 매우 큰점 수를 주도록 한다.
+		if (gameDTO.loserScore > gameDTO.winnerScore)
+			throw new BadRequestException('패자의 점수가 더 큼');
+
+        //전적기록을 디비에 저장.
+		const game = this.gameRepo.create({
+			loser: loser,
+			winner: winner,
+			draw: (gameDTO.winnerScore == gameDTO.loserScore),
+			loserScore: gameDTO.loserScore,
+			winnerScore: gameDTO.winnerScore,
+			mode: gameDTO.mode,
+		});
+
+        //승패를 디비에 갱신.
+		if (game.draw == false) {
+			++loser.loses;
+			++winner.wins;
+			this.usersService.save(loser);
+			this.usersService.save(winner);
+		}
+		return this.gameRepo.save(game);
+	}
+
+    async getHistoryByUserId(id: number) : Promise<Game[]> {
+		return await this.gameRepo.find({
+			relations: ['winner', 'loser'],
+			where: [
+				{ winner: { id: id } },
+				{ loser: { id: id } },
+			],
+		});
+	}
 }
 
