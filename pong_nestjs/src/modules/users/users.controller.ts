@@ -30,6 +30,20 @@ export class UsersController {
         }
     }
 
+    @Get('rank/:id') //랭크 조회.
+    @UseGuards(JwtAuthGuard)
+    async getRank(@Param('id', ParseIntPipe) id: number){
+        const sortedUser = await this.usersService.getSortByRank();
+        let idx: number = 0;
+        for (let user of sortedUser)
+        {
+            ++idx;
+            if (user.id === id)
+                return {rank : idx};
+        }
+        return {rank : 0};
+    }
+
     //초기화가 되어 있는지 상태를 반환하는 api.
     @Get('init/status')
     @UseGuards(JwtAuthGuard)

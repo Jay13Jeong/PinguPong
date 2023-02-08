@@ -29,7 +29,8 @@ function ProfileModal() {
     const setProfileEditState = useSetRecoilState(profileEditModalState);
     const resetState = useResetRecoilState(profileModalState);
     const [avatarFile, setAvatarFile] = useState('');
-    const [record, setRecord] = useState<types.Record[]>([]);
+    const [rank, setRank] = useState<number>(0);
+    const [odds, setOdds] = useState<number>(-1);
     const socket = useContext(SocketContext);
     
     const [userInfo, setUserInfo] = useState<types.User>({
@@ -50,29 +51,7 @@ function ProfileModal() {
         ]
     });    // 유저 정보
 
-    // const [userInfo, setUserInfo] = useState<types.User>({
-    //     userName: "pingi",
-    //     myProfile: false,    // TODO - 더 좋은 방법이 있을지 생각해보기
-    //     userStatus: "game",
-    //     rank: 0,
-    //     odds: 0,
-    //     record: [
-    //         {idx: 1, p1: "cheolee", p2: "jjeong", p1Score: 10, p2Score: 2},
-    //         {idx: 2, p1: "cheolee", p2: "jjeong", p1Score: 10, p2Score: 1}
-    //     ],
-    //     following: false,
-    //     block: false,
-    // });    // 유저 정보
-
     const navigate = useNavigate();
-
-    // interface User {
-    //     id: number;
-    //     username: string;
-    //   email: string;
-    //     twofa: boolean;
-    //     avatar: string;
-    // }
 
     useEffect(() => {
         // TODO: 유저 정보를 받아온다.
@@ -92,10 +71,13 @@ function ProfileModal() {
                         myProfile : true,
                         userStatus : 'off',
                         rank : 0,
-                        odds : res.data.wins === 0? 0 : Math.floor(totalGame / res.data.wins),
+                        odds : res.data.wins === 0? 0 : (100 / Math.floor(totalGame / (res.data.wins !== 0 ? res.data.wins : 1))),
                         record : [],
                     };
                     setUserInfo(myInfo);
+                    setOdds(res.data.wins === 0? 0 : Math.floor(totalGame / res.data.wins));
+                    console.log("++++", totalGame, res.data.wins,);
+                    console.log((Math.floor(totalGame / (res.data.wins !== 0 ? res.data.wins : 1))));
                 }
                 let targetId = res.data.id;
                 if (showModal.userId !== res.data.id && showModal.userId !== 0){
@@ -122,46 +104,41 @@ function ProfileModal() {
         })
     }, [showModal, showEditModal]);
 
+    useEffect(() => {
+        // TODO: 유저 랭크를 받아온다.
+        axios.get('http://' + REACT_APP_HOST + ':3000/api/user/rank/' + userInfo.id , {withCredentials: true}) //쿠키와 함께 보내기 true.
+        .then(res => {
+            // console.log("----",res.data);
+            if (res.data && res.data.rank){
+                setRank(res.data.rank);
+                // const temp: types.User = {
+                //     id: userInfo.id,
+                //     avatar: userInfo.avatar,
+                //     userName: userInfo.userName,
+                //     myProfile: userInfo.myProfile,
+                //     userStatus: userInfo.userStatus,
+                //     rank: res.data.rank,
+                //     odds: userInfo.odds,
+                //     record: userInfo.record,
+                // }
+                // // let temp = userInfo;
+                // // temp.odds = res.data.rank;
+                // setUserInfo(temp);
+                // console.log("00000", temp);
+                // console.log(111111111, userInfo);
+                // console.log(2222, res.data.rank);
+            }
+        })
+        .catch(err => {
+            // alert("333");
+            navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
+        })
+    }, [showModal]);
+
     // useEffect(() => {
-    //     // TODO: 유저 게임기록을 받아온다.
-    //     axios.get('http://' + REACT_APP_HOST + ':3000/api/game/' + userInfo.id , {withCredentials: true}) //쿠키와 함께 보내기 true.
-    //     .then(res => {
-    //         // console.log(res.data);
-    //         if (res.data){
-    //             let records : types.Record[] = res.data.map((rec: any) => {
-    //                 return {
-    //                     idx: rec.id,
-    //                     p1: rec.winner.username,
-    //                     p2: rec.loser.username,
-    //                     p1Score: rec.winnerScore,
-    //                     p2Score: rec.loserScore,
-    //                 }
-    //             })
-    //             // if (userInfo.record === records)
-    //             //     return ;
-    //             const temp: types.User = {
-    //                 id: userInfo.id,
-    //                 avatar: userInfo.avatar,
-    //                 userName: userInfo.userName,
-    //                 myProfile: userInfo.myProfile,
-    //                 userStatus: userInfo.userStatus,
-    //                 rank: userInfo.rank,
-    //                 odds: userInfo.odds,
-    //                 record: [...records],
-    //             }
-    //             // let temp = userInfo;
-    //             // temp.record = records;
-    //             setUserInfo(temp);
-    //             console.log("00000", temp);
-    //             console.log(111111111, userInfo);
-    //             console.log(2222, records);
-    //         }
-    //     })
-    //     .catch(err => {
-    //         // alert("333");
-    //         navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
-    //     })
-    // }, [showModal]);
+    //     if (odds == -1)
+    //         setOdds(userInfo.odds);
+    // }, [odds]);
 
     function showStatus(status: string){
         switch(status) {
@@ -341,7 +318,7 @@ function ProfileModal() {
                     </div>
                     {showStatus(userInfo.userStatus)}   
                     <div className="profile-rank">
-                        Rank : {userInfo.rank}
+                        Rank : {rank}
                     </div>
                     <div className="profile-odds">
                         Odds : {userInfo.odds} %
