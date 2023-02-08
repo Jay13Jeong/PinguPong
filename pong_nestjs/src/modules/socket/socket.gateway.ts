@@ -37,13 +37,13 @@ import { Friend } from '../friend/friend.entity';
       //들어온 유저 로그 찍기
       //this.server.to(client.id).emit('getUser');//해당 클라이언트에게만 보내기//채팅
       const user = await this.findUserBySocket(client);
-      if (user != undefined)
-      {
+
+      if (user != undefined){
         this.socketUserid.set(client.id, user.id);
         this.rooms.socketSave(user.id, client.id);//소켓통신을 하고 있는 채팅이용자 및 예정자들;
       }
     }
-    
+
     //OnGatewayDisconnect를 오버라이딩
     async handleDisconnect(client : Socket) {
       console.log('ping 소켓 끊김 : ', client.id);
@@ -98,6 +98,7 @@ import { Friend } from '../friend/friend.entity';
       this.server.to(client.id).emit('youBan');
       return ;
     }
+    this.server.to(client.id).emit('youPass');
     this.rooms.newRoom(room, client.id, userId);
   }
 
@@ -179,7 +180,7 @@ import { Friend } from '../friend/friend.entity';
     let [room, targetId] = data;//위임할 targetId
     console.log('/api/post/mandateMaster', client.id, data, room, targetId);
     let userId = this.socketUserid.get(client.id);
-    this.rooms.mandateMaster(room, userId, targetId);
+    this.rooms.mandateMaster(this.server, room, userId, targetId);
   }
 
   @SubscribeMessage('/api/put/setSecretpw')//비번 변경, ''이면 공개방으로 전환
@@ -247,6 +248,7 @@ import { Friend } from '../friend/friend.entity';
       let name = await (await this.userService.findUserById(id)).username;
       userName.push(name);
     }
+    //console.log('디엠 리스트 사용자', userName);
     this.server.to(client.id).emit('dmList', userName);//유저 네임 리스트 보내주기
   }
 
@@ -268,7 +270,8 @@ import { Friend } from '../friend/friend.entity';
     this.dmRooms.connectDm(client, targetId);
     let user = await this.findUserBySocket(client);
     let target = await this.userService.findUserById(targetId);
-    let msgs = this.dmRooms.getMsgs(user, target);
+    let msgs = this.dmRooms.getMsgs(user, target);//여태까지 받은 대화들 반환
+    //console.log('receiveDms', user.username, target.username, msgs);
     this.server.to(client.id).emit('receiveDms', msgs);
     //masgs = [{userName : 'tempUser',  msg : '123123123'}, ...]
   }
