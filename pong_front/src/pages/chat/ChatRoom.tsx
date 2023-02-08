@@ -34,19 +34,29 @@ function ChatRoom () {
 
     useEffect(() => {
         if (current !== '') {
-            /* 방에 재 등록 */
-            socket.on('getUser', (data) => {
-                console.log("emit getUser: ", current);
-                socket.emit('getUser', {roomName: roomInfo.id, userId: current});
-                /* 방장 여부 확인 */
-                socket.emit('/api/get/master/status');
-                socket.on('/api/get/master/status', (data: boolean) => {
-                    console.log('isMaster: ', data);
-                    setMaster(data);   // 방장이면 true / 아니면 false
-                });
-            })
+            // NOTE - 재등록 과정 없어짐에 따라 삭제된 코드 (확인 후 삭제하기)
+            // /* 방에 재 등록 */
+            // socket.on('getUser', (data) => {
+            //     console.log("emit getUser: ", current);
+            //     socket.emit('getUser', {roomName: roomInfo.id, userId: current});
+            //     /* 방장 여부 확인 */
+            //     socket.emit('/api/get/master/status');
+            //     socket.on('/api/get/master/status', (data: boolean) => {
+            //         console.log('isMaster: ', data);
+            //         setMaster(data);   // 방장이면 true / 아니면 false
+            //     });
+            // })
+
+            /* 방장 여부 확인 */
+            // socket.emit('/api/get/master/status');
+            socket.emit('/api/get/master/status', roomInfo.id); // NOTE - 방 이름까지 함께 보내주기
+            socket.on('/api/get/master/status', (data: boolean) => {
+                // console.log('isMaster: ', data);
+                setMaster(data);   // 방장이면 true / 아니면 false
+            });
             /* 추방 여부 듣기 */
             socket.on('youKick', ()=>{
+                console.log("kick!!");
                 socket.off('youKick');
                 toast("🔥 추방당했습니다!");
                 navigate('/lobby');
@@ -60,7 +70,7 @@ function ChatRoom () {
             socket.off('/api/get/master/status');
             socket.off('youKick');
         };
-    }, [socket, current, roomInfo.id]);
+    }, [socket, current, roomInfo.id, navigate]);
 
     useEffect(() => {
         /* 현재 유저의 userName */
@@ -70,7 +80,8 @@ function ChatRoom () {
     }, [myInfo, error, isLoading]);
 
     function exitHandler(e: React.MouseEvent<HTMLElement>) {
-        socket.emit('delUser');
+        // data : string (roomName);
+        socket.emit('delUser', roomInfo.id);
         navigate("/lobby");
     }
 
@@ -78,7 +89,9 @@ function ChatRoom () {
         e.preventDefault();
         /* 빈 메시지는 보내지 않습니다. */
         if (msg !== "") {
-            socket.emit('chat', roomInfo.id, current, msg);
+            // socket.emit('chat', roomInfo.id, current, msg);
+            // console.log("chat");
+            socket.emit('chat', roomInfo.id, msg); // NOTE - userID 빼고 보내주기
             setMsg("");
         }
     }
@@ -86,7 +99,7 @@ function ChatRoom () {
 
     return (
         <>
-        <ChangeChatPwModal/>
+        <ChangeChatPwModal roomName={roomInfo.id}/>
         <CustomToastContainer/>
         <ChatMenuModal isMaster={master} roomName={roomInfo.id}/>
         <Center>
