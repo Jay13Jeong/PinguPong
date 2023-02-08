@@ -228,7 +228,7 @@ import { dmClass } from '../chat/chatDmClass';
     //console.log('dmList', client.id, user);
     this.dmRooms.setUsers(client.id, user.id);
     let userIds:number[] = this.dmRooms.getdmList(client.id);
-    let userName:string[];
+    let userName:string[] = [];
     for (let id of userIds){
       let name = await (await this.userService.findUserById(id)).username;
       userName.push(name);
@@ -242,8 +242,8 @@ import { dmClass } from '../chat/chatDmClass';
   async sendDm(client:Socket, data) {
     let targetId = data.targetId;
     let msg = data.msg;
- 
-    this.dmRooms.sendDm(this.server, client, targetId, msg);
+    let user = await this.findUserBySocket(client);
+    this.dmRooms.sendDm(this.server, client, user.username, targetId, msg);
   }
 
   //1대1 대화방 입장시 여태까지 받은 Dm 보내주기
@@ -256,6 +256,7 @@ import { dmClass } from '../chat/chatDmClass';
     let target = await this.userService.findUserById(targetId);
     let msgs = this.dmRooms.getMsgs(user, target);
     this.server.to(client.id).emit('receiveDms', msgs);
+    //masgs = [{userName : 'tempUser',  msg : '123123123'}, ...]
   }
 
   //1대1 디엠방 나감
