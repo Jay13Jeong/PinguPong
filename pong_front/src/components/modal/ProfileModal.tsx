@@ -13,14 +13,6 @@ import axios from "axios";
 import ProfileEditModal from "./ProfileEditModal";
 import { REACT_APP_HOST } from "../../util/configData";
 
-/**
- * profileModalState
- * default: {
-        userId: 0,
-        show: false
-    }
- */
-
 function ProfileModal() {
     // const [showEditModal, setShowEditModal] = useRecoilState(profileEditModalState);
     const showEditModal = useRecoilValue(profileEditModalState);
@@ -30,7 +22,7 @@ function ProfileModal() {
     const resetState = useResetRecoilState(profileModalState);
     const [avatarFile, setAvatarFile] = useState('');
     const [rank, setRank] = useState<number>(0);
-    const [odds, setOdds] = useState<number>(-1);
+    // const [odds, setOdds] = useState<number>(-1);
     const socket = useContext(SocketContext);
     
     const [userInfo, setUserInfo] = useState<types.User>({
@@ -71,13 +63,14 @@ function ProfileModal() {
                         myProfile : true,
                         userStatus : 'off',
                         rank : 0,
-                        odds : res.data.wins === 0? 0 : (100 / Math.floor(totalGame / (res.data.wins !== 0 ? res.data.wins : 1))),
+                        odds : !res.data.wins ? 0 : Math.floor(100 / (totalGame / (res.data.wins ? res.data.wins : 1))),
                         record : [],
                     };
                     setUserInfo(myInfo);
-                    setOdds(res.data.wins === 0? 0 : Math.floor(totalGame / res.data.wins));
-                    console.log("++++", totalGame, res.data.wins,);
-                    console.log((Math.floor(totalGame / (res.data.wins !== 0 ? res.data.wins : 1))));
+                    // setOdds(res.data.wins === 0? 0 : Math.floor(totalGame / res.data.wins));
+                    // console.log("++++", totalGame, res.data.wins,);
+                    // console.log((100 / (6 / 4)));
+                    // console.log((((100 / (6 / 4)))));
                 }
                 let targetId = res.data.id;
                 if (showModal.userId !== res.data.id && showModal.userId !== 0){
@@ -108,25 +101,8 @@ function ProfileModal() {
         // TODO: 유저 랭크를 받아온다.
         axios.get('http://' + REACT_APP_HOST + ':3000/api/user/rank/' + userInfo.id , {withCredentials: true}) //쿠키와 함께 보내기 true.
         .then(res => {
-            // console.log("----",res.data);
             if (res.data && res.data.rank){
                 setRank(res.data.rank);
-                // const temp: types.User = {
-                //     id: userInfo.id,
-                //     avatar: userInfo.avatar,
-                //     userName: userInfo.userName,
-                //     myProfile: userInfo.myProfile,
-                //     userStatus: userInfo.userStatus,
-                //     rank: res.data.rank,
-                //     odds: userInfo.odds,
-                //     record: userInfo.record,
-                // }
-                // // let temp = userInfo;
-                // // temp.odds = res.data.rank;
-                // setUserInfo(temp);
-                // console.log("00000", temp);
-                // console.log(111111111, userInfo);
-                // console.log(2222, res.data.rank);
             }
         })
         .catch(err => {
@@ -134,11 +110,6 @@ function ProfileModal() {
             navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
         })
     }, [showModal]);
-
-    // useEffect(() => {
-    //     if (odds == -1)
-    //         setOdds(userInfo.odds);
-    // }, [odds]);
 
     function showStatus(status: string){
         switch(status) {
