@@ -30,7 +30,6 @@ import { dmClass } from '../chat/chatDmClass';
 
     //OnGatewayConnection를 오버라이딩
     async handleConnection(client : Socket) {
-      console.log('ping', client.id);//client.rooms와 값이 같다
       //console.log(client.rooms);
       //들어온 유저 로그 찍기
       this.server.to(client.id).emit('getUser');//해당 클라이언트에게만 보내기//채팅
@@ -229,7 +228,7 @@ import { dmClass } from '../chat/chatDmClass';
     //console.log('dmList', client.id, user);
     this.dmRooms.setUsers(client.id, user.id);
     let userIds:number[] = this.dmRooms.getdmList(client.id);
-    let userName:string[];
+    let userName:string[] = [];
     for (let id of userIds){
       let name = await (await this.userService.findUserById(id)).username;
       userName.push(name);
