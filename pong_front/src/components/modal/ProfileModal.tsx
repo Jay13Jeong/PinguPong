@@ -281,6 +281,13 @@ function ProfileModal() {
         // TODO - 이미 종료된 게임의 경우 어떻게 되는지 확인해보기
     }
 
+    function sendDm(event: React.MouseEvent<HTMLElement>) {
+        resetState();
+        navigate(`/dm/${userInfo.id}`, {state: {
+            targetId: userInfo.id
+        }});
+    }
+
     function profileButton () {
         if (userInfo.myProfile) {
             return (
@@ -308,7 +315,7 @@ function ProfileModal() {
                 <button className="profile-button" onClick={handleBlock}>
                     <FontAwesomeIcon icon={faUserSlash}/> Block
                 </button>}
-                <button className="profile-button" >
+                <button className="profile-button" onClick={sendDm}>
                     <FontAwesomeIcon icon={faPaperPlane}/> DM
                 </button>
             </div>

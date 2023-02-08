@@ -10,6 +10,8 @@ import { UsersModule } from '../users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Game } from '../game/game.entity';
 import { GameModule } from '../game/game.module';
+import { FriendModule } from '../friend/friend.module';
+import { FriendService } from '../friend/friend.service';
 
 @Module({
 	imports:[
@@ -20,14 +22,15 @@ import { GameModule } from '../game/game.module';
 	providers: [
 		SocketService,
 		socketGateway,
-  		{
+  	{
 			provide: 'AUTH_SERVICE',
 			useClass: AuthService,
 		},
 		JwtService,
 		UsersService,
 		GameService,
-	],
-	controllers: [SocketController]
+		FriendService,
+  ],
+  controllers: [SocketController]
 })
 export class SocketModule {}
