@@ -79,10 +79,10 @@ export class dmClass{
         return this.userDmList.get(userid).getUsers();
     }
 
-    public sendDm(server:Server, socket:Socket, targetId:number, msg:string) {
+    public sendDm(server:Server, socket:Socket, userName:string, targetId:number, msg:string) {
         const myDmList = this.userDmList.get(this.socketidUser.get(socket.id));
         let roomName = myDmList.getTargetRoom(targetId)
-        server.to(roomName).emit('receiveDm', msg);
+        server.to(roomName).emit('receiveDm', userName, msg);
 
         this.saveDmRoomdb(roomName, this.socketidUser.get(socket.id), msg);//메세지 저장
     }
