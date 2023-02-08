@@ -24,12 +24,12 @@ export default function Lobby(props: {setter: SetterOrUpdater<any>}) {
           })
           .catch(err => {
               props.setter(false);
-              navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
+              // navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
           })
       })
       .catch(err => {
           props.setter(false);
-          navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
+          // navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
       })
   }, []);
 

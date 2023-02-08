@@ -29,6 +29,7 @@ function ProfileModal() {
     const setProfileEditState = useSetRecoilState(profileEditModalState);
     const resetState = useResetRecoilState(profileModalState);
     const [avatarFile, setAvatarFile] = useState('');
+    const [record, setRecord] = useState<types.Record[]>([]);
     const socket = useContext(SocketContext);
     
     const [userInfo, setUserInfo] = useState<types.User>({
@@ -121,9 +122,19 @@ function ProfileModal() {
         })
     }, [showModal, showEditModal]);
 
-    // useEffect(() => {
-    //     setUserInfo(userInfo);
-    // }, [userInfo]);
+    useEffect(() => {
+        // TODO: 유저 게임기록을 받아온다.
+        axios.get('http://' + REACT_APP_HOST + ':3000/api/game/' + userInfo.id , {withCredentials: true}) //쿠키와 함께 보내기 true.
+        .then(res => {
+            console.log(res.data);
+            // if (res.data && res.data.){
+            // }
+        })
+        .catch(err => {
+            // alert("333");
+            navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
+        })
+    }, [showModal]);
 
     function showStatus(status: string){
         switch(status) {
