@@ -180,7 +180,7 @@ import { Friend } from '../friend/friend.entity';
     let [room, targetId] = data;//위임할 targetId
     console.log('/api/post/mandateMaster', client.id, data, room, targetId);
     let userId = this.socketUserid.get(client.id);
-    this.rooms.mandateMaster(room, userId, targetId);
+    this.rooms.mandateMaster(this.server, room, userId, targetId);
   }
 
   @SubscribeMessage('/api/put/setSecretpw')//비번 변경, ''이면 공개방으로 전환
