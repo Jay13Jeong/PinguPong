@@ -41,6 +41,7 @@ import { Friend } from '../friend/friend.entity';
       if (user != undefined){
         this.socketUserid.set(client.id, user.id);
         this.rooms.socketSave(user.id, client.id);//소켓통신을 하고 있는 채팅이용자 및 예정자들;
+        this.useridStatus.set(user.id, 'online');
       }
     }
 
@@ -51,9 +52,10 @@ import { Friend } from '../friend/friend.entity';
       this.gameService.iGamegetout(client);// 핑퐁
       //this.rooms.delUser(client.id);//채팅 소켓 자료 지우는 걸로 변경
 
-      this.socketUserid.delete(client.id);
       let userId = this.socketUserid.get(client.id);
+      this.socketUserid.delete(client.id);
       this.rooms.socketDelete(userId);//소켓통신이 끊긴 채팅이용자 및 예정자들;
+      this.useridStatus.delete(userId);
     }
 
 
@@ -79,7 +81,7 @@ import { Friend } from '../friend/friend.entity';
 		return user;
 	}
   
-  @SubscribeMessage('api/get/user/status')//방에서 나가기 누를 경우
+  @SubscribeMessage('api/get/user/status')
   async getUserStatus(client : Socket, data) {
     let targetId = data;
     let status = this.useridStatus.get(targetId);
@@ -339,20 +341,6 @@ import { Friend } from '../friend/friend.entity';
       }
     }
 
-    @SubscribeMessage('watchGame')//관전하기
-    async watchGame(client : Socket, data) {
-      let roomName = data;
-      client.join(roomName);
-      this.gameService.watchGame(roomName, client);
-    }
-
-    @SubscribeMessage('stopwatchGame')//관전 그만두기
-    async stopwatchGame(client : Socket, data) {
-      let roomName = data;
-      client.leave(roomName);
-      this.gameService.stopwatchGame(roomName, client);
-    }
-
     @SubscribeMessage('requestStart')
     async requestStart(client : Socket, data) {
       let roomName = data;
@@ -417,10 +405,51 @@ import { Friend } from '../friend/friend.entity';
      * TODO - 현재 진행중인 게임에 접속할 수 있어야 합니다.
      */
 
+     @SubscribeMessage('watchGame')//관전하기
+     async watchGame(client : Socket, data) {
+       let roomName = data;
+       client.join(roomName);
+       this.gameService.watchGame(roomName, client);
+     }
+ 
+     @SubscribeMessage('stopwatchGame')//관전 그만두기
+     async stopwatchGame(client : Socket, data) {
+       let roomName = data;
+       client.leave(roomName);
+       this.gameService.stopwatchGame(roomName, client);
+     }
+
     /* !SECTION - 게임 관전 */
 
     /* SECTION - 게임 도전장 */
 
+     //상대방에게 도전장 보내기
+
+     //도전장은 1개만 받을 수 있으며 이미 받았으면 false 보내기, 성공시 true
+
+     //도전장 철회 기능 포함
+    //  @SubscribeMessage('duelRequest')//결투 신청
+    //  async duelRequest(client : Socket, data) {
+    //     let targetId:number = data.targetId;
+    //     let targetName:string = data.targetName;
+
+    //     if (this.useridStatus.get(targetId) != 'online')
+    //       this.server.to(client.id).emit('duelRequest', false);
+        
+    //     let targetSocketId:string = this.rooms.getsocketIdByuserId(targetId);
+        
+    //     this.gameService.duelRequest();//방만들기
+        
+    //     this.server.to(client.id).emit('duelRequest', false);
+    //     this.server.to(targetSocketId).emit('duelAccept', this.socketUserid.get(client.id));
+    //  }
+
+    //  @SubscribeMessage('duelAccept')//결투 허락
+    //  async duelAccept(client : Socket, data) {
+    //     //결투 거절이면 룸 삭제하기
+    //     //승낙하면 
+    //  }
+    
     /**
      * TODO - 방법 논의 필요....
      */
