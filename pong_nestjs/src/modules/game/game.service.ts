@@ -358,6 +358,17 @@ export class GameService {
         return arr;
     }
 
+    public checkGaming(socketId: string):boolean {
+        if (this.easyLvUserList.has(socketId) === true)
+            return true;
+        if (this.normalLvUserList.has(socketId) === true)
+            return true;
+        if (this.hardLvUserList.has(socketId) === true)
+            return true;
+        //추가로 this.socketidRoomname.has(socketId)도 확인할 수 있도록 해야 한다.
+        return false;
+    }
+
     public iGamegetout(client:Socket){
         if (!this.socketidRoomname.has(client.id)) {//대결중이 아니면 종료
             this.socketid.delete(client.id);

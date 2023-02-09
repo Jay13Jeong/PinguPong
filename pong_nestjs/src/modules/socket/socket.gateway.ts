@@ -432,18 +432,33 @@ import { Friend } from '../friend/friend.entity';
      async duelRequest(client : Socket, data) {
         let targetId:number = data.targetId;
 
-        if (this.useridStatus.get(targetId) != 'online')//나중에 채팅방에 있는 지 여부를 확인하도록 하기
-          this.server.to(client.id).emit('duelRequest', false);
-
         let target = await this.userService.findUserById(targetId);        
         let targetSocketId:string = this.rooms.getsocketIdByuserId(targetId);
         let user = await this.findUserBySocket(client);
+
+        if ((this.useridStatus.get(targetId) != 'online') && (this.gameService.checkGaming(targetSocketId)))//나중에 채팅방에 있는 지 여부를 확인하도록 하기,이미 상대가 도전신청 받았는지 확인하기
+          this.server.to(client.id).emit('duelRequest', false);
+
         this.gameService.duelRequest(client.id, user.username, targetSocketId, target.username);//방만들기
         
         this.server.to(client.id).emit('duelRequest', true);
         this.server.to(targetSocketId).emit('duelAccept', this.socketUserid.get(client.id));
      }
 
+//a가 대기하다 도망가기
+     @SubscribeMessage('duelRequestRun')//결투 신청자가 도망간 경우
+     async duelRequesRun(client : Socket, data) {
+        let targetId:number = data.targetId;
+
+        let target = await this.userService.findUserById(targetId);        
+        let targetSocketId:string = this.rooms.getsocketIdByuserId(targetId);
+        let user = await this.findUserBySocket(client);
+        this.gameService.duelDelete(client.id, user.username, targetSocketId, target.username);//방 폭파하기
+        
+        this.server.to(targetSocketId).emit('duelTargetRun', user.username);
+        
+     }
+          //b가 취소하고 a에게 알려주기 
      @SubscribeMessage('duelAccept')//결투 허락
      async duelAccept(client : Socket, data) {
         let targetId:number = data.targetId;//결투를 신청했던 사람
@@ -455,6 +470,7 @@ import { Friend } from '../friend/friend.entity';
         //결투 거절이면 룸 삭제하기
         if (result === false){
           this.gameService.duelDelete(client.id, user.username, targetSocketId, target.username);
+          this.server.to(targetSocketId).emit('duelTargetRun', user.username);
           return ;
         }
         //승낙하면 matchSuce
