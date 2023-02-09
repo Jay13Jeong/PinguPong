@@ -122,6 +122,8 @@ import { Friend } from '../friend/friend.entity';
     console.log('chat', client.rooms);  //현재 클라이언트의 방
    // console.log(room, user.id, msg);//메시지
     
+    if (this.rooms.checkRoomInUser(userId, room) == false)//유저가 방에 있는 인원인지 확인하기
+      return ;
     if (this.rooms.checkMuteUser(room, userId))//음소거 상태인지 확인하기
       return ;
     //나를 블록한 유저 리스트
