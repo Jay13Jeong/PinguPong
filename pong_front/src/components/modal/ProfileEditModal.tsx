@@ -1,10 +1,11 @@
-import React, { ChangeEvent, useEffect, useRef, useState } from "react";
+import React, { ChangeEvent, useContext, useEffect, useRef, useState } from "react";
 import ModalBase from "./ModalBase";
 import { useRecoilValue, useResetRecoilState } from "recoil";
 import { profileEditModalState, profileModalState } from "../../states/recoilModalState";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { REACT_APP_HOST } from "../../util/configData";
+import { SocketContext } from "../../states/contextSocket";
 
 function ProfileEditModal(props: {name: string}) {
     // const [showModal, setShowModal] = useRecoilState(profileEditModalState);
@@ -86,14 +87,14 @@ function ProfileEditModal(props: {name: string}) {
 			//update Avatar here
 			axios.post('http://' + REACT_APP_HOST + ':3000/api/user/avatar', {file: inputRef.current.files![0]}, {withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' }})
 			.then((res) => {
-				alert("upload success");
+				alert("아바타 변경 완료");
 			})
 			.catch((err) => {
-				alert("upload fail");
+				alert("fail : 사진 파일만 업로드 가능");
 			})
             return ;
         }
-        alert("can not send empty file");
+        alert("파일이 지정되지 않음");
     };
 
     function onAvatar(e: ChangeEvent<HTMLInputElement>) {

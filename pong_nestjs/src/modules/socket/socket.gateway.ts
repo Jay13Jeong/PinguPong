@@ -83,11 +83,11 @@ import { Friend } from '../friend/friend.entity';
   
   @SubscribeMessage('api/get/user/status')
   async getUserStatus(client : Socket, data) {
-    let targetId = data;
+    let targetId: number = data;
     let status = this.useridStatus.get(targetId);
     if (status == undefined)
       status = 'offline';
-    this.server.to(client.id).emit('api/get/user/status', status);
+    this.server.to(client.id).emit('api/get/user/status', status, targetId);
     //상태는 offline, online, ingame, matching
   }
 

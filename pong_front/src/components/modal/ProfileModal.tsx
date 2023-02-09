@@ -21,8 +21,9 @@ function ProfileModal() {
     const setProfileEditState = useSetRecoilState(profileEditModalState);
     const resetState = useResetRecoilState(profileModalState);
     const [avatarFile, setAvatarFile] = useState('');
+    const [onlineStatus, setOnlineStatus] = useState('offline');
     const [rank, setRank] = useState<number>(0);
-    // const [odds, setOdds] = useState<number>(-1);
+
     const socket = useContext(SocketContext);
     
     const [userInfo, setUserInfo] = useState<types.User>({
@@ -99,7 +100,7 @@ function ProfileModal() {
 
     useEffect(() => {
         // TODO: 유저 랭크를 받아온다.
-        axios.get('http://' + REACT_APP_HOST + ':3000/api/user/rank/' + userInfo.id , {withCredentials: true}) //쿠키와 함께 보내기 true.
+        axios.get('http://' + REACT_APP_HOST + ':3000/api/user/rank/' + (showModal.userId !== 0 ? showModal.userId : userInfo.id) , {withCredentials: true}) //쿠키와 함께 보내기 true.
         .then(res => {
             if (res.data && res.data.rank){
                 setRank(res.data.rank);
@@ -111,21 +112,31 @@ function ProfileModal() {
         })
     }, [showModal]);
 
+    useEffect(() => {
+        if (showModal.userId !== 0){
+            socket.emit('api/get/user/status', showModal.userId);        
+        } else {
+            socket.emit('api/get/user/status', userInfo.id);    
+        }
+        socket.on('api/get/user/status', (status, targetId) => {
+            if (targetId !== 0)
+                setOnlineStatus(status);
+        })
+        console.log(userInfo.id,onlineStatus);
+        return (() => {
+            socket.off('api/get/user/status');
+        })
+    }, [showModal]);
+
     function showStatus(status: string){
         switch(status) {
-            case "on":
+            case "online":
                 return (
                     <div className="profile-status">
                         <FontAwesomeIcon style={{color: "#00BDAA"}} icon={faCircle}/> Online
                     </div>
                 );
-            case "off":
-                return (
-                    <div className="profile-status">
-                        <FontAwesomeIcon style={{color: "#FE346E"}} icon={faCircle}/> Offline
-                    </div>
-                );
-            case "game":
+            case "ingame":
                 return (
                     userInfo.myProfile ? 
                     <div className="profile-status">
@@ -136,7 +147,11 @@ function ProfileModal() {
                     </button>
                 );
             default:
-                return (null);
+                return (
+                    <div className="profile-status">
+                        <FontAwesomeIcon style={{color: "#FE346E"}} icon={faCircle}/> Offline
+                    </div>
+                );
         }
     }
 
@@ -287,7 +302,7 @@ function ProfileModal() {
                     <div className="profile-name">
                         ID : {userInfo.userName}
                     </div>
-                    {showStatus(userInfo.userStatus)}   
+                    {showStatus(onlineStatus)}   
                     <div className="profile-rank">
                         Rank : {rank}
                     </div>
