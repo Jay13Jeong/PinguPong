@@ -16,8 +16,9 @@ function UserCardButton(props: {friend: Friend, userID: number, userName: string
         // } else {
         socket.emit('api/get/user/status', props.userID);    
         // }
-        socket.on('api/get/user/status', (status) => {
-            setOnlineStatus(status);
+        socket.on('api/get/user/status', (status, targetId) => {
+            if (targetId === props.userID)
+                setOnlineStatus(status);
         })
         // console.log(userInfo.id,onlineStatus);
         return (() => {

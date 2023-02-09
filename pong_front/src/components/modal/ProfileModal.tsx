@@ -118,8 +118,9 @@ function ProfileModal() {
         } else {
             socket.emit('api/get/user/status', userInfo.id);    
         }
-        socket.on('api/get/user/status', (status) => {
-            setOnlineStatus(status);
+        socket.on('api/get/user/status', (status, targetId) => {
+            if (targetId !== 0)
+                setOnlineStatus(status);
         })
         console.log(userInfo.id,onlineStatus);
         return (() => {
