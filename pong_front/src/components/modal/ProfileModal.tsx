@@ -21,8 +21,9 @@ function ProfileModal() {
     const setProfileEditState = useSetRecoilState(profileEditModalState);
     const resetState = useResetRecoilState(profileModalState);
     const [avatarFile, setAvatarFile] = useState('');
+    const [onlineStatus, setOnlineStatus] = useState('offline');
     const [rank, setRank] = useState<number>(0);
-    // const [odds, setOdds] = useState<number>(-1);
+
     const socket = useContext(SocketContext);
     
     const [userInfo, setUserInfo] = useState<types.User>({
@@ -111,21 +112,26 @@ function ProfileModal() {
         })
     }, [showModal]);
 
+    useEffect(() => {
+        socket.emit('api/get/user/status', userInfo.id);
+        socket.on('api/get/user/status', (status) => {
+            setOnlineStatus(status);
+        })
+        console.log(userInfo.id,onlineStatus);
+        return (() => {
+            socket.off('api/get/user/status');
+        })
+    }, [showModal]);
+
     function showStatus(status: string){
         switch(status) {
-            case "on":
+            case "online":
                 return (
                     <div className="profile-status">
                         <FontAwesomeIcon style={{color: "#00BDAA"}} icon={faCircle}/> Online
                     </div>
                 );
-            case "off":
-                return (
-                    <div className="profile-status">
-                        <FontAwesomeIcon style={{color: "#FE346E"}} icon={faCircle}/> Offline
-                    </div>
-                );
-            case "game":
+            case "ingame":
                 return (
                     userInfo.myProfile ? 
                     <div className="profile-status">
@@ -136,7 +142,11 @@ function ProfileModal() {
                     </button>
                 );
             default:
-                return (null);
+                return (
+                    <div className="profile-status">
+                        <FontAwesomeIcon style={{color: "#FE346E"}} icon={faCircle}/> Offline
+                    </div>
+                );
         }
     }
 
@@ -287,7 +297,7 @@ function ProfileModal() {
                     <div className="profile-name">
                         ID : {userInfo.userName}
                     </div>
-                    {showStatus(userInfo.userStatus)}   
+                    {showStatus(onlineStatus)}   
                     <div className="profile-rank">
                         Rank : {rank}
                     </div>
