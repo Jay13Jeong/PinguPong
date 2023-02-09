@@ -201,6 +201,10 @@ export class chatClass {
     public socketDelete(userId:number) {
         this.userIdsocketId.delete(userId);
     }
+
+    public checkRoomInUser(userId:number, roomName:string):boolean {
+        return this.userIdRooms.get(userId).has(roomName);
+    }
     
     //방의 현재 인원들 소켓s 반환
     public getSocketList(roomName: string, BlockedMe:Friend[]):Array<string>{
@@ -275,6 +279,7 @@ export class chatClass {
 
         room.delsocketuser(userId);
         this.roomDel(roomName);
+        this.userIdRooms.get(userId).delete(roomName);
     }
 
     //방 삭제, 소켓 연결이 해제될 때, 방에 아무도 없으면 방 삭제
@@ -284,9 +289,6 @@ export class chatClass {
         if (room.userCount() == 0)
             this.rooms.delete(roomName);
     }
-
-    //화면이 변경될 때 소켓 변경이 안된다. 리액트 페이지 라우팅 때문에.
-
 
     //방장 위임 기능 함수
     public mandateMaster(server:Server, roomName: string, userid:number, targetid:number) {
@@ -344,6 +346,7 @@ export class chatClass {
         if (room.kickUser(userId, targetId)) {
             // console.log("kick");
             server.to(this.userIdsocketId.get(targetId)).emit('youKick');
+            this.userIdRooms.get(userId).delete(roomName);
         }
     }
 
