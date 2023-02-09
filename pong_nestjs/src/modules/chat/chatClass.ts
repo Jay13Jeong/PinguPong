@@ -137,8 +137,11 @@ class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함, prima
     public kickUser(userId:number, targetId:number):boolean {
         if (userId != this.master)
             return false;
-        this.delsocketuser(targetId);
-        return this.userIds.has(targetId);
+        if (this.userIds.has(targetId)) {
+            this.delsocketuser(targetId);
+            return true;
+        }
+        return false;
 
     }
 
