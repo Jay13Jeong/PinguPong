@@ -504,7 +504,7 @@ export class GameService {
 		});
 	}
 
-    async getTest(id: number) : Promise<Game[]> {
+    async getAll() : Promise<Game[]> {
 		return await this.gameRepo.find();
 	}
 }
