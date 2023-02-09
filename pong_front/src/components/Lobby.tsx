@@ -5,6 +5,7 @@ import { SetterOrUpdater, useRecoilState } from 'recoil';
 import { useEffect } from 'react';
 import axios from 'axios';
 import { REACT_APP_HOST } from '../util/configData';
+import BackGroundPingu from './util/BackGroundPingu';
 
 export default function Lobby(props: {setter: SetterOrUpdater<any>}) {
   const navigate = useNavigate();
@@ -37,7 +38,8 @@ export default function Lobby(props: {setter: SetterOrUpdater<any>}) {
     <div className="App">
       
       <header className="App-header">
-      <img src={require("../assets/pingu-lollipop.gif")} className='background-pinga'/>
+      <BackGroundPingu />
+      {/* <img src={require("../assets/pingu-lollipop.gif")} className='background-pinga'/> */}
         <Link to="/game">
           <Button primary>GAME</Button>
         </Link>
