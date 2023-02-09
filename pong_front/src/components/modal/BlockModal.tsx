@@ -130,7 +130,7 @@ function FriendModal() {
     if (showModal) {
         return (
             <ModalBase reset={resetState}>
-                <h1>Block List</h1>
+                <h1>🚫 Block List 🚫</h1>
                 {/* <input type="text" placeholder="이름으로 찾기" onChange={event => setTarget(event.target.value)} value={target} />
                 <button className="profile-button" onClick={handleAddFriendSubmit}>
                     친구추가

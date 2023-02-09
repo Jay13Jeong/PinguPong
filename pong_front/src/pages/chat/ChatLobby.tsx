@@ -39,7 +39,7 @@ function ChatLobby() {
         <CreateChatModal current={current}/>
         {loading ? <Loader/> : 
             <Stack>
-                <h1>채팅방 리스트</h1>
+                <h1>🗣 Chat Room List 🗣</h1>
                 <ChatCardButtonList current={current}/>
                 <Button onClick={(e) => {setCreateChatModal(true)}}>새 채팅방 생성</Button>
             </Stack>

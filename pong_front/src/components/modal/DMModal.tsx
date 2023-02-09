@@ -28,6 +28,7 @@ function DMModal() {
     if (showModal) {
         return (
             <ModalBase reset={resetState}>
+                <h1>💌 DM List 💌</h1>
                 {dmList === undefined ? <Loader/> : 
                 <DmCardButtonList dmList={dmList}/>}
             </ModalBase>
