@@ -4,7 +4,7 @@ import axios from 'axios';
 function useGetData(requestUrl: string) {
     const [data, setData] = useState<any>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [error, setError] = useState<any>(null);
+    const [error, setError] = useState<string | null>(null);
 
     const getData = useCallback(async () => {
         try {

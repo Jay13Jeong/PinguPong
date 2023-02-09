@@ -14,31 +14,27 @@ import GameWatchRoomPage from './pages/game/GameWatchRoomPage'
 import ChatLobby from './pages/chat/ChatLobby';
 import DmPage from './pages/dm/DmPage';
 import NotFound from './pages/NotFound';
-import PrivateRoute from './util/PrivateRoute';
 import { SetterOrUpdater } from 'recoil';
+import useCheckLogin from './util/useCheckLogin';
 
 export default function Routing(props: {setter: SetterOrUpdater<any>}) {
+    useCheckLogin();
     return (
       <Routes>
         <Route path="/" element={<LoginPage />} />
         <Route path="/auth/fa2" element={<FA2Page />} />
         <Route path="/profile/init" element={<ProfileInitPage setter={props.setter}/>} />
-        {/* <Route element={<PrivateRoute needLogin={false}/>}> */}
-          {/* <Route path="/api/auth/42/login"/> */}
-        {/* </Route> */}
-        <Route element={<PrivateRoute needLogin={true}/>}>
-          <Route path="/lobby" element={<Lobby setter={props.setter}/>} />
-          <Route path="/chat" element={<ChatLobby />} />
-          <Route path="/chat/room/:id" element={<ChatRoom />} />
-          <Route path="/chat/room/change" element={<EditChatRoomModal />} />
-          <Route path="/chat/manage/:id" element={<ChatManageModal />} />
-          <Route path="/game/" element={<GameLobbyPage/>}></Route>
-          <Route path="/game/match" element={<GameMatchPage/>}></Route>
-          <Route path="/game/match/:id" element={<GamePlayRoomPage/>}></Route>
-          <Route path="/game/watch" element={<GameWatchPage/>}></Route>
-          <Route path="/game/watch/:id" element={<GameWatchRoomPage/>}></Route>
-          <Route path='/dm/:id' element={<DmPage/>}></Route>
-        </Route>
+        <Route path="/lobby" element={<Lobby setter={props.setter}/>} />
+        <Route path="/chat" element={<ChatLobby />} />
+        <Route path="/chat/room/:id" element={<ChatRoom />} />
+        <Route path="/chat/room/change" element={<EditChatRoomModal />} />
+        <Route path="/chat/manage/:id" element={<ChatManageModal />} />
+        <Route path="/game/" element={<GameLobbyPage/>}></Route>
+        <Route path="/game/match" element={<GameMatchPage/>}></Route>
+        <Route path="/game/match/:id" element={<GamePlayRoomPage/>}></Route>
+        <Route path="/game/watch" element={<GameWatchPage/>}></Route>
+        <Route path="/game/watch/:id" element={<GameWatchRoomPage/>}></Route>
+        <Route path='/dm/:id' element={<DmPage/>}></Route>
         <Route path='*' element={<NotFound/>}></Route>
       </Routes>
     );
