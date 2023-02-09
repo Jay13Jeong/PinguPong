@@ -247,7 +247,7 @@ import { Friend } from '../friend/friend.entity';
       let name = await (await this.userService.findUserById(id)).username;
       userName.push(name);
     }
-    console.log('디엠 리스트 사용자', userName);
+    //console.log('디엠 리스트 사용자', userName);
     this.server.to(client.id).emit('dmList', userName);//유저 네임 리스트 보내주기
   }
 
