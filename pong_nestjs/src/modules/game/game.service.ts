@@ -326,7 +326,7 @@ class BattleClass{
 @Injectable()
 export class GameService {
     private vs : Map<string, BattleClass>;//rooms
-    private socketid : Map<string, string>;//소켓id : 유저Id
+    private socketid : Map<string, string>;//소켓id : 유저name
     private easyLvUserList : Set<string>;//소켓 id
     private normalLvUserList : Set<string>;
     private hardLvUserList : Set<string>;
@@ -415,6 +415,25 @@ export class GameService {
             return true;
         }
         return false;
+    }
+
+    public duelRequest(userSocketId:string, userName:string, targetSocketId:string, targetName:string) {
+        let roomName:string = userName + 'vs' + targetName;
+        this.vs.set(roomName, new BattleClass(userSocketId, userName, targetSocketId, targetName, 1.5, this.gameRepo, this.usersService));
+        this.socketid.set(userSocketId, userName);
+        this.socketid.set(targetSocketId, targetName);
+        this.socketidRoomname.set(userName, roomName);
+        this.socketidRoomname.set(targetName, roomName);
+        console.log('creatreDuelRoom', roomName);
+    }
+
+    public duelDelete(userSocketId:string, userName:string, targetSocketId:string, targetName:string){
+        let roomName:string = this.socketidRoomname.get(userSocketId);
+        this.socketid.delete(userSocketId);
+        this.socketid.delete(targetSocketId);
+        this.socketidRoomname.delete(userName);
+        this.socketidRoomname.delete(targetName);
+        this.vs.delete(roomName);
     }
 
     public matchEmit(server:Server, socketid:string) {

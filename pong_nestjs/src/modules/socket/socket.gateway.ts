@@ -428,27 +428,40 @@ import { Friend } from '../friend/friend.entity';
      //도전장은 1개만 받을 수 있으며 이미 받았으면 false 보내기, 성공시 true
 
      //도전장 철회 기능 포함
-    //  @SubscribeMessage('duelRequest')//결투 신청
-    //  async duelRequest(client : Socket, data) {
-    //     let targetId:number = data.targetId;
-    //     let targetName:string = data.targetName;
+     @SubscribeMessage('duelRequest')//결투 신청
+     async duelRequest(client : Socket, data) {
+        let targetId:number = data.targetId;
 
-    //     if (this.useridStatus.get(targetId) != 'online')
-    //       this.server.to(client.id).emit('duelRequest', false);
-        
-    //     let targetSocketId:string = this.rooms.getsocketIdByuserId(targetId);
-        
-    //     this.gameService.duelRequest();//방만들기
-        
-    //     this.server.to(client.id).emit('duelRequest', false);
-    //     this.server.to(targetSocketId).emit('duelAccept', this.socketUserid.get(client.id));
-    //  }
+        if (this.useridStatus.get(targetId) != 'online')//나중에 채팅방에 있는 지 여부를 확인하도록 하기
+          this.server.to(client.id).emit('duelRequest', false);
 
-    //  @SubscribeMessage('duelAccept')//결투 허락
-    //  async duelAccept(client : Socket, data) {
-    //     //결투 거절이면 룸 삭제하기
-    //     //승낙하면 
-    //  }
+        let target = await this.userService.findUserById(targetId);        
+        let targetSocketId:string = this.rooms.getsocketIdByuserId(targetId);
+        let user = await this.findUserBySocket(client);
+        this.gameService.duelRequest(client.id, user.username, targetSocketId, target.username);//방만들기
+        
+        this.server.to(client.id).emit('duelRequest', true);
+        this.server.to(targetSocketId).emit('duelAccept', this.socketUserid.get(client.id));
+     }
+
+     @SubscribeMessage('duelAccept')//결투 허락
+     async duelAccept(client : Socket, data) {
+        let targetId:number = data.targetId;//결투를 신청했던 사람
+        let result:boolean = data.result;//결투 신청을 받은 사람의 선택
+
+        let targetSocketId:string = this.rooms.getsocketIdByuserId(targetId);
+        let user = await this.findUserBySocket(client);
+        let target = await this.userService.findUserById(targetId); 
+        //결투 거절이면 룸 삭제하기
+        if (result === false){
+          this.gameService.duelDelete(client.id, user.username, targetSocketId, target.username);
+          return ;
+        }
+        //승낙하면 matchSuce
+        this.gameService.matchEmit(this.server, client.id);
+        //위의 함수에서 'matchMakeSuccess'이벤트 보냄 이후 게임화면 등장
+        //->게임준비 버튼 등 로직은   @SubscribeMessage('requestStart')으로 진행된다.
+     }
     
     /**
      * TODO - 방법 논의 필요....
