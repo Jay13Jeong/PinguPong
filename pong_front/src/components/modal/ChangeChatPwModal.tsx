@@ -9,7 +9,7 @@ import ModalBase from './ModalBase';
 import { Stack } from '../../styles/Layout';
 import './Chat.scss';
 
-function ChangeChatPwModal() {
+function ChangeChatPwModal(props: {roomName: string}) {
     const showModal = useRecoilValue(changeChatPwModalState);
     const resetState = useResetRecoilState(changeChatPwModalState);
     const [value, setValue] = useState<string>("");
@@ -17,7 +17,7 @@ function ChangeChatPwModal() {
 
     function handler(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        socket.emit('/api/put/setSecretpw', value); // 설정할 비밀번호를 보내기
+        socket.emit('/api/put/setSecretpw', props.roomName, value); // 설정할 비밀번호를 보내기
         toast.success("비밀번호 설정을 완료했습니다!");
         resetState();
     }

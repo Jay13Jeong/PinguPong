@@ -148,7 +148,7 @@ class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함, prima
     public banUser(userId:number, targetId:number){
         if (userId != this.master)
             return ;
-        if (this.userIds.has(targetId))
+        if (!this.userIds.has(targetId))
             this.banList.add(targetId);
     }
 
