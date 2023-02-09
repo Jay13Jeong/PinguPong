@@ -79,6 +79,16 @@ import { Friend } from '../friend/friend.entity';
 		return user;
 	}
   
+  @SubscribeMessage('api/get/user/status')//방에서 나가기 누를 경우
+  async getUserStatus(client : Socket) {
+    let userId = this.socketUserid.get(client.id);
+    let status = this.useridStatus.get(userId);
+    if (status == undefined)
+      status = 'offline';
+    this.server.to(client.id).emit('api/get/user/status', status);
+    //상태는 offline, online, ingame, matching
+  }
+
   @SubscribeMessage('delUser')//방에서 나가기 누를 경우
   async delUser(client : Socket, data) {
     let roomName = data;
