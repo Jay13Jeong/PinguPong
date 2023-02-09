@@ -8,7 +8,7 @@ import Loader from "../util/Loader";
 import { REACT_APP_HOST } from "../../util/configData";
 import { toast } from "react-toastify";
 
-function ChatMenuModal (props: {roomName: string, isMaster: boolean}) {
+function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster: Function}) {
     const socket = useContext(SocketContext);
     const modalState = useRecoilValue(chatMenuModalState);
     const resetState = useResetRecoilState(chatMenuModalState);
@@ -25,7 +25,8 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean}) {
     }, [info, error, isLoading]);
 
     useEffect(() => {
-        socket.emit('api/get/muteuser', modalState.user);
+        // let [roomName, targetId] = data;//음소거 체크할 유저id
+        socket.emit('api/get/muteuser', props.roomName, targetID);
         socket.on('api/get/muteuser', (data: boolean) => {
             setIsMuted(data);
         })
@@ -43,7 +44,8 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean}) {
     /* 추방 (현재 채팅방을 강제로 나가게 함) */
     function kickHandler(e: React.MouseEvent<HTMLElement>) {
         // 추방 기능
-        socket.emit('kickUser', modalState.user);
+        // let [roomName, targetId] = data;
+        socket.emit('kickUser', props.roomName, targetID);
         toast("👟 kick completed!");
         resetState();
     }
@@ -51,27 +53,29 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean}) {
     /* 채팅방에 못들어오게 함 */
     function banHandler(e: React.MouseEvent<HTMLElement>) {
         // 밴 기능
-        socket.emit('banUser', modalState.user);
+        // let [roomName, targetId] = data;
+        socket.emit('banUser', props.roomName, targetID);
         toast("🔥 ban completed!");
         resetState();
     }
 
     /* 음소거 (target 유저가 말하는 것은 누구에게도 표시되지 않는다.) */
     function muteHandler(e: React.MouseEvent<HTMLElement>) {
-        socket.emit('/api/put/addmuteuser', props.roomName, modalState.user);
+        socket.emit('/api/put/addmuteuser', props.roomName, targetID);
         toast("🔇 mute completed!");
         resetState();
     }
 
     function freemuteHandler(e: React.MouseEvent<HTMLElement>) {
-        socket.emit('/api/put/freemuteuser', props.roomName, modalState.user);
+        socket.emit('/api/put/freemuteuser', props.roomName, targetID);
         toast("🔈 unmute completed!");
         resetState();
     }
 
     function setMasterHandler(e: React.MouseEvent<HTMLElement>) {
-        socket.emit('/api/post/mandateMaster', props.roomName, modalState.user);
+        socket.emit('/api/post/mandateMaster', props.roomName, targetID);
         toast("👑 master set up completed!");
+        props.setMaster(false);
         resetState();
     }
 

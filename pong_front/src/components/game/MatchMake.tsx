@@ -63,12 +63,15 @@ function MatchMake() {
 
     return (
         <Center>
-            {loading ? <Loader text="로딩중"/> : 
             <Stack>
+            {loading ? <><Loader text="로딩중"/><Button>게임 매칭 취소</Button></> : 
+                <>
+                <h1>👾 Choose Game Level 👾</h1>
                 <DifficultyButtons difficulty={currentDifficulty} setDifficulty={setDifficulty}/>
                 <Button onClickCapture={handleMatchMakeRequest}> 게임 매칭 요청 </Button>
-            </Stack>
+                </>
             }
+            </Stack>
         </Center>
     )
 }

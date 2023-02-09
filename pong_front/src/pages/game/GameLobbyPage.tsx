@@ -7,7 +7,7 @@ function GameLobbyPage() {
     return (
         <Center>
             <Stack>
-                <h1>Game Lobby</h1>
+                <h1>👾 Game Lobby 👾</h1>
                 <Link to="/game/match">
                     <Button>게임 시작</Button>
                 </Link>
