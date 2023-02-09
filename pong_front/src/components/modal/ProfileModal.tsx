@@ -100,7 +100,7 @@ function ProfileModal() {
 
     useEffect(() => {
         // TODO: 유저 랭크를 받아온다.
-        axios.get('http://' + REACT_APP_HOST + ':3000/api/user/rank/' + userInfo.id , {withCredentials: true}) //쿠키와 함께 보내기 true.
+        axios.get('http://' + REACT_APP_HOST + ':3000/api/user/rank/' + (showModal.userId !== 0 ? showModal.userId : userInfo.id) , {withCredentials: true}) //쿠키와 함께 보내기 true.
         .then(res => {
             if (res.data && res.data.rank){
                 setRank(res.data.rank);
@@ -113,7 +113,11 @@ function ProfileModal() {
     }, [showModal]);
 
     useEffect(() => {
-        socket.emit('api/get/user/status', userInfo.id);
+        if (showModal.userId !== 0){
+            socket.emit('api/get/user/status', showModal.userId);        
+        } else {
+            socket.emit('api/get/user/status', userInfo.id);    
+        }
         socket.on('api/get/user/status', (status) => {
             setOnlineStatus(status);
         })
