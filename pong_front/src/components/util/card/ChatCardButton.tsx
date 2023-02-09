@@ -20,6 +20,7 @@ function ChatCardButton (props: {roomName: string, current: string}) {
                 socket.emit('getUser', {roomName: props.roomName})
                 /* ban 여부 확인 */
                 socket.on('youBan', () => {
+                    socket.off('youBan');
                     toast.error("금지당한 채팅방입니다!");
                 })
                 socket.on('youPass', () => {

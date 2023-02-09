@@ -57,7 +57,7 @@ function ChatRoom () {
             });
             /* 추방 여부 듣기 */
             socket.on('youKick', ()=>{
-                console.log("kick!!");
+                // console.log("kick!!");
                 socket.off('youKick');
                 toast("🔥 추방당했습니다!");
                 navigate('/lobby');
@@ -69,7 +69,7 @@ function ChatRoom () {
         }
 
         return () => {
-            console.log("return!!");
+            // console.log("return!!");
             /* 이벤트 해제 */
             socket.off('getUser');
             socket.off('/api/get/master/status');
