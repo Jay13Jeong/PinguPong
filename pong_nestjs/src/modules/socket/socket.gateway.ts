@@ -80,9 +80,9 @@ import { Friend } from '../friend/friend.entity';
 	}
   
   @SubscribeMessage('api/get/user/status')//방에서 나가기 누를 경우
-  async getUserStatus(client : Socket) {
-    let userId = this.socketUserid.get(client.id);
-    let status = this.useridStatus.get(userId);
+  async getUserStatus(client : Socket, data) {
+    let targetId = data;
+    let status = this.useridStatus.get(targetId);
     if (status == undefined)
       status = 'offline';
     this.server.to(client.id).emit('api/get/user/status', status);
