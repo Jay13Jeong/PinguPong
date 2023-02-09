@@ -190,6 +190,10 @@ export class chatClass {
         this.userIdsocketId =new Map<number, string>();
     }
 
+    public getsocketIdByuserId(userId:number):string {
+        return this.userIdsocketId.get(userId);
+    }
+
     public socketSave(userId:number, socketId:string) {
         this.userIdsocketId.set(userId, socketId);
     }
