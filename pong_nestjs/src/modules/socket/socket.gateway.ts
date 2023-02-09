@@ -239,10 +239,9 @@ import { Friend } from '../friend/friend.entity';
 
   @SubscribeMessage('dmList')//디엠 기능 첫 입장, 처음이면 DM 디비 만들기
   async dmList(client:Socket){
-    const user = await this.findUserBySocket(client);
+    const userId = this.socketUserid.get(client.id);
     //console.log('dmList', client.id, user);
-    this.dmRooms.setUsers(client.id, user.id);
-    let userIds:number[] = this.dmRooms.getdmList(client.id);
+    let userIds:number[] = this.dmRooms.getdmList(userId);
     let userName:string[] = [];
     for (let id of userIds){
       let name = await (await this.userService.findUserById(id)).username;
@@ -259,16 +258,15 @@ import { Friend } from '../friend/friend.entity';
     let targetId:number = data.targetId;
     let msg:string = data.msg;
     let user = await this.findUserBySocket(client);
-    this.dmRooms.sendDm(this.server, client, user.username, targetId, msg);
+    this.dmRooms.sendDm(this.server, user.id, user.username, targetId, msg);
   }
 
   //1대1 대화방 입장시 여태까지 받은 Dm 보내주기
   @SubscribeMessage('connectDm')
   async connectDm(client:Socket, data){//targetuserId
     let targetId = data;
-
-    this.dmRooms.connectDm(client, targetId);
     let user = await this.findUserBySocket(client);
+    this.dmRooms.connectDm(client, user.id, targetId);
     let target = await this.userService.findUserById(targetId);
     let msgs = this.dmRooms.getMsgs(user, target);//여태까지 받은 대화들 반환
     //console.log('receiveDms', user.username, target.username, msgs);
@@ -280,7 +278,8 @@ import { Friend } from '../friend/friend.entity';
   @SubscribeMessage('closeDm')
   async closeDm(client:Socket, data){
     let targetId = data;
-    this.dmRooms.closeDm(client, targetId);
+    let userId = this.socketUserid.get(client.id);
+    this.dmRooms.closeDm(client, userId, targetId);
   }
 
 
