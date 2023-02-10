@@ -62,40 +62,41 @@ export default function Profile() {
     }
 
   return (
-    <div className="App">
-        <header className="App-header">
-        <div>
-          <h3>Chat Lobby</h3>
-          <TableParent />
-            <table className='chatLobby'>
-              <tr>
-                <td rowSpan={4} className='emptySpace'>**방 선택하면 <br/>아래 입장 버튼 활성화 됩니다.</td>
-                <td rowSpan={6} className='chatBackground'>
-                  <div className='roomList'>
-                    {room.map((item) =>
-                      // <div onClick={(e) => buttonClicked(enterRoom, e)} >{item[0]} {" | "} {item[1]} {" | "} {item[2]}</div>
-                      <div className='roomUnit' onClick={(e) => setSelectedRoom(item[0]) }>{item[0]} {" | "} {item[1]} {" | "} {item[2]}</div>
-                    )}
-                  </div>
-                </td>
-              </tr>
-              <tr></tr><tr></tr><tr></tr>
-              <tr>
-                    <td className='optionBtn'>
-                      {
-                        selectedRoom === '0'?
-                        <div> {"Enter Chat"} </div>
-                        : <Link to={`/chat/room/${selectedRoom}`}>Enter Chat</Link>
-                      }
-                    </td>
-              </tr>
-              <tr>
-                    {/* 방 생성 모달 띄워야함. */}
-                  <td className='optionBtn'>Create Chat</td>
-              </tr>
-            </table>
-        </div>
-       </header>
-    </div>
+    // <div className="App">
+    //     <header className="App-header">
+    //     <div>
+    //       <h3>Chat Lobby</h3>
+    //       <TableParent />
+    //         <table className='chatLobby'>
+    //           <tr>
+    //             <td rowSpan={4} className='emptySpace'>**방 선택하면 <br/>아래 입장 버튼 활성화 됩니다.</td>
+    //             <td rowSpan={6} className='chatBackground'>
+    //               <div className='roomList'>
+    //                 {room.map((item) =>
+    //                   // <div onClick={(e) => buttonClicked(enterRoom, e)} >{item[0]} {" | "} {item[1]} {" | "} {item[2]}</div>
+    //                   <div className='roomUnit' onClick={(e) => setSelectedRoom(item[0]) }>{item[0]} {" | "} {item[1]} {" | "} {item[2]}</div>
+    //                 )}
+    //               </div>
+    //             </td>
+    //           </tr>
+    //           <tr></tr><tr></tr><tr></tr>
+    //           <tr>
+    //                 <td className='optionBtn'>
+    //                   {
+    //                     selectedRoom === '0'?
+    //                     <div> {"Enter Chat"} </div>
+    //                     : <Link to={`/chat/room/${selectedRoom}`}>Enter Chat</Link>
+    //                   }
+    //                 </td>
+    //           </tr>
+    //           <tr>
+    //                 {/* 방 생성 모달 띄워야함. */}
+    //               <td className='optionBtn'>Create Chat</td>
+    //           </tr>
+    //         </table>
+    //     </div>
+    //    </header>
+    // </div>
+    <></>
   );
 }

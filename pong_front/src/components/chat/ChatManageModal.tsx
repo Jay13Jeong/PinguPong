@@ -32,37 +32,38 @@ export default function ChatManage() {
     // }, []);
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <div>
-          <TableParent />
-          CHAT MANAGE MODAL<hr/>
-            <table>
-                <tr>
-                    <td colSpan={2}>{userName}</td>
-                </tr>
-                <tr>
-                  {/* 이 기능은 모달 하나에 통합 예정 */}
-                    <td colSpan={2}>프로필화면 바로가기</td>
-                </tr>
-                <tr>
-                    <td className='.halfDiv'><button>도전장 보내기</button></td>
-                    <td className='.halfDiv'><button>차단</button></td>
-                </tr>
-                <tr>
-                    <td className='.halfDiv'><button>방장 위임</button></td>
-                    <td className='.halfDiv'><button>벙어리</button></td>
-                </tr>
-                <tr>
-                    <td colSpan={2}><button>채팅방 강퇴</button></td>
-                </tr>
-                <tr>
-                    <td colSpan={2}><button>닫기</button></td>
-                </tr>
-            </table>
-            {/* </TableParent> */}
-        </div>
-      </header>
-    </div>
+    // <div className="App">
+    //   <header className="App-header">
+    //     <div>
+    //       <TableParent />
+    //       CHAT MANAGE MODAL<hr/>
+    //         <table>
+    //             <tr>
+    //                 <td colSpan={2}>{userName}</td>
+    //             </tr>
+    //             <tr>
+    //               {/* 이 기능은 모달 하나에 통합 예정 */}
+    //                 <td colSpan={2}>프로필화면 바로가기</td>
+    //             </tr>
+    //             <tr>
+    //                 <td className='.halfDiv'><button>도전장 보내기</button></td>
+    //                 <td className='.halfDiv'><button>차단</button></td>
+    //             </tr>
+    //             <tr>
+    //                 <td className='.halfDiv'><button>방장 위임</button></td>
+    //                 <td className='.halfDiv'><button>벙어리</button></td>
+    //             </tr>
+    //             <tr>
+    //                 <td colSpan={2}><button>채팅방 강퇴</button></td>
+    //             </tr>
+    //             <tr>
+    //                 <td colSpan={2}><button>닫기</button></td>
+    //             </tr>
+    //         </table>
+    //         {/* </TableParent> */}
+    //     </div>
+    //   </header>
+    // </div>
+    <></>
   );
 }

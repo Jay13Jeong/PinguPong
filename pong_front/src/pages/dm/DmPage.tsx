@@ -9,8 +9,10 @@ import Loader from "../../components/util/Loader";
 import DmField from "../../components/chat/DmField";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import useCheckLogin from "../../util/useCheckLogin";
 
 function DmPage() {
+    useCheckLogin();
     const socket = useContext(SocketContext);
     const navigate = useNavigate();
     const location = useLocation();

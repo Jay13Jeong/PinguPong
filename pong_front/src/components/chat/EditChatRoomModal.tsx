@@ -23,33 +23,34 @@ export default function EditChatRoom() {
     // useEffect(() => {
     // }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <div>
-          <TableParent />
-          ROOM PWD CHANGE MODAL<hr/>
-            <table>
-                <tr>
-                    <td className='roomName'>Room Name</td>
-                    <td colSpan={3}>{roomName}</td>
-                </tr>
-                <tr>
-                  <td>Room PWD</td>
-                    <td colSpan={3}><input type="text" /></td>
-                </tr>
-                <tr>
-                  <td>Re-enter PWD</td>
-                    <td colSpan={3}><input type="text" /></td>
-                </tr>
-                <tr>
-                    <td colSpan={2}></td>
-                    <td><button>CONFIRM</button></td>
-                    <td><button>CANCEL</button></td>
-                </tr>
-            </table>
-            {/* </TableParent> */}
-        </div>
-      </header>
-    </div>
+    // <div className="App">
+    //   <header className="App-header">
+    //     <div>
+    //       <TableParent />
+    //       ROOM PWD CHANGE MODAL<hr/>
+    //         <table>
+    //             <tr>
+    //                 <td className='roomName'>Room Name</td>
+    //                 <td colSpan={3}>{roomName}</td>
+    //             </tr>
+    //             <tr>
+    //               <td>Room PWD</td>
+    //                 <td colSpan={3}><input type="text" /></td>
+    //             </tr>
+    //             <tr>
+    //               <td>Re-enter PWD</td>
+    //                 <td colSpan={3}><input type="text" /></td>
+    //             </tr>
+    //             <tr>
+    //                 <td colSpan={2}></td>
+    //                 <td><button>CONFIRM</button></td>
+    //                 <td><button>CANCEL</button></td>
+    //             </tr>
+    //         </table>
+    //         {/* </TableParent> */}
+    //     </div>
+    //   </header>
+    // </div>
+    <></>
   );
 }
