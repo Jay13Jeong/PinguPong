@@ -128,6 +128,7 @@ class BattleClass{
     public matchEmit(server:Server){
         server.to(this.player1Id).emit('matchMakeSuccess', {p1: this.player1Name, p2: this.player2Name});
         server.to(this.player2Id).emit('matchMakeSuccess', {p1: this.player1Name, p2: this.player2Name});
+        this.myserver= server;
     }
 
     public async startGame(server:Server): Promise<void>{
@@ -260,8 +261,8 @@ class BattleClass{
     }
 
     public iGameLoser(loserid:string):string{
-        this.myserver.to(this.roomName).emit("endGame", {winner: this.player1Id !== loserid ? this.player1Name : this.player2Name});
         clearInterval(this.counter);
+        this.myserver.to(this.player1Id !== loserid ? this.player1Id : this.player2Id).emit("endGame", {winner: this.player1Id !== loserid ? this.player1Name : this.player2Name});
         console.log("endGame", this.player1Id === loserid ? this.player1Name : this.player2Name);
         return this.player1Id === loserid ? this.player1Id : this.player2Id;
     }
@@ -384,6 +385,7 @@ export class GameService {
         const vs:BattleClass = this.vs.get(roomName);
 
         console.log('iGamegetout', roomName);
+        console.log('clientRoom', client.rooms);
         if (vs != undefined){//but BattleClass이 이미 지웠지만, 다른 사용자가 새로고침할 경우 문제가 생길 수 있다
             let winner:string = vs.iGameLoser(client.id);//이긴 사람의 소켓 id
             this.socketidRoomname.delete(winner);
