@@ -349,8 +349,8 @@ import { Friend } from '../friend/friend.entity';
        if (this.gameService.matchMake(difficulty, player, client.id)){
         this.gameService.matchEmit(this.server, client.id); 
         console.log('matchMake fin');
-        this.useridStatus.set(this.socketUserid.get(client.id), 'matching');
       }
+      this.useridStatus.set(this.socketUserid.get(client.id), 'matching');
     }
 
     @SubscribeMessage('requestStart')
