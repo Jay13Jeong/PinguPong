@@ -86,7 +86,8 @@ import { Friend } from '../friend/friend.entity';
     let userId:number = this.socketUserid.get(client.id);
 
     this.useridStatus.set(userId, 'online');
-    //게임 안에 가서 클래스 삭제하기 할 것
+    //게임 안에 가서 클래스 및 매칭 큐 삭제하기 할 것
+    this.gameService.iGamegetout(client);
   }
 
   @SubscribeMessage('api/get/user/status')
@@ -462,11 +463,10 @@ import { Friend } from '../friend/friend.entity';
      @SubscribeMessage('duelRequestRun')//결투 신청자가 도망간 경우
      async duelRequesRun(client : Socket, data) {
         let targetId:number = data.targetId;
-
-        let target = await this.userService.findUserById(targetId);        
+      
         let targetSocketId:string = this.rooms.getsocketIdByuserId(targetId);
         let user = await this.findUserBySocket(client);
-        this.gameService.duelDelete(client.id, user.username, targetSocketId, target.username);//방 폭파하기
+        this.gameService.duelDelete(client.id, targetSocketId);//방 폭파하기
         
         this.server.to(targetSocketId).emit('duelTargetRun', user.username);
         
@@ -479,10 +479,9 @@ import { Friend } from '../friend/friend.entity';
 
         let targetSocketId:string = this.rooms.getsocketIdByuserId(targetId);
         let user = await this.findUserBySocket(client);
-        let target = await this.userService.findUserById(targetId); 
         //결투 거절이면 룸 삭제하기
         if (result === false){
-          this.gameService.duelDelete(client.id, user.username, targetSocketId, target.username);
+          this.gameService.duelDelete(client.id, targetSocketId);
           this.server.to(targetSocketId).emit('duelTargetRun', user.username);
           return ;
         }
