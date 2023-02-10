@@ -38,9 +38,9 @@ import { Friend } from '../friend/friend.entity';
       //this.server.to(client.id).emit('getUser');//해당 클라이언트에게만 보내기//채팅
       const user = await this.findUserBySocket(client);
 
-      if (user != undefined){
+      if (user != undefined) {
         this.socketUserid.set(client.id, user.id);
-        this.rooms.socketSave(user.id, client.id);//소켓통신을 하고 있는 채팅이용자 및 예정자들;
+        this.rooms.socketSave(user.id, client.id);//소켓통신을 하고 있는 채팅이용자 및 예정자들
         this.useridStatus.set(user.id, 'online');
       }
     }
@@ -81,6 +81,14 @@ import { Friend } from '../friend/friend.entity';
 		return user;
 	}
   
+  @SubscribeMessage('setInLobby')
+  async setInLobby(client : Socket) {
+    let userId:number = this.socketUserid.get(client.id);
+
+    this.useridStatus.set(userId, 'online');
+    //게임 안에 가서 클래스 삭제하기 할 것
+  }
+
   @SubscribeMessage('api/get/user/status')
   async getUserStatus(client : Socket, data) {
     let targetId: number = data;
@@ -340,6 +348,7 @@ import { Friend } from '../friend/friend.entity';
        if (this.gameService.matchMake(difficulty, player, client.id)){
         this.gameService.matchEmit(this.server, client.id); 
         console.log('matchMake fin');
+        this.useridStatus.set(this.socketUserid.get(client.id), 'matching');
       }
     }
 
@@ -350,6 +359,7 @@ import { Friend } from '../friend/friend.entity';
       //플레이어가 준비완료인지 확인하기, 여기서 socket room에 등록을 하자
       if (this.gameService.requestStart(roomName, client, this.server))
         await this.gameService.startGame(roomName, this.server);
+      this.useridStatus.set(this.socketUserid.get(client.id), 'ingame');
         //클래스 안에서 소켓메세지 보내기
         //console.log('requestStart11', client.id, client.rooms);
         //this.server.emit('startGame');//api: 시작 신호 보내기. 서버에서 쓰레드 돌리기 시작, if문으로 구별해서 보내기
@@ -439,12 +449,13 @@ import { Friend } from '../friend/friend.entity';
         let user = await this.findUserBySocket(client);
 
         if ((this.useridStatus.get(targetId) != 'online') && (this.gameService.checkGaming(targetSocketId)))//나중에 채팅방에 있는 지 여부를 확인하도록 하기,이미 상대가 도전신청 받았는지 확인하기
-          this.server.to(client.id).emit('duelRequest', false);
+          return this.server.to(client.id).emit('duelRequest', false);
 
         this.gameService.duelRequest(client.id, user.username, targetSocketId, target.username);//방만들기
         
         this.server.to(client.id).emit('duelRequest', true);
-        this.server.to(targetSocketId).emit('duelAccept', this.socketUserid.get(client.id));
+        this.server.to(targetSocketId).emit('duelAccept', this.socketUserid.get(client.id), user.username);
+        this.useridStatus.set(user.id, 'matching');
      }
 
 //a가 대기하다 도망가기
@@ -477,6 +488,7 @@ import { Friend } from '../friend/friend.entity';
         }
         //승낙하면 matchSuce
         this.gameService.matchEmit(this.server, client.id);
+        this.useridStatus.set(user.id, 'matching');
         //위의 함수에서 'matchMakeSuccess'이벤트 보냄 이후 게임화면 등장
         //->게임준비 버튼 등 로직은   @SubscribeMessage('requestStart')으로 진행된다.
      }
