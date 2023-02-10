@@ -325,7 +325,7 @@ class BattleClass{
 
 @Injectable()
 export class GameService {
-    private vs : Map<string, BattleClass>;//rooms
+    private vs : Map<string, BattleClass>;//roomName:battleClass rooms
     private socketid : Map<string, string>;//소켓id : 유저name
     private easyLvUserList : Set<string>;//소켓 id
     private normalLvUserList : Set<string>;
@@ -366,6 +366,8 @@ export class GameService {
         if (this.hardLvUserList.has(socketId) === true)
             return true;
         //추가로 this.socketidRoomname.has(socketId)도 확인할 수 있도록 해야 한다.
+        if (this.socketidRoomname.has(socketId) === true)
+            return true;
         return false;
     }
 
@@ -433,17 +435,17 @@ export class GameService {
         this.vs.set(roomName, new BattleClass(userSocketId, userName, targetSocketId, targetName, 1.5, this.gameRepo, this.usersService));
         this.socketid.set(userSocketId, userName);
         this.socketid.set(targetSocketId, targetName);
-        this.socketidRoomname.set(userName, roomName);
-        this.socketidRoomname.set(targetName, roomName);
+        this.socketidRoomname.set(userSocketId, roomName);
+        this.socketidRoomname.set(targetSocketId, roomName);
         console.log('creatreDuelRoom', roomName);
     }
 
-    public duelDelete(userSocketId:string, userName:string, targetSocketId:string, targetName:string){
+    public duelDelete(userSocketId:string, targetSocketId:string, ){
         let roomName:string = this.socketidRoomname.get(userSocketId);
         this.socketid.delete(userSocketId);
         this.socketid.delete(targetSocketId);
-        this.socketidRoomname.delete(userName);
-        this.socketidRoomname.delete(targetName);
+        this.socketidRoomname.delete(userSocketId);
+        this.socketidRoomname.delete(targetSocketId);
         this.vs.delete(roomName);
     }
 
