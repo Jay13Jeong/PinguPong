@@ -37,6 +37,7 @@ function GameInviteModal (props: {targetID: number, targetUserName: string, setI
     function acceptHandler(e: React.MouseEvent<HTMLElement>) {
         socket.emit('duelAccept', {targetId: props.targetID, result: true});
         props.setInviteInfo({id: -1, username: ""});
+        resetState();
         navigate(`/game/match/${props.targetUserName}vs${current}`, {state: {
             player1: props.targetUserName,
             player2: current,
@@ -47,7 +48,7 @@ function GameInviteModal (props: {targetID: number, targetUserName: string, setI
     function rejectHandler(e: React.MouseEvent<HTMLElement>) {
         socket.emit('duelAccept', {targetId: props.targetID, result: false});
         props.setInviteInfo({id: -1, username: ""});
-        resetState()
+        resetState();
     }
     if (modalState) {
         return (
