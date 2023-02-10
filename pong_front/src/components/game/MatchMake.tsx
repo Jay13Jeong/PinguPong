@@ -37,7 +37,8 @@ function MatchMake() {
             navigate(`/game/match/${data.p1}vs${data.p2}`, {state: {
                 player1: data.p1,
                 player2: data.p2,
-                current: current
+                current: current,
+                invite: false
             }});
         });
         return (() => {

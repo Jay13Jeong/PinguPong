@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { Center } from "../../styles/Layout";
 import { useSetRecoilState } from "recoil";
-import { changeChatPwModalState } from "../../states/recoilModalState"
+import { changeChatPwModalState, gameInviteModalState } from "../../states/recoilModalState"
 import ChangeChatPwModal from "../../components/modal/ChangeChatPwModal";
 import ChatField from "../../components/chat/ChatField";
 // import axios from "axios";
@@ -15,9 +15,11 @@ import "../../components/chat/ChatRoom.scss"
 import { REACT_APP_HOST } from "../../util/configData";
 import CustomToastContainer from "../../components/util/CustomToastContainer";
 import { toast } from "react-toastify";
+import GameInviteModal from "../../components/modal/GameInviteModal";
 
 function ChatRoom () {
     const setChangeChatPwModalState = useSetRecoilState(changeChatPwModalState);
+    const setGameInviteModal = useSetRecoilState(gameInviteModalState);
     const socket = useContext(SocketContext);
     
     const [myInfo, error, isLoading] = useGetData('http://' + REACT_APP_HOST + ':3000/api/user');
@@ -25,6 +27,7 @@ function ChatRoom () {
     const [current, setCurrent] = useState<string>("");     // 현재 유저의 id
     const [master, setMaster] = useState<boolean>(false);   // 현재 유저의 방장 여부
     const roomInfo = useParams() as { id: string };         // undefined 해결용 type assersion
+    const [invitedInfo, setInvitedInfo] = useState<{id: number, username: string}>({id: -1, username: ""});
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -34,46 +37,40 @@ function ChatRoom () {
 
     useEffect(() => {
         if (current !== '') {
-            // NOTE - 재등록 과정 없어짐에 따라 삭제된 코드 (확인 후 삭제하기)
-            // /* 방에 재 등록 */
-            // socket.on('getUser', (data) => {
-            //     console.log("emit getUser: ", current);
-            //     socket.emit('getUser', {roomName: roomInfo.id, userId: current});
-            //     /* 방장 여부 확인 */
-            //     socket.emit('/api/get/master/status');
-            //     socket.on('/api/get/master/status', (data: boolean) => {
-            //         console.log('isMaster: ', data);
-            //         setMaster(data);   // 방장이면 true / 아니면 false
-            //     });
-            // })
-
             /* 방장 여부 확인 */
-            // socket.emit('/api/get/master/status');
-            console.log("listen!!");
-            socket.emit('/api/get/master/status', roomInfo.id); // NOTE - 방 이름까지 함께 보내주기
+            socket.emit('/api/get/master/status', roomInfo.id);
             socket.on('/api/get/master/status', (data: boolean) => {
-                // console.log('isMaster: ', data);
                 setMaster(data);   // 방장이면 true / 아니면 false
             });
             /* 추방 여부 듣기 */
             socket.on('youKick', ()=>{
-                // console.log("kick!!");
                 socket.off('youKick');
                 toast("🔥 추방당했습니다!");
                 navigate('/lobby');
             });
+            /* 방장 여부 듣기 */
             socket.on('youMaster', ()=> {
                 console.log("youMaster!!");
                 setMaster(true);
             })
+
+            /* 게임 초대 신청 듣기 */
+            socket.on('duelAccept', (targetId: number, targetUsername: string) => {
+                setInvitedInfo({id: targetId, username: targetUsername});
+            })
+
+            /* 게임 초대 취소 듣기 */
+            socket.on('duelTargetRun', (targetUserName: string) => {
+                setInvitedInfo({id: -1, username: ""});
+            })
         }
 
         return () => {
-            // console.log("return!!");
             /* 이벤트 해제 */
             socket.off('getUser');
             socket.off('/api/get/master/status');
             socket.off('youKick');
+            socket.off('duelAccept');
         };
     }, [socket, current, roomInfo.id, navigate]);
 
@@ -107,8 +104,10 @@ function ChatRoom () {
         <ChangeChatPwModal roomName={roomInfo.id}/>
         <CustomToastContainer/>
         <ChatMenuModal isMaster={master} roomName={roomInfo.id} setMaster={setMaster}/>
+        <GameInviteModal targetID={invitedInfo.id} targetUserName={invitedInfo.username} setInviteInfo={setInvitedInfo}/>
         <Center>
             <div id="chat-room">
+                {invitedInfo.id !== -1 ? <button onClick={(e) => {setGameInviteModal(true)}} id="duel-request-btn">도전장 도착</button> : null}
                 {master ? <button onClick={(e) => {setChangeChatPwModalState({roomName: roomInfo.id, show: true})}} id="change-pw-btn">비밀번호 설정</button> : null}
                 <button onClick={exitHandler} id="exit-chat-btn">채팅방 나가기</button>
                 <ChatField roomName={roomInfo.id} current={current}/>
