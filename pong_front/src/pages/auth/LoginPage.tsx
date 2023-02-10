@@ -1,4 +1,5 @@
 import Login from '../../components/auth/Login';
+import useCheckLogin from '../../util/useCheckLogin';
 // const Container = styled.div`
 //   width: 60%;
 //   margin: 0px auto;
@@ -24,6 +25,7 @@ import Login from '../../components/auth/Login';
 // `;
 
 export default function LoginPage() {
+  useCheckLogin();
   return (
     <div>
       <Login />

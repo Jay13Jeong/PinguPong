@@ -52,28 +52,29 @@ export default function EditProfile() {
     // useEffect(() => {
     // }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <div>
-          <TableParent />
-            <table>
-                <tr>
-                    <td colSpan={2} className="img-wrapper"><img src="https://cdn.myanimelist.net/images/characters/11/421848.jpg"/></td>
-                </tr>
-                <tr>
-                    <td colSpan={2}><button>Edit Image</button></td>
-                </tr>
-                <tr>
-                    <td className='halfDiv'><button>Edit Name</button></td>
-                    <td className='halfDiv'>Info : <button>Private/Public</button></td>
-                </tr>
-                <tr>
-                    <td colSpan={2}><button>Activate 2FA</button></td>
-                </tr>
-            </table>
-            {/* </TableParent> */}
-        </div>
-      </header>
-    </div>
+    // <div className="App">
+    //   <header className="App-header">
+    //     <div>
+    //       <TableParent />
+    //         <table>
+    //             <tr>
+    //                 <td colSpan={2} className="img-wrapper"><img src="https://cdn.myanimelist.net/images/characters/11/421848.jpg"/></td>
+    //             </tr>
+    //             <tr>
+    //                 <td colSpan={2}><button>Edit Image</button></td>
+    //             </tr>
+    //             <tr>
+    //                 <td className='halfDiv'><button>Edit Name</button></td>
+    //                 <td className='halfDiv'>Info : <button>Private/Public</button></td>
+    //             </tr>
+    //             <tr>
+    //                 <td colSpan={2}><button>Activate 2FA</button></td>
+    //             </tr>
+    //         </table>
+    //         {/* </TableParent> */}
+    //     </div>
+    //   </header>
+    // </div>
+    <></>
   );
 }

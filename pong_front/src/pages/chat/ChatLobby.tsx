@@ -10,8 +10,10 @@ import CreateChatModal from "../../components/modal/CreateChatModal";
 import useGetData from "../../util/useGetData";
 import Loader from "../../components/util/Loader";
 import { REACT_APP_HOST } from "../../util/configData";
+import useCheckLogin from "../../util/useCheckLogin";
 
 function ChatLobby() {
+    useCheckLogin();
     /* modal state */
     const setCreateChatModal = useSetRecoilState(createChatModalState);
     /* info */

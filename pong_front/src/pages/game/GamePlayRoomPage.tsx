@@ -2,11 +2,10 @@ import { useEffect, useState, useContext } from "react";
 import { SocketContext } from "../../states/contextSocket";
 import { useNavigate, useLocation } from "react-router-dom";
 import GamePlayRoom from "../../components/game/GamePlayRoom";
-import Loader from "../../components/util/Loader";
-import { Button } from "../../styles/Inputs";
-import { toast } from "react-toastify";
+import useCheckLogin from "../../util/useCheckLogin";
 
 function GamePlayRoomPage() {
+    useCheckLogin();
     const [loading, setLoading] = useState<boolean>(true);
     const navigate = useNavigate();
     const location = useLocation();

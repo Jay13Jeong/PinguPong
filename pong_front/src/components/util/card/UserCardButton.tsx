@@ -31,12 +31,13 @@ function UserCardButton(props: {friend: Friend, userID: number, userName: string
         // profileState({userId: 0, show: true});
         // console.log(user);
         // console.log(value);
+        // console.log("###",user);
         profileState({user: user, userId: (value? value : 0), show: true});
         // profileState({userId: value, show: true});
     }
 
     function showStatus(status: string) {
-        console.log("aaa", status)
+        // console.log("aaa", status)
         switch(status) {
             case "ingame" : 
                 return (
@@ -44,16 +45,16 @@ function UserCardButton(props: {friend: Friend, userID: number, userName: string
                         ingame
                     </span>
                 );
-            case "online" :
+            case "offline" :
                 return (
                     <span className="status">
-                        online
+                        offline
                     </span>
                 );
             default:
                 return (
                     <span className="status">
-                        offline
+                        online
                     </span>
                 );
         }

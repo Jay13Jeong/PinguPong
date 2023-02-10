@@ -11,32 +11,39 @@ export default function EditProfile() {
 
     useEffect(() => {
       //2단계인증이 켜져있는지 검사.
-      axios.get('http://' + REACT_APP_HOST + ':3000/api/fa2/status', {withCredentials: true}) //쿠키와 함께 보내기 true.
-      .then(res => {
-        // axios.get('http://localhost:3000/api/fa2',{withCredentials: true});
-        if (res.data.twofa === false){
-          navigate('/lobby');
-        } else {
-          //켜져있다며 메일을 요청한다.
-          axios.get('http://' + REACT_APP_HOST + ':3000/api/fa2',{withCredentials: true});
-        }
-      })
-      .catch(err => {
-        if (err.response.data.statusCode === 401)
+      const get2faStatus = async () => {
+        try{
+          const res = await axios.get('http://' + REACT_APP_HOST + ':3000/api/fa2/status', {withCredentials: true}) //쿠키와 함께 보내기 true.
+          if (res.data.twofa === false){
+            navigate('/lobby'); //2단계인증이 꺼져있으면 로비로 간다.
+            return ;
+          }
+        }catch(err: any){
+          // console.log(err);
           navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
-      })
+        }
+        try{
+          await axios.get('http://' + REACT_APP_HOST + ':3000/api/fa2',{withCredentials: true});
+        } catch(err: any) {
+          // console.log(err);
+          navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
+        }
+      }
+      get2faStatus();
     }, []);
   
     function handleSubmit(event : any) {
       event.preventDefault();
-      axios.post('http://' + REACT_APP_HOST + ':3000/api/fa2', {code : code}, {withCredentials: true})
-      .then(res => {
-        if (res.status === 200)
-          navigate('/lobby');
-      })
-      .catch(err => {
-        alert('invalid code : check 42Email again');
-      })
+      const submitCode = async () => {
+        try{
+          const res = await axios.post('http://' + REACT_APP_HOST + ':3000/api/fa2', {code : code}, {withCredentials: true})
+          if (res.status === 200)
+            navigate('/lobby');
+        }catch(err: any){
+          alert('invalid code : check 42Email again');
+        }
+      }
+      submitCode();
     };
 
     return (
@@ -45,6 +52,7 @@ export default function EditProfile() {
         <img src={require("../../assets/pinga-door.gif")} className='background-pinga'/>
           <div>
               <table className='certTable'>
+                <tbody>
                   <tr>
                       <td>CODE : <input
                       type="text"
@@ -56,6 +64,7 @@ export default function EditProfile() {
                   <tr>
                       <td><button onClick={handleSubmit} className="confirmBtn">OK</button></td>
                   </tr>
+                  </tbody>
               </table>
           </div>
         </header>
