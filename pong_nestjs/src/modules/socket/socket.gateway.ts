@@ -454,8 +454,8 @@ import { Friend } from '../friend/friend.entity';
         this.gameService.duelRequest(client.id, user.username, targetSocketId, target.username);//방만들기
         
         this.server.to(client.id).emit('duelRequest', true);
-        this.server.to(targetSocketId).emit('duelAccept', this.socketUserid.get(client.id));
-        this.useridStatus.set(this.socketUserid.get(client.id), 'matching');
+        this.server.to(targetSocketId).emit('duelAccept', this.socketUserid.get(client.id), user.username);
+        this.useridStatus.set(user.id, 'matching');
      }
 
 //a가 대기하다 도망가기
@@ -488,7 +488,7 @@ import { Friend } from '../friend/friend.entity';
         }
         //승낙하면 matchSuce
         this.gameService.matchEmit(this.server, client.id);
-        this.useridStatus.set(this.socketUserid.get(client.id), 'matching');
+        this.useridStatus.set(user.id, 'matching');
         //위의 함수에서 'matchMakeSuccess'이벤트 보냄 이후 게임화면 등장
         //->게임준비 버튼 등 로직은   @SubscribeMessage('requestStart')으로 진행된다.
      }
