@@ -1,4 +1,6 @@
 import '../App.css';
+import { useContext } from 'react';
+import { SocketContext } from '../states/contextSocket';
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../styles/Inputs"
 import { SetterOrUpdater, useRecoilState } from 'recoil';
@@ -9,8 +11,11 @@ import BackGroundPingu from './util/BackGroundPingu';
 
 export default function Lobby(props: {setter: SetterOrUpdater<any>}) {
   const navigate = useNavigate();
+  const socket = useContext(SocketContext);
 
   useEffect(() => {
+      console.log('setInLobby');
+      socket.emit('setInLobby');
       axios.get('http://' + REACT_APP_HOST + ':3000/api/user/init/status', {withCredentials: true})
       .then(res => {
           if (res.data && res.data.msg === false){

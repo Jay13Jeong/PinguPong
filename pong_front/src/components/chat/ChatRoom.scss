@@ -5,10 +5,10 @@
     height: 600px; 
     grid-template-columns: 1fr 4fr;
     grid-template-rows: 10fr 1fr 1fr 1fr;
-    // #change-pw-btn {
-    //     grid-column: 1/2;
-    //     grid-row: 2/3;
-    // }
+    #duel-request-btn {
+        grid-column: 1/2;
+        grid-row: 2/3;
+    }
     #change-pw-btn {
         grid-column: 1/2;
         grid-row: 3/4;
