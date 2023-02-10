@@ -128,6 +128,7 @@ class BattleClass{
     public matchEmit(server:Server){
         server.to(this.player1Id).emit('matchMakeSuccess', {p1: this.player1Name, p2: this.player2Name});
         server.to(this.player2Id).emit('matchMakeSuccess', {p1: this.player1Name, p2: this.player2Name});
+        this.myserver= server;
     }
 
     public async startGame(server:Server): Promise<void>{
@@ -259,10 +260,23 @@ class BattleClass{
         }
     }
 
-    public iGameLoser(loserid:string):string{
-        this.myserver.to(this.roomName).emit("endGame", {winner: this.player1Id !== loserid ? this.player1Name : this.player2Name});
+    public async iGameLoser(loserid:string):Promise<string>{
         clearInterval(this.counter);
+        this.myserver.to(this.player1Id !== loserid ? this.player1Id : this.player2Id).emit("endGame", {winner: this.player1Id !== loserid ? this.player1Name : this.player2Name});
         console.log("endGame", this.player1Id === loserid ? this.player1Name : this.player2Name);
+        if ((this.game.score.player1 !== 0) && (this.game.score.player2 !== 0)) {
+            const winner : User = await this.usersService.findUserByUsername(this.goal === this.game.score.player1 ? this.player1Name : this.player2Name);
+            const loser : User = await this.usersService.findUserByUsername(this.goal !== this.game.score.player1 ? this.player1Name : this.player2Name);
+            const history : GameDto = { //전적 기록.
+                winner : winner.id,
+                loser : loser.id,
+                winnerScore : this.goal === this.game.score.player1 ? this.game.score.player1 : this.game.score.player2,
+                loserScore : 0
+            };
+            await this.create(history);// 디비에 전적 저장.
+        }
+        this.game.score.player1 = 0;//이긴 사람도 이 부분이 호출 되기 초기화 해주기
+        this.game.score.player2 = 0;
         return this.player1Id === loserid ? this.player1Id : this.player2Id;
     }
 
@@ -325,7 +339,7 @@ class BattleClass{
 
 @Injectable()
 export class GameService {
-    private vs : Map<string, BattleClass>;//rooms
+    private vs : Map<string, BattleClass>;//roomName:battleClass rooms
     private socketid : Map<string, string>;//소켓id : 유저name
     private easyLvUserList : Set<string>;//소켓 id
     private normalLvUserList : Set<string>;
@@ -366,10 +380,12 @@ export class GameService {
         if (this.hardLvUserList.has(socketId) === true)
             return true;
         //추가로 this.socketidRoomname.has(socketId)도 확인할 수 있도록 해야 한다.
+        if (this.socketidRoomname.has(socketId) === true)
+            return true;
         return false;
     }
 
-    public iGamegetout(client:Socket){
+    public async iGamegetout(client:Socket) : Promise<void>{
         if (!this.socketidRoomname.has(client.id)) {//대결중이 아니면 종료
             this.socketid.delete(client.id);
             this.easyLvUserList.delete(client.id);//매칭중에 새로고침을 할 경우
@@ -382,13 +398,15 @@ export class GameService {
         const vs:BattleClass = this.vs.get(roomName);
 
         console.log('iGamegetout', roomName);
+        //console.log('clientRoom', client.rooms);
         if (vs != undefined){//but BattleClass이 이미 지웠지만, 다른 사용자가 새로고침할 경우 문제가 생길 수 있다
-            let winner:string = vs.iGameLoser(client.id);//이긴 사람의 소켓 id
+            const winner:string = await vs.iGameLoser(client.id);//이긴 사람의 소켓 id
             this.socketidRoomname.delete(winner);
         }
         this.socketidRoomname.delete(client.id);
         this.socketid.delete(client.id);
         this.vs.delete(roomName);//방 지우기
+        client.leave(roomName);
     }
 
     //유저를 매칭시키는 함수만들기
@@ -433,17 +451,17 @@ export class GameService {
         this.vs.set(roomName, new BattleClass(userSocketId, userName, targetSocketId, targetName, 1.5, this.gameRepo, this.usersService));
         this.socketid.set(userSocketId, userName);
         this.socketid.set(targetSocketId, targetName);
-        this.socketidRoomname.set(userName, roomName);
-        this.socketidRoomname.set(targetName, roomName);
+        this.socketidRoomname.set(userSocketId, roomName);
+        this.socketidRoomname.set(targetSocketId, roomName);
         console.log('creatreDuelRoom', roomName);
     }
 
-    public duelDelete(userSocketId:string, userName:string, targetSocketId:string, targetName:string){
+    public duelDelete(userSocketId:string, targetSocketId:string, ){
         let roomName:string = this.socketidRoomname.get(userSocketId);
         this.socketid.delete(userSocketId);
         this.socketid.delete(targetSocketId);
-        this.socketidRoomname.delete(userName);
-        this.socketidRoomname.delete(targetName);
+        this.socketidRoomname.delete(userSocketId);
+        this.socketidRoomname.delete(targetSocketId);
         this.vs.delete(roomName);
     }
 

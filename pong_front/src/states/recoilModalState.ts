@@ -69,3 +69,8 @@ export const chatMenuModalState = atom<{user: string, show: boolean}>({
     key: "chatMenuModalState",
     default: {user: "", show: false}
 })
+
+export const gameInviteModalState = atom<boolean>({
+    key: "gameInviteModalState",
+    default: false
+})
