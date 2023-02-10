@@ -9,6 +9,7 @@ import {SocketContext, socket} from './states/contextSocket'
 import GlobalStyle from './GlobalStyles';
 import TopMenuBar from './components/TopMenuBar';
 import Modal from './components/modal/Modal';
+import Cursor from './components/util/Cursor';
 
 function App() {
   const [loginOk, setLoginOk] = useState(false);
@@ -18,12 +19,13 @@ function App() {
   }, []);
 
   return (
-    <div >
+    <div>
     <ThemeProvider theme={theme}>
       <BrowserRouter>
         <RecoilRoot>
           <GlobalStyle />
           <SocketContext.Provider value={socket}>
+            <Cursor/>
             {loginOk?
             <TopMenuBar setter={setLoginOk}/> : null}
             {loginOk?

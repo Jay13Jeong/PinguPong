@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useEffect } from 'react';
 import '../../App.css';
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { REACT_APP_HOST } from '../../util/configData';
 
@@ -18,14 +18,12 @@ export default function EditProfile() {
             navigate('/lobby'); //2단계인증이 꺼져있으면 로비로 간다.
             return ;
           }
-        }catch(err: any){
-          // console.log(err);
-          navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
-        }
-        try{
-          await axios.get('http://' + REACT_APP_HOST + ':3000/api/fa2',{withCredentials: true});
-        } catch(err: any) {
-          // console.log(err);
+          try{
+            await axios.get('http://' + REACT_APP_HOST + ':3000/api/fa2',{withCredentials: true});
+          } catch {
+            navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
+          }
+        }catch{
           navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
         }
       }
