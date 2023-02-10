@@ -28,11 +28,13 @@ function GamePlayRoom() {
             socket.on("ballPos", (data: types.gamePosInfo) => {
                 setGame(data);
             })
-            socket.on("endGame", (data: {winner: string}) => {
-                socket.off("ballPos");
-                socket.off("endGame");
-                setWinner(data.winner);
-            })
+            
+        })
+        socket.on("endGame", (data: {winner: string}) => {
+            console.log("hahahahah end");
+            socket.off("ballPos");
+            socket.off("endGame");
+            setWinner(data.winner);
         })
         return () => {
             window.removeEventListener("keydown", keyDownHandler);

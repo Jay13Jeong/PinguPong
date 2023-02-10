@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useContext} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faCircleUser, faPeopleGroup, faUserAltSlash, faUserSlash, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
@@ -9,9 +9,11 @@ import "./TopMenuBar.scss";
 import { User } from "./profile/User";
 import axios from "axios";
 import { REACT_APP_HOST } from "../util/configData";
+import { SocketContext } from "../states/contextSocket";
+
 
 function TopMenuBar(props: {setter: SetterOrUpdater<any>}) {
-  
+  const socket = useContext(SocketContext);
   const dmState = useSetRecoilState(modalState.dmModalState);
   const profileState = useSetRecoilState(modalState.profileModalState);
   const friendState = useSetRecoilState(modalState.friendModalState);
@@ -45,6 +47,9 @@ function TopMenuBar(props: {setter: SetterOrUpdater<any>}) {
       })
       .catch(err => {
         // alert('sign out fail'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
+      })
+      .finally( () => {
+        socket.disconnect();
       })
   }
 
