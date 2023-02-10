@@ -16,12 +16,17 @@ import DmPage from './pages/dm/DmPage';
 import NotFound from './pages/NotFound';
 import { SetterOrUpdater } from 'recoil';
 import useCheckLogin from './util/useCheckLogin';
+import MainLayout from './components/layout/MainLayout';
+import CopyLobbyPage from "./pages/LobbyPage copy"
 
 export default function Routing(props: {setter: SetterOrUpdater<any>}) {
-    useCheckLogin();
+    // useCheckLogin();
     return (
       <Routes>
         <Route path="/" element={<LoginPage />} />
+        <Route path="/test" element={<MainLayout/>}>
+          <Route path="lobby" element={<CopyLobbyPage/>}/>
+        </Route>
         <Route path="/auth/fa2" element={<FA2Page />} />
         <Route path="/profile/init" element={<ProfileInitPage setter={props.setter}/>} />
         <Route path="/lobby" element={<Lobby setter={props.setter}/>} />
