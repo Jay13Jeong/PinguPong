@@ -12,47 +12,35 @@ import * as types from "../profile/User"
 import axios from "axios";
 import ProfileEditModal from "./ProfileEditModal";
 import { REACT_APP_HOST } from "../../util/configData";
+import useGetData from "../../util/useGetData";
 
 function ProfileModal() {
-    // const [showEditModal, setShowEditModal] = useRecoilState(profileEditModalState);
     const showEditModal = useRecoilValue(profileEditModalState);
-    // const  [showModal, setShowModal] = useRecoilState(profileModalState);
     const showModal = useRecoilValue(profileModalState);
     const setProfileEditState = useSetRecoilState(profileEditModalState);
     const resetState = useResetRecoilState(profileModalState);
     const [avatarFile, setAvatarFile] = useState('');
     const [onlineStatus, setOnlineStatus] = useState('offline');
     const [rank, setRank] = useState<number>(0);
+    // const [data, error, isLoading] = useGetData('http://' + REACT_APP_HOST + ':3000/api/user');
 
     const socket = useContext(SocketContext);
     
     const [userInfo, setUserInfo] = useState<types.User>({
         id: 0,
         avatar: "https://cdn.myanimelist.net/images/characters/11/421848.jpg",
-        userName: "pinga",
-        myProfile: true,    // TODO - 더 좋은 방법이 있을지 생각해보기
-        userStatus: "on",
-        rank: 0,
-        odds: 0,
-        record: [
-            {idx: 1, p1: "cheolee", p2: "jjeong", p1Score: 10, p2Score: 2},
-            {idx: 2, p1: "cheolee", p2: "jjeong", p1Score: 10, p2Score: 1},
-            {idx: 3, p1: "cheolee", p2: "jjeong", p1Score: 10, p2Score: 10},
-            {idx: 4, p1: "cheolee", p2: "jjeong", p1Score: 1, p2Score: 10},
-            {idx: 5, p1: "cheolee", p2: "jjeong", p1Score: 10, p2Score: 10},
-            {idx: 6, p1: "jeyoon", p2: "jjeong", p1Score: 10, p2Score: 5}
-        ]
+        userName: "pinga", myProfile: true, userStatus: "on",rank: 0,odds: 0,record: []
     });    // 유저 정보
 
     const navigate = useNavigate();
 
     useEffect(() => {
         // TODO: 유저 정보를 받아온다.
-        // setUserInfo();
-        axios.get('http://' + REACT_APP_HOST + ':3000/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
-        .then(res => {
-            // console.log(res.data);
-            if (res.data){
+        const initProfileData = async () => {
+            try{
+                const res = await axios.get('http://' + REACT_APP_HOST + ':3000/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
+                if (res.data === null || res.data === undefined)
+                    return ;
                 if (showModal.userId !== res.data.id && showModal.userId !== 0){ //id 0은 빈 값.
                     setUserInfo(showModal.user? showModal.user : userInfo);
                 } else {
@@ -68,48 +56,38 @@ function ProfileModal() {
                         record : [],
                     };
                     setUserInfo(myInfo);
-                    // setOdds(res.data.wins === 0? 0 : Math.floor(totalGame / res.data.wins));
-                    // console.log("++++", totalGame, res.data.wins,);
-                    // console.log((100 / (6 / 4)));
-                    // console.log((((100 / (6 / 4)))));
                 }
                 let targetId = res.data.id;
                 if (showModal.userId !== res.data.id && showModal.userId !== 0){
                     targetId = showModal.userId;
                 }
-                axios.get('http://' + REACT_APP_HOST + ':3000/api/user/avatar/' + targetId, {withCredentials: true, responseType: 'blob'}) //blob : 파일전송용 큰 객체타입.
-                .then(res2 => {
-                    // console.log(res2.data);
-                    setAvatarFile(URL.createObjectURL(res2.data));
-                })
-                .catch(err => {
-                    // alert("111");
-                    // console.log(showModal.user);
-                    // navigate('/');
-                })
-            } else {
-                // alert("222");
-                navigate('/');
-            }
-        })
-        .catch(err => {
-            // alert("333");
-            navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
-        })
+                const getAvatarData = async (id : any) => {
+                    try{
+                        const avatarDataRes = await axios.get('http://' + REACT_APP_HOST + ':3000/api/user/avatar/' + id, {withCredentials: true, responseType: 'blob'}) //blob : 파일전송용 큰 객체타입.
+                        setAvatarFile(URL.createObjectURL(avatarDataRes.data));
+                    }catch{
+                        //no avatar data...
+                    }
+                }
+                getAvatarData(targetId);
+            }catch{ }
+        }
+        initProfileData();
     }, [showModal, showEditModal]);
 
     useEffect(() => {
         // TODO: 유저 랭크를 받아온다.
-        axios.get('http://' + REACT_APP_HOST + ':3000/api/user/rank/' + (showModal.userId !== 0 ? showModal.userId : userInfo.id) , {withCredentials: true}) //쿠키와 함께 보내기 true.
-        .then(res => {
-            if (res.data && res.data.rank){
-                setRank(res.data.rank);
+        const getRank = async () =>{
+            try{
+                const res = await axios.get('http://' + REACT_APP_HOST + ':3000/api/user/rank/' + (showModal.userId !== 0 ? showModal.userId : userInfo.id) , {withCredentials: true}) //쿠키와 함께 보내기 true.
+                if (res.data && res.data.rank){
+                    setRank(res.data.rank);
+                }
+            }catch{
+                navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
             }
-        })
-        .catch(err => {
-            // alert("333");
-            navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
-        })
+        }
+        getRank();
     }, [showModal]);
 
     useEffect(() => {
@@ -130,10 +108,10 @@ function ProfileModal() {
 
     function showStatus(status: string){
         switch(status) {
-            case "online":
+            case "offline":
                 return (
                     <div className="profile-status">
-                        <FontAwesomeIcon style={{color: "#00BDAA"}} icon={faCircle}/> Online
+                        <FontAwesomeIcon style={{color: "#FE346E"}} icon={faCircle}/> Offline
                     </div>
                 );
             case "ingame":
@@ -149,7 +127,7 @@ function ProfileModal() {
             default:
                 return (
                     <div className="profile-status">
-                        <FontAwesomeIcon style={{color: "#FE346E"}} icon={faCircle}/> Offline
+                        <FontAwesomeIcon style={{color: "#00BDAA"}} icon={faCircle}/> Online
                     </div>
                 );
         }
@@ -285,7 +263,11 @@ function ProfileModal() {
         )
     }
 
-    
+    const getClickUser = () : types.User => {
+        if (showModal.user)
+            return showModal.user;
+        return userInfo;
+    }
 
     if (showModal.show) {
         return (
@@ -311,7 +293,7 @@ function ProfileModal() {
                     </div>
                     <div className="record-title">최근 10경기 전적</div>
                 </div>
-                <GameRecordList user={userInfo}/>
+                <GameRecordList user={getClickUser()}/>
             </ModalBase>
         )
     }

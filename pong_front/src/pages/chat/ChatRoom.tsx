@@ -15,9 +15,11 @@ import "../../components/chat/ChatRoom.scss"
 import { REACT_APP_HOST } from "../../util/configData";
 import CustomToastContainer from "../../components/util/CustomToastContainer";
 import { toast } from "react-toastify";
+import useCheckLogin from "../../util/useCheckLogin";
 import GameInviteModal from "../../components/modal/GameInviteModal";
 
 function ChatRoom () {
+    useCheckLogin();
     const setChangeChatPwModalState = useSetRecoilState(changeChatPwModalState);
     const setGameInviteModal = useSetRecoilState(gameInviteModalState);
     const socket = useContext(SocketContext);

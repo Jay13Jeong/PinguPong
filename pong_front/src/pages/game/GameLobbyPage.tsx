@@ -2,8 +2,10 @@ import React from "react";
 import {Link} from 'react-router-dom'
 import {Center, Stack} from "../../styles/Layout"
 import {Button} from "../../styles/Inputs"
+import useCheckLogin from "../../util/useCheckLogin";
 
 function GameLobbyPage() {
+    useCheckLogin();
     return (
         <Center>
             <Stack>

@@ -32,8 +32,8 @@ export default function Routing(props: {setter: SetterOrUpdater<any>}) {
         <Route path="/lobby" element={<Lobby setter={props.setter}/>} />
         <Route path="/chat" element={<ChatLobby />} />
         <Route path="/chat/room/:id" element={<ChatRoom />} />
-        <Route path="/chat/room/change" element={<EditChatRoomModal />} />
-        <Route path="/chat/manage/:id" element={<ChatManageModal />} />
+        {/* <Route path="/chat/room/change" element={<EditChatRoomModal />} /> */}
+        {/* <Route path="/chat/manage/:id" element={<ChatManageModal />} /> */}
         <Route path="/game/" element={<GameLobbyPage/>}></Route>
         <Route path="/game/match" element={<GameMatchPage/>}></Route>
         <Route path="/game/match/:id" element={<GamePlayRoomPage/>}></Route>

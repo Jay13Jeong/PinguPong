@@ -10,12 +10,15 @@ function GameRecordList(props: {user: types.User}) {
     const [record, setRecord] = useState<types.Record[]>([]);
     const cardsPerPage = 5; // 한 페이지에 보여줄 카드
     const offset = (currPage - 1) * cardsPerPage;
+
     useEffect(() => {
         // TODO: 유저 게임기록을 받아온다.
-        axios.get('http://' + REACT_APP_HOST + ':3000/api/game/' + props.user.id , {withCredentials: true}) //쿠키와 함께 보내기 true.
-        .then(res => {
-            // console.log(res.data);
-            if (res.data){
+        // console.log("^^^^",props.user);
+        const getGameData = async () => {
+            try{
+                const res = await axios.get('http://' + REACT_APP_HOST + ':3000/api/game/' + props.user.id , {withCredentials: true}); //쿠키와 함께 보내기 true.
+                if (res.data === null || res.data === undefined)
+                    return ;
                 let records : types.Record[] = res.data.map((rec: any) => {
                     return {
                         idx: rec.id,
@@ -26,10 +29,9 @@ function GameRecordList(props: {user: types.User}) {
                     }
                 })
                 setRecord(records);
-            }
-        })
-        .catch(err => {
-        })
+            }catch(err: any){ }
+        }
+        getGameData();
     }, []);
     let totalPage = Math.ceil(record.length / cardsPerPage);
     

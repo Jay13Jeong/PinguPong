@@ -57,39 +57,40 @@ export default function ChatRoom() {
     // useEffect(() => {
     // }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <div>
-          <TableParent />
-            <table className='chatLobby'>
-              <tr>
-                <td rowSpan={3} className='emptySpace'></td>
-                <td rowSpan={5} className='chatBackground'>
-                  <div className='chatMsgBody'>
-                  {chat.map((item) => {
-                    if (item[0] === me){
-                      return <div className='otherChatMsg'>{item[1]} {"<"}{item[0]}</div>
-                    }else{
-                      return <div className='myChatMsg'>{item[0]}{">"} {item[1]} </div>
-                    }
-                  })}
-                  </div>
-                </td>                
-              </tr>
-              <tr></tr><tr></tr>
-              <tr>
-                <td className='optionBtn'>도전장 도착</td>
-              </tr>
-              <tr>
-                <td className='optionBtn'>비번 변경</td>
-              </tr>
-              <tr>
-                <td className='optionBtn'>EXIT</td>
-                <td className='chatInputBar'><input type="text" placeholder='enter your msg'/><button>SEND</button></td>
-              </tr>
-            </table>
-        </div>
-      </header>
-    </div>
+    // <div className="App">
+    //   <header className="App-header">
+    //     <div>
+    //       <TableParent />
+    //         <table className='chatLobby'>
+    //           <tr>
+    //             <td rowSpan={3} className='emptySpace'></td>
+    //             <td rowSpan={5} className='chatBackground'>
+    //               <div className='chatMsgBody'>
+    //               {chat.map((item) => {
+    //                 if (item[0] === me){
+    //                   return <div className='otherChatMsg'>{item[1]} {"<"}{item[0]}</div>
+    //                 }else{
+    //                   return <div className='myChatMsg'>{item[0]}{">"} {item[1]} </div>
+    //                 }
+    //               })}
+    //               </div>
+    //             </td>                
+    //           </tr>
+    //           <tr></tr><tr></tr>
+    //           <tr>
+    //             <td className='optionBtn'>도전장 도착</td>
+    //           </tr>
+    //           <tr>
+    //             <td className='optionBtn'>비번 변경</td>
+    //           </tr>
+    //           <tr>
+    //             <td className='optionBtn'>EXIT</td>
+    //             <td className='chatInputBar'><input type="text" placeholder='enter your msg'/><button>SEND</button></td>
+    //           </tr>
+    //         </table>
+    //     </div>
+    //   </header>
+    // </div>
+    <></>
   );
 }
