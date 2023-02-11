@@ -1,8 +1,7 @@
 import styled from "styled-components"
 
 export const MainWrapper = styled.div`
-  background-color: white;
-  opacity: 70%;
+  background-color:rgba(255, 255, 255, 0.7);
   border-radius: 10px;
   width: fit-content;
   block-size: fit-content;

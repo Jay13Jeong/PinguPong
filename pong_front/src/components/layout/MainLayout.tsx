@@ -1,9 +1,9 @@
 import { Outlet } from "react-router-dom";
-import BackGroundPingu from "../util/BackGroundPingu";
-import Header from "../common/main/Header";
 import styled from "styled-components";
+import BackGroundPingu from "../util/BackGroundPingu";
+import Header from "./Header";
 
-export const MainLayoutWrapper = styled.div`
+const MainLayoutWrapper = styled.div`
    display: flex;
    justify-content: center;
    align-items: center;
@@ -15,10 +15,9 @@ export const MainLayoutWrapper = styled.div`
 function MainLayout() {
     return (
         <>
-        <header></header>
+        <Header/>
         <MainLayoutWrapper>
-            <Header/>
-            <BackGroundPingu/>
+            {/* <BackGroundPingu/> */}
             <Outlet/>
         </MainLayoutWrapper>
         <footer></footer>

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { MainWrapper } from "../common/main/MainWrapper";
+import { MainWrapper } from "../../common/main/MainWrapper";
 export const MenuButtonsWrapper = styled(MainWrapper)`
     display: grid;
     grid-template-columns: repeat(5, 1fr);

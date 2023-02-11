@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSetRecoilState } from "recoil";
-import * as states from "../../states/recoilModalState";
+import * as states from "../../common/states/recoilModalState";
 import { SocketContext } from "../../states/contextSocket";
 import { faCircleUser, faEnvelope, faPeopleGroup, faSignOutAlt, faUserSlash } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
