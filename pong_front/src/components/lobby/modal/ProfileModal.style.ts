@@ -7,7 +7,7 @@ const profileBox = css `
     overflow: hidden;
 `
 
-export const ProfileModalWrapper = styled.div`
+const ProfileModalWrapper = styled.div`
     box-sizing: content-box;
     display: grid;
     row-gap: 10px;
@@ -60,3 +60,5 @@ export const ProfileModalWrapper = styled.div`
         grid-row: 4 / 5;
     }
 `
+
+export default ProfileModalWrapper;

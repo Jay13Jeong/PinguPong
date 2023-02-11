@@ -1,18 +1,18 @@
 import React, { useState, useEffect, useContext } from "react";
-import { SocketContext } from "../../common/states/contextSocket";
+import { SocketContext } from "../../../common/states/contextSocket";
 import { Link, useNavigate } from "react-router-dom";
-import ModalBase from "./ModalBase";
-import GameRecordList from "../util/card/GameRecordList";
+import ModalBase from "../../modal/ModalBase";
+import GameRecordList from "../../card/game/GameRecordList";
 import { useSetRecoilState , useResetRecoilState, useRecoilValue } from "recoil"
-import { profileEditModalState, profileModalState } from "../../common/states/recoilModalState";
+import { profileEditModalState, profileModalState } from "../../../common/states/recoilModalState";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircle, faUserPen, faUserPlus, faUserMinus, faUser, faUserSlash, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
-import "./ProfileModal.scss"
-import * as types from "../profile/User"
+import * as types from "../../profile/User"
 import axios from "axios";
 import ProfileEditModal from "./ProfileEditModal";
-import { REACT_APP_HOST } from "../../common/configData";
-import useGetData from "../../util/useGetData";
+import { REACT_APP_HOST } from "../../../common/configData";
+import useGetData from "../../../util/useGetData";
+import ProfileModalWrapper from "./ProfileModal.style";
 
 function ProfileModal() {
     const showEditModal = useRecoilValue(profileEditModalState);
@@ -274,7 +274,7 @@ function ProfileModal() {
             <ModalBase reset={resetState}>
                 <ProfileEditModal name={userInfo.userName}/>
                 {/* TODO - 프로필 이미지? */}
-                <div className="profile-wrapper">
+                <ProfileModalWrapper>
                     <div className="profile-box">
                         {avatarFile !== '' ?
                         <img className="profile-image" src={avatarFile} alt={userInfo.userName + '-profile'} />
@@ -292,7 +292,7 @@ function ProfileModal() {
                         Odds : {userInfo.odds} %
                     </div>
                     <div className="record-title">최근 10경기 전적</div>
-                </div>
+                </ProfileModalWrapper>
                 <GameRecordList user={getClickUser()}/>
             </ModalBase>
         )
