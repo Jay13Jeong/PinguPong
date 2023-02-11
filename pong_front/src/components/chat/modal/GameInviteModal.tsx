@@ -14,7 +14,6 @@ function GameInviteModal (props: {targetID: number, targetUserName: string, setI
     const [myInfo, error, isLoading] = useGetData('http://' + REACT_APP_HOST + ':3000/api/user');
     const [loading, setLoading] = useState(true);
     const modalState = useRecoilValue(gameInviteModalState);
-    // const userInfoState = useRecoilValue(userState);
     const resetState = useResetRecoilState(gameInviteModalState);
     const navigate = useNavigate();
 

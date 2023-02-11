@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 // import { userState } from "../../states/recoilUserState";
 
-function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster: Function}) {
+function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?: Function}) {
     const socket = useContext(SocketContext);
     const modalState = useRecoilValue(chatMenuModalState);
     const resetState = useResetRecoilState(chatMenuModalState);
@@ -90,7 +90,7 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster: 
     function setMasterHandler(e: React.MouseEvent<HTMLElement>) {
         socket.emit('/api/post/mandateMaster', props.roomName, targetID);
         toast("👑 master set up completed!");
-        props.setMaster(false);
+        props.setMaster && props.setMaster(false);
         resetState();
     }
 

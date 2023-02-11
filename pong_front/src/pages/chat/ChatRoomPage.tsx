@@ -10,13 +10,11 @@ import ChatField from "../../components/chat/ChatField";
 import useGetData from "../../util/useGetData";
 import ChatMenuModal from "../../components/chat/modal/ChatMenuModal";
 import { REACT_APP_HOST } from "../../common/configData";
-import CustomToastContainer from "../../components/util/CustomToastContainer";
 import { toast } from "react-toastify";
 import useCheckLogin from "../../util/useCheckLogin";
 import GameInviteModal from "../../components/chat/modal/GameInviteModal";
 
 import { ChatRoomWrapper } from "../../components/chat/ChatRoom.styles";
-import { ChatFieldContainer } from "../../components/chat/ChatField.styles";
 
 function ChatRoomPage () {
     useCheckLogin();
