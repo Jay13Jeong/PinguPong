@@ -24,7 +24,6 @@ function DMModal() {
     }, [socket, showModal]);
 
     if (showModal) {
-        console.log("showModal");
         return (
             <ModalBase reset={resetState}>
                 <h1>💌 DM List 💌</h1>

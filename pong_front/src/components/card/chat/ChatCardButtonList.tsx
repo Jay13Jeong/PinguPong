@@ -2,7 +2,7 @@ import {useState, useEffect, useContext} from "react";
 import { SocketContext } from "../../../common/states/contextSocket";
 import CardList from "../../card/CardList";
 import ChatCardButton from "./ChatCardButton";
-import SecretChatModal from "../modal/SecretChatModal";
+import SecretChatModal from "../../chat/modal/SecretChatModal";
 
 function ChatCardButtonList(props: {current: string}) {
     const socket = useContext(SocketContext);

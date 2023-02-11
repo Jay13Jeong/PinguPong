@@ -4,7 +4,7 @@ import { useSetRecoilState } from "recoil";
 import {createChatModalState} from "../../common/states/recoilModalState";
 import {Stack} from "../../common/styles/Stack.style";
 // import {Button} from "../../styles/Inputs";
-import ChatCardButtonList from "../../components/chat/card/ChatCardButtonList";
+import ChatCardButtonList from "../../components/card/chat/ChatCardButtonList";
 // import CustomToastContainer from "../../components/util/CustomToastContainer";
 import CreateChatModal from "../../components/chat/modal/CreateChatModal";
 import useGetData from "../../util/useGetData";
