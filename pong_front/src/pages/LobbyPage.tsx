@@ -1,12 +1,12 @@
-import { SetterOrUpdater } from 'recoil';
-import Lobby from '../components/Lobby';
-import useCheckLogin from '../util/useCheckLogin';
+import { MainWrapper } from "../common/main/MainWrapper";
+import {MenuButtons, LobbyButtons, LobbyModal} from "../components/lobby/"
 
-export default function LobbyPage(props: {setter: SetterOrUpdater<any>}) {
-  useCheckLogin();
+export default function LobbyPage() {
   return (
-    <div>
-      <Lobby setter={props.setter}/>
-    </div>
+    <MainWrapper>
+      <MenuButtons/>
+      <LobbyButtons/>
+      <LobbyModal />
+    </MainWrapper>
   );
 }
