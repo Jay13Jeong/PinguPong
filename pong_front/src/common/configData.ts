@@ -6,6 +6,8 @@ export const RoutePath = {
     profile: "/profile/init",
     chat: "/chat",
     game: "/game",
+    gameMatch: "/game/match",
+    gameWatch: "/game/watch",
     dm: "/dm"
 }
 export const colors = {

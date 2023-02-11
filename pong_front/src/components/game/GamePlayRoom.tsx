@@ -8,7 +8,6 @@ import GameRoom from "./GameRoom";
 import { OverLay, Wrapper } from "../modal/Modal.style";
 import * as types from "../../common/types/Game";
 import { toast } from "react-toastify";
-import CustomToastContainer from "../util/CustomToastContainer";
 
 function GamePlayRoom() {
     const [winner, setWinner] = useState<string>();
@@ -18,16 +17,13 @@ function GamePlayRoom() {
     const location = useLocation();
 
     useEffect(() => {
-        // TODO - 핸들러 달아주기
         window.addEventListener("keydown", keyDownHandler);
         window.addEventListener('beforeunload', beforeUnloadHandler);
-        // TODO - 시작 이벤트 듣기
         socket.on("startGame", () => {
             socket.off("startGame");
             socket.on("ballPos", (data: types.gamePosInfo) => {
                 setGame(data);
             })
-            
         })
         socket.on("endGame", (data: {winner: string}) => {
             console.log("hahahahah end");
@@ -84,7 +80,6 @@ function GamePlayRoom() {
 
     return (
         <>
-        <CustomToastContainer/>
             <Stack>
                 <GameRoom p1={player1} p2={player2}/>
                 <button className="game-button" onClick={readyHandler}>

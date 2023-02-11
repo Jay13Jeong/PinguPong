@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import GamePlayRoom from "../../components/game/GamePlayRoom";
 import Loader from "../../components/util/Loader";
 import { toast } from "react-toastify";
+import { ContentBox } from "../../common/styles/ContentBox";
 import useCheckLogin from "../../util/useCheckLogin";
 
 function GamePlayRoomPage() {
@@ -42,12 +43,14 @@ function GamePlayRoomPage() {
     }
 
     return (
-        loading ? 
-        <>
-        <Loader/>
-        <button onClick={duelRunHander}>초대 취소</button>
-        </> : 
-        <GamePlayRoom/>
+        <ContentBox>
+            {loading ? 
+            <>
+            <Loader/>
+            <button onClick={duelRunHander}>초대 취소</button>
+            </> : 
+            <GamePlayRoom/>}
+        </ContentBox>
     );
 }
 

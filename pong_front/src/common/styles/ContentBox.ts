@@ -8,6 +8,7 @@ export const ContentBox = styled.div`
   block-size: fit-content;
   padding: 10px;
   & button {
+    border: 1px solid black;
     background-color: skyblue;
     border-radius: 5px;
   }

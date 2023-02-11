@@ -1,4 +1,6 @@
-.game-grid{
+import styled from "styled-components";
+
+const GameRoomGrid = styled.div`
     display: grid;
     grid-template-columns: repeat(2, minmax(400px, 400px));
     grid-template-rows: repeat(3, minmax(auto, auto));
@@ -16,4 +18,6 @@
     .game-canvas{
         grid-column: 1 / 3;
     }
-}
+`
+
+export default GameRoomGrid;
