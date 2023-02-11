@@ -13,6 +13,13 @@ const LoginLayoutWrapper = styled.div`
     justify-content: center;
     height: 100vh;
     overflow: hidden;
+    cursor: none !important;
+    * {
+        cursor: none !important;
+    }
+    .cursorPingu {
+        z-index: 2147483647 !important;
+    }
 `
 
 export default LoginLayoutWrapper;

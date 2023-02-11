@@ -10,11 +10,6 @@ import {SocketContext, socket} from './common/states/contextSocket';
 import Routing from './Routing';
 
 function App() {
-  const [loginOk, setLoginOk] = useState(false);
-
-  useEffect(() => {
-    setLoginOk(false);
-  }, []);
 
   return (
     <div >
