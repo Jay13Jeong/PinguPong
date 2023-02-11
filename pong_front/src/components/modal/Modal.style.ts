@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { ContentBox } from '../../common/styles/ContentBox'
 
 export const OverLay = styled.div<{ z_index?: number }>`
     position: fixed;
@@ -12,7 +13,7 @@ export const OverLay = styled.div<{ z_index?: number }>`
     z-index: ${props => props.z_index || 200};
 `
 
-export const Wrapper = styled.div`
+export const Wrapper = styled(ContentBox)`
     box-sizing: border-box;
     min-width: 700px;
     height: fit-content;

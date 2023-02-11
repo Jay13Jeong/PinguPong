@@ -1,11 +1,11 @@
 import React, {useState, useContext, useEffect} from "react";
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
-import { chatMenuModalState, profileModalState } from "../../common/states/recoilModalState";
-import { SocketContext } from "../../common/states/contextSocket";
-import useGetData from "../../util/useGetData";
-import ModalBase from "./ModalBase";
-import Loader from "../util/Loader";
-import { REACT_APP_HOST } from "../../common/configData";
+import { chatMenuModalState, profileModalState } from "../../../common/states/recoilModalState";
+import { SocketContext } from "../../../common/states/contextSocket";
+import useGetData from "../../../util/useGetData";
+import ModalBase from "../../modal/ModalBase";
+import Loader from "../../util/Loader";
+import { REACT_APP_HOST } from "../../../common/configData";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 // import { userState } from "../../states/recoilUserState";

@@ -1,13 +1,13 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { SocketContext } from '../../common/states/contextSocket';
+import { SocketContext } from '../../../common/states/contextSocket';
 import { useResetRecoilState, useRecoilValue } from 'recoil';
-import { secretChatModalState } from '../../common/states/recoilModalState';
+import { secretChatModalState } from '../../../common/states/recoilModalState';
 // import { Button } from '../../styles/Inputs';
-import ModalBase from './ModalBase';
-import { Stack } from '../../common/styles/Layout';
-import './Chat.scss';
+import ModalBase from '../../modal/ModalBase';
+import { Stack } from '../../../common/styles/Layout';
+import { InputTextWrapper } from '../../../common/styles/InputTextWrapper';
 
 function SecretChatModal(props: {current: string}) {
     const showModal = useRecoilValue(secretChatModalState);
@@ -47,13 +47,13 @@ function SecretChatModal(props: {current: string}) {
     if (showModal.show) {
         return (
             <ModalBase reset={resetState}>
-                <Stack className="chat-form-wrapper">
-                    <div className="title">비밀 채팅방 입장</div>
+                <Stack>
+                    <h1>비밀 채팅방 입장</h1>
                     <form onSubmit={handler}>
-                        <div className="wrapper">
+                        <InputTextWrapper>
                             <span>비밀번호</span>
                             <input type="password" autoComplete="off" placeholder="비밀번호" value={values} onChange={(e) => setValues(e.target.value)} />
-                        </div>
+                        </InputTextWrapper>
                         <button type="submit">입장</button>
                     </form>
                 </Stack>

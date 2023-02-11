@@ -2,7 +2,7 @@ import {Routes, Route} from 'react-router-dom'
 import useCheckLogin from "./util/useCheckLogin";
 import {MainLayout, LoginLayout} from "./components/layout/";
 import { LobbyPage } from "./pages/"
-import { ChatLobbyPage } from './pages/chat';
+import { ChatLobbyPage, ChatRoomPage } from './pages/chat';
 import {LoginPage, FA2Page} from './pages/auth/';
 import {RoutePath} from "./common/configData";
 
@@ -17,8 +17,8 @@ export default function Routing() {
             <Route path={RoutePath.root} element={<MainLayout/>}>
                 <Route path={RoutePath.lobby} element={<LobbyPage/>}/>
                 <Route path={RoutePath.chat} element={<ChatLobbyPage/>}/>
+                <Route path={`${RoutePath.chat}/room/:id`} element={<ChatRoomPage/>}/>
             </Route>
-            {/* Chat Room */}
             {/* Game Lobby */}
             {/* Game Match */}
             {/* Game Play */}

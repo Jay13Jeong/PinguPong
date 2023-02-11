@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useRecoilValue, useResetRecoilState } from "recoil";
-import { SocketContext } from "../../common/states/contextSocket";
-import { gameInviteModalState } from "../../common/states/recoilModalState";
-import useGetData from "../../util/useGetData";
-import { REACT_APP_HOST } from "../../common/configData";
-import ModalBase from "./ModalBase";
+import { SocketContext } from "../../../common/states/contextSocket";
+import { gameInviteModalState } from "../../../common/states/recoilModalState";
+import useGetData from "../../../util/useGetData";
+import { REACT_APP_HOST } from "../../../common/configData";
+import ModalBase from "../../modal/ModalBase";
 import { useNavigate } from "react-router-dom";
-import Loader from "../util/Loader";
+import Loader from "../../util/Loader";
 
 function GameInviteModal (props: {targetID: number, targetUserName: string, setInviteInfo: Function}) {
     const socket = useContext(SocketContext);
@@ -53,7 +53,7 @@ function GameInviteModal (props: {targetID: number, targetUserName: string, setI
             <ModalBase reset={resetState} z_index={100}>
                 {loading ? <Loader/> : 
                     <>
-                    <h2>${props.targetUserName}의 도전 신청</h2>
+                    <h2>{props.targetUserName}의 도전 신청</h2>
                     <button onClick={acceptHandler}>수락</button>
                     <button onClick={rejectHandler}>거절</button>
                     </>

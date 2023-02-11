@@ -1,12 +1,11 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { SocketContext } from '../../common/states/contextSocket';
-import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
-import { changeChatPwModalState } from "../../common/states/recoilModalState"
-import ModalBase from './ModalBase';
-import { Stack } from '../../common/styles/Layout';
-import './Chat.scss';
+import { SocketContext } from '../../../common/states/contextSocket';
+import { useRecoilValue, useResetRecoilState } from 'recoil';
+import { changeChatPwModalState } from "../../../common/states/recoilModalState"
+import ModalBase from '../../modal/ModalBase';
+import { InputTextWrapper } from '../../../common/styles/InputTextWrapper';
+import { Stack } from '../../../common/styles/Layout';
 
 function ChangeChatPwModal(props: {roomName: string}) {
     const showModal = useRecoilValue(changeChatPwModalState);
@@ -24,13 +23,13 @@ function ChangeChatPwModal(props: {roomName: string}) {
     if (showModal.show) {
         return (
             <ModalBase reset={resetState}>
-                <Stack className="chat-form-wrapper">
-                    <div className="title">비밀번호 설정</div>
+                <Stack>
+                    <h2>비밀번호 설정</h2>
                     <form onSubmit={handler}>
-                        <div className="wrapper">
+                        <InputTextWrapper>
                             <span>비밀번호</span>
                             <input type="password" autoComplete="off" placeholder="공란으로 둘 경우 공개방이 됩니다." value={value} onChange={(e) => setValue(e.target.value)} />
-                        </div>
+                        </InputTextWrapper>
                         <button type="submit">변경</button>
                     </form>
                 </Stack>

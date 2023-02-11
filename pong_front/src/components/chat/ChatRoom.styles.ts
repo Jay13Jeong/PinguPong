@@ -1,4 +1,8 @@
-#chat-room {
+import styled from "styled-components";
+import { ContentBox } from "../../common/styles/ContentBox";
+import { ChatFieldContainer } from "./ChatField.styles";
+
+export const ChatRoomWrapper = styled(ContentBox)`
     display: grid;
     border: 1px solid #000000;
     width: 1000px;
@@ -17,7 +21,7 @@
         grid-column: 1/2;
         grid-row: 4/5;
     }
-    #chat-field {
+    ${ChatFieldContainer} {
         grid-column: 2/3;
         grid-row: 1/4;
     }
@@ -30,4 +34,4 @@
             margin: 0.5rem;
         }
     }
-}
+`
