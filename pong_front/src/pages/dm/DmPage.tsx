@@ -10,7 +10,7 @@ import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import useCheckLogin from "../../util/useCheckLogin";
 import ChatMenuModal from "../../components/chat/modal/ChatMenuModal";
 import GameInviteModal from "../../components/chat/modal/GameInviteModal";
-
+import { RoutePath } from "../../common/configData";
 import { ChatRoomWrapper } from "../../components/chat/ChatRoom.styles";
 
 function DmPage() {
@@ -55,7 +55,7 @@ function DmPage() {
 
     function exitHandler(e: React.MouseEvent<HTMLElement>) {
         socket.emit('closeDm', targetId);
-        navigate("/lobby");
+        navigate(RoutePath.lobby);
     }
 
     return (

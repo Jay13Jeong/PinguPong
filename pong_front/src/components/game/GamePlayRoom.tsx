@@ -3,11 +3,12 @@ import { SocketContext } from "../../common/states/contextSocket";
 import {useLocation, Link} from "react-router-dom";
 import {useSetRecoilState, useResetRecoilState} from "recoil";
 import {gameState} from "../../common/states/recoilGameState";
-import { Stack } from "../../common/styles/Layout";
+import { Stack } from "../../common/styles/Stack.style";
 import GameRoom from "./GameRoom";
 import { OverLay, Wrapper } from "../modal/Modal.style";
 import * as types from "../../common/types/Game";
 import { toast } from "react-toastify";
+import { RoutePath } from "../../common/configData";
 
 function GamePlayRoom() {
     const [winner, setWinner] = useState<string>();
@@ -97,7 +98,7 @@ function GamePlayRoom() {
                     <div>Lose!!</div>
                 </div>
                 }
-                <Link to="/lobby"><button>Go To Lobby</button></Link>
+                <Link to={RoutePath.lobby}><button>Go To Lobby</button></Link>
             </Wrapper>
         </OverLay> : null}
         </>

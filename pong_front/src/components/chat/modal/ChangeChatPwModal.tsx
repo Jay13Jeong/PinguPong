@@ -4,8 +4,8 @@ import { SocketContext } from '../../../common/states/contextSocket';
 import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { changeChatPwModalState } from "../../../common/states/recoilModalState"
 import ModalBase from '../../modal/ModalBase';
-import { InputTextWrapper } from '../../../common/styles/InputTextWrapper';
-import { Stack } from '../../../common/styles/Layout';
+import { InputTextWrapper } from '../../../common/styles/InputTextWrapper.style';
+import { Stack } from '../../../common/styles/Stack.style';
 
 function ChangeChatPwModal(props: {roomName: string}) {
     const showModal = useRecoilValue(changeChatPwModalState);

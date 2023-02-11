@@ -3,9 +3,10 @@ import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import useCheckLogin from '../../util/useCheckLogin';
 import { REACT_APP_HOST } from '../../common/configData';
-import { ContentBox } from '../../common/styles/ContentBox';
-import { InputTextWrapper } from '../../common/styles/InputTextWrapper';
+import { ContentBox } from '../../common/styles/ContentBox.style';
+import { InputTextWrapper } from '../../common/styles/InputTextWrapper.style';
 import {ProfileBox} from '../../common/styles/ProfileBox.style';
+import { RoutePath } from '../../common/configData';
 
 export default function ProfileInitPage() {
   useCheckLogin();
@@ -19,10 +20,10 @@ export default function ProfileInitPage() {
     axios.get('http://' + REACT_APP_HOST + ':3000/api/user/init/status', {withCredentials: true})
     .then(res => {
       if (res.data && res.data.msg === true)
-        navigate('/lobby');
+        navigate(RoutePath.lobby);
     })
     .catch(err => {
-        navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
+        navigate(RoutePath.root); //로그인 안되어 있다면 로그인페이지로 돌아간다.
     });
   }, []);
 
@@ -35,14 +36,14 @@ export default function ProfileInitPage() {
           {
             axios.post('http://' + REACT_APP_HOST + ':3000/api/user/avatar', {file: inputRef.current.files![0]}, {withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' }})
             .then((res) => {
-              navigate('/lobby');
+              navigate(RoutePath.lobby);
             })
             .catch((err) => {
               alert("img upload fail");
             })
             return ;
           }
-          navigate('/lobby');
+          navigate(RoutePath.lobby);
       })
       .catch(err => {
           alert("Name in use");

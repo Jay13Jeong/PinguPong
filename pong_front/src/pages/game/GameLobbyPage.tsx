@@ -1,7 +1,7 @@
 import React from "react";
 import {Link} from 'react-router-dom'
-import {Stack} from "../../common/styles/Layout";
-import { ContentBox } from "../../common/styles/ContentBox";
+import {Stack} from "../../common/styles/Stack.style";
+import { ContentBox } from "../../common/styles/ContentBox.style";
 import useCheckLogin from "../../util/useCheckLogin";
 
 function GameLobbyPage() {

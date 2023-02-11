@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { ContentBox } from "../../common/styles/ContentBox";
+import { ContentBox } from "../../common/styles/ContentBox.style";
 import { ChatFieldContainer } from "./ChatField.styles";
 
 export const ChatRoomWrapper = styled(ContentBox)`

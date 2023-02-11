@@ -1,13 +1,13 @@
 import React, {useState, useEffect, useContext} from "react";
 import { useNavigate } from "react-router-dom";
 import { SocketContext } from "../../common/states/contextSocket";
-import {Stack } from "../../common/styles/Layout";
+import {Stack } from "../../common/styles/Stack.style";
 import useGetData from "../../util/useGetData";
 import DifficultyButtons from "../../components/game/DifficultyButtons";
 import Loader from "../../components/util/Loader";
 import { REACT_APP_HOST } from "../../common/configData";
 import useCheckLogin from "../../util/useCheckLogin";
-import { ContentBox } from "../../common/styles/ContentBox";
+import { ContentBox } from "../../common/styles/ContentBox.style";
 
 function GameMatchPage() {
     useCheckLogin();

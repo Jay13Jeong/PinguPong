@@ -1,12 +1,12 @@
 import {useState, useEffect, useContext} from "react";
 import Loader from "../../components/util/Loader";
-import {Stack} from "../../common/styles/Layout"
+import {Stack} from "../../common/styles/Stack.style"
 import { SocketContext } from "../../common/states/contextSocket";
 import GameCardButton from "../../components/card/game/GameCardButton";
 import CardList from "../../components/card/CardList";
 
 import useCheckLogin from "../../util/useCheckLogin";
-import { ContentBox } from "../../common/styles/ContentBox";
+import { ContentBox } from "../../common/styles/ContentBox.style";
 
 function GameWatchPage () {
     useCheckLogin();

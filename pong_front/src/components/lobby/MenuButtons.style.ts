@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { ContentBox } from "../../common/styles/ContentBox";
+import { ContentBox } from "../../common/styles/ContentBox.style";
 export const MenuButtonsWrapper = styled(ContentBox)`
     display: grid;
     grid-template-columns: repeat(5, 1fr);

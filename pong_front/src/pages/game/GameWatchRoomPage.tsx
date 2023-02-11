@@ -2,13 +2,14 @@ import React, {useState, useEffect, useContext} from "react";
 import {useLocation, useNavigate, Link} from "react-router-dom";
 import {useSetRecoilState} from "recoil";
 import {gameState} from "../../common/states/recoilGameState";
-import { Stack } from "../../common/styles/Layout";
+import { Stack } from "../../common/styles/Stack.style";
 import GameRoom from "../../components/game/GameRoom";
 import { SocketContext } from "../../common/states/contextSocket";
 import { OverLay, Wrapper } from "../../components/modal/Modal.style";
 import * as types from "../../common/types/Game";
 import useCheckLogin from "../../util/useCheckLogin";
-import { ContentBox } from "../../common/styles/ContentBox";
+import { ContentBox } from "../../common/styles/ContentBox.style";
+import { RoutePath } from "../../common/configData";
 
 function GameWatchRoomPage() {
     useCheckLogin();
@@ -37,7 +38,7 @@ function GameWatchRoomPage() {
 
     function endHandler(e: React.MouseEvent<HTMLButtonElement>) {
         socket.emit('stopwatchGame', `${player1}vs${player2}`);
-        navigate('/lobby');
+        navigate(RoutePath.lobby);
     }
 
     return (
@@ -52,7 +53,7 @@ function GameWatchRoomPage() {
             <OverLay z_index={100}>
                 <Wrapper>
                     <div>Winner is {winner}!</div>
-                    <Link to="/lobby"><button>Go To Lobby</button></Link>
+                    <Link to={RoutePath.lobby}><button>Go To Lobby</button></Link>
                 </Wrapper>
             </OverLay> : null}
         </ContentBox>

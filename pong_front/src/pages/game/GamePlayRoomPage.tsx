@@ -4,8 +4,9 @@ import { useNavigate, useLocation } from "react-router-dom";
 import GamePlayRoom from "../../components/game/GamePlayRoom";
 import Loader from "../../components/util/Loader";
 import { toast } from "react-toastify";
-import { ContentBox } from "../../common/styles/ContentBox";
+import { ContentBox } from "../../common/styles/ContentBox.style";
 import useCheckLogin from "../../util/useCheckLogin";
+import { RoutePath } from "../../common/configData";
 
 function GamePlayRoomPage() {
     useCheckLogin();
@@ -23,7 +24,7 @@ function GamePlayRoomPage() {
             socket.on('duelTargetRun', (username: string) => {
                 socket.off('duelTargetRun');
                 toast.error("🔥 결투 신청이 거절당했습니다!");
-                navigate('/lobby');
+                navigate(RoutePath.lobby);
             })
         }
         else {
@@ -39,7 +40,7 @@ function GamePlayRoomPage() {
         // let targetId:number = data.targetId;
         socket.emit('duelRequestRun', {targetId: location.state.targetId});
         socket.off('matchMakeSuccess');
-        navigate('/lobby');
+        navigate(RoutePath.lobby);
     }
 
     return (

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import { REACT_APP_HOST } from "../../common/configData";
-import { ContentBox } from "../../common/styles/ContentBox";
+import { ContentBox } from "../../common/styles/ContentBox.style";
 import { RoutePath } from "../../common/configData";
 
 export default function FA2Page() {

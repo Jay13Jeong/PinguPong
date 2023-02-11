@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import 'react-toastify/dist/ReactToastify.css';
 import { useSetRecoilState } from "recoil";
 import {createChatModalState} from "../../common/states/recoilModalState";
-import {Stack} from "../../common/styles/Layout";
+import {Stack} from "../../common/styles/Stack.style";
 // import {Button} from "../../styles/Inputs";
 import ChatCardButtonList from "../../components/chat/card/ChatCardButtonList";
 // import CustomToastContainer from "../../components/util/CustomToastContainer";
@@ -11,7 +11,7 @@ import useGetData from "../../util/useGetData";
 import Loader from "../../components/util/Loader";
 import { REACT_APP_HOST } from "../../common/configData";
 import useCheckLogin from "../../util/useCheckLogin";
-import {ContentBox} from "../../common/styles/ContentBox";
+import {ContentBox} from "../../common/styles/ContentBox.style";
 
 function ChatLobbyPage() {
     useCheckLogin();

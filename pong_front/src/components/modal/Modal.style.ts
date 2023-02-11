@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { ContentBox } from '../../common/styles/ContentBox'
+import { ContentBox } from '../../common/styles/ContentBox.style'
 
 export const OverLay = styled.div<{ z_index?: number }>`
     position: fixed;

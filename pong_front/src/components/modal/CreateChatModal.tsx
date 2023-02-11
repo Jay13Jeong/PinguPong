@@ -1,12 +1,12 @@
 import React, {useState, useContext, useEffect} from "react";
 import { toast } from "react-toastify"
 import { useNavigate } from "react-router-dom";
-import { SocketContext } from "../../../common/states/contextSocket";
+import { SocketContext } from "../../common/states/contextSocket";
 import { useRecoilValue, useResetRecoilState } from "recoil";
-import { createChatModalState } from "../../../common/states/recoilModalState";
-import ModalBase from "../../modal/ModalBase";
-import { Stack } from "../../../common/styles/Stack.style";
-import { InputTextWrapper } from "../../../common/styles/InputTextWrapper.style";
+import { createChatModalState } from "../../common/states/recoilModalState";
+import ModalBase from "./ModalBase";
+import { Stack } from "../../common/styles/Stack.style";
+import "./Chat.scss"
 
 function CreateChatModal(props: {current: string}) {
     // const [showModal, setShowModal] = useRecoilState(createChatModalState);
@@ -60,23 +60,23 @@ function CreateChatModal(props: {current: string}) {
     if (showModal) {
         return (
             <ModalBase reset={resetState}>
-                <Stack>
-                    <h1>새 채팅방 만들기</h1>
+                <Stack className="chat-form-wrapper">
+                    <div className="title">새 채팅방 만들기</div>
                         <form onSubmit={handler}>
-                            <InputTextWrapper>
+                            <div className="wrapper">
                                 <span>채팅방 이름</span>
                                 <input type="text" 
                                     onChange={(e) => setValues({...values, room: e.target.value})} 
                                     placeholder="채팅방 이름" 
                                     value={values.room}/>
-                            </InputTextWrapper>
-                            <InputTextWrapper>
+                            </div>
+                            <div className="wrapper">
                                 <span>비밀번호</span>
                                 <input type="text" 
                                     onChange={(e) => setValues({...values, pw: e.target.value})} 
                                     placeholder="빈 칸인 경우 공개 채팅방이 됩니다." 
                                     value={values.pw}/>
-                            </InputTextWrapper>
+                            </div>
                             <button type="submit">채팅방 생성</button>
                         </form>
                     </Stack>

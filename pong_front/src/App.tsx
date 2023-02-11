@@ -7,7 +7,7 @@ import { RecoilRoot, useRecoilState } from 'recoil';
 import {SocketContext, socket} from './common/states/contextSocket';
 // import TopMenuBar from './components/TopMenuBar';
 // import Modal from './components/modal/Modal';
-import Routing from './Route';
+import Routing from './Routing';
 
 function App() {
   const [loginOk, setLoginOk] = useState(false);

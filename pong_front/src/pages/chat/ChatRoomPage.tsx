@@ -13,7 +13,7 @@ import { REACT_APP_HOST } from "../../common/configData";
 import { toast } from "react-toastify";
 import useCheckLogin from "../../util/useCheckLogin";
 import GameInviteModal from "../../components/chat/modal/GameInviteModal";
-
+import {RoutePath} from "../../common/configData";
 import { ChatRoomWrapper } from "../../components/chat/ChatRoom.styles";
 
 function ChatRoomPage () {
@@ -46,7 +46,7 @@ function ChatRoomPage () {
             socket.on('youKick', ()=>{
                 socket.off('youKick');
                 toast("🔥 추방당했습니다!");
-                navigate('/lobby');
+                navigate(RoutePath.lobby);
             });
             /* 방장 여부 듣기 */
             socket.on('youMaster', ()=> {
@@ -84,7 +84,7 @@ function ChatRoomPage () {
     function exitHandler(e: React.MouseEvent<HTMLElement>) {
         // data : string (roomName);
         socket.emit('delUser', roomInfo.id);
-        navigate("/lobby");
+        navigate(RoutePath.lobby);
     }
 
     function msgHandler(e: React.FormEvent<HTMLFormElement>) {

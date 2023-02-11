@@ -1,8 +1,8 @@
 import {Routes, Route} from 'react-router-dom'
 import useCheckLogin from "./util/useCheckLogin";
-import {MainLayout, LoginLayout} from "./components/layout/";
-import { LobbyPage } from "./pages/"
-import {LoginPage, FA2Page} from './pages/auth/';
+import {MainLayout, LoginLayout} from "./components/layout";
+import { LobbyPage } from "./pages"
+import {LoginPage, FA2Page} from './pages/auth';
 import { ChatLobbyPage, ChatRoomPage } from './pages/chat';
 import { GameLobbyPage, GameMatchPage, GameWatchPage, GamePlayRoomPage, GameWatchRoomPage } from './pages/game';
 import DmPage from './pages/dm/DmPage';
