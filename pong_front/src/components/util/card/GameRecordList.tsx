@@ -3,7 +3,7 @@ import CardList from "./CardList";
 import GameCard from "./GameCard";
 import * as types from "../../profile/User"
 import axios from "axios";
-import { REACT_APP_HOST } from "../../../util/configData";
+import { REACT_APP_HOST } from "../../../common/configData";
 
 function GameRecordList(props: {user: types.User}) {
     const [currPage, setCurrPage] = useState<number>(1);

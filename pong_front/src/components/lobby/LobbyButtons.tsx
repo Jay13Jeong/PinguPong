@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import * as S from "./LobbyButtons.style"
-import { RoutePath } from "../../Route";
+import { RoutePath } from "../../common/configData";
 
 export default function LobbyButtons() {
     return (

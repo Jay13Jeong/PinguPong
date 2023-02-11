@@ -1,12 +1,12 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { SocketContext } from '../../states/contextSocket';
+import { SocketContext } from '../../common/states/contextSocket';
 import { useResetRecoilState, useRecoilValue } from 'recoil';
-import { secretChatModalState } from '../../states/recoilModalState';
-import { Button } from '../../styles/Inputs';
+import { secretChatModalState } from '../../common/states/recoilModalState';
+// import { Button } from '../../styles/Inputs';
 import ModalBase from './ModalBase';
-import { Stack } from '../../styles/Layout';
+import { Stack } from '../../common/styles/Layout';
 import './Chat.scss';
 
 function SecretChatModal(props: {current: string}) {
@@ -54,7 +54,7 @@ function SecretChatModal(props: {current: string}) {
                             <span>비밀번호</span>
                             <input type="password" autoComplete="off" placeholder="비밀번호" value={values} onChange={(e) => setValues(e.target.value)} />
                         </div>
-                        <Button type="submit">입장</Button>
+                        <button type="submit">입장</button>
                     </form>
                 </Stack>
             </ModalBase>

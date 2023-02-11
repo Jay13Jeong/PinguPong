@@ -1,14 +1,13 @@
 import React, {useState, useEffect, useContext} from "react";
 import { useNavigate } from "react-router-dom";
-import { SocketContext } from "../../states/contextSocket";
-import { Center, Stack } from "../../styles/Layout";
-import { Button } from "../../styles/Inputs";
+import { SocketContext } from "../../common/states/contextSocket";
+import {Stack } from "../../common/styles/Layout";
 import useGetData from "../../util/useGetData";
 import { User } from "../profile/User";
 import axios from "axios";
 import DifficultyButtons from "./DifficultyButtons";
 import Loader from "../util/Loader";
-import { REACT_APP_HOST } from "../../util/configData";
+import { REACT_APP_HOST } from "../../common/configData";
 
 function MatchMake() {
     const [loading, setLoading] = useState<boolean>(true);
@@ -63,17 +62,15 @@ function MatchMake() {
     }
 
     return (
-        <Center>
-            <Stack>
-            {loading ? <><Loader text="로딩중"/><Button>게임 매칭 취소</Button></> : 
-                <>
-                <h1>👾 Choose Game Level 👾</h1>
-                <DifficultyButtons difficulty={currentDifficulty} setDifficulty={setDifficulty}/>
-                <Button onClickCapture={handleMatchMakeRequest}> 게임 매칭 요청 </Button>
-                </>
-            }
-            </Stack>
-        </Center>
+        <Stack>
+        {loading ? <><Loader text="로딩중"/><button>게임 매칭 취소</button></> : 
+            <>
+            <h1>👾 Choose Game Level 👾</h1>
+            <DifficultyButtons difficulty={currentDifficulty} setDifficulty={setDifficulty}/>
+            <button onClickCapture={handleMatchMakeRequest}> 게임 매칭 요청 </button>
+            </>
+        }
+        </Stack>
     )
 }
 

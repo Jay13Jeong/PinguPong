@@ -1,9 +1,8 @@
 import { useEffect, useState, useContext } from "react";
-import { SocketContext } from "../../states/contextSocket";
+import { SocketContext } from "../../common/states/contextSocket";
 import { useNavigate, useLocation } from "react-router-dom";
 import GamePlayRoom from "../../components/game/GamePlayRoom";
 import Loader from "../../components/util/Loader";
-import { Button } from "../../styles/Inputs";
 import { toast } from "react-toastify";
 import useCheckLogin from "../../util/useCheckLogin";
 
@@ -46,7 +45,7 @@ function GamePlayRoomPage() {
         loading ? 
         <>
         <Loader/>
-        <Button onClick={duelRunHander}>초대 취소</Button>
+        <button onClick={duelRunHander}>초대 취소</button>
         </> : 
         <GamePlayRoom/>
     );

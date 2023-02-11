@@ -1,12 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useRecoilValue, useResetRecoilState } from "recoil";
-import { SocketContext } from "../../states/contextSocket";
-import { gameInviteModalState } from "../../states/recoilModalState";
+import { SocketContext } from "../../common/states/contextSocket";
+import { gameInviteModalState } from "../../common/states/recoilModalState";
 import useGetData from "../../util/useGetData";
-import { REACT_APP_HOST } from "../../util/configData";
+import { REACT_APP_HOST } from "../../common/configData";
 import ModalBase from "./ModalBase";
-import { Button } from "../../styles/Inputs";
-// import { userState } from "../../states/recoilUserState";
 import { useNavigate } from "react-router-dom";
 import Loader from "../util/Loader";
 
@@ -56,8 +54,8 @@ function GameInviteModal (props: {targetID: number, targetUserName: string, setI
                 {loading ? <Loader/> : 
                     <>
                     <h2>${props.targetUserName}의 도전 신청</h2>
-                    <Button onClick={acceptHandler}>수락</Button>
-                    <Button onClick={rejectHandler}>거절</Button>
+                    <button onClick={acceptHandler}>수락</button>
+                    <button onClick={rejectHandler}>거절</button>
                     </>
                 }
             </ModalBase>

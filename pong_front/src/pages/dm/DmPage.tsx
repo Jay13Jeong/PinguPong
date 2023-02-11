@@ -1,9 +1,8 @@
 import { useState, useContext, useEffect } from "react";
-import { SocketContext } from "../../states/contextSocket";
+import { SocketContext } from "../../common/states/contextSocket";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Center } from "../../styles/Layout";
 import useGetData from "../../util/useGetData";
-import { REACT_APP_HOST } from "../../util/configData";
+import { REACT_APP_HOST } from "../../common/configData";
 import "../../components/chat/ChatRoom.scss"
 import Loader from "../../components/util/Loader";
 import DmField from "../../components/chat/DmField";
@@ -46,18 +45,18 @@ function DmPage() {
     }
 
     return (
-        <Center>
-            {current === "" ? <Loader/> :
-            <div id="chat-room">
-                <button onClick={exitHandler} id="exit-chat-btn">DM 나가기</button>
-                <DmField current={current} targetId={targetId}/>
-                <form onSubmit={msgHandler} id="chat-input">
-                    <input type="text" autoComplete="off" id="message" placeholder="메시지를 입력하세요" value={msg} onChange={(e) => setMsg(e.target.value)}/>
-                    <button type="submit"><FontAwesomeIcon icon={faPaperPlane}/></button>
-                </form>
-            </div>
-            }
-        </Center>
+        <>
+        {current === "" ? <Loader/> :
+        <div id="chat-room">
+            <button onClick={exitHandler} id="exit-chat-btn">DM 나가기</button>
+            <DmField current={current} targetId={targetId}/>
+            <form onSubmit={msgHandler} id="chat-input">
+                <input type="text" autoComplete="off" id="message" placeholder="메시지를 입력하세요" value={msg} onChange={(e) => setMsg(e.target.value)}/>
+                <button type="submit"><FontAwesomeIcon icon={faPaperPlane}/></button>
+            </form>
+        </div>
+        }
+        </>
     )
 }
 

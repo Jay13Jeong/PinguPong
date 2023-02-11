@@ -1,8 +1,8 @@
 import { atom } from "recoil";
-import { sizes } from "../components/game/GameEngine/variables";
-import * as types from "../components/game/Game";
+import { sizes } from "../../common/configData";
+import * as T from "../../common/types/Game";
 
-export const gameState = atom<types.gamePosInfo>({
+export const gameState = atom<T.gamePosInfo>({
     key: "gamestate",
     default: {
         player1: sizes.canvasHeight / 2 - sizes.paddleSize / 2,

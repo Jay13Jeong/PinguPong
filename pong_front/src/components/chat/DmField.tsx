@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext, useRef } from "react";
 import { useSetRecoilState } from "recoil";
-import { chatMenuModalState } from "../../states/recoilModalState";
-import { SocketContext } from "../../states/contextSocket";
+import { chatMenuModalState } from "../../common/states/recoilModalState";
+import { SocketContext } from "../../common/states/contextSocket";
 import * as Chat from './ChatField.styles';
 
 function DmField (props: {current: string, targetId: number}) {

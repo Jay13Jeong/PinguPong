@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { SocketContext } from "../../../states/contextSocket";
+import { SocketContext } from "../../../common/states/contextSocket";
 import { useNavigate } from "react-router-dom";
 import {CardButton} from "./Card";
 

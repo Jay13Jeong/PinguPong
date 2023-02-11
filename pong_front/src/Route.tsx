@@ -14,12 +14,10 @@ export default function Routing() {
                 <Route path="" element={<LoginPage/>}/>
                 <Route path={RoutePath.fa2} element={<FA2Page/>}/>
             </Route>
-            <Route path={RoutePath.lobby} element={<MainLayout/>}>
-                <Route path="" element={<LobbyPage/>}/>
+            <Route path={RoutePath.root} element={<MainLayout/>}>
+                <Route path={RoutePath.lobby} element={<LobbyPage/>}/>
                 <Route path={RoutePath.chat} element={<ChatLobbyPage/>}/>
             </Route>
-            
-            {/* Chat Lobby */}
             {/* Chat Room */}
             {/* Game Lobby */}
             {/* Game Match */}

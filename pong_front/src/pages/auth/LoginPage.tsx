@@ -7,7 +7,7 @@ export default function LoginPage() {
   return (
     <>
       <LoginButton/>
-      {/* MovingPingu */}
+      {/* TODO - MovingPingu */}
     </>
   );
 }

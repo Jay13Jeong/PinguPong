@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useContext} from "react";
-import { SocketContext } from "../../states/contextSocket";
+import { SocketContext } from "../../common/states/contextSocket";
 import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
-import { dmModalState } from "../../states/recoilModalState";
+import { dmModalState } from "../../common/states/recoilModalState";
 import DmCardButtonList from "../util/card/DmCardButtonList";
 import Loader from "../util/Loader";
 import ModalBase from "./ModalBase";

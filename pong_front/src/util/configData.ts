@@ -1,1 +1,0 @@
-export const { REACT_APP_HOST } = process.env;

@@ -1,9 +1,9 @@
 import { useEffect, useRef} from "react";
-import {colors, sizes} from "../game/GameEngine/variables";
+import {colors, sizes} from "../../common/configData";
 import {drawNet,drawPaddle, drawBall} from "../game/GameEngine/draw";
 import {useRecoilValue} from "recoil";
-import {gameState} from "../../states/recoilGameState"
-import * as types from "./Game";
+import {gameState} from "../../common/states/recoilGameState"
+import * as types from "../../common/types/Game";
 import "./GameCanvas.scss";
 
 const GameRoom = (props: {p1: string, p2: string}) => {

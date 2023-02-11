@@ -2,10 +2,10 @@ import { useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSetRecoilState } from "recoil";
 import * as states from "../../common/states/recoilModalState";
-import { SocketContext } from "../../states/contextSocket";
+import { SocketContext } from "../../common/states/contextSocket";
 import { faCircleUser, faEnvelope, faPeopleGroup, faSignOutAlt, faUserSlash } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import { REACT_APP_HOST } from "../../util/configData";
+import { REACT_APP_HOST } from "../../common/configData";
 import * as S from "./MenuButtons.style"
 import axios from "axios";
 

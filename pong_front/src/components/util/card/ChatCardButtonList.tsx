@@ -1,5 +1,5 @@
 import {useState, useEffect, useContext} from "react";
-import { SocketContext } from "../../../states/contextSocket";
+import { SocketContext } from "../../../common/states/contextSocket";
 import CardList from "./CardList";
 import ChatCardButton from "./ChatCardButton";
 import SecretChatModal from "../../modal/SecretChatModal";

@@ -1,12 +1,11 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { SocketContext } from '../../states/contextSocket';
+import { SocketContext } from '../../common/states/contextSocket';
 import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
-import { changeChatPwModalState } from "../../states/recoilModalState"
-import { Button } from '../../styles/Inputs';
+import { changeChatPwModalState } from "../../common/states/recoilModalState"
 import ModalBase from './ModalBase';
-import { Stack } from '../../styles/Layout';
+import { Stack } from '../../common/styles/Layout';
 import './Chat.scss';
 
 function ChangeChatPwModal(props: {roomName: string}) {
@@ -32,7 +31,7 @@ function ChangeChatPwModal(props: {roomName: string}) {
                             <span>비밀번호</span>
                             <input type="password" autoComplete="off" placeholder="공란으로 둘 경우 공개방이 됩니다." value={value} onChange={(e) => setValue(e.target.value)} />
                         </div>
-                        <Button type="submit">변경</Button>
+                        <button type="submit">변경</button>
                     </form>
                 </Stack>
             </ModalBase>

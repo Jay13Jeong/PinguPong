@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
-import { SocketContext } from "../../../states/contextSocket";
-import { profileModalState } from "../../../states/recoilModalState";
+import { SocketContext } from "../../../common/states/contextSocket";
+import { profileModalState } from "../../../common/states/recoilModalState";
 import { Friend, User } from "../../profile/User";
 import {CardButton} from "./Card";
 

@@ -1,18 +1,16 @@
 import React, {useEffect, useState} from "react";
-import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
-import { blockModalState, profileModalState } from "../../states/recoilModalState";
-import UserCardButtonList from "../util/card/UserCardButtonList";
-import * as types from "../profile/User"
-import ModalBase from "./ModalBase"
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { REACT_APP_HOST } from "../../util/configData";
+import { useRecoilValue, useResetRecoilState } from "recoil";
+
+import { blockModalState, profileModalState } from "../../../common/states/recoilModalState";
+import UserCardButtonList from "../../card/user/UserCardButtonList";
+import * as types from "../../../common/types/User"
+import ModalBase from "../../modal/ModalBase"
+import { REACT_APP_HOST } from "../../../common/configData";
 
 function FriendModal() {
-    // const [target, setTarget] = useState('');
-    // const [showProfileModal, setShowProfileModal] = useRecoilState(profileModalState);
     const showProfileModal = useRecoilValue(profileModalState);
-    // const [showModal, setShowModal] = useRecoilState(blockModalState);
     const showModal = useRecoilValue(blockModalState);
     const resetState = useResetRecoilState(blockModalState);
     const [friendList, setFriendList] = useState<types.Friend[]>([
@@ -56,8 +54,6 @@ function FriendModal() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // TODO: 친구 정보를 받아온다.
-        // setFriendList();
         axios.get('http://' + REACT_APP_HOST + ':3000/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
         .then(res2 => {
             /////
@@ -67,8 +63,6 @@ function FriendModal() {
                     let myFriends : types.Friend[] = res.data.map((friend: any) => {
                         const myUserInfo = ((friend.sender.id !== res2.data.id) ? friend.reciever : friend.sender);
                         const otherUserInfo = ((friend.sender.id == res2.data.id) ? friend.reciever : friend.sender);
-                        // console.log(friend.sender.id , res2.data.id)
-                        // console.log(otherUserInfo);
                         return {
                             userId: otherUserInfo.id,
                             userName: otherUserInfo.username,
@@ -81,7 +75,7 @@ function FriendModal() {
                                 myProfile : true,
                                 userStatus : 'off',
                                 rank : 0,
-                                odds : myUserInfo.wins == 0? 0 : Math.floor((myUserInfo.wins + myUserInfo.loses) / myUserInfo.wins),
+                                odds : myUserInfo.wins === 0? 0 : Math.floor((myUserInfo.wins + myUserInfo.loses) / myUserInfo.wins),
                                 record : [],
                                 relate : friend.status,
                             },
@@ -92,7 +86,7 @@ function FriendModal() {
                                 myProfile : false,
                                 userStatus : 'off',
                                 rank : 0,
-                                odds : otherUserInfo.wins == 0? 0 : Math.floor((otherUserInfo.wins + otherUserInfo.loses) / otherUserInfo.wins),
+                                odds : otherUserInfo.wins === 0? 0 : Math.floor((otherUserInfo.wins + otherUserInfo.loses) / otherUserInfo.wins),
                                 record : [],
                                 relate : friend.status,
                                 // block : false,
@@ -115,26 +109,10 @@ function FriendModal() {
         
     }, [showModal, showProfileModal]);
 
-    // function handleAddFriendSubmit(event : any) {
-    //     event.preventDefault();
-    //     axios.post('http://localhost:3000/api/friend/name', {username : target}, {withCredentials: true})
-    //     .then(res => {
-    //         console.log('block ok');
-    //     })
-    //     .catch(err => {
-    //         console.log(err.message);
-    //         console.log('invalid username');
-    //     })
-    // };
-
     if (showModal) {
         return (
             <ModalBase reset={resetState}>
                 <h1>🚫 Block List 🚫</h1>
-                {/* <input type="text" placeholder="이름으로 찾기" onChange={event => setTarget(event.target.value)} value={target} />
-                <button className="profile-button" onClick={handleAddFriendSubmit}>
-                    친구추가
-                </button> */}
                 <UserCardButtonList friends={friendList}/>
             </ModalBase>
         );

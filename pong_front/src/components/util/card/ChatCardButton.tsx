@@ -1,9 +1,9 @@
 import React, { useContext, useEffect } from "react";
-import { SocketContext } from "../../../states/contextSocket"
+import { SocketContext } from "../../../common/states/contextSocket"
 import { useNavigate } from "react-router-dom";
 import {CardButton} from "./Card";
 import { useSetRecoilState } from "recoil";
-import { secretChatModalState } from "../../../states/recoilModalState";
+import { secretChatModalState } from "../../../common/states/recoilModalState";
 import { toast } from "react-toastify";
 
 function ChatCardButton (props: {roomName: string, current: string}) {

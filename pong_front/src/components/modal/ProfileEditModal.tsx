@@ -1,11 +1,11 @@
 import React, { ChangeEvent, useContext, useEffect, useRef, useState } from "react";
 import ModalBase from "./ModalBase";
 import { useRecoilValue, useResetRecoilState } from "recoil";
-import { profileEditModalState, profileModalState } from "../../states/recoilModalState";
+import { profileEditModalState, profileModalState } from "../../common/states/recoilModalState";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { REACT_APP_HOST } from "../../util/configData";
-import { SocketContext } from "../../states/contextSocket";
+import { REACT_APP_HOST } from "../../common/configData";
+import { SocketContext } from "../../common/states/contextSocket";
 
 function ProfileEditModal(props: {name: string}) {
     // const [showModal, setShowModal] = useRecoilState(profileEditModalState);

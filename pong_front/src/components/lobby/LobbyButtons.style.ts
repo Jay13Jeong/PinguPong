@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import { MainWrapper } from "../../common/main/MainWrapper";
-export const LobbyButtonsWrapper = styled(MainWrapper)`
+import { ContentBox } from "../../common/styles/ContentBox";
+export const LobbyButtonsWrapper = styled(ContentBox)`
     display: grid;
     grid-template-columns: repeat(2, 2fr);
     & button {

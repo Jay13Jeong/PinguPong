@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useResetRecoilState } from "recoil";
 import { useNavigate } from "react-router-dom";
-import { dmModalState } from "../../../states/recoilModalState";
+import { dmModalState } from "../../../common/states/recoilModalState";
 import Loader from "../Loader";
 import useGetData from "../../../util/useGetData";
-import { REACT_APP_HOST } from "../../../util/configData";
+import { REACT_APP_HOST } from "../../../common/configData";
 import { CardButton} from "./Card";
 import { spawn } from "child_process";
 

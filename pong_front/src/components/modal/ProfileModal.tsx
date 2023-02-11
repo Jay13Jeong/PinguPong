@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useContext } from "react";
-import { SocketContext } from "../../states/contextSocket";
+import { SocketContext } from "../../common/states/contextSocket";
 import { Link, useNavigate } from "react-router-dom";
 import ModalBase from "./ModalBase";
 import GameRecordList from "../util/card/GameRecordList";
-import { useSetRecoilState , useRecoilState, useResetRecoilState, useRecoilValue } from "recoil"
-import { profileEditModalState, profileModalState } from "../../states/recoilModalState";
+import { useSetRecoilState , useResetRecoilState, useRecoilValue } from "recoil"
+import { profileEditModalState, profileModalState } from "../../common/states/recoilModalState";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircle, faUserPen, faUserPlus, faUserMinus, faUser, faUserSlash, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import "./ProfileModal.scss"
 import * as types from "../profile/User"
 import axios from "axios";
 import ProfileEditModal from "./ProfileEditModal";
-import { REACT_APP_HOST } from "../../util/configData";
+import { REACT_APP_HOST } from "../../common/configData";
 import useGetData from "../../util/useGetData";
 
 function ProfileModal() {

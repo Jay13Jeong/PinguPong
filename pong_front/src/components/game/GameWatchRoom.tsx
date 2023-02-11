@@ -1,13 +1,12 @@
 import React, {useState, useEffect, useContext} from "react";
 import {useLocation, useNavigate, Link} from "react-router-dom";
 import {useSetRecoilState} from "recoil";
-import {gameState} from "../../states/recoilGameState"
-import { Center, Stack } from "../../styles/Layout";
-import { Button } from "../../styles/Inputs";
+import {gameState} from "../../common/states/recoilGameState";
+import { Stack } from "../../common/styles/Layout";
 import GameRoom from "./GameRoom";
-import { SocketContext } from "../../states/contextSocket";
-import { OverLay, Wrapper } from "../../styles/Modal";
-import * as types from "./Game";
+import { SocketContext } from "../../common/states/contextSocket";
+import { OverLay, Wrapper } from "../modal/Modal.style";
+import * as types from "../../common/types/Game";
 
 function GameWatchRoom() {
     const location = useLocation();
@@ -38,21 +37,21 @@ function GameWatchRoom() {
     }
 
     return (
-        <Center>
+        <>
             <Stack>
                 <GameRoom p1={player1} p2={player2}/>
-                <Button onClick={endHandler} className="game-button">
+                <button onClick={endHandler} className="game-button">
                     관전 종료
-                </Button>
+                </button>
             </Stack>
             {winner ? 
             <OverLay z_index={100}>
                 <Wrapper>
                 <div>Winner is {winner}!</div>
-                <Link to="/lobby"><Button>Go To Lobby</Button></Link>
+                <Link to="/lobby"><button>Go To Lobby</button></Link>
             </Wrapper>
         </OverLay> : null}
-        </Center>
+        </>
     );
 }
 

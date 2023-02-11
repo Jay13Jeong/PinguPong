@@ -16,16 +16,16 @@ export default function FA2Page() {
       try{
         const res = await axios.get('http://' + REACT_APP_HOST + ':3000/api/fa2/status', {withCredentials: true}) //쿠키와 함께 보내기 true.
         if (res.data.twofa === false){
-          navigate('/lobby'); //2단계인증이 꺼져있으면 로비로 간다.
+          navigate(RoutePath.lobby); //2단계인증이 꺼져있으면 로비로 간다.
           return ;
         }
       }catch(err: any){
-        navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
+        navigate(RoutePath.root); //로그인 안되어 있다면 로그인페이지로 돌아간다.
       }
       try{
         await axios.get('http://' + REACT_APP_HOST + ':3000/api/fa2',{withCredentials: true});
       } catch(err: any) {
-        navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
+        navigate(RoutePath.root); //로그인 안되어 있다면 로그인페이지로 돌아간다.
       }
     }
     get2faStatus();
@@ -37,7 +37,7 @@ export default function FA2Page() {
       try{
         const res = await axios.post('http://' + REACT_APP_HOST + ':3000/api/fa2', {code : code}, {withCredentials: true})
         if (res.status === 200)
-          navigate('/lobby');
+          navigate(RoutePath.lobby);
       }catch(err: any){
         alert('invalid code : check 42Email again');
       }

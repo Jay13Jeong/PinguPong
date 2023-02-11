@@ -1,6 +1,6 @@
 import {createContext} from "react";
 import io, { Socket } from "socket.io-client";
-import { REACT_APP_HOST } from "../util/configData";
+import { REACT_APP_HOST } from "../configData";
 
 const ENDPOINT = "http://" + REACT_APP_HOST + ":3000";
 export const socket = io(ENDPOINT, {

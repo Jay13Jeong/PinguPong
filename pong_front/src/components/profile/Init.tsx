@@ -4,7 +4,7 @@ import '../../App.css';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { SetterOrUpdater } from 'recoil';
-import { REACT_APP_HOST } from '../../util/configData';
+import { REACT_APP_HOST } from '../../common/configData';
 
 export default function InitProfile(props: {setter: SetterOrUpdater<any>}) {
     // const [avatar, setAvatar] = useState("default.jpeg");
