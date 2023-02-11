@@ -1,12 +1,12 @@
-import { MainWrapper } from "../common/main/MainWrapper";
+import { ContentBox } from "../common/styles/ContentBox";
 import {MenuButtons, LobbyButtons, LobbyModal} from "../components/lobby/"
 
 export default function LobbyPage() {
   return (
-    <MainWrapper>
+    <ContentBox>
       <MenuButtons/>
       <LobbyButtons/>
       <LobbyModal />
-    </MainWrapper>
+    </ContentBox>
   );
 }

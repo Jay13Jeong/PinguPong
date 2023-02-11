@@ -3,28 +3,20 @@ import useCheckLogin from "./util/useCheckLogin";
 import {MainLayout, LoginLayout} from "./components/layout/";
 import { LobbyPage } from "./pages/"
 import { ChatLobbyPage } from './pages/chat';
-import {LoginPage} from './pages/auth/';
-
-export const RoutePath = {
-    root: "/",
-    lobby: "/lobby",
-    fa2: "/fa2",
-    profile: "/profile/init",
-    chat: "chat",
-    game: "/game",
-    dm: "/dm"
-}
+import {LoginPage, FA2Page} from './pages/auth/';
+import {RoutePath} from "./common/configData";
 
 export default function Routing() {
     useCheckLogin();
     return (
         <Routes>
+            <Route path={RoutePath.root} element={<LoginLayout/>}>
+                <Route path="" element={<LoginPage/>}/>
+                <Route path={RoutePath.fa2} element={<FA2Page/>}/>
+            </Route>
             <Route path={RoutePath.lobby} element={<MainLayout/>}>
                 <Route path="" element={<LobbyPage/>}/>
                 <Route path={RoutePath.chat} element={<ChatLobbyPage/>}/>
-            </Route>
-            <Route path={RoutePath.root} element={<LoginLayout/>}>
-                <Route path="" element={<LoginPage/>}/>
             </Route>
             
             {/* Chat Lobby */}

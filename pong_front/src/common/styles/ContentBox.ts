@@ -1,6 +1,6 @@
 import styled from "styled-components"
 
-export const MainWrapper = styled.div`
+export const ContentBox = styled.div`
   background-color:rgba(255, 255, 255, 0.7);
   border-radius: 10px;
   width: fit-content;
