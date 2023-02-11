@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import CardList from "../CardList";
 import GameCard from "./GameCard";
-import * as types from "../../profile/User"
+import * as types from "../../../common/types/User"
 import axios from "axios";
 import { REACT_APP_HOST } from "../../../common/configData";
 

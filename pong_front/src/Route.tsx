@@ -6,6 +6,7 @@ import {LoginPage, FA2Page} from './pages/auth/';
 import { ChatLobbyPage, ChatRoomPage } from './pages/chat';
 import { GameLobbyPage, GameMatchPage, GameWatchPage, GamePlayRoomPage, GameWatchRoomPage } from './pages/game';
 import DmPage from './pages/dm/DmPage';
+import ProfileInitPage from './pages/profile/ProfileInitPage';
 import {RoutePath} from "./common/configData";
 
 export default function Routing() {
@@ -15,6 +16,7 @@ export default function Routing() {
             <Route path={RoutePath.root} element={<LoginLayout/>}>
                 <Route path="" element={<LoginPage/>}/>
                 <Route path={RoutePath.fa2} element={<FA2Page/>}/>
+                <Route path={RoutePath.profile} element={<ProfileInitPage/>}/>
             </Route>
             <Route path={RoutePath.root} element={<MainLayout/>}>
                 <Route path={RoutePath.lobby} element={<LobbyPage/>}/>

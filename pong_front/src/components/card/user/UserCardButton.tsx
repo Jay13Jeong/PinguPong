@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import { SocketContext } from "../../../common/states/contextSocket";
 import { profileModalState } from "../../../common/states/recoilModalState";
-import { Friend, User } from "../../profile/User";
+import { Friend, User } from "../../../common/types/User";
 import {CardButton} from "../Card.style";
 
 function UserCardButton(props: {friend: Friend, userID: number, userName: string, userStatus: string, relate?: string}) {

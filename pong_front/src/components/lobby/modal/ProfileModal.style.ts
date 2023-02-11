@@ -1,11 +1,5 @@
-import styled, { css } from "styled-components";
-
-const profileBox = css `
-    width: 90px;
-    height: 90px;
-    border-radius: 30%;
-    overflow: hidden;
-`
+import styled from "styled-components";
+import {ProfileBoxStyle} from "../../../common/styles/ProfileBox.style";
 
 const ProfileModalWrapper = styled.div`
     box-sizing: content-box;
@@ -17,7 +11,7 @@ const ProfileModalWrapper = styled.div`
     grid-template-rows: 90px, 30px, 30px, 30px;
     row-gap: 10px;
     & .profile-box {
-        ${profileBox}
+        ${ProfileBoxStyle}
         grid-column: 1 / 2;
         grid-row: 1 / 2;
     }

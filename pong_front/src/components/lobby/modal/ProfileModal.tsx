@@ -7,7 +7,7 @@ import { useSetRecoilState , useResetRecoilState, useRecoilValue } from "recoil"
 import { profileEditModalState, profileModalState } from "../../../common/states/recoilModalState";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircle, faUserPen, faUserPlus, faUserMinus, faUser, faUserSlash, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
-import * as types from "../../profile/User"
+import * as types from "../../../common/types/User"
 import axios from "axios";
 import ProfileEditModal from "./ProfileEditModal";
 import { REACT_APP_HOST } from "../../../common/configData";

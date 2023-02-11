@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import CardList from "../CardList";
 import UserCardButton from "./UserCardButton";
-import * as types from "../../profile/User"
+import * as types from "../../../common/types/User";
 
 function UserCardButtonList(props: {friends: types.Friend[]}) {
     const [currPage, setCurrPage] = useState<number>(1);
