@@ -8,6 +8,8 @@ import {SocketContext, socket} from './common/states/contextSocket';
 // import TopMenuBar from './components/TopMenuBar';
 // import Modal from './components/modal/Modal';
 import Routing from './Routing';
+import GlobalStyle from './common/styles/GlobalStyle';
+import Cursor from './components/util/Cursor';
 
 function App() {
 
@@ -16,6 +18,8 @@ function App() {
       <BrowserRouter>
         <RecoilRoot>
           <SocketContext.Provider value={socket}>
+            <GlobalStyle />
+            <Cursor/>
             <Routing />
           </SocketContext.Provider>
         </RecoilRoot>
