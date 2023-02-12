@@ -10,7 +10,6 @@ import ProfileInitPage from './pages/profile/ProfileInitPage';
 import {RoutePath} from "./common/configData";
 
 export default function Routing() {
-    useCheckLogin();
     return (
         <Routes>
             <Route path={RoutePath.root} element={<LoginLayout/>}>
