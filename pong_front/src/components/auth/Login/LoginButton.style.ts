@@ -1,6 +1,6 @@
-import { css } from 'styled-components';
+import styled, { css } from 'styled-components';
 
-export const loginButtonStyle = css `
+export const LoginButton = styled.button `
     opacity: 70%;
     font-size: 300%;
     border-radius: 10px;
