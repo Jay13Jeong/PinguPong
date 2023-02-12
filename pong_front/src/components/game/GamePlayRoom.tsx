@@ -1,15 +1,14 @@
 import React, {useState, useEffect, useContext} from "react";
-import { SocketContext } from "../../states/contextSocket";
+import { SocketContext } from "../../common/states/contextSocket";
 import {useLocation, Link} from "react-router-dom";
 import {useSetRecoilState, useResetRecoilState} from "recoil";
-import {gameState} from "../../states/recoilGameState"
-import { Center, Stack } from "../../styles/Layout";
-import { Button } from "../../styles/Inputs";
+import {gameState} from "../../common/states/recoilGameState";
+import { Stack } from "../../common/styles/Stack.style";
 import GameRoom from "./GameRoom";
-import { OverLay, Wrapper } from "../../styles/Modal";
-import * as types from "./Game";
+import { OverLay, Wrapper } from "../modal/Modal.style";
+import * as types from "../../common/types/Game";
 import { toast } from "react-toastify";
-import CustomToastContainer from "../util/CustomToastContainer";
+import { RoutePath } from "../../common/configData";
 
 function GamePlayRoom() {
     const [winner, setWinner] = useState<string>();
@@ -19,16 +18,13 @@ function GamePlayRoom() {
     const location = useLocation();
 
     useEffect(() => {
-        // TODO - 핸들러 달아주기
         window.addEventListener("keydown", keyDownHandler);
         window.addEventListener('beforeunload', beforeUnloadHandler);
-        // TODO - 시작 이벤트 듣기
         socket.on("startGame", () => {
             socket.off("startGame");
             socket.on("ballPos", (data: types.gamePosInfo) => {
                 setGame(data);
             })
-            
         })
         socket.on("endGame", (data: {winner: string}) => {
             console.log("hahahahah end");
@@ -85,13 +81,11 @@ function GamePlayRoom() {
 
     return (
         <>
-        <CustomToastContainer/>
-        <Center>
             <Stack>
                 <GameRoom p1={player1} p2={player2}/>
-                <Button className="game-button" onClick={readyHandler}>
+                <button className="game-button" onClick={readyHandler}>
                     게임 준비
-                </Button>
+                </button>
             </Stack>
             {winner ? 
             <OverLay z_index={100}>
@@ -104,10 +98,9 @@ function GamePlayRoom() {
                     <div>Lose!!</div>
                 </div>
                 }
-                <Link to="/lobby"><Button>Go To Lobby</Button></Link>
+                <Link to={RoutePath.lobby}><button>Go To Lobby</button></Link>
             </Wrapper>
         </OverLay> : null}
-        </Center>
         </>
     );
 }

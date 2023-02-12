@@ -1,7 +1,7 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import * as Modal from "../../styles/Modal";
+import * as Modal from "./Modal.style";
 import { Resetter } from "recoil";
 
 function ModalBase (props: {reset:Resetter, children: React.ReactNode, z_index?: number}) {

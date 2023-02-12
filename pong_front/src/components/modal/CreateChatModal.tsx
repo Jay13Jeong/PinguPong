@@ -1,12 +1,11 @@
 import React, {useState, useContext, useEffect} from "react";
 import { toast } from "react-toastify"
 import { useNavigate } from "react-router-dom";
-import { SocketContext } from "../../states/contextSocket";
-import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
-import { Button } from "../../styles/Inputs";
-import { createChatModalState } from "../../states/recoilModalState";
+import { SocketContext } from "../../common/states/contextSocket";
+import { useRecoilValue, useResetRecoilState } from "recoil";
+import { createChatModalState } from "../../common/states/recoilModalState";
 import ModalBase from "./ModalBase";
-import { Stack } from "../../styles/Layout";
+import { Stack } from "../../common/styles/Stack.style";
 import "./Chat.scss"
 
 function CreateChatModal(props: {current: string}) {
@@ -78,7 +77,7 @@ function CreateChatModal(props: {current: string}) {
                                     placeholder="빈 칸인 경우 공개 채팅방이 됩니다." 
                                     value={values.pw}/>
                             </div>
-                            <Button type="submit">채팅방 생성</Button>
+                            <button type="submit">채팅방 생성</button>
                         </form>
                     </Stack>
             </ModalBase>

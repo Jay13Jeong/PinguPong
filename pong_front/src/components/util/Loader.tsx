@@ -1,6 +1,6 @@
 import React from "react";
 import { PropagateLoader, BeatLoader } from "react-spinners";
-import "./Loader.scss"
+import LoaderWrapper from "./Loader.style";
 
 /**
  * https://www.davidhu.io/react-spinners/storybook/?path=/docs/barloader--main
@@ -12,12 +12,12 @@ import "./Loader.scss"
 function Loader(props: {text?: string, type?: string}) {
   // props로 
   return (
-    <div className="loader-box">
+    <LoaderWrapper>
         {props.text ? <div className="msg">{props.text}</div> : null}
         {props.type === "Propagate" ? 
           <PropagateLoader cssOverride={{display: "block", margin: "auto", gridRow: '2'}} color="#36d7b7" /> 
           : <BeatLoader cssOverride={{display: "block", margin: "auto"}} color="#36d7b7" />}
-    </div>
+    </LoaderWrapper>
   );
 }
 
