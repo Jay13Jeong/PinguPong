@@ -13,56 +13,24 @@ function FriendModal() {
     const showProfileModal = useRecoilValue(profileModalState);
     const showModal = useRecoilValue(blockModalState);
     const resetState = useResetRecoilState(blockModalState);
-    const [friendList, setFriendList] = useState<types.Friend[]>([
-        {
-            userId: 1,
-            userName: "pingu",
-            userStatus: "off"
-        },
-        {
-            userId: 2,
-            userName: "Robby",
-            userStatus: "on"
-        },
-        {
-            userId: 3,
-            userName: "papa",
-            userStatus: "game"
-        },
-        {
-            userId: 4,
-            userName: "mama",
-            userStatus: "off"
-        },
-        {
-            userId: 5,
-            userName: "jeyoon",
-            userStatus: "on"
-        },
-        {
-            userId: 6,
-            userName: "cheolee",
-            userStatus: "game"
-        },
-        {
-            userId: 7,
-            userName: "jjeong",
-            userStatus: "game"
-        }
-    ])
+    const [friendList, setFriendList] = useState<types.Friend[]>([])
 
     const navigate = useNavigate();
 
     useEffect(() => {
+        const calOdds = (win: number, lose: number): number => {
+            if (win === 0)
+                return 0;
+            return Math.floor(100 / ((win + lose) / (win ? win : 1)));
+        }
         axios.get('http://' + REACT_APP_HOST + ':3000/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
-        .then(res2 => {
-            /////
+        .then(userRes => {
             axios.get('http://' + REACT_APP_HOST + ':3000/api/friend/block', {withCredentials: true}) //쿠키와 함께 보내기 true.
-            .then(res => {
-                if (res.data){
-                    let myFriends : types.Friend[] = res.data.map((friend: any) => {
-                        const myUserInfo = ((friend.sender.id !== res2.data.id) ? friend.reciever : friend.sender);
-                        const otherUserInfo = ((friend.sender.id == res2.data.id) ? friend.reciever : friend.sender);
+            .then(blockRes => {
+                if (blockRes.data){
+                    let myFriends : types.Friend[] = blockRes.data.map((friend: any) => {
+                        const myUserInfo = ((friend.sender.id !== userRes.data.id) ? friend.reciever : friend.sender);
+                        const otherUserInfo = ((friend.sender.id == userRes.data.id) ? friend.reciever : friend.sender);
                         return {
                             userId: otherUserInfo.id,
                             userName: otherUserInfo.username,
@@ -75,7 +43,7 @@ function FriendModal() {
                                 myProfile : true,
                                 userStatus : 'off',
                                 rank : 0,
-                                odds : myUserInfo.wins === 0? 0 : Math.floor((myUserInfo.wins + myUserInfo.loses) / myUserInfo.wins),
+                                odds : calOdds(myUserInfo.wins, myUserInfo.loses),
                                 record : [],
                                 relate : friend.status,
                             },
@@ -86,10 +54,9 @@ function FriendModal() {
                                 myProfile : false,
                                 userStatus : 'off',
                                 rank : 0,
-                                odds : otherUserInfo.wins === 0? 0 : Math.floor((otherUserInfo.wins + otherUserInfo.loses) / otherUserInfo.wins),
+                                odds : calOdds(otherUserInfo.wins, otherUserInfo.loses),
                                 record : [],
                                 relate : friend.status,
-                                // block : false,
                             },
                         }
                     });
@@ -100,13 +67,8 @@ function FriendModal() {
                 if (err.response.data.statusCode === 401)
                 navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
             })
-        ////
         })
-        .catch(err => {
-            // if (err.response.data.statusCode === 401)
-            // navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
-        })
-        
+        .catch(err => { })
     }, [showModal, showProfileModal]);
 
     if (showModal) {

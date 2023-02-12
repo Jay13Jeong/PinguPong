@@ -5,10 +5,8 @@ import { profileEditModalState, profileModalState } from "../../../common/states
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { REACT_APP_HOST } from "../../../common/configData";
-import { SocketContext } from "../../../common/states/contextSocket";
 
 function ProfileEditModal(props: {name: string}) {
-    // const [showModal, setShowModal] = useRecoilState(profileEditModalState);
     const showModal = useRecoilValue(profileEditModalState);
     const resetState = useResetRecoilState(profileEditModalState);
     const resetParentState = useResetRecoilState(profileModalState);
