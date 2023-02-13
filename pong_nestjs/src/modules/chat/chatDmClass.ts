@@ -76,6 +76,7 @@ export class dmClass{
     public sendDm(server:Server, userId:number, userName:string, targetId:number, msg:string) {
         const myDmList = this.userDmList.get(userId);
         let roomName = myDmList.getTargetRoom(targetId)
+        
         server.to(roomName).emit('receiveDm', userName, msg);
         //console.log('receiveDm', roomName, userName, msg);
         this.saveDmRoomdb(roomName, userId, msg);//메세지 저장

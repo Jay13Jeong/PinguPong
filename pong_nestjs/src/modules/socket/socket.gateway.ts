@@ -301,7 +301,13 @@ import { statSync } from 'fs';
     let targetId:number = data.targetId;
     let msg:string = data.msg;
     let user = await this.findUserBySocket(client);
-    this.dmRooms.sendDm(this.server, user.id, user.username, targetId, msg);
+
+    let blockedMe:Friend[] = await this.friendService.getReversBlocks(user.id);
+    let block:number[] = [];//날 차단한 사람들 id 만 추출
+    for (let id of blockedMe)
+        block.push(id.sender.id);
+    if (!block.includes(targetId))
+      this.dmRooms.sendDm(this.server, user.id, user.username, targetId, msg);
   }
 
   //1대1 대화방 입장시 여태까지 받은 Dm 보내주기
@@ -478,8 +484,8 @@ import { statSync } from 'fs';
         if ((this.useridStatus.get(targetId).status != 'online') && (this.gameService.checkGaming(targetId)))//나중에 채팅방에 있는 지 여부를 확인하도록 하기,이미 상대가 도전신청 받았는지 확인하기
           return this.server.to(client.id).emit('duelRequest', false);
 
-          let targetSocketIds:Set<string> = this.rooms.getsocketIdByuserId(targetId);
-          let targetSocketId:string = Array.from(targetSocketIds)[targetSocketIds.size - 1];//가장 마지막 소켓을 넣어주기
+        let targetSocketIds:Set<string> = this.rooms.getsocketIdByuserId(targetId);
+        let targetSocketId:string = Array.from(targetSocketIds)[targetSocketIds.size - 1];//가장 마지막 소켓을 넣어주기
         this.gameService.duelRequest(client.id, user, targetSocketId, target);//방만들기
 
         this.server.to(client.id).emit('duelRequest', true);

@@ -220,7 +220,6 @@ export class chatClass {
             // console.log("id.sender.username: ", id.sender.username);
         }
 
-
         let sendId:number[] = [];//날 차단하지 않은 사람들의 id
         for (let id of userIds){
             if (!block.includes(id)) //id 값이 포함되어 있으면.
