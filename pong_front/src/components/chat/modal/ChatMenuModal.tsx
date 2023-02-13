@@ -137,7 +137,7 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
          * let targetId:number = data.targetId;
          * return boolean (성공시 true, 여러 이유로 실패하면 false)
          */
-        socket.emit('duelRequest', {targetId: targetID});
+        socket.emit('duelRequest', {targetId: targetID, roomName: props.roomName});
         /* 성공 여부 듣기 */
         socket.on('duelRequest', (data: boolean) => {
             if (data === true) {

@@ -63,7 +63,7 @@ function DmPage() {
 
     return (
         <>
-        <ChatMenuModal isMaster={false} roomName={""} isDmModal={true}/>
+        <ChatMenuModal isMaster={false} roomName={"_dm"} isDmModal={true}/>
         <GameInviteModal targetID={invitedInfo.id} targetUserName={invitedInfo.username} setInviteInfo={setInvitedInfo}/>
         {current === "" ? <Loader/> :
         <ChatRoomWrapper>
