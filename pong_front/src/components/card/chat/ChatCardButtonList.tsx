@@ -19,7 +19,7 @@ function ChatCardButtonList(props: {current: string}) {
         return (() => {
             socket.off('/api/get/RoomList');
         })
-    }, [socket, props]);
+    }, [socket, props.current]);
 
     /* variables */
     const cardsPerPage = 5;
