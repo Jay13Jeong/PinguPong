@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { SocketContext } from "../../../common/states/contextSocket";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ModalBase from "../../modal/ModalBase";
 import GameRecordList from "../../card/game/GameRecordList";
 import { useSetRecoilState , useResetRecoilState, useRecoilValue } from "recoil"
@@ -11,7 +11,6 @@ import * as types from "../../../common/types/User"
 import axios from "axios";
 import ProfileEditModal from "./ProfileEditModal";
 import { REACT_APP_HOST } from "../../../common/configData";
-import useGetData from "../../../util/useGetData";
 import ProfileModalWrapper from "./ProfileModal.style";
 import { toast } from "react-toastify";
 
@@ -23,7 +22,6 @@ function ProfileModal() {
     const [avatarFile, setAvatarFile] = useState('');
     const [onlineStatus, setOnlineStatus] = useState('offline');
     const [rank, setRank] = useState<number>(0);
-    // const [data, error, isLoading] = useGetData('http://' + REACT_APP_HOST + ':3000/api/user');
 
     const socket = useContext(SocketContext);
     
@@ -260,7 +258,7 @@ function ProfileModal() {
                 <button className="profile-button" onClick={handleFollow}>
                     <FontAwesomeIcon icon={faUserPlus}/> Follow
                 </button>}
-                {userInfo.relate == 'blocked' ? 
+                {userInfo.relate === 'blocked' ? 
                 <button className="profile-button" onClick={handleUnblock}>
                     <FontAwesomeIcon icon={faUser}/> Unblock
                 </button> :

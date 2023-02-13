@@ -1,5 +1,4 @@
-import { BlockModal, DMModal, FriendModal, ProfileModal } from "./modal";
-// import { BlockModal, DMModal, FriendModal, MyProfileModal } from "./modal";
+import { BlockModal, DMModal, FriendModal } from "./modal";
 
 export default function LobbyModal() {
     return (
@@ -7,8 +6,6 @@ export default function LobbyModal() {
             <BlockModal />
             <DMModal />
             <FriendModal />
-            {/* <ProfileModal /> */}
-            {/* <MyProfileModal /> */}
         </>
     );
 }
