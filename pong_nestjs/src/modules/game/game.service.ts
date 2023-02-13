@@ -345,6 +345,7 @@ export class GameService {
     private normalLvUserList : Map<number, string>;
     private hardLvUserList : Map<number, string>;
     private userIdRoomname : Map<number, string>;//userid: roomName
+    private NoGamegetoutSocketList: Set<string>;
 
     public constructor(
         @InjectRepository(Game) private gameRepo: Repository<Game>,
@@ -356,6 +357,7 @@ export class GameService {
         this.normalLvUserList = new Map<number, string>();
         this.hardLvUserList = new Map<number, string>();
         this.userIdRoomname = new Map<number, string>();
+        this.NoGamegetoutSocketList = new Set<string>();
     }
 
     async test(){
@@ -385,7 +387,19 @@ export class GameService {
         return false;
     }
 
+    public addNoGamegetoutSocketList(socketId:string) {
+        this.NoGamegetoutSocketList.add(socketId);
+    }
+
+    public delNoGamegetoutSocketList(socketId:string) {
+        this.NoGamegetoutSocketList.delete(socketId)
+    }
+
     public async iGamegetout(client:Socket, socketUserId:Map<string, number>) : Promise<void>{
+        if (this.NoGamegetoutSocketList.has(client.id) === true){//중복 매칭 된 유저의 소켓id 이면 취소 시킬것
+            this.delNoGamegetoutSocketList(client.id);
+            return ;
+        }
         let userId:number = socketUserId.get(client.id);
         if (!this.userIdRoomname.has(userId)) {//대결중이 아니면 종료
             this.userIduserName.delete(userId);

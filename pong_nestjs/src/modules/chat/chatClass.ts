@@ -196,7 +196,7 @@ export class chatClass {
 
     public socketSave(userId:number, socketId:string) {
         if (this.userIdsocketId.has(userId)=== false)
-            this.userIdsocketId.set(userId, new Set<string>);
+            this.userIdsocketId.set(userId, new Set<string>());
         this.userIdsocketId.get(userId).add(socketId);
     }
 
@@ -302,6 +302,10 @@ export class chatClass {
             let targetSocketIds:Set<string> = this.userIdsocketId.get(targetid);
             for (let id of targetSocketIds)
                 server.to(id).emit('youMaster');
+            //방장 이였던 사람에게 메세지 전송 'youExMaster'
+            let userSocketIds:Set<string> = this.userIdsocketId.get(userid);
+            for (let id of userSocketIds)
+                server.to(id).emit('youExMaster');
         }
     }
 
