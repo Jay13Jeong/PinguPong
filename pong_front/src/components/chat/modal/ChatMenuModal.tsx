@@ -8,6 +8,8 @@ import Loader from "../../util/Loader";
 import { REACT_APP_HOST } from "../../../common/configData";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { User } from "../../../common/types/User";
+import axios from "axios";
 // import { userState } from "../../states/recoilUserState";
 
 function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?: Function}) {
@@ -15,13 +17,13 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
     const modalState = useRecoilValue(chatMenuModalState);
     const resetState = useResetRecoilState(chatMenuModalState);
     const profileState = useSetRecoilState(profileModalState);
-    // const userInfoState = useRecoilValue(userState);
     const [info, error, loading] = useGetData(`http://` + REACT_APP_HOST + `:3000/api/user/name?username=${modalState.user}`);
     const [current, setCurrent] = useState("");
     const [myInfo, myerror, myLoading] = useGetData('http://' + REACT_APP_HOST + ':3000/api/user');
     const [menuLoading, isMenuLoading] = useState<boolean>(true);
     const [targetID, setTargetID] = useState<number>();
     const [isMuted, setIsMuted] = useState<boolean>();
+    const [targetUser, setTargetUser] = useState<User | null>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -132,6 +134,33 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
         resetState();
     }
 
+    function getUserInfo(targetId: number): User{
+        const initTargetData = async () => {
+            let info: any = myInfo;
+            try{
+                const res = await axios.get('http://' + REACT_APP_HOST + ':3000/api/user/' + targetId, {withCredentials: true}) //쿠키와 함께 보내기 true.
+                if (res.data !== null && res.data !== undefined)
+                    info = res;    
+            }catch{ }
+            let totalGame = info.wins + info.loses;
+            let targetUserInfo : User = {
+                id : info.id,
+                avatar: info.avatar,
+                userName : info.username as string,
+                myProfile : false,
+                userStatus : 'off',
+                rank : 0,
+                odds : !info.wins ? 0 : Math.floor(100 / (totalGame / (info.wins ? info.wins : 1))),
+                record : [],
+            };
+            setTargetUser(targetUserInfo);
+        }
+        initTargetData();
+        while (targetUser === null)
+            ;
+        return targetUser;
+    }
+
     if (modalState.show) {
         return (
             <ModalBase reset={resetState} z_index={100}>
@@ -146,7 +175,7 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
                     </div> : null}
                     <div>
                         <button onClick={inviteHandler}>도전장 보내기</button>
-                        <button onClick={(e) => {targetID && profileState({userId: targetID, show: true})}}>프로필 보기</button>
+                        <button onClick={(e) => {targetID && profileState({user: getUserInfo(targetID), userId: targetID, show: true})}}>프로필 보기</button>
                     </div>
                     </>
                 }
