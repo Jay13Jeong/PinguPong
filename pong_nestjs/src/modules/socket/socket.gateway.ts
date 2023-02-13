@@ -148,7 +148,7 @@ import { statSync } from 'fs';
     let userId = this.socketUserid.get(client.id);
     let user = this.userService.findUserById(userId);
     console.log('chat', client.rooms);  //현재 클라이언트의 방
-   // console.log(room, user.id, msg);//메시지
+    console.log(room, userId, (await user).username, msg);//메시지
 
     if (this.rooms.checkRoomInUser(userId, room) == false)//유저가 방에 있는 인원인지 확인하기
       return ;
@@ -160,9 +160,10 @@ import { statSync } from 'fs';
     //메세지를 보내야할 소켓id
     const sockets = this.rooms.getSocketList(room, blockedMe);
 
-    for (let id of sockets)
+    for (let id of sockets){
       this.server.to(id).emit('chat', (await user).username, msg);
-
+      console.log('chat', id);
+    }
   }
 
   //방이름 :보내면, 공개방이면 true, 비밀방이면 false 반환

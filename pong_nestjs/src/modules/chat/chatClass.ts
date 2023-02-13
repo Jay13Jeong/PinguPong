@@ -371,7 +371,7 @@ export class chatClass {
             let targetSocketIds:Set<string> = this.userIdsocketId.get(targetId);
             for (let id of targetSocketIds)
                 server.to(id).emit('youKick');
-            this.userIdRooms.get(userId).delete(roomName);
+            this.userIdRooms.get(targetId).delete(roomName);
         }
     }
 
