@@ -7,6 +7,7 @@ import ModalBase from "../../modal/ModalBase";
 import axios from "axios";
 import { REACT_APP_HOST } from "../../../common/configData";
 import useGetData from "../../../util/useGetData";
+import { toast } from "react-toastify";
 
 function FriendModal() {
     const [target, setTarget] = useState('');
@@ -29,7 +30,7 @@ function FriendModal() {
                 const res = await axios.get('http://' + REACT_APP_HOST + ':3000/api/friend', {withCredentials: true}) //쿠키와 함께 보내기 true.
                 if (res === null || res === undefined)
                 {
-                    alert("friend fail..");
+                    toast.error("friend fail..");
                     return;
                 }
                 let myFriends : types.Friend[] = res.data.map((friend: any) => {
@@ -80,9 +81,9 @@ function FriendModal() {
         event.preventDefault();
         try{
             const res = await axios.post('http://' + REACT_APP_HOST + ':3000/api/friend/name', {username : target}, {withCredentials: true});
-            alert(target + "에게 친구요청 성공");
+            toast.success(target + "에게 친구요청 성공");
         }catch(err : any){
-            alert(err.response.data.message);
+            toast.error(err.response.data.message);
         }
     };
 

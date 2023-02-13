@@ -5,6 +5,7 @@ import { profileEditModalState, profileModalState } from "../../../common/states
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { REACT_APP_HOST } from "../../../common/configData";
+import { toast } from "react-toastify";
 
 function ProfileEditModal(props: {name: string}) {
     const showModal = useRecoilValue(profileEditModalState);
@@ -25,7 +26,7 @@ function ProfileEditModal(props: {name: string}) {
             if (res.data){
                 setStatus2fa(res.data.twofa);
             } else {
-                alert('nodata 2fa : ' + res.data);
+                toast.error('nodata 2fa : ' + res.data);
             }
         })
         .catch(err => {
@@ -43,7 +44,7 @@ function ProfileEditModal(props: {name: string}) {
             resetState();
         })
         .catch(err => {
-            alert("Name in use");
+            toast.error("적절하지 않은 이름입니다.");
         })
     };
     //2단계 켜기.
@@ -85,14 +86,14 @@ function ProfileEditModal(props: {name: string}) {
 			//update Avatar here
 			axios.post('http://' + REACT_APP_HOST + ':3000/api/user/avatar', {file: inputRef.current.files![0]}, {withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' }})
 			.then((res) => {
-				alert("아바타 변경 완료");
+				toast.success("아바타 변경 완료");
 			})
 			.catch((err) => {
-				alert("fail : 사진 파일만 업로드 가능");
+				toast.error("fail : 사진 파일만 업로드 가능");
 			})
             return ;
         }
-        alert("파일이 지정되지 않음");
+        toast.error("파일이 지정되지 않음");
     };
 
     function onAvatar(e: ChangeEvent<HTMLInputElement>) {
