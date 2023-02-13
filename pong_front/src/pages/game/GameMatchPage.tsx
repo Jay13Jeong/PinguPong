@@ -66,9 +66,14 @@ function GameMatchPage() {
         currentDifficulty = difficulty;
     }
 
+    /* 매칭 취소 이벤트 */
+    function requestCancelHander(e: React.MouseEvent<HTMLElement>) {
+        navigate(RoutePath.lobby);
+    }
+
     return (
         <ContentBox><Stack>
-        {loading ? <><Loader text="로딩중"/><button>게임 매칭 취소</button></> : 
+        {loading ? <><Loader text="로딩중"/><button onClick={requestCancelHander}>게임 매칭 취소</button></> : 
             <>
             <h1>👾 Choose Game Level 👾</h1>
             <DifficultyButtons difficulty={currentDifficulty} setDifficulty={setDifficulty}/>
