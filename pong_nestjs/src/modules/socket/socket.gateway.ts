@@ -65,6 +65,7 @@ import { statSync } from 'fs';
         this.useridStatus.get(userId).count--;
         if (this.useridStatus.get(userId).count <= 0)
           this.useridStatus.delete(userId);
+        this.gameService.delNoGamegetoutSocketList(client.id);
         //console.log('userStatusDel', this.useridStatus);
       }
     }
@@ -365,8 +366,9 @@ import { statSync } from 'fs';
       // 1. 같은 난이도를 요청한 플레이어가 큐에 있을 경우 게임 매치
       // 2. 같은 난이도를 요청한 플레이어가 큐에 없을 경우 해당 플레이어를 큐에 넣는다.
       if (this.gameService.matchCheck(this.socketUserid.get(client.id)) === true){//유저가 이미 매칭중인지 확인
-         this.server.to(client.id).emit('match fail');//늦게 매칭한 소켓에게 이벤트 전송
-         console.log('match fail');
+         this.server.to(client.id).emit('matchFail');//늦게 매칭한 소켓에게 이벤트 전송
+         this.gameService.addNoGamegetoutSocketList(client.id);//로비에서 게임에 영향가지 않도록 소켓 저장하기
+         console.log('matchFail');
         return ;
       }
        if (this.gameService.matchMake(difficulty, player, client.id, this.socketUserid.get(client.id))){
@@ -380,6 +382,7 @@ import { statSync } from 'fs';
     async requestStart(client : Socket, data) {
       let roomName = data;
 
+      console.log('requestStart', roomName);
       //플레이어가 준비완료인지 확인하기, 여기서 socket room에 등록을 하자
       if (this.gameService.requestStart(roomName, client, this.server))
         await this.gameService.startGame(roomName, this.server);

@@ -25,11 +25,9 @@ function DmField (props: {current: string, targetId: number}) {
     useEffect(() => {
         socket.emit('connectDm', props.targetId);
         socket.on('receiveDms', (data: {userName: string, msg: string}[]) => {
-            // console.log("receiveDms : ", data);
             setChatList([...data]);
         })
         socket.on('receiveDm', (user: string, msg: string) => {
-            // console.log("receiveDm : user : ", user, "msg : ", msg);
             setChat({userName: user, msg: msg});
         })
         return (() => {

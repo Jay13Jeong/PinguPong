@@ -260,10 +260,11 @@ class BattleClass{
         }
     }
 
-    public async iGameLoser(loserid:string):Promise<string>{
+    public async iGameLoser(loserName:string):Promise<string>{
         clearInterval(this.counter);
-        this.myserver.to(this.player1Id !== loserid ? this.player1Id : this.player2Id).emit("endGame", {winner: this.player1Id !== loserid ? this.player1Name : this.player2Name});
-        console.log("endGame", this.player1Id === loserid ? this.player1Name : this.player2Name);
+        //this.myserver.to(this.player1Id !== loserid ? this.player1Id : this.player2Id).emit("endGame", {winner: this.player1Id !== loserid ? this.player1Name : this.player2Name});
+        this.myserver.to(this.roomName).emit("endGame", {winner: this.player1Name !== loserName ? this.player1Name : this.player2Name});
+        console.log("endGame", this.player1Name === loserName ? this.player1Name : this.player2Name);
         if ((this.game.score.player1 !== 0) && (this.game.score.player2 !== 0)) {
             const winner : User = await this.usersService.findUserByUsername(this.goal === this.game.score.player1 ? this.player1Name : this.player2Name);
             const loser : User = await this.usersService.findUserByUsername(this.goal !== this.game.score.player1 ? this.player1Name : this.player2Name);
@@ -277,7 +278,7 @@ class BattleClass{
         }
         this.game.score.player1 = 0;//이긴 사람도 이 부분이 호출 되기 초기화 해주기
         this.game.score.player2 = 0;
-        return this.player1Id === loserid ? this.player1Id : this.player2Id;
+        return this.player1Name === loserName ? this.player1Id : this.player2Id;
     }
 
     //사용자가 레디 눌렀는지 확인하기
@@ -345,6 +346,7 @@ export class GameService {
     private normalLvUserList : Map<number, string>;
     private hardLvUserList : Map<number, string>;
     private userIdRoomname : Map<number, string>;//userid: roomName
+    private NoGamegetoutSocketList: Set<string>;
 
     public constructor(
         @InjectRepository(Game) private gameRepo: Repository<Game>,
@@ -356,6 +358,7 @@ export class GameService {
         this.normalLvUserList = new Map<number, string>();
         this.hardLvUserList = new Map<number, string>();
         this.userIdRoomname = new Map<number, string>();
+        this.NoGamegetoutSocketList = new Set<string>();
     }
 
     async test(){
@@ -385,7 +388,19 @@ export class GameService {
         return false;
     }
 
+    public addNoGamegetoutSocketList(socketId:string) {
+        this.NoGamegetoutSocketList.add(socketId);
+    }
+
+    public delNoGamegetoutSocketList(socketId:string) {
+        this.NoGamegetoutSocketList.delete(socketId)
+    }
+
     public async iGamegetout(client:Socket, socketUserId:Map<string, number>) : Promise<void>{
+        if (this.NoGamegetoutSocketList.has(client.id) === true){//중복 매칭 된 유저의 소켓id 이면 취소 시킬것
+            this.delNoGamegetoutSocketList(client.id);
+            return ;
+        }
         let userId:number = socketUserId.get(client.id);
         if (!this.userIdRoomname.has(userId)) {//대결중이 아니면 종료
             this.userIduserName.delete(userId);
@@ -401,7 +416,7 @@ export class GameService {
         console.log('iGamegetout', roomName);
         //console.log('clientRoom', client.rooms);
         if (vs != undefined){//but BattleClass이 이미 지웠지만, 다른 사용자가 새로고침할 경우 문제가 생길 수 있다
-            const winner:string = await vs.iGameLoser(client.id);//이긴 사람의 소켓 id
+            const winner:string = await vs.iGameLoser(this.userIduserName.get(userId));//이긴 사람의 소켓 id
             this.userIdRoomname.delete(socketUserId.get(winner));
         }
         this.userIdRoomname.delete(userId);
@@ -448,7 +463,7 @@ export class GameService {
             UserList.delete(player1);
             player2 = Array.from(UserList)[0];
             UserList.delete(player2[0]);
-            let roomName:string = this.userIduserName.get(player1) + 'vs' + player2[1];
+            let roomName:string = this.userIduserName.get(player1) + 'vs' + this.userIduserName.get(player2[0]);
             // console.log("333", await this.usersService.findUserById(1));
             this.vs.set(roomName, new BattleClass(player1sockerId, this.userIduserName.get(player1), player2[1], this.userIduserName.get(player2[0]), speed, this.gameRepo, this.usersService));
             this.userIdRoomname.set(player1, roomName);

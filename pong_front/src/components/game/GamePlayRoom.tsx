@@ -27,7 +27,8 @@ function GamePlayRoom() {
             })
         })
         socket.on("endGame", (data: {winner: string}) => {
-            console.log("hahahahah end");
+            window.removeEventListener("keydown", keyDownHandler);
+            window.removeEventListener('beforeunload', beforeUnloadHandler);
             socket.off("ballPos");
             socket.off("endGame");
             setWinner(data.winner);
@@ -50,7 +51,6 @@ function GamePlayRoom() {
     
     /* Event Handler */
     const keyDownHandler = (e: KeyboardEvent) => {
-        console.log('0000', isP1 , "current" , currentPlayer);
         if (e.key === "ArrowUp") {
             if (isP1) { // 1번을 위로
                 socket.emit("player1Move", -playerSpeed, gameRoomName);
