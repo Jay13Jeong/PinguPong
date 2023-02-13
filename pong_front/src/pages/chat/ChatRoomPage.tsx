@@ -50,8 +50,11 @@ function ChatRoomPage () {
             });
             /* 방장 여부 듣기 */
             socket.on('youMaster', ()=> {
-                console.log("youMaster!!");
                 setMaster(true);
+            })
+            /* 방장 권한 해제 여부 듣기 */
+            socket.on('youExMaster', ()=> {
+                setMaster(false);
             })
 
             /* 게임 초대 신청 듣기 */
