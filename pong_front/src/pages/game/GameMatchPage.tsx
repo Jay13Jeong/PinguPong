@@ -5,9 +5,10 @@ import {Stack } from "../../common/styles/Stack.style";
 import useGetData from "../../util/useGetData";
 import DifficultyButtons from "../../components/game/DifficultyButtons";
 import Loader from "../../components/util/Loader";
-import { REACT_APP_HOST } from "../../common/configData";
+import { REACT_APP_HOST, RoutePath } from "../../common/configData";
 import useCheckLogin from "../../util/useCheckLogin";
 import { ContentBox } from "../../common/styles/ContentBox.style";
+import { toast } from "react-toastify";
 
 function GameMatchPage() {
     useCheckLogin();
@@ -39,8 +40,14 @@ function GameMatchPage() {
                 invite: false
             }});
         });
+        socket.on("matchFail", () => {
+            toast.error("게임 매칭 실패!");
+            socket.off('matchFail');
+            navigate(RoutePath.lobby);
+        })
         return (() => {
             socket.off('matchMakeSuccess');
+            socket.off('matchFail');
         })
     }, [current, socket, navigate]);
 
@@ -59,9 +66,14 @@ function GameMatchPage() {
         currentDifficulty = difficulty;
     }
 
+    /* 매칭 취소 이벤트 */
+    function requestCancelHander(e: React.MouseEvent<HTMLElement>) {
+        navigate(RoutePath.lobby);
+    }
+
     return (
         <ContentBox><Stack>
-        {loading ? <><Loader text="로딩중"/><button>게임 매칭 취소</button></> : 
+        {loading ? <><Loader text="로딩중"/><button onClick={requestCancelHander}>게임 매칭 취소</button></> : 
             <>
             <h1>👾 Choose Game Level 👾</h1>
             <DifficultyButtons difficulty={currentDifficulty} setDifficulty={setDifficulty}/>
