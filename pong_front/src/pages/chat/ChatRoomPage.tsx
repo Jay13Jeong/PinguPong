@@ -103,7 +103,6 @@ function ChatRoomPage () {
     return (
         <>
         <ChangeChatPwModal roomName={roomInfo.id}/>
-        {/* <CustomToastContainer/> */}
         <ChatMenuModal isMaster={master} roomName={roomInfo.id} setMaster={setMaster}/>
         <GameInviteModal targetID={invitedInfo.id} targetUserName={invitedInfo.username} setInviteInfo={setInvitedInfo}/>
         <ChatRoomWrapper>
