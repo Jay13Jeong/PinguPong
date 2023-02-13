@@ -64,6 +64,7 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
     useEffect(() => {
         return(() => {
             socket.off('api/get/muteuser');
+            socket.off('duelRequest');
         })
     }, [socket]);
 
@@ -124,7 +125,6 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
     }
 
     function inviteHandler(e: React.MouseEvent<HTMLElement>) {
-        // TODO - 도전장 기능
         /**
          * NOTE - 흐름
          * - 도전장을 보냄
@@ -141,6 +141,7 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
         /* 성공 여부 듣기 */
         socket.on('duelRequest', (data: boolean) => {
             if (data === true) {
+                socket.off('duelRequest');
                 // 성공
                 resetState();
                 // 도전 신청한 쪽이 p1이 됩니다.
@@ -153,11 +154,11 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
                 }});
             }
             else {
+                socket.off('duelRequest');
                 toast.error("📤 dual request failed!");
                 resetState();
             }
         });
-        // TODO - 처리 후 toast, 모달 닫기
         resetState();
     }
 

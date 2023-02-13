@@ -11,10 +11,19 @@ function ChatCardButton (props: {roomName: string, current: string}) {
     const socket = useContext(SocketContext);
     const setSecretChatModalState = useSetRecoilState(secretChatModalState);
 
+    useEffect(() => {
+        return (() => {
+            socket.off('/api/check/secret');
+            socket.off('youBan');
+            socket.off('youPass');
+        })
+    }, [socket]);
+
     function clickHandler(e: React.MouseEvent<HTMLElement>) {
         /* 비밀방 여부 확인 */
         socket.emit('/api/check/secret', props.roomName);
         socket.on('/api/check/secret', (data) => {
+            socket.off('/api/check/secret');
             if (data) {
                 socket.emit('getUser', {roomName: props.roomName})
                 /* ban 여부 확인 */
@@ -32,14 +41,6 @@ function ChatCardButton (props: {roomName: string, current: string}) {
                 setSecretChatModalState({roomName: props.roomName, show: true});
         })
     };
-
-    useEffect(() => {
-        return (() => {
-            socket.off('/api/check/secret');
-            socket.off('youBan');
-            socket.off('youPass');
-        })
-    })
 
     return (
         <CardButton onClick={clickHandler}>

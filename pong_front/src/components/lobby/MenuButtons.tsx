@@ -11,7 +11,6 @@ import axios from "axios";
 
 export default function MenuButtons() {
     const socket = useContext(SocketContext);
-    // TODO - 전역 상태로 관리할 필요가 있을지 생각해보기
     const dmState = useSetRecoilState(states.dmModalState);
     const profileState = useSetRecoilState(states.profileModalState);
     const friendState = useSetRecoilState(states.friendModalState);
@@ -23,7 +22,7 @@ export default function MenuButtons() {
     }
 
     const showProfileModal = () => {
-        profileState({userId: 0, show: true}); // TODO - 친구 모달과 내 모달 분리할 것
+        profileState({userId: 0, show: true});
     }
 
     const showFriendModal = () => {
@@ -43,7 +42,7 @@ export default function MenuButtons() {
             }
         })
         .catch(err => {
-            // TODO - Error?
+
         })
         .finally( () => {
           socket.disconnect();

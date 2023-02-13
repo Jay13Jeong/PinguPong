@@ -36,7 +36,6 @@ function ProfileModal() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // TODO: 유저 정보를 받아온다.
         const initProfileData = async () => {
             try{
                 const res = await axios.get('http://' + REACT_APP_HOST + ':3000/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
@@ -77,7 +76,6 @@ function ProfileModal() {
     }, [showModal, showEditModal]);
 
     useEffect(() => {
-        // TODO: 유저 랭크를 받아온다.
         const getRank = async () =>{
             try{
                 const res = await axios.get('http://' + REACT_APP_HOST + ':3000/api/user/rank/' + (showModal.userId !== 0 ? showModal.userId : userInfo.id) , {withCredentials: true}) //쿠키와 함께 보내기 true.
@@ -232,9 +230,7 @@ function ProfileModal() {
             }
             socket.off('api/get/roomlist');
             resetState();
-            // TODO - 만약에 목록에 동일한 이름의 유저가 없는 경우 (그 찰나에 게임이 종료됨) 어떻게 처리할지 확인해보기
         })
-        // TODO - 이미 종료된 게임의 경우 어떻게 되는지 확인해보기
     }
 
     function sendDm(event: React.MouseEvent<HTMLElement>) {
@@ -294,7 +290,6 @@ function ProfileModal() {
         return (
             <ModalBase reset={resetState}>
                 <ProfileEditModal name={userInfo.userName}/>
-                {/* TODO - 프로필 이미지? */}
                 <ProfileModalWrapper>
                     <div className="profile-box">
                         {avatarFile !== '' ?

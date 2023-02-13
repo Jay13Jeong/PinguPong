@@ -19,7 +19,6 @@ function ProfileEditModal(props: {name: string}) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // TODO: 유저 정보를 받아온다.
         // setUserInfo();
         axios.get('http://' + REACT_APP_HOST + ':3000/api/fa2/status', {withCredentials: true}) //쿠키와 함께 보내기 true.
         .then(res => {

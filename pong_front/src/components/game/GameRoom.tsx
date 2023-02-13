@@ -7,7 +7,6 @@ import * as types from "../../common/types/Game";
 import GameRoomGrid from "./GameRoom.style";
 
 const GameRoom = (props: {p1: string, p2: string}) => {
-    // TODO - 연결 전 로딩 state, endGame state도 설정해야 함.
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     /* state */
