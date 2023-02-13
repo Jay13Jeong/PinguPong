@@ -18,7 +18,6 @@ function FriendModal() {
 
     useEffect(() => {
         // TODO: 친구 정보를 받아온다.
-
         const calOdds = (win: number, lose: number): number => {
             if (win === 0)
                 return 0;
@@ -36,9 +35,6 @@ function FriendModal() {
                 let myFriends : types.Friend[] = res.data.map((friend: any) => {
                     const myUserInfo = ((friend.sender.id !== data.id) ? friend.reciever : friend.sender);
                     const otherUserInfo = ((friend.sender.id == data.id) ? friend.reciever : friend.sender);
-                    // console.log("%%%%%%", otherUserInfo.username, otherUserInfo.wins, otherUserInfo.loses);
-                    // console.log("&&&", ((otherUserInfo.wins + otherUserInfo.loses) / (otherUserInfo.wins ? otherUserInfo.wins : 1)));
-                    // console.log("$$", ((otherUserInfo.wins + otherUserInfo.loses)));
                     return {
                         userId: otherUserInfo.id,
                         userName: otherUserInfo.username,

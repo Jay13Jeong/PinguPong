@@ -7,7 +7,7 @@ export default function LobbyModal() {
             <BlockModal />
             <DMModal />
             <FriendModal />
-            <ProfileModal />
+            {/* <ProfileModal /> */}
             {/* <MyProfileModal /> */}
         </>
     );
