@@ -93,7 +93,7 @@ export class UsersController {
     @Patch()
     @UseGuards(JwtAuthGuard)
     async create(@Req() req : Request, @Body() body){
-        const newName = body.username;
+        const newName = body.username.toLowerCase();
         if (newName.length > 10)
             throw new BadRequestException('최대 길이 10자 초과');
         //문자열에 공백이 있는 경우
@@ -115,6 +115,9 @@ export class UsersController {
             throw new BadRequestException('잘못된 유저 요청');
         // user.avatar = body.avatar;
         user.username = newName;
+        if (await this.usersService.findUserByUsername(newName)){
+            throw new BadRequestException('사용 중인 이름');
+        }
         return await this.usersService.updateUser(user);
     }
 
