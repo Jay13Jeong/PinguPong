@@ -195,7 +195,8 @@ import { statSync } from 'fs';
     let userId = this.socketUserid.get(client.id);
     console.log('/api/post/newRoom', client.id, data, room, (await userId), secretpw);
     //let reg2 = /[^\w\sㄱ-힣()0-9 ]/g;
-    if (!this.rooms.roomCheck(room)){
+
+    if (!this.rooms.roomCheck(room) && (room.length <= 10)){
       this.rooms.newRoom(room, client.id, userId, secretpw);
       this.server.to(client.id).emit('/api/post/newRoom', true);
     }
