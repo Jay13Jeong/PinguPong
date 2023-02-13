@@ -238,15 +238,16 @@ class BattleClass{
         this.game.ball.x += this.game.ball.dx * this.speed;
         // 4. 게임 종료 여부도 확인해서 보내주기
         if (this.goal === this.game.score.player1 || this.goal === this.game.score.player2) {
+            clearInterval(this.counter); // 반복 종료
             // 이긴 사람만 winner에 넣어서 보내줍니다.
             this.myserver.to(this.roomName).emit("endGame", {winner: this.goal === this.game.score.player1 ? this.player1Name : this.player2Name});
             //this.player2socket.to(this.player2Id).emit("endGame", {winner: this.goal === this.game.score.player1 ? this.game.score.player1 : this.game.score.player2});
             // TODO - 🌟 전적 정보를 저장해야 한다면 여기서 저장하기 🌟
+            //console.log('endGame');
             this.player1socket.leave(this.roomName);
             this.player2socket.leave(this.roomName);
             for (let socket of this.watchUser.keys())
                 socket.leave(this.roomName);
-            clearInterval(this.counter); // 반복 종료
             const winner : User = await this.usersService.findUserByUsername(this.goal === this.game.score.player1 ? this.player1Name : this.player2Name);
             const loser : User = await this.usersService.findUserByUsername(this.goal !== this.game.score.player1 ? this.player1Name : this.player2Name);
             // console.log("444", winner);
@@ -256,6 +257,8 @@ class BattleClass{
                 winnerScore : this.goal === this.game.score.player1 ? this.game.score.player1 : this.game.score.player2,
                 loserScore : this.goal !== this.game.score.player1 ? this.game.score.player1 : this.game.score.player2
             };
+            this.game.score.player1 = 0;//이긴 사람도 이 부분이 호출 되기 초기화 해주기
+            this.game.score.player2 = 0;
             await this.create(history);// 디비에 전적 저장.
         }
     }
@@ -265,7 +268,7 @@ class BattleClass{
         //this.myserver.to(this.player1Id !== loserid ? this.player1Id : this.player2Id).emit("endGame", {winner: this.player1Id !== loserid ? this.player1Name : this.player2Name});
         this.myserver.to(this.player1Id).emit("endGame", {winner: this.player1Name !== loserName ? this.player1Name : this.player2Name});
         this.myserver.to(this.player2Id).emit("endGame", {winner: this.player1Name !== loserName ? this.player1Name : this.player2Name});
-        console.log("endGame", this.player1Name === loserName ? this.player1Name : this.player2Name);
+        //console.log("endGame", this.player1Name === loserName ? this.player1Name : this.player2Name);
         if ((this.game.score.player1 !== 0) && (this.game.score.player2 !== 0)) {
             const winner : User = await this.usersService.findUserByUsername(this.goal === this.game.score.player1 ? this.player1Name : this.player2Name);
             const loser : User = await this.usersService.findUserByUsername(this.goal !== this.game.score.player1 ? this.player1Name : this.player2Name);
@@ -409,6 +412,7 @@ export class GameService {
             this.hardLvUserList.delete(userId);
             return ;
         }
+
         //대결 중에 한명이 새로고침을 할경우 , but BattleClass이 이미 지웠지만, 다른 사용자가 새로고침할 경우 문제가 생길 수 있다
         const roomName:string = this.userIdRoomname.get(userId);
         const vs:BattleClass = this.vs.get(roomName);

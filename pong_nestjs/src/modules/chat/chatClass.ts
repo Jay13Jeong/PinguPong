@@ -220,7 +220,6 @@ export class chatClass {
             // console.log("id.sender.username: ", id.sender.username);
         }
 
-
         let sendId:number[] = [];//날 차단하지 않은 사람들의 id
         for (let id of userIds){
             if (!block.includes(id)) //id 값이 포함되어 있으면.
@@ -372,7 +371,7 @@ export class chatClass {
             let targetSocketIds:Set<string> = this.userIdsocketId.get(targetId);
             for (let id of targetSocketIds)
                 server.to(id).emit('youKick');
-            this.userIdRooms.get(userId).delete(roomName);
+            this.userIdRooms.get(targetId).delete(roomName);
         }
     }
 

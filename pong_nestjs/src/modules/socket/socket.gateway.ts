@@ -148,7 +148,7 @@ import { statSync } from 'fs';
     let userId = this.socketUserid.get(client.id);
     let user = this.userService.findUserById(userId);
     console.log('chat', client.rooms);  //현재 클라이언트의 방
-   // console.log(room, user.id, msg);//메시지
+    console.log(room, userId, (await user).username, msg);//메시지
 
     if (this.rooms.checkRoomInUser(userId, room) == false)//유저가 방에 있는 인원인지 확인하기
       return ;
@@ -160,9 +160,10 @@ import { statSync } from 'fs';
     //메세지를 보내야할 소켓id
     const sockets = this.rooms.getSocketList(room, blockedMe);
 
-    for (let id of sockets)
+    for (let id of sockets){
       this.server.to(id).emit('chat', (await user).username, msg);
-
+      console.log('chat', id);
+    }
   }
 
   //방이름 :보내면, 공개방이면 true, 비밀방이면 false 반환
@@ -195,7 +196,8 @@ import { statSync } from 'fs';
     let userId = this.socketUserid.get(client.id);
     console.log('/api/post/newRoom', client.id, data, room, (await userId), secretpw);
     //let reg2 = /[^\w\sㄱ-힣()0-9 ]/g;
-    if (!this.rooms.roomCheck(room)){
+
+    if (!this.rooms.roomCheck(room) && (room.length <= 10)){
       this.rooms.newRoom(room, client.id, userId, secretpw);
       this.server.to(client.id).emit('/api/post/newRoom', true);
     }
@@ -301,7 +303,13 @@ import { statSync } from 'fs';
     let targetId:number = data.targetId;
     let msg:string = data.msg;
     let user = await this.findUserBySocket(client);
-    this.dmRooms.sendDm(this.server, user.id, user.username, targetId, msg);
+
+    let blockedMe:Friend[] = await this.friendService.getReversBlocks(user.id);
+    let block:number[] = [];//날 차단한 사람들 id 만 추출
+    for (let id of blockedMe)
+        block.push(id.sender.id);
+    if (!block.includes(targetId))
+      this.dmRooms.sendDm(this.server, user.id, user.username, targetId, msg);
   }
 
   //1대1 대화방 입장시 여태까지 받은 Dm 보내주기
@@ -478,8 +486,8 @@ import { statSync } from 'fs';
         if ((this.useridStatus.get(targetId).status != 'online') && (this.gameService.checkGaming(targetId)))//나중에 채팅방에 있는 지 여부를 확인하도록 하기,이미 상대가 도전신청 받았는지 확인하기
           return this.server.to(client.id).emit('duelRequest', false);
 
-          let targetSocketIds:Set<string> = this.rooms.getsocketIdByuserId(targetId);
-          let targetSocketId:string = Array.from(targetSocketIds)[targetSocketIds.size - 1];//가장 마지막 소켓을 넣어주기
+        let targetSocketIds:Set<string> = this.rooms.getsocketIdByuserId(targetId);
+        let targetSocketId:string = Array.from(targetSocketIds)[targetSocketIds.size - 1];//가장 마지막 소켓을 넣어주기
         this.gameService.duelRequest(client.id, user, targetSocketId, target);//방만들기
 
         this.server.to(client.id).emit('duelRequest', true);
