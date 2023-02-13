@@ -1,13 +1,16 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useResetRecoilState, useSetRecoilState } from "recoil";
 import { SocketContext } from "../../../common/states/contextSocket";
 import { profileModalState } from "../../../common/states/recoilModalState";
 import { Friend, User } from "../../../common/types/User";
 import {CardButton} from "../Card.style";
+import * as states from "../../../common/states/recoilModalState";
 
 function UserCardButton(props: {friend: Friend, userID: number, userName: string, userStatus: string, relate?: string}) {
     const profileState = useSetRecoilState(profileModalState);
     const [onlineStatus, setOnlineStatus] = useState<string>('offline');
+    const resetFriendState =  useResetRecoilState(states.friendModalState);
+    const resetBlockState =  useResetRecoilState(states.blockModalState);
     const socket = useContext(SocketContext);
 
     useEffect(() => {
@@ -23,6 +26,8 @@ function UserCardButton(props: {friend: Friend, userID: number, userName: string
 
     function clickHandler(user?: User, value?: number, e?: any) {
         profileState({user: user, userId: (value? value : 0), show: true});
+        resetFriendState();
+        resetBlockState();
     }
 
     function showStatus(status: string) {
