@@ -1,9 +1,9 @@
 import React, {useState} from "react";
-import {Button} from "../../styles/Inputs";
 import styled from "styled-components";
 
-const SelectedDifficultyButton = styled(Button)`
-        background: teal
+const SelectedDifficultyButton = styled.button`
+        font-weight: bold;
+        color: blue;
     `;
 
 function DifficultyButtons (props: {difficulty: number, setDifficulty: Function}) {
@@ -16,9 +16,9 @@ function DifficultyButtons (props: {difficulty: number, setDifficulty: Function}
 
     return (
         <div>
-            {current_difficulty === 0 ? <SelectedDifficultyButton>"EASY"</SelectedDifficultyButton> : <Button onClick={(e) => handleDifficultyChange(0, e)}>"EASY"</Button>}
-            {current_difficulty === 1 ? <SelectedDifficultyButton>"NORMAL"</SelectedDifficultyButton> : <Button onClick={(e) => handleDifficultyChange(1, e)}>"NORMAL"</Button>}
-            {current_difficulty === 2 ? <SelectedDifficultyButton>"HARD"</SelectedDifficultyButton> : <Button onClick={(e) => handleDifficultyChange(2, e)}>"HARD"</Button>}
+            {current_difficulty === 0 ? <SelectedDifficultyButton>✨EASY✨</SelectedDifficultyButton> : <button onClick={(e: React.MouseEvent<HTMLElement>) => handleDifficultyChange(0, e)}>✨EASY✨</button>}
+            {current_difficulty === 1 ? <SelectedDifficultyButton>✨NORMAL✨</SelectedDifficultyButton> : <button onClick={(e: React.MouseEvent<HTMLElement>) => handleDifficultyChange(1, e)}>✨NORMAL✨</button>}
+            {current_difficulty === 2 ? <SelectedDifficultyButton>✨HARD✨</SelectedDifficultyButton> : <button onClick={(e: React.MouseEvent<HTMLElement>) => handleDifficultyChange(2, e)}>✨HARD✨</button>}
         </div>
     );
 }

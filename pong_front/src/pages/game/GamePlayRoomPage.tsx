@@ -1,12 +1,15 @@
 import { useEffect, useState, useContext } from "react";
-import { SocketContext } from "../../states/contextSocket";
+import { SocketContext } from "../../common/states/contextSocket";
 import { useNavigate, useLocation } from "react-router-dom";
 import GamePlayRoom from "../../components/game/GamePlayRoom";
 import Loader from "../../components/util/Loader";
-import { Button } from "../../styles/Inputs";
 import { toast } from "react-toastify";
+import { ContentBox } from "../../common/styles/ContentBox.style";
+import useCheckLogin from "../../util/useCheckLogin";
+import { RoutePath } from "../../common/configData";
 
 function GamePlayRoomPage() {
+    useCheckLogin();
     const [loading, setLoading] = useState<boolean>(true);
     const navigate = useNavigate();
     const location = useLocation();
@@ -21,7 +24,7 @@ function GamePlayRoomPage() {
             socket.on('duelTargetRun', (username: string) => {
                 socket.off('duelTargetRun');
                 toast.error("🔥 결투 신청이 거절당했습니다!");
-                navigate('/lobby');
+                navigate(RoutePath.lobby);
             })
         }
         else {
@@ -37,16 +40,18 @@ function GamePlayRoomPage() {
         // let targetId:number = data.targetId;
         socket.emit('duelRequestRun', {targetId: location.state.targetId});
         socket.off('matchMakeSuccess');
-        navigate('/lobby');
+        navigate(RoutePath.lobby);
     }
 
     return (
-        loading ? 
-        <>
-        <Loader/>
-        <Button onClick={duelRunHander}>초대 취소</Button>
-        </> : 
-        <GamePlayRoom/>
+        <ContentBox>
+            {loading ? 
+            <>
+            <Loader/>
+            <button onClick={duelRunHander}>초대 취소</button>
+            </> : 
+            <GamePlayRoom/>}
+        </ContentBox>
     );
 }
 

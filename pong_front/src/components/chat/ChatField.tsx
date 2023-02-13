@@ -1,8 +1,8 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import * as Chat from './ChatField.styles';
-import { SocketContext } from "../../states/contextSocket"
+import { SocketContext } from "../../common/states/contextSocket"
 import {useSetRecoilState } from 'recoil';
-import { chatMenuModalState } from '../../states/recoilModalState';
+import { chatMenuModalState } from '../../common/states/recoilModalState';
 
 
 function ChatField (props: {roomName: string, current: string}) {

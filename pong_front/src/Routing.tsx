@@ -1,41 +1,33 @@
-import { Route, Routes } from 'react-router';
-import LoginPage from './pages/auth/LoginPage';
-import FA2Page from './pages/auth/FA2Page';
-import Lobby from './pages/LobbyPage';
-import ProfileInitPage from './pages/profile/ProfileInitPage';
-import GameLobbyPage from './pages/game/GameLobbyPage';
-import GameMatchPage from './pages/game/GameMatchPage';
-import GamePlayRoomPage from './pages/game/GamePlayRoomPage';
-import ChatRoom from './pages/chat/ChatRoom';
-import EditChatRoomModal from './pages/chat/EditChatRoomModal';
-import ChatManageModal from './pages/chat/ChatManageModal';
-import GameWatchPage from './pages/game/GameWatchPage';
-import GameWatchRoomPage from './pages/game/GameWatchRoomPage'
-import ChatLobby from './pages/chat/ChatLobby';
+import {Routes, Route} from 'react-router-dom'
+import useCheckLogin from "./util/useCheckLogin";
+import {MainLayout, LoginLayout} from "./components/layout";
+import { LobbyPage } from "./pages"
+import {LoginPage, FA2Page} from './pages/auth';
+import { ChatLobbyPage, ChatRoomPage } from './pages/chat';
+import { GameLobbyPage, GameMatchPage, GameWatchPage, GamePlayRoomPage, GameWatchRoomPage } from './pages/game';
 import DmPage from './pages/dm/DmPage';
-import NotFound from './pages/NotFound';
-import { SetterOrUpdater } from 'recoil';
-import useCheckLogin from './util/useCheckLogin';
+import ProfileInitPage from './pages/profile/ProfileInitPage';
+import {RoutePath} from "./common/configData";
 
-export default function Routing(props: {setter: SetterOrUpdater<any>}) {
-    useCheckLogin();
+export default function Routing() {
     return (
-      <Routes>
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/auth/fa2" element={<FA2Page />} />
-        <Route path="/profile/init" element={<ProfileInitPage setter={props.setter}/>} />
-        <Route path="/lobby" element={<Lobby setter={props.setter}/>} />
-        <Route path="/chat" element={<ChatLobby />} />
-        <Route path="/chat/room/:id" element={<ChatRoom />} />
-        <Route path="/chat/room/change" element={<EditChatRoomModal />} />
-        <Route path="/chat/manage/:id" element={<ChatManageModal />} />
-        <Route path="/game/" element={<GameLobbyPage/>}></Route>
-        <Route path="/game/match" element={<GameMatchPage/>}></Route>
-        <Route path="/game/match/:id" element={<GamePlayRoomPage/>}></Route>
-        <Route path="/game/watch" element={<GameWatchPage/>}></Route>
-        <Route path="/game/watch/:id" element={<GameWatchRoomPage/>}></Route>
-        <Route path='/dm/:id' element={<DmPage/>}></Route>
-        <Route path='*' element={<NotFound/>}></Route>
-      </Routes>
-    );
-  }
+        <Routes>
+            <Route path={RoutePath.root} element={<LoginLayout/>}>
+                <Route path="" element={<LoginPage/>}/>
+                <Route path={RoutePath.fa2} element={<FA2Page/>}/>
+                <Route path={RoutePath.profile} element={<ProfileInitPage/>}/>
+            </Route>
+            <Route path={RoutePath.root} element={<MainLayout/>}>
+                <Route path={RoutePath.lobby} element={<LobbyPage/>}/>
+                <Route path={RoutePath.chat} element={<ChatLobbyPage/>}/>
+                <Route path={`${RoutePath.chat}/room/:id`} element={<ChatRoomPage/>}/>
+                <Route path={RoutePath.game} element={<GameLobbyPage/>}/>
+                <Route path={RoutePath.gameMatch} element={<GameMatchPage/>}/>
+                <Route path={`${RoutePath.gameMatch}/:id`} element={<GamePlayRoomPage/>}/>
+                <Route path={RoutePath.gameWatch} element={<GameWatchPage/>}/>
+                <Route path={`${RoutePath.gameWatch}/:id`} element={<GameWatchRoomPage/>}/>
+                <Route path={`${RoutePath.dm}/:id`} element={<DmPage/>}/>
+            </Route>
+        </Routes>
+    )
+}

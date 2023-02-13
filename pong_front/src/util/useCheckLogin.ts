@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { useRecoilState } from "recoil";
-import { userState } from "../states/recoilUserState";
+import { userState } from "../common/states/recoilUserState";
 import { useNavigate } from "react-router-dom";
-import { REACT_APP_HOST } from "./configData";
+import { REACT_APP_HOST } from "../common/configData";
 import useGetData from "./useGetData";
 
 function useCheckLogin() {
@@ -11,6 +11,8 @@ function useCheckLogin() {
     const navigate = useNavigate();
 
     useEffect(() => {
+        if (!data && !error)
+            return ;
         if (!error && data) {
             setUser(data);
         }
@@ -18,11 +20,6 @@ function useCheckLogin() {
             navigate('/');
         }
     }, [error, data]);
-
-    useEffect(() => {
-        if (user.id === -1 || user.userName === '')
-            navigate('/');
-    }, [user]);
 }
 
 export default useCheckLogin;

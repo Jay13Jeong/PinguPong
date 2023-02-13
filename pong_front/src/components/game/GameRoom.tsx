@@ -1,10 +1,10 @@
 import { useEffect, useRef} from "react";
-import {colors, sizes} from "../game/GameEngine/variables";
-import {drawNet,drawPaddle, drawBall} from "../game/GameEngine/draw";
+import {colors, sizes} from "../../common/configData";
+import {drawNet,drawPaddle, drawBall} from "./draw";
 import {useRecoilValue} from "recoil";
-import {gameState} from "../../states/recoilGameState"
-import * as types from "./Game";
-import "./GameCanvas.scss";
+import {gameState} from "../../common/states/recoilGameState"
+import * as types from "../../common/types/Game";
+import GameRoomGrid from "./GameRoom.style";
 
 const GameRoom = (props: {p1: string, p2: string}) => {
     // TODO - 연결 전 로딩 state, endGame state도 설정해야 함.
@@ -33,7 +33,7 @@ const GameRoom = (props: {p1: string, p2: string}) => {
     }
 
     return (
-        <div className="game-grid">
+        <GameRoomGrid>
                 <div className="player-name">{props.p1}</div>
                 <div className="player-name">{props.p2}</div>
                 <div className="score">{game.score.player1}</div>
@@ -43,7 +43,7 @@ const GameRoom = (props: {p1: string, p2: string}) => {
                 width={sizes.canvasWidth} 
                 height={sizes.canvasHeight} 
                 style={{background: colors.backgroudColor}}></canvas>
-        </div>
+        </GameRoomGrid>
     );
 }
 export default GameRoom;

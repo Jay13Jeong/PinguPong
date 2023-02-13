@@ -133,6 +133,7 @@ export class UsersService {
 			order: {
 				wins: "DESC",
 				loses: "ASC",
+				createdAt: "ASC",
 			}
 		});
 	}
