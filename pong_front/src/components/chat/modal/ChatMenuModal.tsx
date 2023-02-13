@@ -58,6 +58,24 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
         })
     }, [socket]);
 
+    useEffect(() => {
+        if (info === null)
+            return ;
+        let userData: any = info;
+        let totalGame = userData.wins + userData.loses;
+        let targetUserInfo : User = {
+            id : userData.id,
+            avatar: userData.avatar,
+            userName : userData.username as string,
+            myProfile : false,
+            userStatus : 'off',
+            rank : 0,
+            odds : !userData.wins ? 0 : Math.floor(100 / (totalGame / (userData.wins ? userData.wins : 1))),
+            record : [],
+        };
+        setTargetUser(targetUserInfo);
+    }, [info]);
+
     /* 추방 (현재 채팅방을 강제로 나가게 함) */
     function kickHandler(e: React.MouseEvent<HTMLElement>) {
         // 추방 기능
@@ -134,33 +152,6 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
         resetState();
     }
 
-    function getUserInfo(targetId: number): User{
-        const initTargetData = async () => {
-            let info: any = myInfo;
-            try{
-                const res = await axios.get('http://' + REACT_APP_HOST + ':3000/api/user/' + targetId, {withCredentials: true}) //쿠키와 함께 보내기 true.
-                if (res.data !== null && res.data !== undefined)
-                    info = res;    
-            }catch{ }
-            let totalGame = info.wins + info.loses;
-            let targetUserInfo : User = {
-                id : info.id,
-                avatar: info.avatar,
-                userName : info.username as string,
-                myProfile : false,
-                userStatus : 'off',
-                rank : 0,
-                odds : !info.wins ? 0 : Math.floor(100 / (totalGame / (info.wins ? info.wins : 1))),
-                record : [],
-            };
-            setTargetUser(targetUserInfo);
-        }
-        initTargetData();
-        while (targetUser === null)
-            ;
-        return targetUser;
-    }
-
     if (modalState.show) {
         return (
             <ModalBase reset={resetState} z_index={100}>
@@ -175,7 +166,9 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
                     </div> : null}
                     <div>
                         <button onClick={inviteHandler}>도전장 보내기</button>
-                        <button onClick={(e) => {targetID && profileState({user: getUserInfo(targetID), userId: targetID, show: true})}}>프로필 보기</button>
+                        {targetUser !== null ?
+                        <button onClick={(e) => {targetID && profileState({user: targetUser, userId: targetID, show: true})}}>프로필 보기</button>
+                        : null}
                     </div>
                     </>
                 }
