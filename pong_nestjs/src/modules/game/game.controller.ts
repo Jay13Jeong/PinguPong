@@ -11,12 +11,12 @@ export class GameController {
 	) {}
 
     //디비 조회용 테스트 api.
-	@Get('test')
-    @UseGuards(JwtAuthGuard)
-	async getTest(@Req() req : Request,) {
-        const user = req.user as User;
-		return await this.gameService.getAll();
-	}
+	// @Get('test')
+    // @UseGuards(JwtAuthGuard)
+	// async getTest(@Req() req : Request,) {
+    //     const user = req.user as User;
+	// 	return await this.gameService.getAll();
+	// }
 
     //선택한 유저의 전적을 가져오는 api.
 	@Get(':id')
