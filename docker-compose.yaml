@@ -50,6 +50,7 @@ services:
       - pong
     volumes:
       - ./pong_nestjs/src:/pong_nestjs/src
+      - ./pong_nestjs/avatars:/pong_nestjs/avatars
     ports:
       - '3000:3000'
 

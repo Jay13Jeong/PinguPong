@@ -43,7 +43,7 @@ function ProfileEditModal(props: {name: string}) {
             resetState();
         })
         .catch(err => {
-            alert("Name in use");
+            alert(err.response.data.message);
         })
     };
     //2단계 켜기.

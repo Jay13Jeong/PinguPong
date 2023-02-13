@@ -11,8 +11,8 @@ function MainLayout() {
         <Header/>
         <CustomToastContainer/>
         <MainLayoutWrapper>
-            <ProfileModal/>
             <Outlet/>
+            <ProfileModal/>
         </MainLayoutWrapper>
         <footer></footer>
         </>
