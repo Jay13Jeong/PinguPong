@@ -92,10 +92,15 @@ function ProfileModal() {
 
     useEffect(() => {
         if (showModal.userId !== 0){
-            socket.emit('api/get/user/status', showModal.userId);        
+            checkOnline(showModal.userId);
         } else {
-            socket.emit('api/get/user/status', userInfo.id);    
+            checkOnline(userInfo.id);
         }
+    }, [showModal]);
+
+    //온오프라인 게임중 검사하는 메소드.
+    function checkOnline(userId: number){
+        socket.emit('api/get/user/status', userId); 
         socket.on('api/get/user/status', (status, targetId) => {
             if (targetId !== 0)
                 setOnlineStatus(status);
@@ -104,7 +109,7 @@ function ProfileModal() {
         return (() => {
             socket.off('api/get/user/status');
         })
-    }, [showModal]);
+    }
 
     function showStatus(status: string){
         switch(status) {
@@ -193,6 +198,15 @@ function ProfileModal() {
          * - 모달 클리어
          * - 그 게임으로 이동
          */
+        if (showModal.userId !== 0){
+            checkOnline(showModal.userId);
+        } else {
+            checkOnline(userInfo.id);
+        }
+        if (onlineStatus !== 'ingame'){
+            alert('게임 중이 아님');
+            return ;
+        }
         /* 게임 목록 받아오기 */
         socket.emit('api/get/roomlist');
         socket.on('api/get/roomlist', (data: {p1: string, p2: string}[]) => {
@@ -259,6 +273,12 @@ function ProfileModal() {
                 <button className="profile-button" onClick={sendDm}>
                     <FontAwesomeIcon icon={faPaperPlane}/> DM
                 </button>
+                {/* {onlineStatus === 'ingame' ?
+                <button className="profile-button" onClick={watchHandler}>
+                <FontAwesomeIcon icon={faPaperPlane}/> 게임관전
+                </button> :
+                null
+                } */}
             </div>
         )
     }
