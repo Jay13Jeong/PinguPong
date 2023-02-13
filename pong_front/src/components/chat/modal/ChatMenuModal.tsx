@@ -152,6 +152,13 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
         resetState();
     }
 
+    function showProfileHander(e: React.MouseEvent<HTMLElement>) {
+        if (targetID && targetUser) {
+            profileState({user: targetUser, userId: targetID, show: true})
+        }
+        resetState();
+    }
+
     if (modalState.show) {
         return (
             <ModalBase reset={resetState} z_index={100}>
@@ -167,7 +174,7 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
                     <div>
                         <button onClick={inviteHandler}>도전장 보내기</button>
                         {targetUser !== null ?
-                        <button onClick={(e) => {targetID && profileState({user: targetUser, userId: targetID, show: true})}}>프로필 보기</button>
+                        <button onClick={showProfileHander}>프로필 보기</button>
                         : null}
                     </div>
                     </>
