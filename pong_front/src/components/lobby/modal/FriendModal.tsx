@@ -18,7 +18,6 @@ function FriendModal() {
     const [data] = useGetData('http://' + REACT_APP_HOST + ':3000/api/user');
 
     useEffect(() => {
-        // TODO: 친구 정보를 받아온다.
         const calOdds = (win: number, lose: number): number => {
             if (win === 0)
                 return 0;
