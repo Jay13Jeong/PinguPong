@@ -36,6 +36,7 @@ function GamePlayRoom() {
         socket.on("endGame", (data: {winner: string}) => {
             window.removeEventListener("keydown", keyDownHandler);
             window.removeEventListener('beforeunload', beforeUnloadHandler);
+            window.removeEventListener('popstate', preventGoBack);
             socket.off("ballPos");
             socket.off("endGame");
             setWinner(data.winner);
@@ -43,6 +44,7 @@ function GamePlayRoom() {
         return () => {
             window.removeEventListener("keydown", keyDownHandler);
             window.removeEventListener('beforeunload', beforeUnloadHandler);
+            window.removeEventListener('popstate', preventGoBack);
             socket.off("ballPos");
             socket.off("endGame");
             resetGame();
