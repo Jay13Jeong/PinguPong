@@ -47,7 +47,7 @@ import { statSync } from 'fs';
         else{
           this.useridStatus.set(user.id, {status:'online', count:1});
         }
-        //console.log('userStatusADD', this.useridStatus);
+        console.log('소켓 연결', user.username, client.id);
       }
     }
 

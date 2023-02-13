@@ -264,6 +264,8 @@ class BattleClass{
         clearInterval(this.counter);
         //this.myserver.to(this.player1Id !== loserid ? this.player1Id : this.player2Id).emit("endGame", {winner: this.player1Id !== loserid ? this.player1Name : this.player2Name});
         this.myserver.to(this.roomName).emit("endGame", {winner: this.player1Name !== loserName ? this.player1Name : this.player2Name});
+        console.log('player1', this.player1Name, this.player1Id);
+        console.log('player2', this.player2Name, this.player2Id);
         console.log("endGame", this.player1Name === loserName ? this.player1Name : this.player2Name);
         if ((this.game.score.player1 !== 0) && (this.game.score.player2 !== 0)) {
             const winner : User = await this.usersService.findUserByUsername(this.goal === this.game.score.player1 ? this.player1Name : this.player2Name);

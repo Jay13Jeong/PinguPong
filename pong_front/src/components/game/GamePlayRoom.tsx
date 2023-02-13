@@ -27,6 +27,7 @@ function GamePlayRoom() {
             })
         })
         socket.on("endGame", (data: {winner: string}) => {
+            console.log('endGame', data.winner);
             window.removeEventListener("keydown", keyDownHandler);
             window.removeEventListener('beforeunload', beforeUnloadHandler);
             socket.off("ballPos");
