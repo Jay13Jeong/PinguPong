@@ -267,8 +267,20 @@ export class chatClass {
         return this.rooms.keys();
     }
 
-    // 기존의 방이 있는지 확인, 브라우저에서 방이 있는지 보내주기
+    // 방이름 체크 및 기존의 방이 있는지 확인, 브라우저에서 방이 있는지 보내주기
     public roomCheck(roomName: string):boolean {
+        //문자열에 공백이 있는 경우
+        let blank_pattern = /[\s]/g;
+        if( blank_pattern.test(roomName) == true)
+            return true;
+        //특수문자가 있는 경우
+        let special_pattern = /[`~!@#$%^&*|\\\'\";:\/?]/gi;
+        if(special_pattern.test(roomName) == true)
+            return true;
+        //공백 혹은 특수문자가 있는 경우
+        if(roomName.search(/\W|\s/g) > -1)
+            return true;
+
         return this.rooms.has(roomName);
     }
 
