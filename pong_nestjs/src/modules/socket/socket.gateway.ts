@@ -482,8 +482,8 @@ import { statSync } from 'fs';
 
         let target = await this.userService.findUserById(targetId);
         let user = await this.findUserBySocket(client);
-
-        if ((this.useridStatus.get(targetId).status != 'online') && (this.gameService.checkGaming(targetId)))//나중에 채팅방에 있는 지 여부를 확인하도록 하기,이미 상대가 도전신청 받았는지 확인하기
+        
+        if (!(this.useridStatus.get(targetId).status === 'online') || (this.gameService.checkGaming(targetId)))//나중에 채팅방에 있는 지 여부를 확인하도록 하기,이미 상대가 도전신청 받았는지 확인하기
           return this.server.to(client.id).emit('duelRequest', false);
 
         let targetSocketIds:Set<string> = this.rooms.getsocketIdByuserId(targetId);
