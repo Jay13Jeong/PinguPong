@@ -12,7 +12,7 @@ import { User } from "../../../common/types/User";
 import axios from "axios";
 // import { userState } from "../../states/recoilUserState";
 
-function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?: Function}) {
+function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?: Function, isDmModal: boolean}) {
     const socket = useContext(SocketContext);
     const modalState = useRecoilValue(chatMenuModalState);
     const resetState = useResetRecoilState(chatMenuModalState);
@@ -40,15 +40,24 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
 
     useEffect(() => {
         // let [roomName, targetId] = data;//음소거 체크할 유저id
-        socket.emit('api/get/muteuser', props.roomName, targetID);
-        socket.on('api/get/muteuser', (data: boolean) => {
-            setIsMuted(data);
-        })
-    }, [socket, modalState.user]);
+        if (props.isDmModal !== true) {
+            socket.emit('api/get/muteuser', props.roomName, targetID);
+            socket.on('api/get/muteuser', (data: boolean) => {
+                setIsMuted(data);
+            })
+        }
+    }, [socket, modalState.user, props.isDmModal]);
 
     useEffect(() => {
-        if (targetID !== undefined && isMuted !== undefined && current !== "") {
-            isMenuLoading(false);
+        if (props.isDmModal !== true) {
+            if (targetID !== undefined && isMuted !== undefined && current !== "") {
+                isMenuLoading(false);
+            }
+        }
+        else {
+            if (targetID !== undefined && current !== "") {
+                isMenuLoading(false);
+            }
         }
     }, [targetID, isMuted]);
 
