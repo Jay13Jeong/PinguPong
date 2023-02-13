@@ -13,6 +13,7 @@ import ProfileEditModal from "./ProfileEditModal";
 import { REACT_APP_HOST } from "../../../common/configData";
 import useGetData from "../../../util/useGetData";
 import ProfileModalWrapper from "./ProfileModal.style";
+import { toast } from "react-toastify";
 
 function ProfileModal() {
     const showEditModal = useRecoilValue(profileEditModalState);
@@ -144,10 +145,10 @@ function ProfileModal() {
         axios.post('http://' + REACT_APP_HOST + ':3000/api/friend', {otherID : userInfo.id}, {withCredentials: true})
         .then(res => {
             if (res.status === 200)
-                alert('send follow');
+                toast.success('send follow');
         })
         .catch(err => {
-            alert('invalid');
+            toast.error('invalid');
         })
     };
 
@@ -157,10 +158,10 @@ function ProfileModal() {
         axios.patch('http://' + REACT_APP_HOST + ':3000/api/friend', {otherID : userInfo.id}, {withCredentials: true})
         .then(res => {
             if (res.status === 200)
-                alert('unfollow ok');
+                toast.success('unfollow ok');
         })
         .catch(err => {
-            alert('invalid');
+            toast.error('invalid');
         })
     };
 
@@ -169,10 +170,10 @@ function ProfileModal() {
         event.preventDefault();
         axios.post('http://' + REACT_APP_HOST + ':3000/api/friend/block', {otherID : userInfo.id}, {withCredentials: true})
         .then(res => {
-            alert('target block ok');
+            toast.success('target block ok');
         })
         .catch(err => {
-            alert('target block fail');
+            toast.error('target block fail');
         })
     };
 
@@ -182,10 +183,10 @@ function ProfileModal() {
         axios.patch('http://' + REACT_APP_HOST + ':3000/api/friend/block', {otherID : userInfo.id}, {withCredentials: true})
         .then(res => {
             if (res.status === 200)
-                alert('target unblock ok');
+                toast.success('target unblock ok');
         })
         .catch(err => {
-            alert('target unblock fail');
+            toast.error('target unblock fail');
         })
     };
 
@@ -204,7 +205,7 @@ function ProfileModal() {
             checkOnline(userInfo.id);
         }
         if (onlineStatus !== 'ingame'){
-            alert('게임 중이 아님');
+            toast.error('게임 중이 아님');
             return ;
         }
         /* 게임 목록 받아오기 */

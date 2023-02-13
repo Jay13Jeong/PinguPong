@@ -47,13 +47,12 @@ import { statSync } from 'fs';
         else{
           this.useridStatus.set(user.id, {status:'online', count:1});
         }
-        //console.log('userStatusADD', this.useridStatus);
+        console.log('소켓 연결', user.username, client.id);
       }
     }
 
     //OnGatewayDisconnect를 오버라이딩
     async handleDisconnect(client : Socket) {
-      console.log('ping 소켓 끊김 : ', client.id);
       //게임 중인지 파악하고 패배시키기
       this.gameService.iGamegetout(client, this.socketUserid);// 핑퐁
       //this.rooms.delUser(client.id);//채팅 소켓 자료 지우는 걸로 변경
@@ -67,6 +66,7 @@ import { statSync } from 'fs';
           this.useridStatus.delete(userId);
         this.gameService.delNoGamegetoutSocketList(client.id);
         //console.log('userStatusDel', this.useridStatus);
+        console.log('소켓 해제', client.id);
       }
     }
 
@@ -194,6 +194,7 @@ import { statSync } from 'fs';
     let [room, secretpw] = data;
     let userId = this.socketUserid.get(client.id);
     console.log('/api/post/newRoom', client.id, data, room, (await userId), secretpw);
+    //let reg2 = /[^\w\sㄱ-힣()0-9 ]/g;
     if (!this.rooms.roomCheck(room)){
       this.rooms.newRoom(room, client.id, userId, secretpw);
       this.server.to(client.id).emit('/api/post/newRoom', true);
@@ -367,7 +368,6 @@ import { statSync } from 'fs';
       // 2. 같은 난이도를 요청한 플레이어가 큐에 없을 경우 해당 플레이어를 큐에 넣는다.
       if (this.gameService.matchCheck(this.socketUserid.get(client.id)) === true){//유저가 이미 매칭중인지 확인
          this.server.to(client.id).emit('matchFail');//늦게 매칭한 소켓에게 이벤트 전송
-         this.gameService.addNoGamegetoutSocketList(client.id);//로비에서 게임에 영향가지 않도록 소켓 저장하기
          console.log('matchFail');
         return ;
       }

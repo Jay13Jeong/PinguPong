@@ -263,7 +263,8 @@ class BattleClass{
     public async iGameLoser(loserName:string):Promise<string>{
         clearInterval(this.counter);
         //this.myserver.to(this.player1Id !== loserid ? this.player1Id : this.player2Id).emit("endGame", {winner: this.player1Id !== loserid ? this.player1Name : this.player2Name});
-        this.myserver.to(this.roomName).emit("endGame", {winner: this.player1Name !== loserName ? this.player1Name : this.player2Name});
+        this.myserver.to(this.player1Id).emit("endGame", {winner: this.player1Name !== loserName ? this.player1Name : this.player2Name});
+        this.myserver.to(this.player2Id).emit("endGame", {winner: this.player1Name !== loserName ? this.player1Name : this.player2Name});
         console.log("endGame", this.player1Name === loserName ? this.player1Name : this.player2Name);
         if ((this.game.score.player1 !== 0) && (this.game.score.player2 !== 0)) {
             const winner : User = await this.usersService.findUserByUsername(this.goal === this.game.score.player1 ? this.player1Name : this.player2Name);
@@ -397,10 +398,9 @@ export class GameService {
     }
 
     public async iGamegetout(client:Socket, socketUserId:Map<string, number>) : Promise<void>{
-        if (this.NoGamegetoutSocketList.has(client.id) === true){//중복 매칭 된 유저의 소켓id 이면 취소 시킬것
-            this.delNoGamegetoutSocketList(client.id);
+        if (this.NoGamegetoutSocketList.has(client.id) === false)//중복 매칭 된 유저의 소켓id 이면 취소 시킬것
             return ;
-        }
+
         let userId:number = socketUserId.get(client.id);
         if (!this.userIdRoomname.has(userId)) {//대결중이 아니면 종료
             this.userIduserName.delete(userId);
@@ -423,6 +423,7 @@ export class GameService {
         this.userIduserName.delete(userId);
         this.vs.delete(roomName);//방 지우기
         client.leave(roomName);
+        this.delNoGamegetoutSocketList(client.id);
     }
 
     public matchCheck(userId:number):boolean {
@@ -443,14 +444,17 @@ export class GameService {
         this.userIduserName.set(userId, userName);
         if (difficulty == '0'){
             this.easyLvUserList.set(userId, socketid);
+            this.addNoGamegetoutSocketList(socketid);//로비에서 게임에 영향가지 않도록 소켓 저장하기
             return this.createCheck(this.easyLvUserList, socketid, userId, 1);
         }
         else if (difficulty == '1'){
             this.normalLvUserList.set(userId, socketid);
+            this.addNoGamegetoutSocketList(socketid);//로비에서 게임에 영향가지 않도록 소켓 저장하기
             return this.createCheck(this.normalLvUserList, socketid, userId, 1.5);
         }
         else if (difficulty == '2'){
             this.hardLvUserList.set(userId, socketid);
+            this.addNoGamegetoutSocketList(socketid);//로비에서 게임에 영향가지 않도록 소켓 저장하기
             return this.createCheck(this.hardLvUserList, socketid, userId, 2);
         }
         return false;
@@ -482,6 +486,8 @@ export class GameService {
         this.userIdRoomname.set(user.id, roomName);
         this.userIdRoomname.set(target.id, roomName);
         console.log('creatreDuelRoom', roomName);
+        this.addNoGamegetoutSocketList(userSocketId);
+        this.addNoGamegetoutSocketList(targetSocketId);
     }
 
     public duelDelete(userId:number, targetId:number){
@@ -515,8 +521,8 @@ export class GameService {
     //방이름 유저소켓id offset으로 값 넣어주기
     public playerMove(whoplayer:string, roomName:string, offset:string){
         const vs:BattleClass = this.vs.get(roomName);
-
-        vs.playerMove(whoplayer, offset);
+        if (vs != undefined)//비동기로 인해 게임이 종료되어도 브라우저에서 이벤트를 간혹 보내는 경우 대비
+            vs.playerMove(whoplayer, offset);
 
     }
 
