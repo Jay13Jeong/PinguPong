@@ -479,11 +479,13 @@ import { statSync } from 'fs';
      @SubscribeMessage('duelRequest')//결투 신청
      async duelRequest(client : Socket, data) {
         let targetId:number = data.targetId;
+        let roomName:string = data.roomName;
 
         let target = await this.userService.findUserById(targetId);
         let user = await this.findUserBySocket(client);
         
-        if (!(this.useridStatus.get(targetId).status === 'online') || (this.gameService.checkGaming(targetId)))//나중에 채팅방에 있는 지 여부를 확인하도록 하기,이미 상대가 도전신청 받았는지 확인하기
+        _dm으로 오면 룸네임을 찾아서 넣어 줄 것, 
+        if (!(this.useridStatus.get(targetId).status === roomName) || (this.gameService.checkGaming(targetId)))//나중에 채팅방에 있는 지 여부를 확인하도록 하기,이미 상대가 도전신청 받았는지 확인하기
           return this.server.to(client.id).emit('duelRequest', false);
 
         let targetSocketIds:Set<string> = this.rooms.getsocketIdByuserId(targetId);
