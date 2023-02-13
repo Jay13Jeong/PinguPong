@@ -47,13 +47,12 @@ import { statSync } from 'fs';
         else{
           this.useridStatus.set(user.id, {status:'online', count:1});
         }
-        //console.log('userStatusADD', this.useridStatus);
+        console.log('소켓 연결', user.username, client.id);
       }
     }
 
     //OnGatewayDisconnect를 오버라이딩
     async handleDisconnect(client : Socket) {
-      console.log('ping 소켓 끊김 : ', client.id);
       //게임 중인지 파악하고 패배시키기
       this.gameService.iGamegetout(client, this.socketUserid);// 핑퐁
       //this.rooms.delUser(client.id);//채팅 소켓 자료 지우는 걸로 변경
@@ -67,6 +66,7 @@ import { statSync } from 'fs';
           this.useridStatus.delete(userId);
         this.gameService.delNoGamegetoutSocketList(client.id);
         //console.log('userStatusDel', this.useridStatus);
+        console.log('소켓 해제', client.id);
       }
     }
 
@@ -194,6 +194,7 @@ import { statSync } from 'fs';
     let [room, secretpw] = data;
     let userId = this.socketUserid.get(client.id);
     console.log('/api/post/newRoom', client.id, data, room, (await userId), secretpw);
+    //let reg2 = /[^\w\sㄱ-힣()0-9 ]/g;
     if (!this.rooms.roomCheck(room)){
       this.rooms.newRoom(room, client.id, userId, secretpw);
       this.server.to(client.id).emit('/api/post/newRoom', true);
