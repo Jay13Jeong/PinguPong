@@ -115,6 +115,9 @@ export class UsersController {
             throw new BadRequestException('잘못된 유저 요청');
         // user.avatar = body.avatar;
         user.username = newName;
+        if (await this.usersService.findUserByUsername(newName)){
+            throw new BadRequestException('사용 중인 이름');
+        }
         return await this.usersService.updateUser(user);
     }
 
