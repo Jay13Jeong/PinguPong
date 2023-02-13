@@ -382,6 +382,7 @@ import { statSync } from 'fs';
     async requestStart(client : Socket, data) {
       let roomName = data;
 
+      console.log('requestStart', roomName);
       //플레이어가 준비완료인지 확인하기, 여기서 socket room에 등록을 하자
       if (this.gameService.requestStart(roomName, client, this.server))
         await this.gameService.startGame(roomName, this.server);
