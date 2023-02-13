@@ -46,7 +46,7 @@ export default function ProfileInitPage() {
           navigate(RoutePath.lobby);
       })
       .catch(err => {
-          alert("Name in use");
+        alert(err.response.data.message);
       });
   };
 

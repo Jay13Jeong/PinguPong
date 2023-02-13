@@ -14,41 +14,41 @@ export class FriendController {
         private readonly userServices : UsersService,
     ){ };
 
-    @Get('test') //테스트용 친구들
-    @UseGuards(JwtAuthGuard)
-    async inputDummyFriendList(@Req() req)
-	{
-        const user = req.user as User;
-        const user2 = await this.authServices.validateUser({
-            username: 'pinga7', //ex. jjeong
-			email: 'pinga7@pong.com',
-			oauthID: '99987', //ex. 85322
-        })
-        const user3 = await this.authServices.validateUser({
-            username: 'pinga8', //ex. jjeong
-			email: 'pinga8@pong.com',
-			oauthID: '99988', //ex. 85322
-        })
-        const user4 = await this.authServices.validateUser({
-            username: 'pinga9', //ex. jjeong
-			email: 'pinga9@pong.com',
-			oauthID: '99989', //ex. 85322
-        })
-        const user5 = await this.authServices.validateUser({
-            username: 'pinga5', //ex. jjeong
-			email: 'pinga5@pong.com',
-			oauthID: '99985', //ex. 85322
-        })
-        await this.friendServices.invite(user, 2);
-        await this.friendServices.invite(user, 3);
-        // await this.friendServices.invite(user, 4);
-        await this.friendServices.invite(user, 5); //친추 수락 대기중.
-        await this.friendServices.invite(user2, 1); //친구됨
-        await this.friendServices.invite(user3, 1); //친구됨
-        await this.friendServices.invite(user4, 1); //상대가 나에게 친추 검.
-        await this.friendServices.block(user, 4);
-        await this.friendServices.block(user4, 1);
-	}
+    // @Get('test') //테스트용 친구들
+    // @UseGuards(JwtAuthGuard)
+    // async inputDummyFriendList(@Req() req)
+	// {
+    //     const user = req.user as User;
+    //     const user2 = await this.authServices.validateUser({
+    //         username: 'pinga7', //ex. jjeong
+	// 		email: 'pinga7@pong.com',
+	// 		oauthID: '99987', //ex. 85322
+    //     })
+    //     const user3 = await this.authServices.validateUser({
+    //         username: 'pinga8', //ex. jjeong
+	// 		email: 'pinga8@pong.com',
+	// 		oauthID: '99988', //ex. 85322
+    //     })
+    //     const user4 = await this.authServices.validateUser({
+    //         username: 'pinga9', //ex. jjeong
+	// 		email: 'pinga9@pong.com',
+	// 		oauthID: '99989', //ex. 85322
+    //     })
+    //     const user5 = await this.authServices.validateUser({
+    //         username: 'pinga5', //ex. jjeong
+	// 		email: 'pinga5@pong.com',
+	// 		oauthID: '99985', //ex. 85322
+    //     })
+    //     await this.friendServices.invite(user, 2);
+    //     await this.friendServices.invite(user, 3);
+    //     // await this.friendServices.invite(user, 4);
+    //     await this.friendServices.invite(user, 5); //친추 수락 대기중.
+    //     await this.friendServices.invite(user2, 1); //친구됨
+    //     await this.friendServices.invite(user3, 1); //친구됨
+    //     await this.friendServices.invite(user4, 1); //상대가 나에게 친추 검.
+    //     await this.friendServices.block(user, 4);
+    //     await this.friendServices.block(user4, 1);
+	// }
 
     @Get()
     @UseGuards(JwtAuthGuard)
@@ -72,6 +72,20 @@ export class FriendController {
     @Post('name')
     @UseGuards(JwtAuthGuard)
     async inviteFriendByName(@Req() req, @Body('username') username: string){
+        //문자열에 공백이 있는 경우
+        let blank_pattern = /[\s]/g;
+        if( blank_pattern.test(username) == true){
+            throw new BadRequestException('공백이 입력되었습니다');
+        }
+        //특수문자가 있는 경우
+        let special_pattern = /[`~!@#$%^&*|\\\'\";:\/?]/gi;
+        if(special_pattern.test(username) == true){
+            throw new BadRequestException('특수문자가 입력되었습니다');
+        }
+        //공백 혹은 특수문자가 있는 경우
+        if(username.search(/\W|\s/g) > -1){
+            throw new BadRequestException('특수문자 또는 공백이 입력되었습니다');
+        }
         let user = req.user as User;
         const target = await this.userServices.findUserByUsername(username);
         if (!target)

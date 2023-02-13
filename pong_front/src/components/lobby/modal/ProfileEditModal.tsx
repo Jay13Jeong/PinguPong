@@ -44,6 +44,7 @@ function ProfileEditModal(props: {name: string}) {
             resetState();
         })
         .catch(err => {
+            //alert(err.response.data.message);
             toast.error("적절하지 않은 이름입니다.");
         })
     };
