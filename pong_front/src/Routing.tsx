@@ -8,6 +8,7 @@ import { GameLobbyPage, GameMatchPage, GameWatchPage, GamePlayRoomPage, GameWatc
 import DmPage from './pages/dm/DmPage';
 import ProfileInitPage from './pages/profile/ProfileInitPage';
 import {RoutePath} from "./common/configData";
+import NotFound from './pages/NotFound';
 
 export default function Routing() {
     return (
@@ -27,6 +28,7 @@ export default function Routing() {
                 <Route path={RoutePath.gameWatch} element={<GameWatchPage/>}/>
                 <Route path={`${RoutePath.gameWatch}/:id`} element={<GameWatchRoomPage/>}/>
                 <Route path={`${RoutePath.dm}/:id`} element={<DmPage/>}/>
+                <Route path="*" element={<NotFound/>}/>
             </Route>
         </Routes>
     )
