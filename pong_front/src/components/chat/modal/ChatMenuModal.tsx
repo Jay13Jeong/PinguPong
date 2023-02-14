@@ -71,36 +71,28 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
     useEffect(() => {
         if (info === null)
             return ;
-        // const init
-        // let targetRelate = '';
-        // try{
-        //     const blockRes = await axios.get('http://' + REACT_APP_HOST + ':3000/api/friend/block', {withCredentials: true}) //쿠키와 함께 보내기 true.
-        //     if (blockRes.data){
-        //         let myFriends : Friend[] = blockRes.data.map((friend: any) => {
-        //             const otherUserInfo = ((friend.sender.id == info.id) ? friend.reciever : friend.sender);
-        //             if (otherUserInfo.id === info.id){
-        //                 targetRelate = friend.status
-        //             }
-        //         });
-        //     }
-        //     let userData: any = info;
-        //     let totalGame = userData.wins + userData.loses;
-        //     let targetUserInfo : User = {
-        //         id : userData.id,
-        //         avatar: userData.avatar,
-        //         userName : userData.username as string,
-        //         myProfile : false,
-        //         userStatus : 'off',
-        //         rank : 0,
-        //         odds : !userData.wins ? 0 : Math.floor(100 / (totalGame / (userData.wins ? userData.wins : 1))),
-        //         record : [],
-        //         relate : targetRelate,
-        //     };
-        //     setTargetUser(targetUserInfo);
-        // }catch(err: any){
-        //     if (err.response.data.statusCode === 401)
-        //         navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
-        // }
+        const initTargetInfo = async () => {
+            try{
+                const res = await axios.get('http://' + REACT_APP_HOST + ':3000/api/friend/relate/' + info.id, {withCredentials: true});
+                let userData: any = info;
+                let totalGame = userData.wins + userData.loses;
+                let targetUserInfo : User = {
+                    id : userData.id,
+                    avatar: userData.avatar,
+                    userName : userData.username as string,
+                    myProfile : false,
+                    userStatus : 'off',
+                    rank : 0,
+                    odds : !userData.wins ? 0 : Math.floor(100 / (totalGame / (userData.wins ? userData.wins : 1))),
+                    record : [],
+                    relate : res.data,
+                };
+                setTargetUser(targetUserInfo);
+            }catch(err: any){
+                navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
+            }
+        }
+        initTargetInfo();
     }, [info]);
 
     /* 추방 (현재 채팅방을 강제로 나가게 함) */

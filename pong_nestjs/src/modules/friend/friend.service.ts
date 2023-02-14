@@ -84,7 +84,9 @@ export class FriendService {
 			],
 		});
 		if (friendship) { //차단 대상이 친구목록 테이블에 있을 때 관계를 끊음.
-				await this.repo.remove(friendship)
+			if (friendship.status === 'blocked')
+				throw new NotFoundException('이미 차단된 대상');
+			await this.repo.remove(friendship)
 		}
 		friendship = this.repo.create({
 			sender: sender,
@@ -150,5 +152,22 @@ export class FriendService {
 			],
 		});
 		return friends;
+	}
+
+	async getRelate(id: number, targetID: number): Promise<string> {
+		const friends = await this.repo.findOne({
+			relations: ['sender', 'reciever'],
+			where: [
+				{ sender:  { id: id }, reciever: { id: targetID }, status: 'pending' },
+				{ sender:  { id: targetID }, reciever: { id: id }, status: 'pending' },
+				{ sender:  { id: id }, reciever: { id: targetID }, status: 'accepted' },
+				{ sender:  { id: targetID }, reciever: { id: id }, status: 'accepted' },
+				{ sender:  { id: id }, reciever: { id: targetID }, status: 'blocked' },
+			],
+		});
+		if (!friends){
+			return 'nothing';
+		}
+		return friends.status;
 	}
 }
