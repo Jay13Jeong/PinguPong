@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
 import { SocketContext } from "../../common/states/contextSocket";
-import {useLocation, Link} from "react-router-dom";
+import {useLocation, Link, useNavigate} from "react-router-dom";
 import {useSetRecoilState, useResetRecoilState} from "recoil";
 import {gameState} from "../../common/states/recoilGameState";
 import { Stack } from "../../common/styles/Stack.style";
@@ -16,10 +16,17 @@ function GamePlayRoom() {
     const resetGame = useResetRecoilState(gameState);
     const socket = useContext(SocketContext);
     const location = useLocation();
+    const navigate = useNavigate();
 
     useEffect(() => {
         window.addEventListener("keydown", keyDownHandler);
-        window.addEventListener('beforeunload', beforeUnloadHandler);
+        (() => {
+            window.addEventListener("beforeunload", beforeUnloadHandler);
+        })();
+        (() => {
+            window.history.pushState(null, "", window.location.href);
+            window.addEventListener("popstate", preventGoBack);
+        })();
         socket.on("startGame", () => {
             socket.off("startGame");
             socket.on("ballPos", (data: types.gamePosInfo) => {
@@ -27,7 +34,9 @@ function GamePlayRoom() {
             })
         })
         socket.on("endGame", (data: {winner: string}) => {
-            console.log("hahahahah end");
+            window.removeEventListener("keydown", keyDownHandler);
+            window.removeEventListener('beforeunload', beforeUnloadHandler);
+            window.removeEventListener('popstate', preventGoBack);
             socket.off("ballPos");
             socket.off("endGame");
             setWinner(data.winner);
@@ -35,6 +44,7 @@ function GamePlayRoom() {
         return () => {
             window.removeEventListener("keydown", keyDownHandler);
             window.removeEventListener('beforeunload', beforeUnloadHandler);
+            window.removeEventListener('popstate', preventGoBack);
             socket.off("ballPos");
             socket.off("endGame");
             resetGame();
@@ -50,7 +60,6 @@ function GamePlayRoom() {
     
     /* Event Handler */
     const keyDownHandler = (e: KeyboardEvent) => {
-        console.log('0000', isP1 , "current" , currentPlayer);
         if (e.key === "ArrowUp") {
             if (isP1) { // 1번을 위로
                 socket.emit("player1Move", -playerSpeed, gameRoomName);
@@ -76,7 +85,13 @@ function GamePlayRoom() {
     function beforeUnloadHandler(e: BeforeUnloadEvent) {
         e.preventDefault();
         e.returnValue = "";
-        toast.error("게임 중에는 불가합니다!");
+        navigate(RoutePath.lobby);
+    }
+
+    function preventGoBack(e: any) {
+        window.history.pushState(null, "", window.location.href);
+        console.log("뒤로 가기!!");
+        toast.error("게임 중엔 불가합니다!");
     }
 
     return (

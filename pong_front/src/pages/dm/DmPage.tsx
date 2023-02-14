@@ -1,4 +1,5 @@
 import { useState, useContext, useEffect } from "react";
+import { useSetRecoilState } from "recoil";
 import { SocketContext } from "../../common/states/contextSocket";
 import { useNavigate, useLocation } from "react-router-dom";
 import useGetData from "../../util/useGetData";
@@ -12,6 +13,7 @@ import ChatMenuModal from "../../components/chat/modal/ChatMenuModal";
 import GameInviteModal from "../../components/chat/modal/GameInviteModal";
 import { RoutePath } from "../../common/configData";
 import { ChatRoomWrapper } from "../../components/chat/ChatRoom.styles";
+import { gameInviteModalState } from "../../common/states/recoilModalState";
 
 function DmPage() {
     useCheckLogin();
@@ -22,6 +24,7 @@ function DmPage() {
     const [myInfo, error, isLoading] = useGetData('http://' + REACT_APP_HOST + ':3000/api/user');
     const [msg, setMsg] = useState<string>("");
     const [invitedInfo, setInvitedInfo] = useState<{id: number, username: string}>({id: -1, username: ""});
+    const setGameInviteModal = useSetRecoilState(gameInviteModalState);
 
     const targetId = location.state.targetId;
 
@@ -60,10 +63,11 @@ function DmPage() {
 
     return (
         <>
-        <ChatMenuModal isMaster={false} roomName={""}/>
+        <ChatMenuModal isMaster={false} roomName={"_dm"} isDmModal={true}/>
         <GameInviteModal targetID={invitedInfo.id} targetUserName={invitedInfo.username} setInviteInfo={setInvitedInfo}/>
         {current === "" ? <Loader/> :
         <ChatRoomWrapper>
+            {invitedInfo.id !== -1 ? <button onClick={(e) => {setGameInviteModal(true)}} id="duel-request-btn">도전장 도착</button> : null}
             <button onClick={exitHandler} id="exit-chat-btn">DM 나가기</button>
             <DmField current={current} targetId={targetId}/>
             <form onSubmit={msgHandler} id="chat-input">

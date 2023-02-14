@@ -9,10 +9,10 @@ import { FileInterceptor } from '@nestjs/platform-express';
 export class UsersController {
     constructor(private readonly usersService: UsersService,) {}
 
-    @Get('test') //테스트용 메소드. 유저 디비조회용.
-    async findA(): Promise<User[]>{
-        return await this.usersService.findAll();
-    }
+    // @Get('test') //테스트용 메소드. 유저 디비조회용.
+    // async findA(): Promise<User[]>{
+    //     return await this.usersService.findAll();
+    // }
 
     @Get('name') //이름으로 조회.
     @UseGuards(JwtAuthGuard)
@@ -93,11 +93,31 @@ export class UsersController {
     @Patch()
     @UseGuards(JwtAuthGuard)
     async create(@Req() req : Request, @Body() body){
+        const newName = body.username.toLowerCase();
+        if (newName.length > 10)
+            throw new BadRequestException('최대 길이 10자 초과');
+        //문자열에 공백이 있는 경우
+        let blank_pattern = /[\s]/g;
+        if( blank_pattern.test(newName) == true){
+            throw new BadRequestException('공백이 입력되었습니다');
+        }
+        //특수문자가 있는 경우
+        let special_pattern = /[`~!@#$%^&*|\\\'\";:\/?]/gi;
+        if(special_pattern.test(newName) == true){
+            throw new BadRequestException('특수문자가 입력되었습니다');
+        }
+        //공백 혹은 특수문자가 있는 경우
+        if(newName.search(/\W|\s/g) > -1){
+            throw new BadRequestException('특수문자 또는 공백이 입력되었습니다');
+        }
         let user = req.user as User;
-        if (!user || body.username === '')
-            throw new BadRequestException('잘못된 유저 요청.');
+        if (!user || newName === '')
+            throw new BadRequestException('잘못된 유저 요청');
         // user.avatar = body.avatar;
-        user.username = body.username;
+        user.username = newName;
+        if (await this.usersService.findUserByUsername(newName)){
+            throw new BadRequestException('사용 중인 이름');
+        }
         return await this.usersService.updateUser(user);
     }
 

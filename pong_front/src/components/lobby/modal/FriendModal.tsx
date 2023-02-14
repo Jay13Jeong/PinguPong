@@ -7,6 +7,7 @@ import ModalBase from "../../modal/ModalBase";
 import axios from "axios";
 import { REACT_APP_HOST } from "../../../common/configData";
 import useGetData from "../../../util/useGetData";
+import { toast } from "react-toastify";
 
 function FriendModal() {
     const [target, setTarget] = useState('');
@@ -17,8 +18,6 @@ function FriendModal() {
     const [data] = useGetData('http://' + REACT_APP_HOST + ':3000/api/user');
 
     useEffect(() => {
-        // TODO: 친구 정보를 받아온다.
-
         const calOdds = (win: number, lose: number): number => {
             if (win === 0)
                 return 0;
@@ -30,15 +29,12 @@ function FriendModal() {
                 const res = await axios.get('http://' + REACT_APP_HOST + ':3000/api/friend', {withCredentials: true}) //쿠키와 함께 보내기 true.
                 if (res === null || res === undefined)
                 {
-                    alert("friend fail..");
+                    toast.error("friend fail..");
                     return;
                 }
                 let myFriends : types.Friend[] = res.data.map((friend: any) => {
                     const myUserInfo = ((friend.sender.id !== data.id) ? friend.reciever : friend.sender);
                     const otherUserInfo = ((friend.sender.id == data.id) ? friend.reciever : friend.sender);
-                    // console.log("%%%%%%", otherUserInfo.username, otherUserInfo.wins, otherUserInfo.loses);
-                    // console.log("&&&", ((otherUserInfo.wins + otherUserInfo.loses) / (otherUserInfo.wins ? otherUserInfo.wins : 1)));
-                    // console.log("$$", ((otherUserInfo.wins + otherUserInfo.loses)));
                     return {
                         userId: otherUserInfo.id,
                         userName: otherUserInfo.username,
@@ -84,9 +80,9 @@ function FriendModal() {
         event.preventDefault();
         try{
             const res = await axios.post('http://' + REACT_APP_HOST + ':3000/api/friend/name', {username : target}, {withCredentials: true});
-            alert(target + "에게 친구요청 성공");
+            toast.success(target + "에게 친구요청 성공");
         }catch(err : any){
-            alert(err.response.data.message);
+            toast.error(err.response.data.message);
         }
     };
 

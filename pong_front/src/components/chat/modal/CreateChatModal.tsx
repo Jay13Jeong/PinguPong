@@ -47,7 +47,7 @@ function CreateChatModal(props: {current: string}) {
                 }});
             }
             else {
-                toast.error("중복된 방 이름 입니다.");
+                toast.error("적절하지 않은 방 이름입니다.");
                 socket.off('/api/post/newRoom');
             }
         })

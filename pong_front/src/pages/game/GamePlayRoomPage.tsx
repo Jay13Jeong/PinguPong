@@ -16,7 +16,10 @@ function GamePlayRoomPage() {
     const socket = useContext(SocketContext);
     
     useEffect(() => {
-        if (location.state.invite === true) {
+        if (!location.state) {
+            navigate(RoutePath.lobby);
+        }
+        else if (location.state.invite === true) {
             socket.on('matchMakeSuccess', (data: {p1: string, p2: string}) => {
                 socket.off('matchMakeSuccess');
                 setLoading(false);
@@ -34,7 +37,7 @@ function GamePlayRoomPage() {
             socket.off('matchMakeSuccess');
             socket.off('duelTargetRun');
         });
-    }, [location.state.invite]);
+    }, [location.state]);
     
     function duelRunHander(e: React.MouseEvent<HTMLElement>) {
         // let targetId:number = data.targetId;

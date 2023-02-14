@@ -13,6 +13,7 @@ import ProfileEditModal from "./ProfileEditModal";
 import { REACT_APP_HOST } from "../../../common/configData";
 import useGetData from "../../../util/useGetData";
 import ProfileModalWrapper from "./ProfileModal.style";
+import { toast } from "react-toastify";
 
 function ProfileModal() {
     const showEditModal = useRecoilValue(profileEditModalState);
@@ -35,7 +36,6 @@ function ProfileModal() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // TODO: 유저 정보를 받아온다.
         const initProfileData = async () => {
             try{
                 const res = await axios.get('http://' + REACT_APP_HOST + ':3000/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
@@ -76,7 +76,6 @@ function ProfileModal() {
     }, [showModal, showEditModal]);
 
     useEffect(() => {
-        // TODO: 유저 랭크를 받아온다.
         const getRank = async () =>{
             try{
                 const res = await axios.get('http://' + REACT_APP_HOST + ':3000/api/user/rank/' + (showModal.userId !== 0 ? showModal.userId : userInfo.id) , {withCredentials: true}) //쿠키와 함께 보내기 true.
@@ -92,10 +91,15 @@ function ProfileModal() {
 
     useEffect(() => {
         if (showModal.userId !== 0){
-            socket.emit('api/get/user/status', showModal.userId);        
+            checkOnline(showModal.userId);
         } else {
-            socket.emit('api/get/user/status', userInfo.id);    
+            checkOnline(userInfo.id);
         }
+    }, [showModal]);
+
+    //온오프라인 게임중 검사하는 메소드.
+    function checkOnline(userId: number){
+        socket.emit('api/get/user/status', userId); 
         socket.on('api/get/user/status', (status, targetId) => {
             if (targetId !== 0)
                 setOnlineStatus(status);
@@ -104,7 +108,7 @@ function ProfileModal() {
         return (() => {
             socket.off('api/get/user/status');
         })
-    }, [showModal]);
+    }
 
     function showStatus(status: string){
         switch(status) {
@@ -139,10 +143,10 @@ function ProfileModal() {
         axios.post('http://' + REACT_APP_HOST + ':3000/api/friend', {otherID : userInfo.id}, {withCredentials: true})
         .then(res => {
             if (res.status === 200)
-                alert('send follow');
+                toast.success('send follow');
         })
         .catch(err => {
-            alert('invalid');
+            toast.error('invalid');
         })
     };
 
@@ -152,10 +156,10 @@ function ProfileModal() {
         axios.patch('http://' + REACT_APP_HOST + ':3000/api/friend', {otherID : userInfo.id}, {withCredentials: true})
         .then(res => {
             if (res.status === 200)
-                alert('unfollow ok');
+                toast.success('unfollow ok');
         })
         .catch(err => {
-            alert('invalid');
+            toast.error('invalid');
         })
     };
 
@@ -164,10 +168,10 @@ function ProfileModal() {
         event.preventDefault();
         axios.post('http://' + REACT_APP_HOST + ':3000/api/friend/block', {otherID : userInfo.id}, {withCredentials: true})
         .then(res => {
-            alert('target block ok');
+            toast.success('target block ok');
         })
         .catch(err => {
-            alert('target block fail');
+            toast.error('target block fail');
         })
     };
 
@@ -177,10 +181,10 @@ function ProfileModal() {
         axios.patch('http://' + REACT_APP_HOST + ':3000/api/friend/block', {otherID : userInfo.id}, {withCredentials: true})
         .then(res => {
             if (res.status === 200)
-                alert('target unblock ok');
+                toast.success('target unblock ok');
         })
         .catch(err => {
-            alert('target unblock fail');
+            toast.error('target unblock fail');
         })
     };
 
@@ -193,6 +197,15 @@ function ProfileModal() {
          * - 모달 클리어
          * - 그 게임으로 이동
          */
+        if (showModal.userId !== 0){
+            checkOnline(showModal.userId);
+        } else {
+            checkOnline(userInfo.id);
+        }
+        if (onlineStatus !== 'ingame'){
+            toast.error('게임 중이 아님');
+            return ;
+        }
         /* 게임 목록 받아오기 */
         socket.emit('api/get/roomlist');
         socket.on('api/get/roomlist', (data: {p1: string, p2: string}[]) => {
@@ -217,9 +230,7 @@ function ProfileModal() {
             }
             socket.off('api/get/roomlist');
             resetState();
-            // TODO - 만약에 목록에 동일한 이름의 유저가 없는 경우 (그 찰나에 게임이 종료됨) 어떻게 처리할지 확인해보기
         })
-        // TODO - 이미 종료된 게임의 경우 어떻게 되는지 확인해보기
     }
 
     function sendDm(event: React.MouseEvent<HTMLElement>) {
@@ -259,6 +270,12 @@ function ProfileModal() {
                 <button className="profile-button" onClick={sendDm}>
                     <FontAwesomeIcon icon={faPaperPlane}/> DM
                 </button>
+                {/* {onlineStatus === 'ingame' ?
+                <button className="profile-button" onClick={watchHandler}>
+                <FontAwesomeIcon icon={faPaperPlane}/> 게임관전
+                </button> :
+                null
+                } */}
             </div>
         )
     }
@@ -273,7 +290,6 @@ function ProfileModal() {
         return (
             <ModalBase reset={resetState}>
                 <ProfileEditModal name={userInfo.userName}/>
-                {/* TODO - 프로필 이미지? */}
                 <ProfileModalWrapper>
                     <div className="profile-box">
                         {avatarFile !== '' ?

@@ -50,8 +50,11 @@ function ChatRoomPage () {
             });
             /* 방장 여부 듣기 */
             socket.on('youMaster', ()=> {
-                console.log("youMaster!!");
                 setMaster(true);
+            })
+            /* 방장 권한 해제 여부 듣기 */
+            socket.on('youExMaster', ()=> {
+                setMaster(false);
             })
 
             /* 게임 초대 신청 듣기 */
@@ -91,7 +94,7 @@ function ChatRoomPage () {
         e.preventDefault();
         /* 빈 메시지는 보내지 않습니다. */
         if (msg !== "") {
-            socket.emit('chat', roomInfo.id, msg); // NOTE - userID 빼고 보내주기
+            socket.emit('chat', roomInfo.id, msg);
             setMsg("");
         }
     }
@@ -100,8 +103,7 @@ function ChatRoomPage () {
     return (
         <>
         <ChangeChatPwModal roomName={roomInfo.id}/>
-        {/* <CustomToastContainer/> */}
-        <ChatMenuModal isMaster={master} roomName={roomInfo.id} setMaster={setMaster}/>
+        <ChatMenuModal isMaster={master} roomName={roomInfo.id} setMaster={setMaster} isDmModal={false}/>
         <GameInviteModal targetID={invitedInfo.id} targetUserName={invitedInfo.username} setInviteInfo={setInvitedInfo}/>
         <ChatRoomWrapper>
             {invitedInfo.id !== -1 ? <button onClick={(e) => {setGameInviteModal(true)}} id="duel-request-btn">도전장 도착</button> : null}
