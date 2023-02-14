@@ -1,12 +1,10 @@
 import { useEffect } from "react";
-import { useRecoilState } from "recoil";
-import { userState } from "../common/states/recoilUserState";
 import { useNavigate } from "react-router-dom";
 import { REACT_APP_HOST } from "../common/configData";
 import useGetData from "./useGetData";
 
 function useCheckLogin() {
-    const [user, setUser] = useRecoilState(userState);
+    // const [user, setUser] = useRecoilState(userState);
     const [data, error] = useGetData('http://' + REACT_APP_HOST + ':3000/api/user');
     const navigate = useNavigate();
 
@@ -14,12 +12,12 @@ function useCheckLogin() {
         if (!data && !error)
             return ;
         if (!error && data) {
-            setUser(data);
+            // setUser(data);
         }
         else {
             navigate('/');
         }
-    }, [error, data]);
+    }, [error, data, navigate]);
 }
 
 export default useCheckLogin;
