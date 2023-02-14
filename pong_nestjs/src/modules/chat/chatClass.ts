@@ -24,7 +24,6 @@ class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함, prima
     private banList : Set<number>;
 
     public constructor(socketId:string, userId:number, secretpw:string){
-        console.log('new');
         this.master = userId;
         this.userIds = new Set<number>();
         this.userIds.add(userId);
@@ -60,9 +59,7 @@ class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함, prima
     //방장 나갈 때 방장 위임 기능 함수 실행
     private newMaster(){
         const newMaster = Array.from(this.userIds.keys())
-        console.log('before master', this.master, newMaster, newMaster[0]);
         this.master = newMaster[0];
-        console.log('after master', this.master);
     }
 
     //추가 유저
@@ -217,7 +214,6 @@ export class chatClass {
         let block:number[] = [];//날 차단한 사람들 id 만 추출
         for (let id of BlockedMe) {
             block.push(id.sender.id);
-            // console.log("id.sender.username: ", id.sender.username);
         }
 
         let sendId:number[] = [];//날 차단하지 않은 사람들의 id
@@ -248,8 +244,6 @@ export class chatClass {
             this.rooms.set(roomName, new roomClass(socketId, userId, secretpw));
             if (!this.userIdRooms.has(userId))
                 this.userIdRooms.set(userId, new Set<string>());
-            // console.log(userId);
-            // console.log(this.userIdRooms.get(userId));
             this.userIdRooms.get(userId).add(roomName);
         }
         else{
@@ -323,7 +317,6 @@ export class chatClass {
     //비번 변경 함수
     public setSecretpw(roomName:string, userId:number, newsecret:string) {
         const room:roomClass = this.rooms.get(roomName);
-        console.log(room.setSecretpw(userId, newsecret));
     }
 
     //음소거를 하는 함수
@@ -354,7 +347,6 @@ export class chatClass {
     //방이 비밀방 여부 확인, 비밀방이면 false
     public checksecret(roomName:string):boolean{
         const room:roomClass = this.rooms.get(roomName);
-        console.log(room.checksecret());
         return room.checksecret();
     }
 
@@ -367,7 +359,6 @@ export class chatClass {
     public kickUser(server:Server, roomName:string, userId:number, targetId:number) {
         const room:roomClass = this.rooms.get(roomName);
         if (room.kickUser(userId, targetId)) {
-            // console.log("kick");
             let targetSocketIds:Set<string> = this.userIdsocketId.get(targetId);
             for (let id of targetSocketIds)
                 server.to(id).emit('youKick');

@@ -39,7 +39,7 @@ function CreateChatModal(props: {current: string}) {
         socket.on('/api/post/newRoom', (data: boolean) => {
             if (data) {
                 toast.success("채팅방 생성에 성공했습니다.");
-                socket.emit('/api/get/RoomList');
+                //socket.emit('/api/get/RoomList');
                 resetState();
                 socket.off('/api/post/newRoom');
                 navigate(`/chat/room/${values.room}`, {state: {
