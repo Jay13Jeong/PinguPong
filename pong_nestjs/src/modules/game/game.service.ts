@@ -515,14 +515,14 @@ export class GameService {
 
     public watchGame(roomName:string, client:Socket) {
         const vs:BattleClass = this.vs.get(roomName);
-
-        vs.watchGame(client);
+        if (vs != undefined)
+            vs.watchGame(client);
     }
 
     public stopwatchGame(roomName:string, client:Socket) {
         const vs:BattleClass = this.vs.get(roomName);
-
-        vs.stopwatchGame(client);
+        if (vs != undefined)
+            vs.stopwatchGame(client);
     }
 
     //디비에 전적을 저장하는 서비스.
