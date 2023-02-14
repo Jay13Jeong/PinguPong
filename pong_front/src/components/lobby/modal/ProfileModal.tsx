@@ -104,7 +104,6 @@ function ProfileModal() {
             if (targetId !== 0)
                 setOnlineStatus(status);
         })
-        console.log(userInfo.id,onlineStatus);
         return (() => {
             socket.off('api/get/user/status');
         })

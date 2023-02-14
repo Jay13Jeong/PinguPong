@@ -90,7 +90,7 @@ function GamePlayRoom() {
 
     function preventGoBack(e: any) {
         window.history.pushState(null, "", window.location.href);
-        console.log("뒤로 가기!!");
+        // console.log("뒤로 가기!!");
         toast.error("게임 중엔 불가합니다!");
     }
 
