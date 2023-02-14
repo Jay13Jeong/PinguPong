@@ -31,6 +31,10 @@ function ChatCardButton (props: {roomName: string, current: string}) {
                     socket.off('youBan');
                     toast.error("금지당한 채팅방입니다!");
                 })
+                socket.on('notRoom', () => {
+                    socket.off('notRoom');
+                    toast.error("존재하지 않는 채팅방입니다!");
+                })
                 socket.on('youPass', () => {
                     navigate(`/chat/room/${props.roomName}`, {state: {
                         isMaster: false
