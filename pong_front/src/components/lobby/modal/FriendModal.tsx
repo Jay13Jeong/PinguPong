@@ -34,7 +34,7 @@ function FriendModal() {
                 }
                 let myFriends : types.Friend[] = res.data.map((friend: any) => {
                     const myUserInfo = ((friend.sender.id !== data.id) ? friend.reciever : friend.sender);
-                    const otherUserInfo = ((friend.sender.id == data.id) ? friend.reciever : friend.sender);
+                    const otherUserInfo = ((friend.sender.id === data.id) ? friend.reciever : friend.sender);
                     return {
                         userId: otherUserInfo.id,
                         userName: otherUserInfo.username,

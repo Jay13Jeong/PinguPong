@@ -24,6 +24,10 @@ function GameWatchRoomPage() {
     const player2 = location.state.player2;
 
     useEffect(() => {
+        socket.emit('watchGame', `${player1}vs${player2}`);
+    }, []);
+
+    useEffect(() => {
         socket.on("ballPos", (data: types.gamePosInfo) => {
             setGame(data);
         })

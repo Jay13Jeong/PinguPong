@@ -9,7 +9,6 @@ function GameCardButton (props: {p1: string, p2: string}) {
     
     function clickHandler(e: React.MouseEvent<HTMLElement>) {
         /* 관전 요청 */
-        socket.emit('watchGame', `${props.p1}vs${props.p2}`);
         navigate(`/game/watch/${props.p1}vs${props.p2}`, {state: {
             player1: props.p1,
             player2: props.p2
