@@ -414,6 +414,13 @@ import { statSync } from 'fs';
      * TODO - 현재 진행중인 게임에 접속할 수 있어야 합니다.
      */
 
+     @SubscribeMessage('gameRoomCheck')//방이 현재 존재 하는지 확인
+     async gameRoomCheck(client : Socket, data) {
+       let roomName = data;
+
+       this.server.to(client.id).emit('gameRoomCheck', this.gameService.getRoomCheck(roomName));
+     }
+
      @SubscribeMessage('watchGame')//관전하기
      async watchGame(client : Socket, data) {
        let roomName = data;

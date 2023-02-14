@@ -509,6 +509,10 @@ export class GameService {
 
     }
 
+    public getRoomCheck(roomName:string):boolean {
+        return this.vs.has(roomName);
+    }
+
     public watchGame(roomName:string, client:Socket) {
         const vs:BattleClass = this.vs.get(roomName);
 
