@@ -23,6 +23,7 @@ class BattleClass{
     private player1Ready:boolean;
     private player2Ready:boolean;
     private myserver:Server;
+    private gameFinish:boolean;
     // private userService: UsersService;
     // private create;
 
@@ -80,6 +81,7 @@ class BattleClass{
         this.speed = speed;
 
         this.counter = undefined;
+        this.gameFinish = false;
     }
 
     //디비에 전적을 저장하는 메소드.
@@ -227,6 +229,7 @@ class BattleClass{
         // 4. 게임 종료 여부도 확인해서 보내주기
         if (this.goal === this.game.score.player1 || this.goal === this.game.score.player2) {
             clearInterval(this.counter); // 반복 종료
+            this.gameFinish = true;
             // 이긴 사람만 winner에 넣어서 보내줍니다.
             this.myserver.to(this.roomName).emit("endGame", {winner: this.goal === this.game.score.player1 ? this.player1Name : this.player2Name});
             //this.player2socket.to(this.player2Id).emit("endGame", {winner: this.goal === this.game.score.player1 ? this.game.score.player1 : this.game.score.player2});
@@ -251,6 +254,8 @@ class BattleClass{
 
     public async iGameLoser(loserName:string):Promise<string>{
         clearInterval(this.counter);
+        if (this.gameFinish == true)
+            return 'temp';
         //this.myserver.to(this.player1Id !== loserid ? this.player1Id : this.player2Id).emit("endGame", {winner: this.player1Id !== loserid ? this.player1Name : this.player2Name});
         this.myserver.to(this.player1Id).emit("endGame", {winner: this.player1Name !== loserName ? this.player1Name : this.player2Name});
         this.myserver.to(this.player2Id).emit("endGame", {winner: this.player1Name !== loserName ? this.player1Name : this.player2Name});
