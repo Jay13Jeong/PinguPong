@@ -10,6 +10,7 @@ import * as types from "../../common/types/Game";
 import useCheckLogin from "../../util/useCheckLogin";
 import { ContentBox } from "../../common/styles/ContentBox.style";
 import { RoutePath } from "../../common/configData";
+import { toast } from "react-toastify";
 
 function GameWatchRoomPage() {
     useCheckLogin();
@@ -24,7 +25,21 @@ function GameWatchRoomPage() {
     const player2 = location.state.player2;
 
     useEffect(() => {
-        socket.emit('watchGame', `${player1}vs${player2}`);
+        // TODO : 게임이 있는지 확인 (gameRoomCheck : roomName)-> 게임이 있으면 watch game
+        socket.emit('gameRoomCheck', `${player1}vs${player2}`);
+        socket.on(`${player1}vs${player2}`, (result) => {
+            socket.off('gameRoomCheck');
+            if (result === true) {
+                socket.emit('watchGame', `${player1}vs${player2}`);
+            }
+            else {
+                toast.error("존재하지 않는 게임입니다!");
+                navigate(RoutePath.lobby);
+            }
+        })
+        return (() => {
+            socket.off('gameRoomCheck');
+        })
     }, []);
 
     useEffect(() => {
@@ -32,6 +47,7 @@ function GameWatchRoomPage() {
             setGame(data);
         })
         socket.on("endGame", (data: {winner: string}) => {
+            // socket.emit('setInLobby');
             setWinner(data.winner);
         })
         return (() => {
