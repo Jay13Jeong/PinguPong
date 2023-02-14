@@ -129,6 +129,10 @@ import { statSync } from 'fs';
     let room =data.roomName;
     //let userId = data.userId;//비밀번호 안 받음 ''이거로 변경
     let userId = this.socketUserid.get(client.id);
+    if (this.rooms.roomCheck(room) == false) {//없는 방에 입장을 하려고 할때
+      this.server.to(client.id).emit('notRoom');
+      return ;
+    }
     if (this.rooms.banCheck(room, userId)){
       this.server.to(client.id).emit('youBan');
       return ;
