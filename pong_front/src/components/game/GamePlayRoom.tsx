@@ -39,6 +39,7 @@ function GamePlayRoom() {
             window.removeEventListener('popstate', preventGoBack);
             socket.off("ballPos");
             socket.off("endGame");
+            socket.emit('setInLobby');
             setWinner(data.winner);
         })
         return () => {
