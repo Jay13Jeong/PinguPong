@@ -82,6 +82,7 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
             rank : 0,
             odds : !userData.wins ? 0 : Math.floor(100 / (totalGame / (userData.wins ? userData.wins : 1))),
             record : [],
+            // relate : 여기 블락여부 넣어 줘야함...
         };
         setTargetUser(targetUserInfo);
     }, [info]);

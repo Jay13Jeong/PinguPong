@@ -80,6 +80,7 @@ export class FriendService {
 				{ sender:  { id: reciever.id }, reciever: { id: sender.id }, status: 'pending' },
 				{ sender:  { id: sender.id }, reciever: { id: reciever.id }, status: 'accepted' },
 				{ sender:  { id: reciever.id }, reciever: { id: sender.id }, status: 'accepted' },
+				{ sender:  { id: sender.id }, reciever: { id: reciever.id }, status: 'blocked' },
 			],
 		});
 		if (friendship) { //차단 대상이 친구목록 테이블에 있을 때 관계를 끊음.
