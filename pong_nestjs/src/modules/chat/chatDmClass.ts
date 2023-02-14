@@ -73,7 +73,6 @@ export class dmClass{
 
     //디엠 리스트 주기, 처음 입장이거나 받은 디엠이 없으면 디엠 룸 만들어 주기
     public getdmList(userId:number):number[]{
-        //console.log('dmList 초기', !this.userDmList.has(userId),  userId);
         if (!this.userDmList.has(userId))
             this.userDmList.set(userId, new userDmList());
         return this.userDmList.get(userId).getUsers();
@@ -84,7 +83,6 @@ export class dmClass{
         let roomName = myDmList.getTargetRoom(targetId);
 
         server.to(roomName).emit('receiveDm', userName, msg);
-        //console.log('receiveDm', roomName, userName, msg);
         this.saveDmRoomdb(roomName, userId, msg);//메세지 저장
     }
 
@@ -99,10 +97,7 @@ export class dmClass{
         if (this.userDmList.get(userId) == undefined)//userDmList 없으면 생성하기
             this.getdmList(userId);
         const myDmList = this.userDmList.get(userId);
-        //console.log('유저아이디', userId, targetId);
-        //console.log('디엠방 생성 여부체크', 'dm'+this.roomNumber, !myDmList.checkCreateDM(targetId))
         if (!myDmList.checkCreateDM(targetId)){
-            //console.log('새로운 디엠방 생성', 'dm'+this.roomNumber);
             myDmList.pushDm(targetId, 'dm'+this.roomNumber);
             this.roomDB.set('dm'+this.roomNumber, new roomMsgDb());//디비 클래스 생성
             if (!this.userDmList.has(targetId))
@@ -115,7 +110,6 @@ export class dmClass{
 
     public getMsgs(user:User, target:User): receiveMsg[] {
         const myDmList = this.userDmList.get(user.id);
-        //console.log('getMsgs', user.id, target.id, this.userDmList)
         const roomName = myDmList.getTargetRoom(target.id);
         let msgs =  this.roomDB.get(roomName).getMsg();
 
@@ -134,6 +128,5 @@ export class dmClass{
         const myDmList = this.userDmList.get(userId);
 
         socket.leave(myDmList.getTargetRoom(targetId));
-        //console.log('closeDm roomName: ', myDmList.getTargetRoom(targetId), targetId);
     }
 }

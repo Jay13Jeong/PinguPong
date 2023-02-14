@@ -34,9 +34,7 @@ import { statSync } from 'fs';
 
     //OnGatewayConnection를 오버라이딩
     async handleConnection(client : Socket) {
-      //console.log(client.rooms);
       //들어온 유저 로그 찍기
-      //this.server.to(client.id).emit('getUser');//해당 클라이언트에게만 보내기//채팅
       const user = await this.findUserBySocket(client);
 
       if (user != undefined) {
@@ -47,7 +45,6 @@ import { statSync } from 'fs';
         else{
           this.useridStatus.set(user.id, {status:'online', count:1});
         }
-        console.log('소켓 연결', user.username, client.id);
       }
     }
 
@@ -65,8 +62,6 @@ import { statSync } from 'fs';
         if (this.useridStatus.get(userId).count <= 0)
           this.useridStatus.delete(userId);
         this.gameService.delNoGamegetoutSocketList(client.id);
-        //console.log('userStatusDel', this.useridStatus);
-        console.log('소켓 해제', client.id);
       }
     }
 
@@ -102,7 +97,6 @@ import { statSync } from 'fs';
     let userId:number = this.socketUserid.get(client.id);
 
     this.changeUseridStatus(userId, 'online');
-    console.log('userStatus', this.useridStatus.get(userId));
     //게임 안에 가서 클래스 및 매칭 큐 삭제하기 할 것
     this.gameService.iGamegetout(client, this.socketUserid);
   }
@@ -126,7 +120,6 @@ import { statSync } from 'fs';
   async delUser(client : Socket, data) {
     let roomName = data;
     let userId = this.socketUserid.get(client.id);
-    console.log('delUser', client.id, data, roomName);
 
     this.rooms.delUser(roomName, userId);
   }
@@ -136,7 +129,6 @@ import { statSync } from 'fs';
     let room =data.roomName;
     //let userId = data.userId;//비밀번호 안 받음 ''이거로 변경
     let userId = this.socketUserid.get(client.id);
-    console.log('getUser', client.id, data, room);
     if (this.rooms.banCheck(room, userId)){
       this.server.to(client.id).emit('youBan');
       return ;
@@ -144,7 +136,6 @@ import { statSync } from 'fs';
     this.server.to(client.id).emit('youPass');
     this.rooms.newRoom(room, client.id, userId);
     this.changeUseridStatus(userId, room);
-    console.log('userStatus', this.useridStatus.get(userId));
   }
 
   @SubscribeMessage('chat')// 테스트용, 음소거, 차단 유무까지 확인을 해야한다.
@@ -152,8 +143,6 @@ import { statSync } from 'fs';
     let [room, msg] = data;
     let userId = this.socketUserid.get(client.id);
     let user = this.userService.findUserById(userId);
-    console.log('chat', client.rooms);  //현재 클라이언트의 방
-    console.log(room, userId, (await user).username, msg);//메시지
 
     if (this.rooms.checkRoomInUser(userId, room) == false)//유저가 방에 있는 인원인지 확인하기
       return ;
@@ -161,13 +150,11 @@ import { statSync } from 'fs';
       return ;
     //나를 블록한 유저 리스트
     let blockedMe:Friend[] = await this.friendService.getReversBlocks(userId);
-    //console.log('qqqqq', blockedMe);
     //메세지를 보내야할 소켓id
     const sockets = this.rooms.getSocketList(room, blockedMe);
 
     for (let id of sockets){
       this.server.to(id).emit('chat', (await user).username, msg);
-      console.log('chat', id);
     }
   }
 
@@ -175,7 +162,6 @@ import { statSync } from 'fs';
   @SubscribeMessage('/api/check/secret')
   async checksecret(client : Socket, data) {
     let roomName = data;
-    console.log('/api/check/secret', client.id, data, roomName);
 
     this.server.to(client.id).emit('/api/check/secret', this.rooms.checksecret(roomName));
    }
@@ -187,7 +173,6 @@ import { statSync } from 'fs';
     let secretPW = data.secret;
     let userId = this.socketUserid.get(client.id);
 
-    console.log('/api/post/secretPW', client.id, data, roomName, secretPW, userId);
     if (this.rooms.checksecretPw(roomName, secretPW)){
       this.rooms.newRoom(roomName, client.id, userId);
       this.server.to(client.id).emit('/api/post/secretPW', true);
@@ -199,13 +184,11 @@ import { statSync } from 'fs';
   async newRoom(client : Socket, data) {//userid 안줘도 됨
     let [room, secretpw] = data;
     let userId = this.socketUserid.get(client.id);
-    console.log('/api/post/newRoom', client.id, data, room, (await userId), secretpw);
 
     if (!this.rooms.roomCheck(room) && (room.length <= 10)){
       this.rooms.newRoom(room, client.id, userId, secretpw);
       this.server.to(client.id).emit('/api/post/newRoom', true);
       this.changeUseridStatus(userId, room);
-      console.log('userStatus', this.useridStatus.get(userId));
     }
     else
       this.server.to(client.id).emit('/api/post/newRoom', false);
@@ -214,7 +197,6 @@ import { statSync } from 'fs';
   @SubscribeMessage('/api/get/master/status')//내가 마스터 이면 true, 아니면 false
   async getMasterStatus(client : Socket, data) { //방이름 보내주기
     let roomName = data;
-    console.log('/api/get/master/status', client.id, roomName);
     let userid = this.socketUserid.get(client.id);
 
     this.server.to(client.id).emit('/api/get/master/status', this.rooms.getMasterStatus(roomName, userid));// 클래스 함수 리턴값으로 고치기
@@ -222,16 +204,14 @@ import { statSync } from 'fs';
 
   @SubscribeMessage('/api/get/RoomList')//브라우저가 채팅방 리스트 요청함
   async getChatList(client : Socket) {
-    console.log('/api/get/RoomList', client.id, Array.from(this.rooms.getRoomList()));
     this.server.to(client.id).emit('/api/get/RoomList', Array.from(this.rooms.getRoomList()));// 리스트 보내주기, 클래스 함수 리턴값으로 고치기
     this.changeUseridStatus(this.socketUserid.get(client.id), 'online');
-    console.log('userStatus', this.useridStatus.get(this.socketUserid.get(client.id)));
   }
 
   @SubscribeMessage('/api/post/mandateMaster')//방장위임
   async mandateMaster(client : Socket, data) {//targetid 보내주기
     let [room, targetId] = data;//위임할 targetId
-    console.log('/api/post/mandateMaster', client.id, data, room, targetId);
+
     let userId = this.socketUserid.get(client.id);
     this.rooms.mandateMaster(this.server, room, userId, targetId);
   }
@@ -239,7 +219,7 @@ import { statSync } from 'fs';
   @SubscribeMessage('/api/put/setSecretpw')//비번 변경, ''이면 공개방으로 전환
   async setSecretpw(client : Socket, data){//방이름도 추가로 받기
     let [roomName, newsecret] = data;
-    console.log('/api/put/setSecretpw', client.id, data, roomName, newsecret);
+
     let userId = this.socketUserid.get(client.id);
     this.rooms.setSecretpw(roomName, userId, newsecret);
   }
@@ -248,7 +228,7 @@ import { statSync } from 'fs';
   @SubscribeMessage('/api/put/addmuteuser')//음소거를 하는 함수
   async addmuteuser(client : Socket, data) {//음소거할 유저id
     let [roomName, targetId] = data;//음소거할 유저id
-    console.log('/api/put/addmuteuser', client.id, data, roomName, targetId);
+
     let userId = this.socketUserid.get(client.id)
     this.rooms.addmuteuser(roomName, userId, targetId);
   }
@@ -256,7 +236,7 @@ import { statSync } from 'fs';
   @SubscribeMessage('/api/put/freemuteuser')//음소거를 해제하는 함수
   async freemuteuser(client : Socket, data) {//음소거 해제할 유저id
     let [room, targetId] = data;//음소거 해제할 유저id
-    console.log('/api/put/freemuteuser', client.id, data, room, targetId);
+
     let userId = this.socketUserid.get(client.id)
     this.rooms.freemuteuser(room, userId, targetId);
   }
@@ -293,17 +273,16 @@ import { statSync } from 'fs';
   @SubscribeMessage('dmList')//디엠 기능 첫 입장, 처음이면 DM 디비 만들기
   async dmList(client:Socket){
     const userId = this.socketUserid.get(client.id);
-    //console.log('dmList', client.id, user);
+
     let userIds:number[] = this.dmRooms.getdmList(userId);
     let userName:string[] = [];
     for (let id of userIds){
       let name = await (await this.userService.findUserById(id)).username;
       userName.push(name);
     }
-    //console.log('디엠 리스트 사용자', userName);
+
     this.server.to(client.id).emit('dmList', userName);//유저 네임 리스트 보내주기
     this.changeUseridStatus(userId, 'online');
-    console.log('userStatus', this.useridStatus.get(this.socketUserid.get(client.id)));
   }
 
   //메시지를 보냄
@@ -330,11 +309,9 @@ import { statSync } from 'fs';
     this.dmRooms.connectDm(client, user.id, targetId);
     let target = await this.userService.findUserById(targetId);
     let msgs = this.dmRooms.getMsgs(user, target);//여태까지 받은 대화들 반환
-    //console.log('receiveDms', user.username, target.username, msgs);
     this.server.to(client.id).emit('receiveDms', msgs);
     //masgs = [{userName : 'tempUser',  msg : '123123123'}, ...]
     this.changeUseridStatus(user.id, this.dmRooms.getTargetDmRoom(user.id, targetId));
-    console.log('userStatus', this.useridStatus.get(this.socketUserid.get(client.id)));
   }
 
   //1대1 디엠방 나감
@@ -344,26 +321,7 @@ import { statSync } from 'fs';
     let userId = this.socketUserid.get(client.id);
     this.dmRooms.closeDm(client, userId, targetId);
     this.changeUseridStatus(userId, 'online');
-    console.log('userStatus', this.useridStatus.get(this.socketUserid.get(client.id)));
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -384,46 +342,31 @@ import { statSync } from 'fs';
     async requestMatchMake(client : Socket, data) {
        let difficulty = data.difficulty;
        let player = data.player;
-       //console.log('requestMatchMake', client.id, data, difficulty, player);
-       //console.log('requestMatchMake', client.id, client.rooms);
       // 1. 같은 난이도를 요청한 플레이어가 큐에 있을 경우 게임 매치
       // 2. 같은 난이도를 요청한 플레이어가 큐에 없을 경우 해당 플레이어를 큐에 넣는다.
       if (this.gameService.matchCheck(this.socketUserid.get(client.id)) === true){//유저가 이미 매칭중인지 확인
          this.server.to(client.id).emit('matchFail');//늦게 매칭한 소켓에게 이벤트 전송
-         console.log('matchFail');
         return ;
       }
        if (this.gameService.matchMake(difficulty, player, client.id, this.socketUserid.get(client.id))){
         this.gameService.matchEmit(this.server, this.socketUserid.get(client.id));
-        console.log('matchMake fin');
       }
       this.changeUseridStatus(this.socketUserid.get(client.id), 'matching');
-      console.log('userStatus', this.useridStatus.get(this.socketUserid.get(client.id)));
     }
 
     @SubscribeMessage('requestStart')
     async requestStart(client : Socket, data) {
       let roomName = data;
 
-      console.log('requestStart', roomName);
       //플레이어가 준비완료인지 확인하기, 여기서 socket room에 등록을 하자
       if (this.gameService.requestStart(roomName, client, this.server))
         await this.gameService.startGame(roomName, this.server);
       this.changeUseridStatus(this.socketUserid.get(client.id), 'ingame');
-      console.log('userStatus', this.useridStatus.get(this.socketUserid.get(client.id)));
-
         //클래스 안에서 소켓메세지 보내기
-        //console.log('requestStart11', client.id, client.rooms);
-        //this.server.emit('startGame');//api: 시작 신호 보내기. 서버에서 쓰레드 돌리기 시작, if문으로 구별해서 보내기
-        //gameStart();//게임 실행 함수 호출
-        //api: 각각의 방마다 따로 돌아야 한다.이부분을 공부해 보자,, 모듈을 만들어야 한다.
-        //api : 스레드가 안되면 브라우저에서 요청이 계속 오도록 해서 답변하는 식으로 하자.
+        //api: 각각의 방마다 따로 돌아야 한다.
     }
 
 
-    //public putBallPos(socket:string, data){
-    //  this.server.to(socket).emit("ballPos", data);
-    //}
     /**
      * player1Move - p1이 움직임
      * offset : 움직인 거리
@@ -433,7 +376,6 @@ import { statSync } from 'fs';
     @SubscribeMessage('player1Move')
     async player1Move(client : Socket, data) {
       let [offset, roomName] = data;
-      //console.log('player1Move', client.id, data, roomName, offset);
 
       this.gameService.playerMove('1', roomName, offset);
     }
@@ -446,7 +388,6 @@ import { statSync } from 'fs';
     @SubscribeMessage('player2Move')
     async player2Move(client : Socket, data) {
       let [offset, roomName] = data;
-      //console.log('player2Move', client.id, data, roomName, offset);
 
       this.gameService.playerMove('2', roomName, offset);
     }
@@ -504,7 +445,7 @@ import { statSync } from 'fs';
         if (roomName === '_dm')
           roomName = this.dmRooms.getTargetDmRoom(user.id, targetId);
 
-        if (!(this.useridStatus.get(targetId).status === roomName) || (this.gameService.checkGaming(targetId)))//나중에 채팅방에 있는 지 여부를 확인하도록 하기,이미 상대가 도전신청 받았는지 확인하기
+        if (!(this.useridStatus.get(targetId).status === roomName) || (this.gameService.checkGaming(targetId)))
           return this.server.to(client.id).emit('duelRequest', false);
 
         let targetSocketIds:Set<string> = this.rooms.getsocketIdByuserId(targetId);
@@ -514,7 +455,6 @@ import { statSync } from 'fs';
         this.server.to(client.id).emit('duelRequest', true);
         this.server.to(targetSocketId).emit('duelAccept', this.socketUserid.get(client.id), user.username);
         this.changeUseridStatus(user.id, 'matching');
-        console.log('userStatus', this.useridStatus.get(this.socketUserid.get(client.id)));
      }
 
 //a가 대기하다 도망가기
@@ -548,7 +488,6 @@ import { statSync } from 'fs';
         //승낙하면 matchSuce
         this.gameService.matchEmit(this.server, user.id);
         this.changeUseridStatus(user.id, 'matching');
-        console.log('userStatus', this.useridStatus.get(this.socketUserid.get(client.id)));
         //위의 함수에서 'matchMakeSuccess'이벤트 보냄 이후 게임화면 등장
         //->게임준비 버튼 등 로직은   @SubscribeMessage('requestStart')으로 진행된다.
      }
