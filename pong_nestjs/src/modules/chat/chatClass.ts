@@ -347,6 +347,8 @@ export class chatClass {
     //방이 비밀방 여부 확인, 비밀방이면 false
     public checksecret(roomName:string):boolean{
         const room:roomClass = this.rooms.get(roomName);
+        if (room == undefined)
+            return true;//방이 없지만 목록리스트에서 방이 있어 접근하는 경우. 뒤에서 방 입장시에 fail을 던지자
         return room.checksecret();
     }
 
