@@ -11,15 +11,12 @@ import { Repository } from "typeorm";
 @Injectable()
 export class AuthService {
     constructor(
-        // private readonly userService: UsersService,
         private readonly jwtService: JwtService,
-        // private readonly configService: ConfigService,
         @InjectRepository(User) private readonly userRepository: Repository<User>,
     ) { }
 
     //유저가 있다면 유저 정보 반환, 없다면 디비에 새로 유저를 넣고 유저 정보 반환. 
     async validateUser(details: AuthUserDto) {
-      // console.log("AuthService-validateUser------");
       const user = await this.userRepository.findOneBy({
         oauthID: details.oauthID,
       });
@@ -32,11 +29,9 @@ export class AuthService {
     }
 
     //토큰을 생성하는 서비스.
-    createToken(user: User, twofa_verified: boolean) {		
+    createToken(user: User, twofa_verified: boolean) {
       return (
-        // expiresIn: 3600,
         this.jwtService.sign({ sub: user.id, oauthID: user.oauthID, twofa_verified: twofa_verified })
-        // user,
       )
     }
 

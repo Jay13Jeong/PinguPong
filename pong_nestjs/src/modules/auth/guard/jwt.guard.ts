@@ -15,7 +15,6 @@ export class JwtAuthGuard implements CanActivate {
 	async canActivate(context: ExecutionContext): Promise<boolean> {
 		const request = context.switchToHttp().getRequest();
 
-		// console.log(request);
 		if (request.cookies == undefined) {
 			throw new UnauthorizedException('쿠키 정보 없음.');
 		}
@@ -36,7 +35,6 @@ export class JwtAuthGuard implements CanActivate {
 		if (user.twofa && !obj.twofa_verified)
 			throw new UnauthorizedException('twofa');
 		request.user = user;
-		// request.fa2 = obj.twofa_verified;
 		return true;
 	}
 }

@@ -55,7 +55,6 @@ export class FriendController {
     async getFriendList(@Req() req)
 	{
         const user = req.user as User;
-        // console.log("322?");
 		return await this.friendServices.getFriends(user.id);
 	}
 
@@ -64,7 +63,6 @@ export class FriendController {
     async getBlockList(@Req() req)
 	{
         const user = req.user as User;
-        // console.log("322?");
 		return await this.friendServices.getBlocks(user.id);
 	}
 
@@ -119,9 +117,7 @@ export class FriendController {
     async block(@Req() req, @Body('otherID', ParseIntPipe) otherID: number){
         let user = req.user as User;
         //친구를 차단한다.
-        // console.log("block api--");
         const raw = await this.friendServices.block(user, otherID);
-        // console.log("block api--");
         return raw;
     };
 

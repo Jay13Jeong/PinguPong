@@ -22,9 +22,6 @@ export class GameController {
 	@Get(':id')
     @UseGuards(JwtAuthGuard)
 	async getGameByUserID(@Param('id', ParseIntPipe) id: number) {
-        // const user = req.user as User;
-        // console.log("111");
-        // console.log(await this.gameService.test());
 		return await this.gameService.getHistoryByUserId(id);
 	}
 

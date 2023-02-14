@@ -22,7 +22,6 @@ export class Message { //대화내용 메시지.
 	})
 	parent: Chat; //이 메시지의 채팅방.
 
-	// @ApiProperty({ description: 'Creation Date epoch', example: '1669318644507' })
 	@Column()
 	createdAt: string; //작성 일자.
 

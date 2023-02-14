@@ -1,9 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException, } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import * as fs from 'fs'
 import { User } from "./user.entity";
-import { JwtService } from "@nestjs/jwt";
 
 @Injectable()
 export class UsersService {

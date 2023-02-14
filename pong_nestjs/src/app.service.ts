@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { connected } from 'process';
 
 @Injectable()
 export class AppService {

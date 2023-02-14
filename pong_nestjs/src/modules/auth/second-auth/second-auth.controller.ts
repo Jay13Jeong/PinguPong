@@ -25,7 +25,6 @@ export class SecondAuthController {
         const email : string = user.email;
         const code2fa : string = Math.random().toString(36).slice(2,6); //랜덤한 값을 ^10
         this.secondAuthServices.sendCode(email, code2fa);
-        // user.twofa_secret = await bcrypt.hash(code2fa, 10);
         user.twofa_secret = code2fa;
         this.userRepository.save(user);
     }
@@ -66,9 +65,7 @@ export class SecondAuthController {
         //디비에 있는 인증코드와 인풋 파라메터 값을 비교한다.
         const user = req.user as User;
         const fa2Code = body.code;
-        if (fa2Code !== user.twofa_secret)
-        // if (!(await bcrypt.compare(fa2Code, user.twofa_secret)))
-        {
+        if (fa2Code !== user.twofa_secret){
             throw new UnauthorizedException('2단계 코드 불일치.');
         }
         res.clearCookie('jwt');

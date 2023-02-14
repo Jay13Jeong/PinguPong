@@ -1,4 +1,4 @@
-import { BeforeInsert, Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "../users/user.entity";
 import { Message } from "./msg.entity";
 
@@ -56,7 +56,6 @@ export class Chat { //채팅방 엔티티.
 	@Column({ nullable: true })
 	password: string; //채팅방 비번.
 
-	// @ApiProperty({ description: 'Creation Date epoch', example: '1669318644507' })
 	@Column()
 	createdAt: string; //채팅방 생성일.
 

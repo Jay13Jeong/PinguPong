@@ -1,8 +1,8 @@
-import { BadRequestException, Body, Controller, Delete, Get, MaxFileSizeValidator, Param, ParseFilePipe, ParseIntPipe, Patch, Post, Query, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, MaxFileSizeValidator, Param, ParseFilePipe, ParseIntPipe, Patch, Post, Query, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guard/jwt.guard';
 import { User } from './user.entity';
 import { UsersService } from "./users.service";
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('user')
@@ -51,10 +51,8 @@ export class UsersController {
         const user = req.user as User;
         if (!user)
             return {msg : false};
-        // console.log("123");
         if (user.username.slice(0,8) !== 'no_init_')
             return {msg : true}
-            // console.log("234");
         return {msg : false};
     }
 
@@ -63,7 +61,6 @@ export class UsersController {
     @UseGuards(JwtAuthGuard)
     getUserInfo(@Req() req : Request){
         const user = req.user as User;
-        // console.log(user);
         return user;
     }
 

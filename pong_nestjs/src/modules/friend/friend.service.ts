@@ -1,6 +1,5 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { send } from 'process';
 import { Repository } from 'typeorm';
 import { User } from '../users/user.entity';
 import { UsersService } from '../users/users.service';
@@ -49,17 +48,6 @@ export class FriendService {
 				reciever: reciever,
 			});
 		}
-		/* 소켓으로 수락됨을 알린다. */
-		// if (friendship.status == 'accepted') {
-		// 	const payload: createChatDto = {
-		// 		type: ChatType.PRIVATE,
-		// 		users: [
-		// 			friendship.sender.id,
-		// 			friendship.reciever.id,
-		// 		]
-		// 	}
-		// 	this.chatService.createChat(friendship.sender.id, payload);
-		// }
 		return this.repo.save(friendship);
 	}
 
@@ -76,11 +64,6 @@ export class FriendService {
 		});
 		if (!friendship)
 			throw new NotFoundException('끊을 친구 대상 없음.');
-		// if (friendship.status == 'accepted') {
-		// 	const chatID = await this.chatService.getPrivateChat(sender.id, reciever.id)
-		// 	if (chatID)
-		// 		this.chatService.leaveChat(friendship.sender.id, chatID.id);
-		// }
 		return await this.repo.remove(friendship);
 	}
 
@@ -99,13 +82,7 @@ export class FriendService {
 				{ sender:  { id: reciever.id }, reciever: { id: sender.id }, status: 'accepted' },
 			],
 		});
-		// if (friendship) {
-		// 	const chatID = await this.chatService.getPrivateChat(sender.id, reciever.id)
-		// 	if (chatID)
-		// 		this.chatService.leaveChat(friendship.sender.id, chatID.id);
-		// }
 		if (friendship) { //차단 대상이 친구목록 테이블에 있을 때 관계를 끊음.
-				// friendship.status = 'blocked';
 				await this.repo.remove(friendship)
 		}
 		friendship = this.repo.create({
@@ -125,7 +102,6 @@ export class FriendService {
 			relations: ['sender', 'reciever'],
 			where: [
 				{ sender:  { id: sender.id }, reciever: { id: reciever.id } },
-				// { sender:  { id: reciever.id }, reciever: { id: sender.id } },
 			],
 		});
 		if (!friendship)
@@ -146,7 +122,6 @@ export class FriendService {
 				{ reciever: { id: user.id }, status: 'accepted' },
 			],
 		});
-		// console.log(friends);
 		return friends;
 	}
 
@@ -160,7 +135,6 @@ export class FriendService {
 				{ sender: { id: user.id }, status: 'blocked' },
 			],
 		});
-		// console.log(friends);
 		return friends;
 	}
 
@@ -174,7 +148,6 @@ export class FriendService {
 				{ reciever: { id: user.id }, status: 'blocked' },
 			],
 		});
-		// console.log(friends);
 		return friends;
 	}
 }
