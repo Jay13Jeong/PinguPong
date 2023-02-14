@@ -14,7 +14,7 @@ type receiveMsg={
 
 class roomMsgDb{
     private userMsg : Set<msg>;
-    
+
     public constructor(){
         this.userMsg = new Set<msg>();
     }
@@ -64,7 +64,13 @@ export class dmClass{
         this.roomNumber = 1;
     }
 
-    
+    //도전기능에서 해당 유저의 타겟 방이름을 가져오기 위한 함수, 유저상태를 나타내기 위한 방이름
+    public getTargetDmRoom(userId:number, targetId:number):string{
+        const myDmList = this.userDmList.get(userId);
+        let roomName = myDmList.getTargetRoom(targetId);
+        return roomName;
+    }
+
     //디엠 리스트 주기, 처음 입장이거나 받은 디엠이 없으면 디엠 룸 만들어 주기
     public getdmList(userId:number):number[]{
         //console.log('dmList 초기', !this.userDmList.has(userId),  userId);
@@ -75,8 +81,8 @@ export class dmClass{
 
     public sendDm(server:Server, userId:number, userName:string, targetId:number, msg:string) {
         const myDmList = this.userDmList.get(userId);
-        let roomName = myDmList.getTargetRoom(targetId)
-        
+        let roomName = myDmList.getTargetRoom(targetId);
+
         server.to(roomName).emit('receiveDm', userName, msg);
         //console.log('receiveDm', roomName, userName, msg);
         this.saveDmRoomdb(roomName, userId, msg);//메세지 저장
