@@ -254,6 +254,9 @@ class BattleClass{
         //this.myserver.to(this.player1Id !== loserid ? this.player1Id : this.player2Id).emit("endGame", {winner: this.player1Id !== loserid ? this.player1Name : this.player2Name});
         this.myserver.to(this.player1Id).emit("endGame", {winner: this.player1Name !== loserName ? this.player1Name : this.player2Name});
         this.myserver.to(this.player2Id).emit("endGame", {winner: this.player1Name !== loserName ? this.player1Name : this.player2Name});
+        this.myserver.to(this.roomName).emit("endGame", {winner: this.player1Name !== loserName ? this.player1Name : this.player2Name});
+        for (let socket of this.watchUser.keys())
+                socket.leave(this.roomName);
         if ((this.game.score.player1 !== 0) && (this.game.score.player2 !== 0)) {
             const winner : User = await this.usersService.findUserByUsername(this.goal === this.game.score.player1 ? this.player1Name : this.player2Name);
             const loser : User = await this.usersService.findUserByUsername(this.goal !== this.game.score.player1 ? this.player1Name : this.player2Name);
