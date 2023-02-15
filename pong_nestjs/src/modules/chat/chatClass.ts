@@ -57,9 +57,10 @@ class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함, prima
     }
 
     //방장 나갈 때 방장 위임 기능 함수 실행
-    private newMaster(){
+    public newMaster():number{
         const newMaster = Array.from(this.userIds.keys())
         this.master = newMaster[0];
+        return this.master;
     }
 
     //추가 유저
@@ -72,9 +73,6 @@ class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함, prima
     public delsocketuser(userId:number){
         if (this.userIds.has(userId))
             this.userIds.delete(userId);
-        // if (this.blockuser.has(userId))
-        //     this.blockuser.delete(userId);
-        // this.muteuser.delete(userId);
         if (userId == this.master)
             this.newMaster();
     }
@@ -284,12 +282,19 @@ export class chatClass {
     }
 
     //방 인원 나감,
-    public delUser(roomName:string, userId:number) {
+    public delUser(roomName:string, userId:number, server:Server) {
         const room:roomClass = this.rooms.get(roomName);
 
-        room.delsocketuser(userId);
+        if (room.getMasterStatus(userId) == true){//나간 사람이 방장이면 새로운 방장 임명 후  당사자에게 메세지 전송
+            let targetId:number = room.newMaster();
+            let targetSocketIds:Set<string> = this.userIdsocketId.get(targetId);
+            for (let id of targetSocketIds)
+                server.to(id).emit('youMaster');
+        }
+        room.delsocketuser(userId)
         this.roomDel(roomName);
         this.userIdRooms.get(userId).delete(roomName);
+
     }
 
     //방 삭제, 소켓 연결이 해제될 때, 방에 아무도 없으면 방 삭제
