@@ -1,5 +1,5 @@
 import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { User } from "../users/user.entity";
+import { Users } from "../users/user.entity";
 import { Chat } from "./chat.entity";
 
 @Entity()
@@ -10,12 +10,12 @@ export class Message { //대화내용 메시지.
 	@Column()
 	message: string; //메시지 내용.
 
-	@ManyToOne(() => User, {
+	@ManyToOne(() => Users, {
 		onDelete: 'CASCADE',
 		eager: true,
 	})
 	@JoinColumn()
-	sender: User; //작성자.
+	sender: Users; //작성자.
 
 	@ManyToOne(() => Chat, (chat) => chat.messages, {
 		onDelete: 'CASCADE',

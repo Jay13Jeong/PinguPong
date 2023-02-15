@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import './App.css';
+import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
+
 import {SocketContext, socket} from './common/states/contextSocket';
-import Routing from './Routing';
 import GlobalStyle from './common/styles/GlobalStyle';
 import Cursor from './components/util/Cursor';
+import Routing from './Routing';
 
 function App() {
 

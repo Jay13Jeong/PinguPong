@@ -1,5 +1,5 @@
 import * as dotenv from 'dotenv';
-import { User } from 'src/modules/users/user.entity';
+import { Users } from 'src/modules/users/user.entity';
 import { IDatabaseConfig } from './interfaces/dbConfig.interface';
 
 dotenv.config();

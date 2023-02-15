@@ -1,6 +1,6 @@
 import { Controller, Get, Param, ParseIntPipe, Query, Req, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guard/jwt.guard';
-import { User } from '../users/user.entity';
+import { Users } from '../users/user.entity';
 import { GameService } from './game.service';
 import { Request, Response } from 'express';
 

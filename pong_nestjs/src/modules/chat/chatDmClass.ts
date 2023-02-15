@@ -1,6 +1,6 @@
 import { Inject } from "@nestjs/common";
 import { Socket, Server } from "socket.io";
-import { User } from "../users/user.entity";
+import { Users } from "../users/user.entity";
 
 type msg= {
     userId:number,
@@ -108,7 +108,7 @@ export class dmClass{
         socket.join(myDmList.getTargetRoom(targetId));
     }
 
-    public getMsgs(user:User, target:User): receiveMsg[] {
+    public getMsgs(user:Users, target:Users): receiveMsg[] {
         const myDmList = this.userDmList.get(user.id);
         const roomName = myDmList.getTargetRoom(target.id);
         let msgs =  this.roomDB.get(roomName).getMsg();

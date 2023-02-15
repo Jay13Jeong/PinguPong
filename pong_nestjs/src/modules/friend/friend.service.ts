@@ -1,7 +1,7 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../users/user.entity';
+import { Users } from '../users/user.entity';
 import { UsersService } from '../users/users.service';
 import { Friend } from './friend.entity';
 
@@ -14,7 +14,7 @@ export class FriendService {
 	) {}
 
     //친구목록 테이블에 초대 데이터를 넣고 해당 행을 반환하는 서비스.
-    async invite(sender: User, recieverID: number): Promise<Friend> {
+    async invite(sender: Users, recieverID: number): Promise<Friend> {
 		if (sender.id == recieverID)
 			throw new BadRequestException('본인 친구초대 불가.');
 		const reciever = await this.userService.findUserById(recieverID);
@@ -51,7 +51,7 @@ export class FriendService {
 		return this.repo.save(friendship);
 	}
 
-	async  delete(sender: User, recieverID: number): Promise<Friend> {
+	async  delete(sender: Users, recieverID: number): Promise<Friend> {
 		if (sender.id == recieverID)
 			throw new BadRequestException('본인 친구삭제 불가.');
 		const reciever = await this.userService.findUserById(recieverID);
@@ -67,7 +67,7 @@ export class FriendService {
 		return await this.repo.remove(friendship);
 	}
 
-	async block(sender: User, recieverID: number): Promise<Friend> {
+	async block(sender: Users, recieverID: number): Promise<Friend> {
 		if (sender.id == recieverID)
 			throw new BadRequestException('본인 차단 불가.');
 		const reciever = await this.userService.findUserById(recieverID); //차단대상의 정보를 얻어온다.

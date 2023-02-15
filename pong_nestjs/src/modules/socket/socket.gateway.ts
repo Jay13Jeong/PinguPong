@@ -4,7 +4,7 @@ import { Inject } from '@nestjs/common';
 import { AuthService } from '../auth/auth.service';
 import { UsersService } from '../users/users.service';
 import { chatClass } from 'src/modules/chat/chatClass';
-import { User } from '../users/user.entity';
+import { Users } from '../users/user.entity';
 import { GameService } from '../game/game.service';
 import { dmClass } from '../chat/chatDmClass';
 import { FriendService } from '../friend/friend.service';
@@ -79,7 +79,7 @@ import { statSync } from 'fs';
 	}
 
   //웹소켓의 헤더에서 jwt토큰을 추출하여 해당하는 유저정보를 디비에서 반환하는 메소드.
-  private async findUserBySocket (client: Socket): Promise<User> {
+  private async findUserBySocket (client: Socket): Promise<Users> {
 		const cookies = this.parseCookie(client.handshake.headers.cookie);
 		const payload = await this.authService.verifyJWToken(cookies['jwt'])
 		if (!payload)

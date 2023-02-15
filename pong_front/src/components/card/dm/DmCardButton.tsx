@@ -10,7 +10,7 @@ import { CardButton} from "../Card.style";
 
 function DmCardButton(props: {userName: string}) {
     const [targetId, setTargetId] = useState<number>();
-    const [info, error, isLoading] = useGetData(`http://` + REACT_APP_HOST + `:3000/api/user/name?username=${props.userName}`);
+    const [info, error, isLoading] = useGetData(`http://` + REACT_APP_HOST + `:3000/api/user/name?username=${props.userName}`, props.userName);
     const resetState =  useResetRecoilState(dmModalState);
     const [loading, setLoading] = useState<boolean>(true);
     const navigate = useNavigate();

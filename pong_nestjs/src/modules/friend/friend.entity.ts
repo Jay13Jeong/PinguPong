@@ -1,18 +1,18 @@
 import { Column, BeforeInsert, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { User } from "../users/user.entity";
+import { Users } from "../users/user.entity";
 
 @Entity() //친구 목록
 export class Friend {
 	@PrimaryGeneratedColumn()
 	id: number; //친구 목록 인덱스 pk.
 
-	@ManyToOne(() => User, (user) => user.sentFriendRequests, {	eager: true, onDelete: 'CASCADE'})
+	@ManyToOne(() => Users, (user) => user.sentFriendRequests, {	eager: true, onDelete: 'CASCADE'})
 	@JoinColumn()
-	sender: User; //초대한 유저 정보.
+	sender: Users; //초대한 유저 정보.
 
-	@ManyToOne(() => User, (user) => user.receivedFriendRequests, {	eager: true, onDelete: 'CASCADE'})
+	@ManyToOne(() => Users, (user) => user.receivedFriendRequests, {	eager: true, onDelete: 'CASCADE'})
 	@JoinColumn()
-	reciever: User; //수신한 유저 정보.
+	reciever: Users; //수신한 유저 정보.
 
 	@Column({default: 'pending'})
 	status: string; //친구관계 여부 (기본 '보류중').
