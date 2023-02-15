@@ -9,10 +9,10 @@ import { FileInterceptor } from '@nestjs/platform-express';
 export class UsersController {
     constructor(private readonly usersService: UsersService,) {}
 
-    @Get('test') //테스트용 메소드. 유저 디비조회용.
-    async findA(): Promise<Users[]>{
-        return await this.usersService.findAll();
-    }
+    // @Get('test') //테스트용 메소드. 유저 디비조회용.
+    // async findA(): Promise<Users[]>{
+    //     return await this.usersService.findAll();
+    // }
 
     @Get('name') //이름으로 조회.
     @UseGuards(JwtAuthGuard)
