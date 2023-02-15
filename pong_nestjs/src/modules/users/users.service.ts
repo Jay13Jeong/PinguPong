@@ -2,24 +2,24 @@ import { BadRequestException, Injectable, NotFoundException, } from "@nestjs/com
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import * as fs from 'fs'
-import { User } from "./user.entity";
+import { Users } from "./user.entity";
 
 @Injectable()
 export class UsersService {
 
     constructor(
-        @InjectRepository(User) private readonly userRepository: Repository<User>, //user엔티티를 레파지토리로 사용 선언.
+        @InjectRepository(Users) private readonly userRepository: Repository<Users>, //user엔티티를 레파지토리로 사용 선언.
 	) { }
 
-    findAll(): Promise<User[]>{
+    findAll(): Promise<Users[]>{
         return this.userRepository.find(); //모두 조회하는 메소드.
     }
 
-    findOne(id: number): Promise<User>{
+    findOne(id: number): Promise<Users>{
         return this.userRepository.findOneBy({ id: id });
     }
 
-    async create(user : User) :Promise<void>{
+    async create(user : Users) :Promise<void>{
         await this.userRepository.save(user);
     }
 
@@ -39,7 +39,7 @@ export class UsersService {
 		return res.sendFile(user.avatar, { root: 'avatars' });
 	}
 
-	async postAvatar(user : User, filename: string) {
+	async postAvatar(user : Users, filename: string) {
 		if (!user) {
 			throw new NotFoundException('User not found');
 		}
@@ -66,7 +66,7 @@ export class UsersService {
 	}
 
 	/* user */
-	async getUser(id: number): Promise<User> {
+	async getUser(id: number): Promise<Users> {
 		const user = await this.findUserById(id);
 		if (!user) {
 			throw new NotFoundException('User not found');
@@ -74,7 +74,7 @@ export class UsersService {
 		return user;
 	}
 
-	async updateUser(user: User) {
+	async updateUser(user: Users) {
 		await this.userRepository.save(user)
 		return { msg: "user info update OK" };
 	}
@@ -88,14 +88,14 @@ export class UsersService {
 		});
 	}
 
-	async findUserById(idArg: number): Promise<User> {
+	async findUserById(idArg: number): Promise<Users> {
 		const user = await this.userRepository.findOneBy({
 			id: idArg
 		});
 		return user;
 	}
 
-	async findUserByUsername(usernameArg: string): Promise<User> {
+	async findUserByUsername(usernameArg: string): Promise<Users> {
 		const user = await this.userRepository.findOneBy({
 			username: usernameArg
 		});
@@ -103,7 +103,7 @@ export class UsersService {
 
 	}
 
-	async findUserByIdUsername(idArg: number, usernameArg: string): Promise<User> {
+	async findUserByIdUsername(idArg: number, usernameArg: string): Promise<Users> {
 		const user = await this.userRepository.findOneBy({
 			id: idArg,
 			username: usernameArg
@@ -111,7 +111,7 @@ export class UsersService {
 		return user;
 	}
 
-	async findUserByOauthID(oauthID: string): Promise<User> {
+	async findUserByOauthID(oauthID: string): Promise<Users> {
 		const user = await this.userRepository.findOneBy({
 			oauthID: oauthID
 		});
@@ -119,15 +119,15 @@ export class UsersService {
 
 	}
 
-	async save(user: User): Promise<User> {
+	async save(user: Users): Promise<Users> {
 		return await this.userRepository.save(user);
 	}
 
-	async all(): Promise<User[]> {
+	async all(): Promise<Users[]> {
 		return this.userRepository.find();
 	}
 
-	async getSortByRank(): Promise<User[]> {
+	async getSortByRank(): Promise<Users[]> {
 		return this.userRepository.find({
 			order: {
 				wins: "DESC",

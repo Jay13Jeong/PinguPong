@@ -2,14 +2,14 @@ import { Module } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
-import { User } from './user.entity';
+import { Users } from './user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MulterModule } from '@nestjs/platform-express';
 import { UsersController } from './users.controller';
 
 @Module({
   imports: [
-		TypeOrmModule.forFeature([User]),
+		TypeOrmModule.forFeature([Users]),
     MulterModule.registerAsync({ useFactory: () => ({ dest: './avatars' }) }),
   ], 
 	controllers: [

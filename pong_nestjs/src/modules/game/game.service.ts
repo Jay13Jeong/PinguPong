@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ColdObservable } from 'rxjs/internal/testing/ColdObservable';
 import { Socket, Server } from 'socket.io';
 import { Repository } from 'typeorm';
-import { User } from '../users/user.entity';
+import { Users } from '../users/user.entity';
 import { UsersService } from '../users/users.service';
 import { GameDto } from './game.dto';
 import { Game } from './game.entity';
@@ -238,8 +238,8 @@ class BattleClass{
             this.player2socket.leave(this.roomName);
             for (let socket of this.watchUser.keys())
                 socket.leave(this.roomName);
-            const winner : User = await this.usersService.findUserByUsername(this.goal === this.game.score.player1 ? this.player1Name : this.player2Name);
-            const loser : User = await this.usersService.findUserByUsername(this.goal !== this.game.score.player1 ? this.player1Name : this.player2Name);
+            const winner : Users = await this.usersService.findUserByUsername(this.goal === this.game.score.player1 ? this.player1Name : this.player2Name);
+            const loser : Users = await this.usersService.findUserByUsername(this.goal !== this.game.score.player1 ? this.player1Name : this.player2Name);
             const history : GameDto = { //전적 기록.
                 winner : winner.id,
                 loser : loser.id,
@@ -263,8 +263,8 @@ class BattleClass{
         for (let socket of this.watchUser.keys())
                 socket.leave(this.roomName);
         if ((this.game.score.player1 !== 0) && (this.game.score.player2 !== 0)) {
-            const winner : User = await this.usersService.findUserByUsername(this.goal === this.game.score.player1 ? this.player1Name : this.player2Name);
-            const loser : User = await this.usersService.findUserByUsername(this.goal !== this.game.score.player1 ? this.player1Name : this.player2Name);
+            const winner : Users = await this.usersService.findUserByUsername(this.goal === this.game.score.player1 ? this.player1Name : this.player2Name);
+            const loser : Users = await this.usersService.findUserByUsername(this.goal !== this.game.score.player1 ? this.player1Name : this.player2Name);
             const history : GameDto = { //전적 기록.
                 winner : winner.id,
                 loser : loser.id,
@@ -470,7 +470,7 @@ export class GameService {
         return false;
     }
 
-    public duelRequest(userSocketId:string, user:User, targetSocketId:string, target:User) {
+    public duelRequest(userSocketId:string, user:Users, targetSocketId:string, target:Users) {
         let roomName:string = user.username + 'vs' + target.username;
         this.vs.set(roomName, new BattleClass(userSocketId, user.username, targetSocketId, target.username, 1.5, this.gameRepo, this.usersService));
         this.userIduserName.set(user.id, user.username);

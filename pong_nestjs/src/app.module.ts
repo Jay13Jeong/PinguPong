@@ -5,7 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './modules/users/user.entity';
+import { Users } from './modules/users/user.entity';
 import { Friend } from './modules/friend/friend.entity';
 import { FriendModule } from './modules/friend/friend.module';
 import { Game } from './modules/game/game.entity';
@@ -25,7 +25,7 @@ import { SocketModule } from './modules/socket/socket.module';
       database: process.env.DB_NAME_DEVELOPMENT, // db name.
       autoLoadEntities: true, // 엔티티를 자동으로 로드.
       synchronize: true, // 앱을 실행할 때마다 운영 주체가 데이터베이스와 동기화. 개발모드에서만 써야함.
-      entities: [User, Friend, Game, Chat, Message, Ban] //디비가 다룰 엔티티목록.
+      entities: [Users, Friend, Game, Chat, Message, Ban] //디비가 다룰 엔티티목록.
     }),
     UsersModule,
     AuthModule,

@@ -1,5 +1,5 @@
 import { BeforeInsert, Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { User } from "../users/user.entity";
+import { Users } from "../users/user.entity";
 import { Message } from "./msg.entity";
 
 export enum ChatType {
@@ -40,12 +40,12 @@ export class Chat { //채팅방 엔티티.
 	@Column("int", { array: true, nullable: true })
 	muted: number[]; //벙어리 시킨 대상.
 
-	@ManyToMany(() => User, (user) => user.chats, {
+	@ManyToMany(() => Users, (user) => user.chats, {
 		onDelete: 'CASCADE',
 		eager: true,
 	})
 	@JoinTable()
-	users: User[]; //참가자 리스트.
+	users: Users[]; //참가자 리스트.
 	
 	@OneToMany(() => Message, (message) => message.parent, {
 		onDelete: 'CASCADE',

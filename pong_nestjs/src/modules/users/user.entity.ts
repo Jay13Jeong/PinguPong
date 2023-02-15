@@ -4,7 +4,7 @@ import { Friend } from "../friend/friend.entity";
 import { Game } from "../game/game.entity";
 
 @Entity() //유저 엔티티.
-export class User {
+export class Users {
 	@PrimaryGeneratedColumn() //pk
 	id: number; // 유저테이블 고유번호.
 

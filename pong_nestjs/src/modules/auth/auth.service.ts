@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from "@nestjs/config";
 import axios from 'axios';
 import { AuthUserDto } from './dto/authUser.dto';
-import { User } from '../users/user.entity';
+import { Users } from '../users/user.entity';
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 
@@ -12,7 +12,7 @@ import { Repository } from "typeorm";
 export class AuthService {
     constructor(
         private readonly jwtService: JwtService,
-        @InjectRepository(User) private readonly userRepository: Repository<User>,
+        @InjectRepository(Users) private readonly userRepository: Repository<Users>,
     ) { }
 
     //유저가 있다면 유저 정보 반환, 없다면 디비에 새로 유저를 넣고 유저 정보 반환. 
@@ -29,7 +29,7 @@ export class AuthService {
     }
 
     //토큰을 생성하는 서비스.
-    createToken(user: User, twofa_verified: boolean) {
+    createToken(user: Users, twofa_verified: boolean) {
       return (
         this.jwtService.sign({ sub: user.id, oauthID: user.oauthID, twofa_verified: twofa_verified })
       )
