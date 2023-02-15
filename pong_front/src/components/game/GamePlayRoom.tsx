@@ -1,14 +1,15 @@
 import React, {useState, useEffect, useContext} from "react";
-import { SocketContext } from "../../common/states/contextSocket";
 import {useLocation, Link, useNavigate} from "react-router-dom";
 import {useSetRecoilState, useResetRecoilState} from "recoil";
+import { toast } from "react-toastify";
+
+import { SocketContext } from "../../common/states/contextSocket";
 import {gameState} from "../../common/states/recoilGameState";
 import { Stack } from "../../common/styles/Stack.style";
+import * as types from "../../common/types/Game";
+import { RoutePath } from "../../common/configData";
 import GameRoom from "./GameRoom";
 import { OverLay, Wrapper } from "../modal/Modal.style";
-import * as types from "../../common/types/Game";
-import { toast } from "react-toastify";
-import { RoutePath } from "../../common/configData";
 
 function GamePlayRoom() {
     const [winner, setWinner] = useState<string>();
@@ -39,7 +40,6 @@ function GamePlayRoom() {
             window.removeEventListener('popstate', preventGoBack);
             socket.off("ballPos");
             socket.off("endGame");
-            socket.emit('setInLobby');
             setWinner(data.winner);
         })
         return () => {
@@ -91,7 +91,6 @@ function GamePlayRoom() {
 
     function preventGoBack(e: any) {
         window.history.pushState(null, "", window.location.href);
-        // console.log("뒤로 가기!!");
         toast.error("게임 중엔 불가합니다!");
     }
 
