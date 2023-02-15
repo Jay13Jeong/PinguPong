@@ -266,8 +266,8 @@ class BattleClass{
         for (let socket of this.watchUser.keys())
                 socket.leave(this.roomName);
         if ((this.game.score.player1 !== 0) && (this.game.score.player2 !== 0)) {
-            const winner : Users = await this.usersService.findUserByUsername(this.goal === this.game.score.player1 ? this.player1Name : this.player2Name);
-            const loser : Users = await this.usersService.findUserByUsername(this.goal !== this.game.score.player1 ? this.player1Name : this.player2Name);
+            const winner : Users = await this.usersService.findUserByUsername(this.player1Name !== loserName ? this.player1Name : this.player2Name);
+            const loser : Users = await this.usersService.findUserByUsername(this.player1Name === loserName ? this.player1Name : this.player2Name);
             const history : GameDto = { //전적 기록.
                 winner : winner.id,
                 loser : loser.id,
