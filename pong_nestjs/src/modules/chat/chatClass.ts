@@ -325,6 +325,7 @@ export class chatClass {
     //비번 변경 함수
     public setSecretpw(roomName:string, userId:number, newsecret:string) {
         const room:roomClass = this.rooms.get(roomName);
+        room.setSecretpw(userId, newsecret);
     }
 
     //음소거를 하는 함수
