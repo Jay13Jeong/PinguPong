@@ -27,7 +27,7 @@ function GameWatchRoomPage() {
     useEffect(() => {
         // TODO : 게임이 있는지 확인 (gameRoomCheck : roomName)-> 게임이 있으면 watch game
         socket.emit('gameRoomCheck', `${player1}vs${player2}`);
-        socket.on(`${player1}vs${player2}`, (result) => {
+        socket.on('gameRoomCheck', (result) => {
             socket.off('gameRoomCheck');
             if (result === true) {
                 socket.emit('watchGame', `${player1}vs${player2}`);
