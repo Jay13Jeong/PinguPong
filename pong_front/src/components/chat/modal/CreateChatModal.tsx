@@ -7,9 +7,9 @@ import { createChatModalState } from "../../../common/states/recoilModalState";
 import ModalBase from "../../modal/ModalBase";
 import { Stack } from "../../../common/styles/Stack.style";
 import { InputTextWrapper } from "../../../common/styles/InputTextWrapper.style";
+import Loader from "../../util/Loader"
 
 function CreateChatModal(props: {current: string}) {
-    // const [showModal, setShowModal] = useRecoilState(createChatModalState);
     const showModal = useRecoilValue(createChatModalState);
     const resetState = useResetRecoilState(createChatModalState);
     const [values, setValues] = useState({ 
@@ -60,26 +60,28 @@ function CreateChatModal(props: {current: string}) {
     if (showModal) {
         return (
             <ModalBase reset={resetState}>
+                {loading ? <Loader/> : 
                 <Stack>
-                    <h1>새 채팅방 만들기</h1>
-                        <form onSubmit={handler}>
-                            <InputTextWrapper>
-                                <span>채팅방 이름</span>
-                                <input type="text" 
-                                    onChange={(e) => setValues({...values, room: e.target.value})} 
-                                    placeholder="채팅방 이름" 
-                                    value={values.room}/>
-                            </InputTextWrapper>
-                            <InputTextWrapper>
-                                <span>비밀번호</span>
-                                <input type="text" 
-                                    onChange={(e) => setValues({...values, pw: e.target.value})} 
-                                    placeholder="빈 칸인 경우 공개 채팅방이 됩니다." 
-                                    value={values.pw}/>
-                            </InputTextWrapper>
-                            <button type="submit">채팅방 생성</button>
-                        </form>
-                    </Stack>
+                <h1>새 채팅방 만들기</h1>
+                    <form onSubmit={handler}>
+                        <InputTextWrapper>
+                            <span>채팅방 이름</span>
+                            <input type="text" 
+                                onChange={(e) => setValues({...values, room: e.target.value})} 
+                                placeholder="채팅방 이름" 
+                                value={values.room}/>
+                        </InputTextWrapper>
+                        <InputTextWrapper>
+                            <span>비밀번호</span>
+                            <input type="text" 
+                                onChange={(e) => setValues({...values, pw: e.target.value})} 
+                                placeholder="빈 칸인 경우 공개 채팅방이 됩니다." 
+                                value={values.pw}/>
+                        </InputTextWrapper>
+                        <button type="submit">채팅방 생성</button>
+                    </form>
+                </Stack>
+                }
             </ModalBase>
         )
     }
