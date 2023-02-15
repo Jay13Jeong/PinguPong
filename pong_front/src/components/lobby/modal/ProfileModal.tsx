@@ -22,6 +22,7 @@ function ProfileModal() {
     const [avatarFile, setAvatarFile] = useState('');
     const [onlineStatus, setOnlineStatus] = useState('offline');
     const [rank, setRank] = useState<number>(0);
+    const [relate, setRelate] = useState<string>('nothing');
 
     const socket = useContext(SocketContext);
     
@@ -95,6 +96,19 @@ function ProfileModal() {
         }
     }, [showModal]);
 
+    useEffect(() => {
+        initRelate();
+    }, [userInfo]);
+
+    async function initRelate() {
+        try{
+            const res = await axios.get('http://' + REACT_APP_HOST + ':3000/api/friend/relate/' + userInfo.id, {withCredentials: true});
+            setRelate(res.data);
+        }catch{
+            //nothing relate...
+        }
+    }
+
     //온오프라인 게임중 검사하는 메소드.
     function checkOnline(userId: number){
         socket.emit('api/get/user/status', userId); 
@@ -135,54 +149,55 @@ function ProfileModal() {
     }
 
     //친추.
-    function handleFollow(event: React.MouseEvent<HTMLElement>) {
+    async function handleFollow(event: React.MouseEvent<HTMLElement>) {
         event.preventDefault();
-        axios.post('http://' + REACT_APP_HOST + ':3000/api/friend', {otherID : userInfo.id}, {withCredentials: true})
-        .then(res => {
-            if (res.status === 200)
-                toast.success('send follow');
-        })
-        .catch(err => {
-            toast.error('invalid');
-        })
+        try{
+            const res = await axios.post('http://' + REACT_APP_HOST + ':3000/api/friend', {otherID : userInfo.id}, {withCredentials: true})
+            toast.success('send follow');
+            await initRelate();
+        }catch(err: any){   
+            toast.error(err.response.data.message);
+            await initRelate();
+        }
     };
 
     //언팔.
-    function handleUnfollow(event: React.MouseEvent<HTMLElement>) {
+    async function handleUnfollow(event: React.MouseEvent<HTMLElement>) {
         event.preventDefault();
-        axios.patch('http://' + REACT_APP_HOST + ':3000/api/friend', {otherID : userInfo.id}, {withCredentials: true})
-        .then(res => {
-            if (res.status === 200)
-                toast.success('unfollow ok');
-        })
-        .catch(err => {
-            toast.error('invalid');
-        })
+        try{
+            const res = await axios.patch('http://' + REACT_APP_HOST + ':3000/api/friend', {otherID : userInfo.id}, {withCredentials: true})
+            toast.success('unfollow ok');
+            await initRelate();
+        }catch(err: any){   
+            toast.error(err.response.data.message);
+            await initRelate();
+        }
     };
 
     // 차단
-    function handleBlock(event: React.MouseEvent<HTMLElement>) {
+    async function handleBlock(event: React.MouseEvent<HTMLElement>) {
         event.preventDefault();
-        axios.post('http://' + REACT_APP_HOST + ':3000/api/friend/block', {otherID : userInfo.id}, {withCredentials: true})
-        .then(res => {
+        try{
+            await axios.post('http://' + REACT_APP_HOST + ':3000/api/friend/block', {otherID : userInfo.id}, {withCredentials: true})
             toast.success('target block ok');
-        })
-        .catch(err => {
-            toast.error('target block fail');
-        })
+            await initRelate();
+        }catch(err: any){   
+            toast.error(err.response.data.message);
+            await initRelate();
+        }
     };
 
     // 차단 해제
-    function handleUnblock(event: React.MouseEvent<HTMLElement>) {
+    async function handleUnblock(event: React.MouseEvent<HTMLElement>) {
         event.preventDefault();
-        axios.patch('http://' + REACT_APP_HOST + ':3000/api/friend/block', {otherID : userInfo.id}, {withCredentials: true})
-        .then(res => {
-            if (res.status === 200)
-                toast.success('target unblock ok');
-        })
-        .catch(err => {
-            toast.error('target unblock fail');
-        })
+        try{
+            await axios.patch('http://' + REACT_APP_HOST + ':3000/api/friend/block', {otherID : userInfo.id}, {withCredentials: true})
+            toast.success('target unblock ok');
+            await initRelate();
+        }catch(err: any){   
+            toast.error(err.response.data.message);
+            await initRelate();
+        }
     };
 
     // 게임 관전 이동
@@ -250,14 +265,14 @@ function ProfileModal() {
         }
         return (
             <div className="profile-button-wrapper">
-                {userInfo.relate === 'accepted' ? 
+                {relate === 'accepted' ? 
                 <button className="profile-button" onClick={handleUnfollow}>
                     <FontAwesomeIcon icon={faUserMinus}/> Unfollow
                 </button> :
                 <button className="profile-button" onClick={handleFollow}>
                     <FontAwesomeIcon icon={faUserPlus}/> Follow
                 </button>}
-                {userInfo.relate === 'blocked' ? 
+                {relate === 'blocked' ? 
                 <button className="profile-button" onClick={handleUnblock}>
                     <FontAwesomeIcon icon={faUser}/> Unblock
                 </button> :
@@ -267,12 +282,6 @@ function ProfileModal() {
                 <button className="profile-button" onClick={sendDm}>
                     <FontAwesomeIcon icon={faPaperPlane}/> DM
                 </button>
-                {/* {onlineStatus === 'ingame' ?
-                <button className="profile-button" onClick={watchHandler}>
-                <FontAwesomeIcon icon={faPaperPlane}/> 게임관전
-                </button> :
-                null
-                } */}
             </div>
         )
     }
