@@ -64,6 +64,7 @@ class BattleClass{
         player2Id: string,
         player2: string,
         speed: number,
+        server:Server,
         private gameRepo: Repository<Game>,
         private readonly usersService: UsersService,
         ){
@@ -73,6 +74,8 @@ class BattleClass{
         this.player2Name = player2;
 
         this.roomName = player1 + 'vs' + player2;
+
+        this.myserver = server;
 
         this.watchUser= new Set<Socket>();
         this.player1Ready = false;
@@ -434,35 +437,35 @@ export class GameService {
 
     //유저를 매칭시키는 함수만들기
         //유저가 플레이어 몇인지 이때 할당하기
-    public matchMake(difficulty:number, userName:string, socketid:string, userId:number): boolean{
+    public matchMake(difficulty:number, userName:string, socketid:string, userId:number, server:Server): boolean{
         this.userIduserName.set(userId, userName);
         if (difficulty == 0){
             this.easyLvUserList.set(userId, socketid);
             this.addNoGamegetoutSocketList(socketid);//로비에서 게임에 영향가지 않도록 소켓 저장하기
-            return this.createCheck(this.easyLvUserList, socketid, userId, 1);
+            return this.createCheck(this.easyLvUserList, socketid, userId, 1, server);
         }
         else if (difficulty == 1){
             this.normalLvUserList.set(userId, socketid);
             this.addNoGamegetoutSocketList(socketid);//로비에서 게임에 영향가지 않도록 소켓 저장하기
-            return this.createCheck(this.normalLvUserList, socketid, userId, 1.5);
+            return this.createCheck(this.normalLvUserList, socketid, userId, 1.5, server);
         }
         else if (difficulty == 2){
             this.hardLvUserList.set(userId, socketid);
             this.addNoGamegetoutSocketList(socketid);//로비에서 게임에 영향가지 않도록 소켓 저장하기
-            return this.createCheck(this.hardLvUserList, socketid, userId, 2);
+            return this.createCheck(this.hardLvUserList, socketid, userId, 2, server);
         }
         return false;
     }
 
     //소켓id로 관리를 하자.
-    private createCheck(UserList:Map<number, string>, player1sockerId:string, player1:number, speed:number): boolean{
+    private createCheck(UserList:Map<number, string>, player1sockerId:string, player1:number, speed:number, server:Server): boolean{
         let player2:[number, string];
         if (UserList.size >= 2) {//대기열이 2명이상이면 매칭후 방 만들기
             UserList.delete(player1);
             player2 = Array.from(UserList)[0];
             UserList.delete(player2[0]);
             let roomName:string = this.userIduserName.get(player1) + 'vs' + this.userIduserName.get(player2[0]);
-            this.vs.set(roomName, new BattleClass(player1sockerId, this.userIduserName.get(player1), player2[1], this.userIduserName.get(player2[0]), speed, this.gameRepo, this.usersService));
+            this.vs.set(roomName, new BattleClass(player1sockerId, this.userIduserName.get(player1), player2[1], this.userIduserName.get(player2[0]), speed, server, this.gameRepo, this.usersService));
             this.userIdRoomname.set(player1, roomName);
             this.userIdRoomname.set(player2[0], roomName);
             return true;
@@ -470,9 +473,9 @@ export class GameService {
         return false;
     }
 
-    public duelRequest(userSocketId:string, user:Users, targetSocketId:string, target:Users) {
+    public duelRequest(userSocketId:string, user:Users, targetSocketId:string, target:Users, server:Server) {
         let roomName:string = user.username + 'vs' + target.username;
-        this.vs.set(roomName, new BattleClass(userSocketId, user.username, targetSocketId, target.username, 1.5, this.gameRepo, this.usersService));
+        this.vs.set(roomName, new BattleClass(userSocketId, user.username, targetSocketId, target.username, 1.5, server, this.gameRepo, this.usersService));
         this.userIduserName.set(user.id, user.username);
         this.userIduserName.set(target.id, target.username);
         this.userIdRoomname.set(user.id, roomName);
