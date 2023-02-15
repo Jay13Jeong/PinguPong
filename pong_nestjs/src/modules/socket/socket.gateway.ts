@@ -143,7 +143,7 @@ import { statSync } from 'fs';
   async onChat(client : Socket, data) {
     let [room, msg] = data;
     let userId:number = this.socketUserid.get(client.id);
-    let user:Promise<User> = this.userService.findUserById(userId);
+    let user:Promise<Users> = this.userService.findUserById(userId);
 
     if (this.rooms.checkRoomInUser(userId, room) == false)//유저가 방에 있는 인원인지 확인하기
       return ;
@@ -292,7 +292,7 @@ import { statSync } from 'fs';
   async sendDm(client:Socket, data) {
     let targetId:number = data.targetId;
     let msg:string = data.msg;
-    let user:User = await this.findUserBySocket(client);
+    let user:Users = await this.findUserBySocket(client);
 
     let blockedMe:Friend[] = await this.friendService.getReversBlocks(user.id);
     let block:number[] = [];//날 차단한 사람들 id 만 추출
@@ -306,9 +306,9 @@ import { statSync } from 'fs';
   @SubscribeMessage('connectDm')
   async connectDm(client:Socket, data){
     let targetId:number = data;
-    let user:User = await this.findUserBySocket(client);
+    let user:Users = await this.findUserBySocket(client);
     this.dmRooms.connectDm(client, user.id, targetId);
-    let target:User = await this.userService.findUserById(targetId);
+    let target:Users = await this.userService.findUserById(targetId);
     let msgs = this.dmRooms.getMsgs(user, target);//여태까지 받은 대화들 반환
     this.server.to(client.id).emit('receiveDms', msgs);//반환된 메세지들 보내주기
     //masgs = [{userName : 'tempUser',  msg : '123123123'}, ...]
