@@ -350,7 +350,7 @@ import { statSync } from 'fs';
       }
       // 1. 같은 난이도를 요청한 플레이어가 큐에 있을 경우 게임 매치
       // 2. 같은 난이도를 요청한 플레이어가 큐에 없을 경우 해당 플레이어를 큐에 넣는다.
-       if (this.gameService.matchMake(difficulty, userName, client.id, this.socketUserid.get(client.id))){
+       if (this.gameService.matchMake(difficulty, userName, client.id, this.socketUserid.get(client.id), this.server)){
         this.gameService.matchEmit(this.server, this.socketUserid.get(client.id));
       }
       this.changeUseridStatus(this.socketUserid.get(client.id), 'matching');//유저 상태 변경
@@ -458,7 +458,7 @@ import { statSync } from 'fs';
 
         let targetSocketIds:Set<string> = this.rooms.getsocketIdByuserId(targetId);
         let targetSocketId:string = Array.from(targetSocketIds)[targetSocketIds.size - 1];//가장 마지막 소켓을 넣어주기
-        this.gameService.duelRequest(client.id, user, targetSocketId, target);//방만들기
+        this.gameService.duelRequest(client.id, user, targetSocketId, target, this.server);//방만들기
 
         this.server.to(client.id).emit('duelRequest', true);
         this.server.to(targetSocketId).emit('duelAccept', this.socketUserid.get(client.id), user.username);
