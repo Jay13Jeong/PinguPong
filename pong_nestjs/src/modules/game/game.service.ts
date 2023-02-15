@@ -1,5 +1,6 @@
 import { BadRequestException, ConsoleLogger, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ColdObservable } from 'rxjs/internal/testing/ColdObservable';
 import { Socket, Server } from 'socket.io';
 import { Repository } from 'typeorm';
 import { User } from '../users/user.entity';
@@ -232,7 +233,6 @@ class BattleClass{
             this.gameFinish = true;
             // 이긴 사람만 winner에 넣어서 보내줍니다.
             this.myserver.to(this.roomName).emit("endGame", {winner: this.goal === this.game.score.player1 ? this.player1Name : this.player2Name});
-            //this.player2socket.to(this.player2Id).emit("endGame", {winner: this.goal === this.game.score.player1 ? this.game.score.player1 : this.game.score.player2});
             // TODO - 🌟 전적 정보를 저장해야 한다면 여기서 저장하기 🌟
             this.player1socket.leave(this.roomName);
             this.player2socket.leave(this.roomName);
@@ -255,7 +255,7 @@ class BattleClass{
     public async iGameLoser(loserName:string):Promise<string>{
         clearInterval(this.counter);
         if (this.gameFinish == true)
-            return 'temp';
+            return 'temp';//더미값
         //this.myserver.to(this.player1Id !== loserid ? this.player1Id : this.player2Id).emit("endGame", {winner: this.player1Id !== loserid ? this.player1Name : this.player2Name});
         this.myserver.to(this.player1Id).emit("endGame", {winner: this.player1Name !== loserName ? this.player1Name : this.player2Name});
         this.myserver.to(this.player2Id).emit("endGame", {winner: this.player1Name !== loserName ? this.player1Name : this.player2Name});
@@ -328,6 +328,10 @@ class BattleClass{
 
     public stopwatchGame(client:Socket) {
         this.watchUser.delete(client);
+    }
+
+    public gameFinishCheck():boolean{
+        return this.gameFinish;
     }
 }
 
@@ -515,13 +519,18 @@ export class GameService {
     }
 
     public getRoomCheck(roomName:string):boolean {
-        return this.vs.has(roomName);
+        if (this.vs.has(roomName) === false)
+            return false;
+        const vs:BattleClass = this.vs.get(roomName);
+        return vs.gameFinishCheck() === false;
     }
 
     public watchGame(roomName:string, client:Socket) {
         const vs:BattleClass = this.vs.get(roomName);
-        if (vs != undefined)
+        if (vs != undefined){
             vs.watchGame(client);
+            client.join(roomName);
+        }
     }
 
     public stopwatchGame(roomName:string, client:Socket) {

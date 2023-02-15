@@ -424,14 +424,13 @@ import { statSync } from 'fs';
      @SubscribeMessage('watchGame')//관전하기
      async watchGame(client : Socket, data) {
        let roomName = data;
-       client.join(roomName);
-       this.gameService.watchGame(roomName, client);
+       this.gameService.watchGame(roomName, client);//이 안에서 소켓룸에 넣어주기
      }
 
      @SubscribeMessage('stopwatchGame')//관전 그만두기
      async stopwatchGame(client : Socket, data) {
        let roomName = data;
-       client.leave(roomName);
+       client.leave(roomName);//먼저 값 못받게 하기
        this.gameService.stopwatchGame(roomName, client);
      }
 
