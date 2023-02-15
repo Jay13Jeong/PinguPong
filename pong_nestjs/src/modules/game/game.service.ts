@@ -434,19 +434,19 @@ export class GameService {
 
     //유저를 매칭시키는 함수만들기
         //유저가 플레이어 몇인지 이때 할당하기
-    public matchMake(difficulty:string, userName:string, socketid:string, userId:number): boolean{
+    public matchMake(difficulty:number, userName:string, socketid:string, userId:number): boolean{
         this.userIduserName.set(userId, userName);
-        if (difficulty == '0'){
+        if (difficulty == 0){
             this.easyLvUserList.set(userId, socketid);
             this.addNoGamegetoutSocketList(socketid);//로비에서 게임에 영향가지 않도록 소켓 저장하기
             return this.createCheck(this.easyLvUserList, socketid, userId, 1);
         }
-        else if (difficulty == '1'){
+        else if (difficulty == 1){
             this.normalLvUserList.set(userId, socketid);
             this.addNoGamegetoutSocketList(socketid);//로비에서 게임에 영향가지 않도록 소켓 저장하기
             return this.createCheck(this.normalLvUserList, socketid, userId, 1.5);
         }
-        else if (difficulty == '2'){
+        else if (difficulty == 2){
             this.hardLvUserList.set(userId, socketid);
             this.addNoGamegetoutSocketList(socketid);//로비에서 게임에 영향가지 않도록 소켓 저장하기
             return this.createCheck(this.hardLvUserList, socketid, userId, 2);
