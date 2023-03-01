@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {useLocation, useNavigate, Link} from "react-router-dom";
+import {useLocation, useNavigate, Link, useParams} from "react-router-dom";
 import {useSetRecoilState, useResetRecoilState} from "recoil";
 import { toast } from "react-toastify";
 
@@ -12,11 +12,13 @@ import * as types from "../../common/types/Game";
 import GameRoom from "../../components/game/GameRoom";
 import { OverLay, Wrapper } from "../../components/modal/Modal.style";
 import useCheckLogin from "../../util/useCheckLogin";
+import Loader from "../../components/util/Loader";
 
 function GameWatchRoomPage() {
     useCheckLogin();
 
     const location = useLocation();
+    const { id } = useParams();
     const navigate = useNavigate();
     const socket = useContext(SocketContext);
     const setGame = useSetRecoilState<types.gamePosInfo>(gameState);
@@ -24,11 +26,17 @@ function GameWatchRoomPage() {
     const resetGame = useResetRecoilState(gameState);
 
     useEffect(() => {
-        socket.emit('gameRoomCheck', `${player1}vs${player2}`);
+        if (!location) {
+            toast.error("존재하지 않는 게임입니다!");
+            navigate(RoutePath.lobby);
+        }
+        socket.emit('gameRoomCheck', id);
         socket.on('gameRoomCheck', (result) => {
             socket.off('gameRoomCheck');
             if (result === true) {
-                socket.emit('watchGame', `${player1}vs${player2}`);
+                player1 = location.state.player1;
+                player2 = location.state.player2;
+                socket.emit('watchGame', id);
             }
             else {
                 toast.error("존재하지 않는 게임입니다!");
@@ -59,8 +67,8 @@ function GameWatchRoomPage() {
         })
     }, [resetGame]);
 
-    const player1 = location.state.player1;
-    const player2 = location.state.player2;
+    let player1: string | undefined;
+    let player2: string | undefined;
 
     function endHandler(e: React.MouseEvent<HTMLButtonElement>) {
         socket.emit('stopwatchGame', `${player1}vs${player2}`);
@@ -69,6 +77,8 @@ function GameWatchRoomPage() {
 
     return (
         <ContentBox>
+            {player1 && player2 ? 
+            <>
             <Stack>
                 <GameRoom p1={player1} p2={player2}/>
                 <button onClick={endHandler} className="game-button">
@@ -82,6 +92,8 @@ function GameWatchRoomPage() {
                     <Link to={RoutePath.lobby}><button>Go To Lobby</button></Link>
                 </Wrapper>
             </OverLay> : null}
+            </>
+            : <Loader text="게임 로딩 중"/>}
         </ContentBox>
     );
 }
