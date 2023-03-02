@@ -99,7 +99,7 @@ import { statSync } from 'fs';
     this.gameService.iGamegetout(client, this.socketUserid);//게임 중에 로비로 올 수 있으니 관련 사항 처리
   }
 
-  @SubscribeMessage('api/get/user/status')
+  @SubscribeMessage('getUserStatus')//api/get/user/status
   async getUserStatus(client : Socket, data) {
     let targetId: number = data;
     let status:string;
@@ -110,11 +110,11 @@ import { statSync } from 'fs';
       status = 'offline';
     if (status != 'offline' && status != 'online' && status != 'ingame' && status != 'matching')
       status = 'online';
-    this.server.to(client.id).emit('api/get/user/status', status, targetId);
+    this.server.to(client.id).emit('getUserStatus', status, targetId);
     //상태는 offline, online, ingame, matching값 만 반환하기 채팅,디엠방이면 온라인상태이다.
   }
 
-  @SubscribeMessage('delUser')//방에서 나가기 누르면 해당 방에서 유저 삭제
+  @SubscribeMessage('chatDelUser')//방에서 나가기 누르면 해당 방에서 유저 삭제/delUser
   async delUser(client : Socket, data) {
     let roomName:string = data;
     let userId:number = this.socketUserid.get(client.id);
@@ -122,7 +122,7 @@ import { statSync } from 'fs';
     this.rooms.delUser(roomName, userId, this.server);
   }
 
-  @SubscribeMessage('getUser')//해당 유저 등록하기
+  @SubscribeMessage('chatGetUser')//해당 유저 등록하기//getUser
   async getUser(client : Socket, data) {
     let room:string = data.roomName;
     let userId:number = this.socketUserid.get(client.id);
@@ -160,15 +160,15 @@ import { statSync } from 'fs';
   }
 
   //방이름 :보내면, 공개방이면 true, 비밀방이면 false 반환
-  @SubscribeMessage('/api/check/secret')
+  @SubscribeMessage('chatCheckSecret')///api/check/secret
   async checksecret(client : Socket, data) {
     let roomName:string = data;
 
-    this.server.to(client.id).emit('/api/check/secret', this.rooms.checksecret(roomName));
+    this.server.to(client.id).emit('chatCheckSecret', this.rooms.checksecret(roomName));
    }
 
   //방이름, 비밀번호: 받아서 맞으면 true. 틀리면 false// 맞으면 바로 등록해주기
-  @SubscribeMessage('/api/post/secretPW')
+  @SubscribeMessage('chatPostSecretPW')//api/post/secretPW
   async checksecretPw(client : Socket, data) {
     let roomName:string = data.roomName;
     let secretPW:string = data.secret;
@@ -176,40 +176,40 @@ import { statSync } from 'fs';
 
     if (this.rooms.checksecretPw(roomName, secretPW)){//비밀번호 확인
       this.rooms.newRoom(roomName, client.id, userId);
-      this.server.to(client.id).emit('/api/post/secretPW', true);
+      this.server.to(client.id).emit('chatPostSecretPW', true);
     }else
-    this.server.to(client.id).emit('/api/post/secretPW', false);
+    this.server.to(client.id).emit('chatPostSecretPW', false);
   }
 
-  @SubscribeMessage('/api/post/newRoom')//새로운 방 만들기, 이미 있는 방이름이면 false 반환
+  @SubscribeMessage('chatPostNewRoom')//새로운 방 만들기, 이미 있는 방이름이면 false 반환///api/post/newRoom
   async newRoom(client : Socket, data) {
     let [room, secretpw] = data;
     let userId:number = this.socketUserid.get(client.id);
 
     if (!this.rooms.roomCheck(room) && (room.length <= 10)){//방이름 체크 및 글자수 제한 확인, 한글로 채팅방이름 못 만듬
       this.rooms.newRoom(room, client.id, userId, secretpw);
-      this.server.to(client.id).emit('/api/post/newRoom', true);
+      this.server.to(client.id).emit('chatPostNewRoom', true);
       this.changeUseridStatus(userId, room);
     }
     else
-      this.server.to(client.id).emit('/api/post/newRoom', false);
+      this.server.to(client.id).emit('chatPostNewRoom', false);
   }
 
-  @SubscribeMessage('/api/get/master/status')//내가 마스터 이면 true, 아니면 false
+  @SubscribeMessage('chatGetMasterStatus')//내가 마스터 이면 true, 아니면 false///api/get/master/status
   async getMasterStatus(client : Socket, data) {
     let roomName:string = data;
     let userid = this.socketUserid.get(client.id);
 
-    this.server.to(client.id).emit('/api/get/master/status', this.rooms.getMasterStatus(roomName, userid));// 클래스 함수 리턴값으로 고치기
+    this.server.to(client.id).emit('chatGetMasterStatus', this.rooms.getMasterStatus(roomName, userid));// 클래스 함수 리턴값으로 고치기
   }
 
-  @SubscribeMessage('/api/get/RoomList')//브라우저가 채팅방 리스트 요청함
+  @SubscribeMessage('chatGetRoomList')//브라우저가 채팅방 리스트 요청함///api/get/RoomList
   async getChatList(client : Socket) {
-    this.server.to(client.id).emit('/api/get/RoomList', Array.from(this.rooms.getRoomList()));// 리스트 보내주기, 클래스 함수 리턴값으로 고치기
+    this.server.to(client.id).emit('chatGetRoomList', Array.from(this.rooms.getRoomList()));// 리스트 보내주기, 클래스 함수 리턴값으로 고치기
     this.changeUseridStatus(this.socketUserid.get(client.id), 'online');
   }
 
-  @SubscribeMessage('/api/post/mandateMaster')//방장위임 하기
+  @SubscribeMessage('chatPostMandateMaster')//방장위임 하기///api/post/mandateMaster
   async mandateMaster(client : Socket, data) {
     let [room, targetId] = data;//위임할 targetId
 
@@ -217,7 +217,7 @@ import { statSync } from 'fs';
     this.rooms.mandateMaster(this.server, room, userId, targetId);
   }
 
-  @SubscribeMessage('/api/put/setSecretpw')//비번 변경, ''이면 공개방으로 전환
+  @SubscribeMessage('chatPutSetSecretpw')//비번 변경, ''이면 공개방으로 전환///api/put/setSecretpw
   async setSecretpw(client : Socket, data){
     let [roomName, newsecret] = data;
 
@@ -226,7 +226,7 @@ import { statSync } from 'fs';
   }
 
 
-  @SubscribeMessage('/api/put/addmuteuser')//음소거를 하는 함수
+  @SubscribeMessage('chatPutAddmuteuser')//음소거를 하는 함수///api/put/addmuteuser
   async addmuteuser(client : Socket, data) {
     let [roomName, targetId] = data;//음소거할 타겟id
 
@@ -234,7 +234,7 @@ import { statSync } from 'fs';
     this.rooms.addmuteuser(roomName, userId, targetId);
   }
 
-  @SubscribeMessage('/api/put/freemuteuser')//음소거를 해제하는 함수
+  @SubscribeMessage('chatPutFreeMuteUser')//음소거를 해제하는 함수///api/put/freemuteuser
   async freemuteuser(client : Socket, data) {
     let [room, targetId] = data;//음소거 해제할 타겟id
 
@@ -242,10 +242,10 @@ import { statSync } from 'fs';
     this.rooms.freemuteuser(room, userId, targetId);
   }
 
-  @SubscribeMessage('api/get/muteuser')//상대가 음소거인지 확인
+  @SubscribeMessage('chatGetMuteUser')//상대가 음소거인지 확인/api/get/muteuser
   async checkMuteYou(client: Socket, data) {
     let [roomName, targetId] = data;//음소거 상태 체크할 타겟id
-   this.server.to(client.id).emit('api/get/muteuser', this.rooms.checkMuteYou(roomName, targetId));
+   this.server.to(client.id).emit('chatGetMuteUser', this.rooms.checkMuteYou(roomName, targetId));
   }
 
   @SubscribeMessage('kickUser')//넌 킥
@@ -332,9 +332,9 @@ import { statSync } from 'fs';
 
 
 
-    @SubscribeMessage('api/get/roomlist')//게임 리스트
+    @SubscribeMessage('pingGetRoomList')//게임 리스트//api/get/roomlist
     async getRoomList(client : Socket) {
-      this.server.to(client.id).emit('api/get/roomlist', this.gameService.getRoomList());
+      this.server.to(client.id).emit('pingGetRoomList', this.gameService.getRoomList());
     }
 
     //api:유저의 소켓과 난이도에 따른 배열 3개 만들어서 2개 이상이면 매치시켜주기.
@@ -435,11 +435,8 @@ import { statSync } from 'fs';
     /* !SECTION - 게임 관전 */
 
     /* SECTION - 게임 도전장 */
-
      //상대방에게 도전장 보내기
-
      //도전장은 1개만 받을 수 있으며 이미 받았으면 false 보내기, 성공시 true
-
      //도전장 철회 기능 포함
      @SubscribeMessage('duelRequest')//결투 신청
      async duelRequest(client : Socket, data) {
@@ -499,11 +496,5 @@ import { statSync } from 'fs';
         //위의 함수에서 'matchMakeSuccess'이벤트 보냄 이후 게임화면 등장
         //->게임준비 버튼 등 로직은   @SubscribeMessage('requestStart')으로 진행된다.
      }
-
-    /**
-     * TODO - 방법 논의 필요....
-     */
-
-    /* !SECTION - 게임 도전장 */
 
   }

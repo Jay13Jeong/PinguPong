@@ -17,13 +17,13 @@ function GameWatchPage () {
     const socket = useContext(SocketContext);
 
     useEffect(() => {
-        socket.emit('api/get/roomlist');
-        socket.on('api/get/roomlist', (data: {p1: string, p2: string}[]) => {
+        socket.emit('pingGetRoomList');
+        socket.on('pingGetRoomList', (data: {p1: string, p2: string}[]) => {
             setGameList((prev) => [...prev, ...data]);
             setLoading(false);
         });
         return(()=>{
-            socket.off('api/get/roomlist');
+            socket.off('pingGetRoomList');
         })
     }, [socket]);
 

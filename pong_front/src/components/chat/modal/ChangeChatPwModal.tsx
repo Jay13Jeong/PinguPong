@@ -15,7 +15,7 @@ function ChangeChatPwModal(props: {roomName: string}) {
 
     function handler(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        socket.emit('/api/put/setSecretpw', props.roomName, value); // 설정할 비밀번호를 보내기
+        socket.emit('chatPutSetSecretpw', props.roomName, value); // 설정할 비밀번호를 보내기
         toast.success("비밀번호 설정을 완료했습니다!");
         resetState();
     }
