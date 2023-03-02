@@ -290,8 +290,11 @@ export class chatClass {
         if (room.getMasterStatus(userId) == true){//나간 사람이 방장이면 새로운 방장 임명 후  당사자에게 메세지 전송
             let targetId:number = room.newMaster(userId);
             let targetSocketIds:Set<string> = this.userIdsocketId.get(targetId);
-            for (let id of targetSocketIds){
-                server.to(id).emit('youMaster');
+            if (targetSocketIds != undefined){
+                let targetSocketIdsArray:string[] = Array.from(targetSocketIds.keys());
+                for (let id of targetSocketIdsArray){
+                    server.to(id).emit('youMaster');
+                }
             }
         }
         room.delsocketuser(userId)
