@@ -206,7 +206,7 @@ import { ChatService } from '../chat/chat.service';
   @SubscribeMessage('chatGetRoomList')//브라우저가 채팅방 리스트 요청함///api/get/RoomList
   async getChatList(client : Socket) {
     this.server.to(client.id).emit('chatGetRoomList', Array.from(this.chatService.getRoomList()));// 리스트 보내주기, 클래스 함수 리턴값으로 고치기
-    this.changeUseridStatus(this.socketUserid.get(client.id), 'online');
+    //this.changeUseridStatus(this.socketUserid.get(client.id), 'online');//이 부분 빼도 되지 않나?
   }
 
   @SubscribeMessage('chatPostMandateMaster')//방장위임 하기///api/post/mandateMaster
