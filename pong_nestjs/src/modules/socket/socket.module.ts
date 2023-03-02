@@ -13,6 +13,7 @@ import { GameModule } from '../game/game.module';
 import { FriendModule } from '../friend/friend.module';
 import { FriendService } from '../friend/friend.service';
 import { Friend } from '../friend/friend.entity';
+import { ChatService } from '../chat/chat.service';
 
 @Module({
 	imports:[
@@ -31,6 +32,7 @@ import { Friend } from '../friend/friend.entity';
 		UsersService,
 		GameService,
 		FriendService,
+		ChatService,
   ],
   controllers: [SocketController]
 })

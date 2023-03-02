@@ -11,6 +11,7 @@ import { FriendService } from '../friend/friend.service';
 import { Friend } from '../friend/friend.entity';
 import { status } from './userStatusType';
 import { statSync } from 'fs';
+import { ChatService } from '../chat/chat.service';
 
 @WebSocketGateway( {
     cors: { origin: '*' }//, credentials: true,}//, namespace: 'api/ping'
@@ -19,7 +20,8 @@ import { statSync } from 'fs';
      constructor(@Inject(GameService) private readonly gameService:GameService,
      @Inject('AUTH_SERVICE') private readonly authService: AuthService,
 		private readonly userService: UsersService,
-    private readonly friendService: FriendService,)
+    private readonly friendService: FriendService,
+    private readonly chatService: ChatService,)
     {
     }
 
@@ -29,7 +31,7 @@ import { statSync } from 'fs';
     rooms : chatClass = new chatClass();
     socketUserid : Map<string, number> = new Map<string, number>();
     useridStatus : Map<number, status> = new Map<number, status>();
-
+    dmRooms : dmClass = new dmClass();
 
     //OnGatewayConnection를 오버라이딩
     async handleConnection(client : Socket) {
@@ -268,8 +270,6 @@ import { statSync } from 'fs';
 
 
 
-
-  dmRooms : dmClass = new dmClass();
 
   @SubscribeMessage('dmList')//디엠 기능 첫 입장, 처음이면 DM 디비 만들기
   async dmList(client:Socket){
