@@ -21,9 +21,8 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
     const [current, setCurrent] = useState("");
     const [myInfo, myerror, myLoading] = useGetData('http://' + REACT_APP_HOST + ':3000/api/user');
     const [menuLoading, isMenuLoading] = useState<boolean>(true);
-    const [targetID, setTargetID] = useState<number>();
+    const [targetID, setTargetID] = useState<number>(0);
     const [isMuted, setIsMuted] = useState<boolean>();
-    const [targetUser, setTargetUser] = useState<User | null>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -67,33 +66,6 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
             socket.off('duelRequest');
         })
     }, [socket]);
-
-    useEffect(() => {
-        if (info === null)
-            return ;
-        const initTargetInfo = async () => {
-            try{
-                const res = await axios.get('http://' + REACT_APP_HOST + ':3000/api/friend/relate/' + info.id, {withCredentials: true});
-                let userData: any = info;
-                let totalGame = userData.wins + userData.loses;
-                let targetUserInfo : User = {
-                    id : userData.id,
-                    avatar: userData.avatar,
-                    userName : userData.username as string,
-                    myProfile : false,
-                    userStatus : 'off',
-                    rank : 0,
-                    odds : !userData.wins ? 0 : Math.floor(100 / (totalGame / (userData.wins ? userData.wins : 1))),
-                    record : [],
-                    relate : res.data,
-                };
-                setTargetUser(targetUserInfo);
-            }catch(err: any){
-                navigate('/'); //로그인 안되어 있다면 로그인페이지로 돌아간다.
-            }
-        }
-        initTargetInfo();
-    }, [info]);
 
     /* 추방 (현재 채팅방을 강제로 나가게 함) */
     function kickHandler(e: React.MouseEvent<HTMLElement>) {
@@ -172,8 +144,8 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
     }
 
     function showProfileHander(e: React.MouseEvent<HTMLElement>) {
-        if (targetID && targetUser) {
-            profileState({user: targetUser, userId: targetID, show: true})
+        if (targetID) {
+            profileState({userId: targetID, show: true})
         }
         resetState();
     }
@@ -192,7 +164,7 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
                     </div> : null}
                     <div>
                         <button onClick={inviteHandler}>도전장 보내기</button>
-                        {targetUser !== null ?
+                        {targetID !== 0 ?
                         <button onClick={showProfileHander}>프로필 보기</button>
                         : null}
                     </div>

@@ -19,17 +19,15 @@ function ProfileModal() {
     const showModal = useRecoilValue(profileModalState);
     const setProfileEditState = useSetRecoilState(profileEditModalState);
     const resetState = useResetRecoilState(profileModalState);
-    const [avatarFile, setAvatarFile] = useState('');
-    const [onlineStatus, setOnlineStatus] = useState('offline');
-    const [rank, setRank] = useState<number>(0);
-    const [relate, setRelate] = useState<string>('nothing');
-
-    const socket = useContext(SocketContext);
-    
-    const [userInfo, setUserInfo] = useState<types.User>({
+    const [avatarFile, setAvatarFile] = useState(''); //대상의 아바타.
+    const [onlineStatus, setOnlineStatus] = useState('offline'); // 대상의 상태 (온,오프,게임중).
+    const [rank, setRank] = useState<number>(0); // 대상의 게임순위.
+    const [relate, setRelate] = useState<string>('nothing');// 대상과 나의 관계.
+    const socket = useContext(SocketContext); //소켓.
+    const [userInfo, setUserInfo] = useState<types.User>({ //유저정보 기본값.
         id: 0,
         avatar: "https://cdn.myanimelist.net/images/characters/11/421848.jpg",
-        userName: "pinga", myProfile: true, userStatus: "on",rank: 0,odds: 0,record: []
+        userName: "pinga", myProfile: true, userStatus: "offline",rank: 0,odds: 0,record: []
     });    // 유저 정보
 
     const navigate = useNavigate();
@@ -41,7 +39,7 @@ function ProfileModal() {
                 if (res.data === null || res.data === undefined)
                     return ;
                 if (showModal.userId !== res.data.id && showModal.userId !== 0){ //id 0은 빈 값.
-                    setUserInfo(showModal.user? showModal.user : userInfo);
+                    await initUserInfo(showModal.userId);
                 } else {
                     let totalGame = res.data.wins + res.data.loses;
                     let myInfo : types.User = {
@@ -89,12 +87,8 @@ function ProfileModal() {
     }, [showModal]);
 
     useEffect(() => {
-        if (showModal.userId !== 0){
-            checkOnline(showModal.userId);
-        } else {
-            checkOnline(userInfo.id);
-        }
-    }, [showModal]);
+        checkOnline(userInfo.id);
+    }, [userInfo]);
 
     useEffect(() => {
         initRelate();
@@ -106,6 +100,26 @@ function ProfileModal() {
             setRelate(res.data);
         }catch{
             //nothing relate...
+        }
+    }
+
+    async function initUserInfo(userId: number){
+        try{
+            const res = await axios.get('http://' + REACT_APP_HOST + ':3000/api/user/' + showModal.userId, {withCredentials: true});
+            let totalGame = res.data.wins + res.data.loses;
+            let myInfo : types.User = {
+                id : res.data.id,
+                avatar: res.data.avatar,
+                userName : res.data.username as string,
+                myProfile : true,
+                userStatus : 'off',
+                rank : 0,
+                odds : !res.data.wins ? 0 : Math.floor(100 / (totalGame / (res.data.wins ? res.data.wins : 1))),
+                record : [],
+            };
+            setUserInfo(myInfo);
+        }catch{
+            //nothing res...
         }
     }
 
@@ -287,8 +301,6 @@ function ProfileModal() {
     }
 
     const getClickUser = () : types.User => {
-        if (showModal.user)
-            return showModal.user;
         return userInfo;
     }
 

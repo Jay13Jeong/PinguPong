@@ -6,19 +6,9 @@ export const dmModalState = atom<boolean>({
     default: false
 })
 
-export const profileModalState = atom<{user?:User, userId: number, show: boolean}>({
+export const profileModalState = atom<{ userId: number, show: boolean }>({
     key: "profileModalState",
     default: {
-        user: {
-            id: 0,
-            avatar: "test.jpg",
-            userName: "pinga",
-            myProfile: true, 
-            userStatus: "test",
-            rank: 0,
-            odds: 0,
-            record: []
-        },
         userId: 0,
         show: false
     }

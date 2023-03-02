@@ -18,7 +18,7 @@ export class FriendController {
     // @UseGuards(JwtAuthGuard)
     // async inputDummyFriendList(@Req() req)
 	// {
-    //     const user = req.user as User;
+    //     const user = req.user as Users;
     //     const user2 = await this.authServices.validateUser({
     //         username: 'pinga7', //ex. jjeong
 	// 		email: 'pinga7@pong.com',
