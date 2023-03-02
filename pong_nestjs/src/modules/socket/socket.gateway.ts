@@ -5,12 +5,11 @@ import { AuthService } from '../auth/auth.service';
 import { UsersService } from '../users/users.service';
 import { Users } from '../users/user.entity';
 import { GameService } from '../game/game.service';
-import { dmClass } from '../chat/chatDmClass';
 import { FriendService } from '../friend/friend.service';
 import { Friend } from '../friend/friend.entity';
 import { status } from './userStatusType';
-import { statSync } from 'fs';
 import { ChatService } from '../chat/chat.service';
+import { ChatDmService } from '../chatdm/chatdm.service';
 
 @WebSocketGateway( {
     cors: { origin: '*' }//, credentials: true,}//, namespace: 'api/ping'
@@ -20,7 +19,8 @@ import { ChatService } from '../chat/chat.service';
      @Inject('AUTH_SERVICE') private readonly authService: AuthService,
 		private readonly userService: UsersService,
     private readonly friendService: FriendService,
-    private readonly chatService: ChatService,)
+    private readonly chatService: ChatService,
+    private readonly chatDmService: ChatDmService,)
     {
     }
 
@@ -29,7 +29,7 @@ import { ChatService } from '../chat/chat.service';
 
     socketUserid : Map<string, number> = new Map<string, number>();
     useridStatus : Map<number, status> = new Map<number, status>();
-    dmRooms : dmClass = new dmClass();
+  
 
     //OnGatewayConnection를 오버라이딩
     async handleConnection(client : Socket) {
@@ -273,7 +273,7 @@ import { ChatService } from '../chat/chat.service';
   async dmList(client:Socket){
     const userId:number = this.socketUserid.get(client.id);
 
-    let userIds:number[] = this.dmRooms.getdmList(userId);
+    let userIds:number[] = this.chatDmService.getdmList(userId);
     let userName:string[] = [];
     for (let id of userIds){
       let name = await (await this.userService.findUserById(id)).username;
@@ -281,7 +281,7 @@ import { ChatService } from '../chat/chat.service';
     }
 
     this.server.to(client.id).emit('dmList', userName);//유저 네임 리스트 보내주기
-    this.changeUseridStatus(userId, 'online');
+    this.changeUseridStatus(userId, 'online');//이거 빼도 되지 않은가?
   }
 
   //메시지를 보냄
@@ -297,7 +297,7 @@ import { ChatService } from '../chat/chat.service';
     for (let id of blockedMe)
         block.push(id.sender.id);
     if (!block.includes(targetId))//날 차단 했는지 확인 후 메시지 보내기
-      this.dmRooms.sendDm(this.server, user.id, user.username, targetId, msg);
+      this.chatDmService.sendDm(this.server, user.id, user.username, targetId, msg);
   }
 
   //1대1 대화방 입장시 여태까지 받은 Dm 보내주기
@@ -305,12 +305,12 @@ import { ChatService } from '../chat/chat.service';
   async connectDm(client:Socket, data){
     let targetId:number = data;
     let user:Users = await this.findUserBySocket(client);
-    this.dmRooms.connectDm(client, user.id, targetId);
+    this.chatDmService.connectDm(client, user.id, targetId);
     let target:Users = await this.userService.findUserById(targetId);
-    let msgs = this.dmRooms.getMsgs(user, target);//여태까지 받은 대화들 반환
+    let msgs = this.chatDmService.getMsgs(user, target);//여태까지 받은 대화들 반환
     this.server.to(client.id).emit('receiveDms', msgs);//반환된 메세지들 보내주기
     //masgs = [{userName : 'tempUser',  msg : '123123123'}, ...]
-    this.changeUseridStatus(user.id, this.dmRooms.getTargetDmRoom(user.id, targetId));//유저 상태 변경
+    this.changeUseridStatus(user.id, this.chatDmService.getTargetDmRoom(user.id, targetId));//유저 상태 변경
   }
 
   //1대1 디엠방 나감
@@ -318,7 +318,7 @@ import { ChatService } from '../chat/chat.service';
   async closeDm(client:Socket, data){
     let targetId:number = data;
     let userId:number = this.socketUserid.get(client.id);
-    this.dmRooms.closeDm(client, userId, targetId);
+    this.chatDmService.closeDm(client, userId, targetId);
     this.changeUseridStatus(userId, 'online');//유저상태 변경
   }
 
@@ -446,7 +446,7 @@ import { ChatService } from '../chat/chat.service';
 
         //_dm으로 오면 룸네임을 찾아서 넣어 줄 것,
         if (roomName === '_dm')
-          roomName = this.dmRooms.getTargetDmRoom(user.id, targetId);
+          roomName = this.chatDmService.getTargetDmRoom(user.id, targetId);
 
         if (!(this.useridStatus.get(targetId).status === roomName) || (this.gameService.checkGaming(targetId)))
           return this.server.to(client.id).emit('duelRequest', false);

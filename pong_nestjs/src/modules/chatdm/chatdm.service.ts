@@ -1,59 +1,12 @@
-import { Inject } from "@nestjs/common";
+import { Injectable } from '@nestjs/common';
 import { Socket, Server } from "socket.io";
 import { Users } from "../users/user.entity";
+import { receiveMsg } from "./receiveMsgType";
+import { roomMsgDb } from "./roomMsgDb";
+import { userDmList } from "./userDmListClass";
 
-type msg= {
-    userId:number,
-    msg:string
-}
-
-type receiveMsg={
-    userName : string,
-    msg : string
-}
-
-class roomMsgDb{
-    private userMsg : Set<msg>;
-
-    public constructor(){
-        this.userMsg = new Set<msg>();
-    }
-
-    public pushMsg(userId:number, msg:string){
-        this.userMsg.add({userId:userId, msg:msg});
-    }
-
-    public getMsg():Array<msg>{
-        return Array.from(this.userMsg.keys());
-    }
-}
-
-class userDmList{
-    private targetuserRoomnum:Map<number,string>;
-
-    public constructor(){
-        this.targetuserRoomnum = new Map<number, string>();
-    }
-
-    public pushDm(target:number, roomNum:string){
-        if (!this.targetuserRoomnum.has(target))
-            this.targetuserRoomnum.set(target, roomNum);
-    }
-
-    public checkCreateDM(target:number):boolean {
-        return this.targetuserRoomnum.has(target);
-    }
-
-    public getUsers():Array<number>{
-        return Array.from(this.targetuserRoomnum.keys());
-    }
-
-    public getTargetRoom(targetid:number) {
-        return this.targetuserRoomnum.get(targetid);
-    }
-}
-
-export class dmClass{
+@Injectable()
+export class ChatDmService {
     private userDmList:Map<number, userDmList>;//나의 디엠 리스트
     private roomNumber : number;//프라이머리키 및 룸 넘버 지정용
     private roomDB : Map<string, roomMsgDb>//룸 넘버에 해당하는 저장된 msg들
