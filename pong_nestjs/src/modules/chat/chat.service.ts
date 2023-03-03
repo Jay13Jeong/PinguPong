@@ -70,7 +70,7 @@ export class ChatService {
         // 새로운 채팅방 추가,일단 소켓으로 알려주고 추후 api로 변경 되면 소켓 부분 제거하기
         public newRoom(roomName: string, socketId:string, userId:number, secretpw:string=''){
             if (!(this.rooms.has(roomName))){
-                this.rooms.set(roomName, new roomClass(socketId, userId, secretpw));
+                this.rooms.set(roomName, new roomClass(userId, secretpw));
                 if (!this.userIdRooms.has(userId))
                     this.userIdRooms.set(userId, new Set<string>());
                 this.userIdRooms.get(userId).add(roomName);
@@ -109,7 +109,7 @@ export class ChatService {
         //방 인원 추가, api로 방 추가가 되면 소켓통신
         private addUser(roomName: string, socketId:string, userId:number):void {
             const room:roomClass = this.rooms.get(roomName);
-            room.addsocketuser(socketId, userId);
+            room.addsocketuser(userId);
         }
     
         //방 인원 나감,

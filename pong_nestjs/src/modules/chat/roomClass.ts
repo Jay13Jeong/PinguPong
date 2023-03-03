@@ -20,7 +20,7 @@ export class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함
     //방장에게 밴 당한 userid Set
     private banList : Set<number>;
 
-    public constructor(socketId:string, userId:number, secretpw:string){
+    public constructor(userId:number, secretpw:string){
         this.master = userId;
         this.userIds = new Set<number>();
         this.userIds.add(userId);
@@ -63,7 +63,7 @@ export class roomClass {//유저 아이디와 고유 키값 둘다 있어야 함
     }
 
     //추가 유저
-    public addsocketuser(socketid:string, userid:number) {
+    public addsocketuser(userid:number) {
         if (!this.userIds.has(userid))
             this.userIds.add(userid);
     }
