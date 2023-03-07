@@ -35,14 +35,22 @@ export class ChatService {
         this.userIdsocketId.get(userId).delete(socketId);
     }
 
-    public checkRoomInUser(userId:number, roomName:string):boolean {
-        return this.userIdRooms.get(userId).has(roomName);
+    public async checkRoomInUser(userId:number, roomName:string):Promise<boolean> {
+        let room = await this.chatRepository.findOneBy({roomName:roomName});
+
+        if (room.userIds == undefined)
+             return false;
+        for (let user of room.userIds){
+            if (user.userid == userId)
+                return true;
+        }
+        return false;
     }
 
     //방의 현재 인원들 소켓s 반환
-    public getSocketList(roomName: string, BlockedMe:Friend[]):Array<string>{
-        const room:roomClass = this.rooms.get(roomName);
-        let userIds = room.getUserIdList();
+    public async getSocketList(roomName: string, BlockedMe:Friend[]):Promise<Array<string>>{
+        const room = await this.chatRepository.findOneBy({roomName: roomName});
+        let userIds: RoomUserId[] = room.userIds;
         let sockets:string[] = [];
 
         let block:number[] = [];//날 차단한 사람들 id 만 추출
@@ -52,8 +60,8 @@ export class ChatService {
 
         let sendId:number[] = [];//날 차단하지 않은 사람들의 id
         for (let id of userIds){
-            if (!block.includes(id)) //id 값이 포함되어 있으면.
-                sendId.push(id);
+            if (!block.includes(id.userid)) //id 값이 포함되어 있으면.
+                sendId.push(id.userid);
         }
 
         for(let id of sendId){//방 인원 중 현재 접속한 사람들 소켓리스트만 반환
@@ -66,27 +74,20 @@ export class ChatService {
         return sockets;
     }
 
-    public getMasterStatus(roomName:string, userid:number):boolean{//내가 마스터 이면 true, 아니면 false
-        const room:roomClass = this.rooms.get(roomName);
+    public async getMasterStatus(roomName:string, userid:number):Promise<boolean>{//내가 마스터 이면 true, 아니면 false
+        let room = await this.chatRepository.findOneBy({roomName: roomName});
 
-        return room.getMasterStatus(userid);
+        return room.adminId == userid;
     }
 
     // 새로운 채팅방 추가,일단 소켓으로 알려주고 추후 api로 변경 되면 소켓 부분 제거하기
-    public newRoom(roomName: string, socketId:string, userId:number, secretpw:string=''){
-        if (!(this.rooms.has(roomName))){
-            this.rooms.set(roomName, new roomClass(userId, secretpw));
-            this.roomSave(roomName, userId, secretpw);
-            if (!this.userIdRooms.has(userId))
-                this.userIdRooms.set(userId, new Set<string>());
-            this.userIdRooms.get(userId).add(roomName);
+    public async newRoom(roomName: string, userId:number, secretpw:string=''){
+        if (!(await this.roomDbHas(roomName))){
+            await this.roomDbCreate(roomName, userId, secretpw);
         }
         else{
             //비번 확인하는 구조 넣기//게이트웨이 단에서 비번 확인할 때 체크함
-            this.addUser(roomName, socketId, userId);
-            if (!this.userIdRooms.has(userId))
-                this.userIdRooms.set(userId, new Set<string>());
-            this.userIdRooms.get(userId).add(roomName);
+            this.addUser(roomName, userId);
         }
     }
 
@@ -113,9 +114,13 @@ export class ChatService {
     }
 
     //방 인원 추가, api로 방 추가가 되면 소켓통신
-    private addUser(roomName: string, socketId:string, userId:number):void {
-        const room:roomClass = this.rooms.get(roomName);
-        room.addsocketuser(userId);
+    private async addUser(roomName: string, userId:number) {
+        let room = await this.chatRepository.findOneBy({roomName: roomName});
+
+        let addUser = new RoomUserId();
+        addUser.userid = userId;
+        room.userIds.push(addUser);
+        await this.chatRepository.save(room);
     }
     //방 인원 나감,
     public delUser(roomName:string, userId:number, server:Server) {
@@ -169,15 +174,30 @@ export class ChatService {
         room.freemuteuser(userId, targetId);
     }
     //음소거 여부를 확인 후 bool값을 리턴하는 함수
-    public checkMuteUser(roomName:string, userId:number) {
-        const room:roomClass = this.rooms.get(roomName);
-        return room.checkmuteuser(userId);
+    public async checkMuteUser(roomName:string, userId:number) {
+        let room = await this.chatRepository.findOneBy({roomName:roomName});
+
+        if (room.muted == undefined)
+             return false;
+        for (let user of room.muted){
+            if (user.userid == userId)
+                return true;
+        }
+        return false;
     }
     //음소거 여부를 확인 후 bool값을 리턴하는 함수
-    public checkMuteYou(roomName:string, targetId:number):boolean {
-        const room:roomClass = this.rooms.get(roomName);
-        return room.checkmuteYou(targetId);
+    public async checkMuteYou(roomName:string, targetId:number):Promise<boolean> {
+        let room = await this.chatRepository.findOneBy({roomName:roomName});
+
+        if (room.muted == undefined)
+            return false;
+        for (let mute of room.muted){
+            if (mute.userid == targetId)
+                return true;
+        }
+        return false;
     }
+
     //방이 비밀방 여부 확인, 비밀방이면 false
     public checksecret(roomName:string):boolean{
         const room:roomClass = this.rooms.get(roomName);
@@ -210,7 +230,7 @@ export class ChatService {
         return room.banCheck(userId);
     }
 
-    private async roomSave(roomName: string, userId:number, secretpw:string){
+    private async roomDbCreate(roomName: string, userId:number, secretpw:string){
         let secret:boolean = true;
         if (secretpw == '')
             secret = false;
@@ -220,11 +240,19 @@ export class ChatService {
         chat.adminId = userId;
         chat.secret = secret;
         chat.password = secretpw;
-
+        chat.banned = [];
+        chat.muted = [];
         let roomNewUserId : RoomUserId = new RoomUserId();
         roomNewUserId.userid = userId;
         chat.userIds = [roomNewUserId];
         await this.chatRepository.save(chat);
+    }
+
+    private async roomDbHas(roomName):Promise<boolean>{
+        let temp = await this.chatRepository.findOneBy({roomName: roomName});
+        if (temp == null)
+            return false;
+        return true;
     }
 //룸 유저 체크, 마스터 체크, 방장 위임,, 유저 추가 제거, 비번 변경, 음소거추가/해제, 벤 추가
 

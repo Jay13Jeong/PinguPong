@@ -9,6 +9,6 @@ export class Ban { //채팅차단 목록 엔티티.
 	@Column()
 	userid: number; //밴당한 유저 Id
 
-	@ManyToOne(()=>Chat, Chat=>Chat.banned, {eager: true, onDelete: 'CASCADE'})
+	@ManyToOne(()=>Chat, Chat=>Chat.banned, {onDelete: 'CASCADE'})
 	room:Chat
 }

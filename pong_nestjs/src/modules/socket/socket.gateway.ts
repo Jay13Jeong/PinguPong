@@ -135,7 +135,7 @@ import { ChatDmService } from '../chatdm/chatdm.service';
       return ;
     }
     this.server.to(client.id).emit('youPass');//접속 가능하면
-    this.chatService.newRoom(room, client.id, userId);//채팅방에 유저 등록
+    this.chatService.newRoom(room, userId);//채팅방에 유저 등록
     this.changeUseridStatus(userId, room);//유저 상태 변경
   }
 
@@ -145,14 +145,14 @@ import { ChatDmService } from '../chatdm/chatdm.service';
     let userId:number = this.socketUserid.get(client.id);
     let user:Promise<Users> = this.userService.findUserById(userId);
 
-    if (this.chatService.checkRoomInUser(userId, room) == false)//유저가 방에 있는 인원인지 확인하기
+    if (await this.chatService.checkRoomInUser(userId, room) == false)//유저가 방에 있는 인원인지 확인하기
       return ;
-    if (this.chatService.checkMuteUser(room, userId))//음소거 상태인지 확인하기
+    if (await this.chatService.checkMuteUser(room, userId))//음소거 상태인지 확인하기
       return ;
     //나를 블록한 유저 리스트
     let blockedMe:Friend[] = await this.friendService.getReversBlocks(userId);
     //메세지를 보내야할 소켓id, 나를 차단한 유저를 제외하고.
-    const sockets = this.chatService.getSocketList(room, blockedMe);
+    const sockets = await this.chatService.getSocketList(room, blockedMe);
 
     for (let id of sockets){
       this.server.to(id).emit('chat', (await user).username, msg);// 메세지 전송
@@ -175,7 +175,7 @@ import { ChatDmService } from '../chatdm/chatdm.service';
     let userId:number = this.socketUserid.get(client.id);
 
     if (this.chatService.checksecretPw(roomName, secretPW)){//비밀번호 확인
-      this.chatService.newRoom(roomName, client.id, userId);
+      this.chatService.newRoom(roomName, userId);
       this.server.to(client.id).emit('chatPostSecretPW', true);
     }else
     this.server.to(client.id).emit('chatPostSecretPW', false);
@@ -187,7 +187,7 @@ import { ChatDmService } from '../chatdm/chatdm.service';
     let userId:number = this.socketUserid.get(client.id);
 
     if (!this.chatService.roomCheck(room) && (room.length <= 10)){//방이름 체크 및 글자수 제한 확인, 한글로 채팅방이름 못 만듬
-      this.chatService.newRoom(room, client.id, userId, secretpw);
+      await this.chatService.newRoom(room, userId, secretpw);
       this.server.to(client.id).emit('chatPostNewRoom', true);
       this.changeUseridStatus(userId, room);
     }
@@ -200,7 +200,7 @@ import { ChatDmService } from '../chatdm/chatdm.service';
     let roomName:string = data;
     let userid = this.socketUserid.get(client.id);
 
-    this.server.to(client.id).emit('chatGetMasterStatus', this.chatService.getMasterStatus(roomName, userid));// 클래스 함수 리턴값으로 고치기
+    this.server.to(client.id).emit('chatGetMasterStatus', await this.chatService.getMasterStatus(roomName, userid));// 클래스 함수 리턴값으로 고치기
   }
 
   @SubscribeMessage('chatGetRoomList')//브라우저가 채팅방 리스트 요청함///api/get/RoomList
@@ -245,7 +245,7 @@ import { ChatDmService } from '../chatdm/chatdm.service';
   @SubscribeMessage('chatGetMuteUser')//상대가 음소거인지 확인/api/get/muteuser
   async checkMuteYou(client: Socket, data) {
     let [roomName, targetId] = data;//음소거 상태 체크할 타겟id
-   this.server.to(client.id).emit('chatGetMuteUser', this.chatService.checkMuteYou(roomName, targetId));
+   this.server.to(client.id).emit('chatGetMuteUser', await this.chatService.checkMuteYou(roomName, targetId));
   }
 
   @SubscribeMessage('kickUser')//넌 킥
