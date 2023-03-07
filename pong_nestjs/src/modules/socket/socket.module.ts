@@ -13,12 +13,16 @@ import { GameModule } from '../game/game.module';
 import { FriendModule } from '../friend/friend.module';
 import { FriendService } from '../friend/friend.service';
 import { Friend } from '../friend/friend.entity';
+import { ChatService } from '../chat/chat.service';
+import { ChatDmService } from '../chatdm/chatdm.service';
+import { ChatModule } from '../chat/chat.module';
+import { Chat } from '../chat/chat.entity';
 
 @Module({
 	imports:[
 		UsersModule,
 		GameModule,
-		TypeOrmModule.forFeature([Game, Friend]),
+		TypeOrmModule.forFeature([Game, Friend, Chat]),
 	],
 	providers: [
 		SocketService,
@@ -31,6 +35,8 @@ import { Friend } from '../friend/friend.entity';
 		UsersService,
 		GameService,
 		FriendService,
+		ChatService,
+		ChatDmService,
   ],
   controllers: [SocketController]
 })

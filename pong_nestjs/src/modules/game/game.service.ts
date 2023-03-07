@@ -1,8 +1,9 @@
 import { BadRequestException, ConsoleLogger, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ColdObservable } from 'rxjs/internal/testing/ColdObservable';
 import { Socket, Server } from 'socket.io';
 import { Repository } from 'typeorm';
-import { User } from '../users/user.entity';
+import { Users } from '../users/user.entity';
 import { UsersService } from '../users/users.service';
 import { GameDto } from './game.dto';
 import { Game } from './game.entity';
@@ -23,6 +24,7 @@ class BattleClass{
     private player1Ready:boolean;
     private player2Ready:boolean;
     private myserver:Server;
+    private gameFinish:boolean;
     // private userService: UsersService;
     // private create;
 
@@ -62,6 +64,7 @@ class BattleClass{
         player2Id: string,
         player2: string,
         speed: number,
+        server:Server,
         private gameRepo: Repository<Game>,
         private readonly usersService: UsersService,
         ){
@@ -69,13 +72,10 @@ class BattleClass{
         this.player2Id = player2Id;
         this.player1Name = player1;
         this.player2Name = player2;
-        // this.create = create;
-        // this.userService = userService;
-        // console.log("123", this.usersService, userService);
-
 
         this.roomName = player1 + 'vs' + player2;
-        //this.pingGateway = pingGateway;
+
+        this.myserver = server;
 
         this.watchUser= new Set<Socket>();
         this.player1Ready = false;
@@ -85,6 +85,7 @@ class BattleClass{
         this.speed = speed;
 
         this.counter = undefined;
+        this.gameFinish = false;
     }
 
     //디비에 전적을 저장하는 메소드.
@@ -134,67 +135,16 @@ class BattleClass{
     public async startGame(server:Server): Promise<void>{
         if (this.counter != undefined)//게임 중인지 확인하기
             return ;
-        console.log('startGame');
         this.myserver = server;
         await this.gameStart();
     }
 
     /* 공 움직이는 함수 - 반사, 점수 획득 */
-    // private ballMove(qwe:string):void {
-    //     console.log('ballMove+++++++++++', qwe);
-    //     const p1PaddleStart = this.game.player1;
-    //     const p1PaddleEnd = this.game.player1 + this.sizes.paddleSize;
-    //     const p2PaddleStart = this.game.player2;
-    //     const p2PaddleEnd = this.game.player2 + this.sizes.paddleSize;
-    //     if (this.game.ball.y < 0 || this.game.ball.y > this.sizes.canvasHeight) {  // 위아래 벽에 튕김
-    //         this.game.ball.dy *= -1;
-    //     }
-    //     if (this.game.ball.x > this.sizes.canvasWidth - this.sizes.lineWidth) {    // 오른쪽(p2네) 벽으로 돌진
-    //         if (this.game.ball.y < p2PaddleStart || this.game.ball.y > p2PaddleEnd) { // 패들 너머로 간 경우
-    //             // 초기화
-    //             this.game.ball.y = this.sizes.canvasHeight / 2;
-    //             this.game.ball.x = this.sizes.canvasWidth / 2;
-    //             this.game.ball.dy = 4;
-    //             this.game.ball.dx = Math.random() > 0.5 ? 4 : -4;
-    //             // p1의 점수를 올린다.
-    //             this.game.score.player1++;
-    //         }
-    //         else {  // p2의 패들에 튕김
-    //             this.game.ball.dx *= -1;
-    //         }
-    //     }
-    //     else if (this.game.ball.x < this.sizes.lineWidth) {   // 왼쪽(p1네) 벽으로 돌진
-    //         if (this.game.ball.y < p1PaddleStart || this.game.ball.y > p1PaddleEnd) { // 패들 너머로 간 경우
-    //             // 초기화
-    //             this.game.ball.y = this.sizes.canvasHeight / 2;
-    //             this.game.ball.x = this.sizes.canvasWidth / 2;
-    //             this.game.ball.dy = 4;
-    //             this.game.ball.dx = Math.random() > 0.5 ? 4 : -4;
-    //             // p2의 점수를 올린다.
-    //             this.game.score.player2++;
-    //         }
-    //         else {  // p1의 패들에 튕김
-    //             this.game.ball.dx *= -1;
-    //         }
-    //     }
-    // }
-
-    /* 일정 시간마다 게임 동작 함수 실행 */
-    private async gameStart ():Promise<void> {
-        console.log('gameStart------------');
-        let me = await this.gameRun.bind(this);
-        this.counter = setInterval(me, 1000 * 0.02);
-
-    //api:clearInterval(counter)함수를 쓰면 setInterval를 종료할 수 있다.
-    }
-
-    /* 게임 동작 함수 */
-    private async gameRun(): Promise<void> {
-        // 1. 공 움직이고 (방향전환, 점수 검사)
-        const p1PaddleStart:number = this.game.player1;
-        const p1PaddleEnd:number = this.game.player1 + this.sizes.paddleSize;
-        const p2PaddleStart:number = this.game.player2;
-        const p2PaddleEnd:number = this.game.player2 + this.sizes.paddleSize;
+    private ballMove():void {
+        const p1PaddleStart = this.game.player1;
+        const p1PaddleEnd = this.game.player1 + this.sizes.paddleSize;
+        const p2PaddleStart = this.game.player2;
+        const p2PaddleEnd = this.game.player2 + this.sizes.paddleSize;
         if (this.game.ball.y < 0 || this.game.ball.y > this.sizes.canvasHeight) {  // 위아래 벽에 튕김
             this.game.ball.dy *= -1;
         }
@@ -225,13 +175,23 @@ class BattleClass{
             else {  // p1의 패들에 튕김
                 this.game.ball.dx *= -1;
             }
-        }//여기까지 ballMove함수 내용
+        }
+    }
+
+    /* 일정 시간마다 게임 동작 함수 실행 */
+    private async gameStart ():Promise<void> {
+        let me = await this.gameRun.bind(this);
+        this.counter = setInterval(me, 1000 * 0.02);
+    //api:clearInterval(counter)함수를 쓰면 setInterval를 종료할 수 있다.
+    }
+
+    /* 게임 동작 함수 */
+    private async gameRun(): Promise<void> {
+        // 1. 공 움직이고 (방향전환, 점수 검사)
+        this.ballMove();
 
         // 2. 바뀐 게임 정보들 보내준다. (플레이어와 관전자 모두에게 보내주기)
-        //this.pingGateway.putBallPos(this.player1Id, this.game);
         this.myserver.to(this.roomName).emit("ballPos", this.game);
-        //this.myserver.to(this.player2Id).emit("ballPos", this.game);
-        //console.log('ballpos', this.player1Id, this.player2Id);
 
         // 3. 공 움직이기 (위치 변화)
         this.game.ball.y += this.game.ball.dy * this.speed;
@@ -239,18 +199,16 @@ class BattleClass{
         // 4. 게임 종료 여부도 확인해서 보내주기
         if (this.goal === this.game.score.player1 || this.goal === this.game.score.player2) {
             clearInterval(this.counter); // 반복 종료
+            this.gameFinish = true;
             // 이긴 사람만 winner에 넣어서 보내줍니다.
             this.myserver.to(this.roomName).emit("endGame", {winner: this.goal === this.game.score.player1 ? this.player1Name : this.player2Name});
-            //this.player2socket.to(this.player2Id).emit("endGame", {winner: this.goal === this.game.score.player1 ? this.game.score.player1 : this.game.score.player2});
             // TODO - 🌟 전적 정보를 저장해야 한다면 여기서 저장하기 🌟
-            //console.log('endGame');
             this.player1socket.leave(this.roomName);
             this.player2socket.leave(this.roomName);
             for (let socket of this.watchUser.keys())
                 socket.leave(this.roomName);
-            const winner : User = await this.usersService.findUserByUsername(this.goal === this.game.score.player1 ? this.player1Name : this.player2Name);
-            const loser : User = await this.usersService.findUserByUsername(this.goal !== this.game.score.player1 ? this.player1Name : this.player2Name);
-            // console.log("444", winner);
+            const winner : Users = await this.usersService.findUserByUsername(this.goal === this.game.score.player1 ? this.player1Name : this.player2Name);
+            const loser : Users = await this.usersService.findUserByUsername(this.goal !== this.game.score.player1 ? this.player1Name : this.player2Name);
             const history : GameDto = { //전적 기록.
                 winner : winner.id,
                 loser : loser.id,
@@ -265,17 +223,21 @@ class BattleClass{
 
     public async iGameLoser(loserName:string):Promise<string>{
         clearInterval(this.counter);
+        if (this.gameFinish == true)
+            return 'temp';//더미값
         //this.myserver.to(this.player1Id !== loserid ? this.player1Id : this.player2Id).emit("endGame", {winner: this.player1Id !== loserid ? this.player1Name : this.player2Name});
         this.myserver.to(this.player1Id).emit("endGame", {winner: this.player1Name !== loserName ? this.player1Name : this.player2Name});
         this.myserver.to(this.player2Id).emit("endGame", {winner: this.player1Name !== loserName ? this.player1Name : this.player2Name});
-        //console.log("endGame", this.player1Name === loserName ? this.player1Name : this.player2Name);
-        if ((this.game.score.player1 !== 0) && (this.game.score.player2 !== 0)) {
-            const winner : User = await this.usersService.findUserByUsername(this.goal === this.game.score.player1 ? this.player1Name : this.player2Name);
-            const loser : User = await this.usersService.findUserByUsername(this.goal !== this.game.score.player1 ? this.player1Name : this.player2Name);
+        this.myserver.to(this.roomName).emit("endGame", {winner: this.player1Name !== loserName ? this.player1Name : this.player2Name});
+        for (let socket of this.watchUser.keys())
+                socket.leave(this.roomName);
+        if (!((this.game.score.player1 === 0) && (this.game.score.player2 === 0))) {
+            const winner : Users = await this.usersService.findUserByUsername(this.player1Name !== loserName ? this.player1Name : this.player2Name);
+            const loser : Users = await this.usersService.findUserByUsername(this.player1Name === loserName ? this.player1Name : this.player2Name);
             const history : GameDto = { //전적 기록.
                 winner : winner.id,
                 loser : loser.id,
-                winnerScore : this.goal === this.game.score.player1 ? this.game.score.player1 : this.game.score.player2,
+                winnerScore : this.player1Name !== loserName ? this.game.score.player1 : this.game.score.player2,
                 loserScore : 0
             };
             await this.create(history);// 디비에 전적 저장.
@@ -293,20 +255,16 @@ class BattleClass{
             this.player1Ready = true;
             this.player1socket = socket;
             socket.join(this.roomName);
-            //console.log('player1sockerRoom', socket.rooms);
         }
         if (this.player2Id == socket.id){
             this.player2Ready = true;
             this.player2socket = socket;
             socket.join(this.roomName);
-            //console.log('player2sockerRoom', socket.rooms);
         }
         if (this.player1Ready && this.player2Ready){
             server.to(this.roomName).emit('startGame');//여기서 소켓 메시지보내기
-            //this.player2socket.to(this.player1Id).emit('startGame');소켓이 to로 자기자신에게는 메세지를 못 보낸다.
-            //socket.to(this.roomName).emit('startGame');//2번쨰 누르는 사람은 못 받음,서버가 아닌 소켓이 룸에 보낼때는 브로드캐스팅인것 같다.
-
-            console.log('startGame');
+            //소켓이 to로 자기자신에게는 메세지를 못 보낸다.
+            //2번쨰 누르는 사람은 못 받음,서버가 아닌 소켓이 룸에 보낼때는 브로드캐스팅인것 같다.
             return true;
         }
         return false;
@@ -340,6 +298,10 @@ class BattleClass{
     public stopwatchGame(client:Socket) {
         this.watchUser.delete(client);
     }
+
+    public gameFinishCheck():boolean{
+        return this.gameFinish;
+    }
 }
 
 @Injectable()
@@ -366,7 +328,6 @@ export class GameService {
     }
 
     async test(){
-        // console.log(this.usersService);
         return await this.usersService.findUserById(1);
     }
 
@@ -417,8 +378,6 @@ export class GameService {
         const roomName:string = this.userIdRoomname.get(userId);
         const vs:BattleClass = this.vs.get(roomName);
 
-        console.log('iGamegetout', roomName);
-        //console.log('clientRoom', client.rooms);
         if (vs != undefined){//but BattleClass이 이미 지웠지만, 다른 사용자가 새로고침할 경우 문제가 생길 수 있다
             const winner:string = await vs.iGameLoser(this.userIduserName.get(userId));//이긴 사람의 소켓 id
             this.userIdRoomname.delete(socketUserId.get(winner));
@@ -444,52 +403,50 @@ export class GameService {
 
     //유저를 매칭시키는 함수만들기
         //유저가 플레이어 몇인지 이때 할당하기
-    public matchMake(difficulty:string, userName:string, socketid:string, userId:number): boolean{
+    public matchMake(difficulty:number, userName:string, socketid:string, userId:number, server:Server): boolean{
         this.userIduserName.set(userId, userName);
-        if (difficulty == '0'){
+        if (difficulty == 0){
             this.easyLvUserList.set(userId, socketid);
             this.addNoGamegetoutSocketList(socketid);//로비에서 게임에 영향가지 않도록 소켓 저장하기
-            return this.createCheck(this.easyLvUserList, socketid, userId, 1);
+            return this.createCheck(this.easyLvUserList, socketid, userId, 1, server);
         }
-        else if (difficulty == '1'){
+        else if (difficulty == 1){
             this.normalLvUserList.set(userId, socketid);
             this.addNoGamegetoutSocketList(socketid);//로비에서 게임에 영향가지 않도록 소켓 저장하기
-            return this.createCheck(this.normalLvUserList, socketid, userId, 1.5);
+            return this.createCheck(this.normalLvUserList, socketid, userId, 1.5, server);
         }
-        else if (difficulty == '2'){
+        else if (difficulty == 2){
             this.hardLvUserList.set(userId, socketid);
             this.addNoGamegetoutSocketList(socketid);//로비에서 게임에 영향가지 않도록 소켓 저장하기
-            return this.createCheck(this.hardLvUserList, socketid, userId, 2);
+            return this.createCheck(this.hardLvUserList, socketid, userId, 2, server);
         }
         return false;
     }
 
     //소켓id로 관리를 하자.
-    private createCheck(UserList:Map<number, string>, player1sockerId:string, player1:number, speed:number): boolean{
+    private createCheck(UserList:Map<number, string>, player1sockerId:string, player1:number, speed:number, server:Server): boolean{
         let player2:[number, string];
         if (UserList.size >= 2) {//대기열이 2명이상이면 매칭후 방 만들기
             UserList.delete(player1);
             player2 = Array.from(UserList)[0];
             UserList.delete(player2[0]);
             let roomName:string = this.userIduserName.get(player1) + 'vs' + this.userIduserName.get(player2[0]);
-            // console.log("333", await this.usersService.findUserById(1));
-            this.vs.set(roomName, new BattleClass(player1sockerId, this.userIduserName.get(player1), player2[1], this.userIduserName.get(player2[0]), speed, this.gameRepo, this.usersService));
+            this.vs.set(roomName, new BattleClass(player1sockerId, this.userIduserName.get(player1), player2[1], this.userIduserName.get(player2[0]), speed, server, this.gameRepo, this.usersService));
             this.userIdRoomname.set(player1, roomName);
             this.userIdRoomname.set(player2[0], roomName);
-            console.log('createRoom', roomName);
             return true;
         }
         return false;
     }
 
-    public duelRequest(userSocketId:string, user:User, targetSocketId:string, target:User) {
+    public duelRequest(userSocketId:string, user:Users, targetSocketId:string, target:Users, server:Server) {
         let roomName:string = user.username + 'vs' + target.username;
-        this.vs.set(roomName, new BattleClass(userSocketId, user.username, targetSocketId, target.username, 1.5, this.gameRepo, this.usersService));
+        this.vs.set(roomName, new BattleClass(userSocketId, user.username, targetSocketId, target.username, 1.5, server, this.gameRepo, this.usersService));
         this.userIduserName.set(user.id, user.username);
         this.userIduserName.set(target.id, target.username);
         this.userIdRoomname.set(user.id, roomName);
         this.userIdRoomname.set(target.id, roomName);
-        console.log('creatreDuelRoom', roomName);
+
         this.addNoGamegetoutSocketList(userSocketId);
         this.addNoGamegetoutSocketList(targetSocketId);
     }
@@ -530,16 +487,25 @@ export class GameService {
 
     }
 
+    public getRoomCheck(roomName:string):boolean {
+        if (this.vs.has(roomName) === false)
+            return false;
+        const vs:BattleClass = this.vs.get(roomName);
+        return vs.gameFinishCheck() === false;
+    }
+
     public watchGame(roomName:string, client:Socket) {
         const vs:BattleClass = this.vs.get(roomName);
-
-        vs.watchGame(client);
+        if (vs != undefined){
+            vs.watchGame(client);
+            client.join(roomName);
+        }
     }
 
     public stopwatchGame(roomName:string, client:Socket) {
         const vs:BattleClass = this.vs.get(roomName);
-
-        vs.stopwatchGame(client);
+        if (vs != undefined)
+            vs.stopwatchGame(client);
     }
 
     //디비에 전적을 저장하는 서비스.

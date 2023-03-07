@@ -8,7 +8,7 @@ import Loader from "../../util/Loader";
 import { REACT_APP_HOST } from "../../../common/configData";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { User } from "../../../common/types/User";
+import { Friend, User } from "../../../common/types/User";
 import axios from "axios";
 // import { userState } from "../../states/recoilUserState";
 
@@ -17,13 +17,12 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
     const modalState = useRecoilValue(chatMenuModalState);
     const resetState = useResetRecoilState(chatMenuModalState);
     const profileState = useSetRecoilState(profileModalState);
-    const [info, error, loading] = useGetData(`http://` + REACT_APP_HOST + `:3000/api/user/name?username=${modalState.user}`);
+    const [info, error, loading] = useGetData(`http://` + REACT_APP_HOST + `:3000/api/user/name?username=${modalState.user}`, modalState.user);
     const [current, setCurrent] = useState("");
     const [myInfo, myerror, myLoading] = useGetData('http://' + REACT_APP_HOST + ':3000/api/user');
     const [menuLoading, isMenuLoading] = useState<boolean>(true);
-    const [targetID, setTargetID] = useState<number>();
+    const [targetID, setTargetID] = useState<number>(0);
     const [isMuted, setIsMuted] = useState<boolean>();
-    const [targetUser, setTargetUser] = useState<User | null>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -41,8 +40,8 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
     useEffect(() => {
         // let [roomName, targetId] = data;//음소거 체크할 유저id
         if (props.isDmModal !== true) {
-            socket.emit('api/get/muteuser', props.roomName, targetID);
-            socket.on('api/get/muteuser', (data: boolean) => {
+            socket.emit('chatGetMuteUser', props.roomName, targetID);
+            socket.on('chatGetMuteUser', (data: boolean) => {
                 setIsMuted(data);
             })
         }
@@ -63,28 +62,10 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
 
     useEffect(() => {
         return(() => {
-            socket.off('api/get/muteuser');
+            socket.off('chatGetMuteUser');
             socket.off('duelRequest');
         })
     }, [socket]);
-
-    useEffect(() => {
-        if (info === null)
-            return ;
-        let userData: any = info;
-        let totalGame = userData.wins + userData.loses;
-        let targetUserInfo : User = {
-            id : userData.id,
-            avatar: userData.avatar,
-            userName : userData.username as string,
-            myProfile : false,
-            userStatus : 'off',
-            rank : 0,
-            odds : !userData.wins ? 0 : Math.floor(100 / (totalGame / (userData.wins ? userData.wins : 1))),
-            record : [],
-        };
-        setTargetUser(targetUserInfo);
-    }, [info]);
 
     /* 추방 (현재 채팅방을 강제로 나가게 함) */
     function kickHandler(e: React.MouseEvent<HTMLElement>) {
@@ -106,19 +87,19 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
 
     /* 음소거 (target 유저가 말하는 것은 누구에게도 표시되지 않는다.) */
     function muteHandler(e: React.MouseEvent<HTMLElement>) {
-        socket.emit('/api/put/addmuteuser', props.roomName, targetID);
+        socket.emit('chatPutAddmuteuser', props.roomName, targetID);
         toast("🔇 mute completed!");
         resetState();
     }
 
     function freemuteHandler(e: React.MouseEvent<HTMLElement>) {
-        socket.emit('/api/put/freemuteuser', props.roomName, targetID);
+        socket.emit('chatPutFreeMuteUser', props.roomName, targetID);
         toast("🔈 unmute completed!");
         resetState();
     }
 
     function setMasterHandler(e: React.MouseEvent<HTMLElement>) {
-        socket.emit('/api/post/mandateMaster', props.roomName, targetID);
+        socket.emit('chatPostMandateMaster', props.roomName, targetID);
         toast("👑 master set up completed!");
         props.setMaster && props.setMaster(false);
         resetState();
@@ -163,8 +144,8 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
     }
 
     function showProfileHander(e: React.MouseEvent<HTMLElement>) {
-        if (targetID && targetUser) {
-            profileState({user: targetUser, userId: targetID, show: true})
+        if (targetID) {
+            profileState({userId: targetID, show: true})
         }
         resetState();
     }
@@ -183,7 +164,7 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
                     </div> : null}
                     <div>
                         <button onClick={inviteHandler}>도전장 보내기</button>
-                        {targetUser !== null ?
+                        {targetID !== 0 ?
                         <button onClick={showProfileHander}>프로필 보기</button>
                         : null}
                     </div>

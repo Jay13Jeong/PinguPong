@@ -24,20 +24,20 @@ function SecretChatModal(props: {current: string}) {
 
     function handler(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        // socket.emit('/api/post/secretPW', {roomName: showModal.roomName, secret: values, userId: props.current});
-        socket.emit('/api/post/secretPW', {roomName: showModal.roomName, secret: values});
-        socket.on('/api/post/secretPW', (data) => {
+        // socket.emit('chatPostSecretPW', {roomName: showModal.roomName, secret: values, userId: props.current});
+        socket.emit('chatPostSecretPW', {roomName: showModal.roomName, secret: values});
+        socket.on('chatPostSecretPW', (data) => {
             if (data) {
                 // 입장 성공
                 resetState();
-                socket.off('/api/post/secretPW');
+                socket.off('chatPostSecretPW');
                 navigate(`/chat/room/${showModal.roomName}`, {state: {
                     isMaster: false
                 }});
             }
             else {
                 toast.error("비밀번호가 틀렸습니다.");
-                socket.off('/api/post/secretPW');
+                socket.off('chatPostSecretPW');
                 setValues("");
             };
         })

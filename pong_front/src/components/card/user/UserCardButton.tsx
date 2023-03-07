@@ -14,18 +14,18 @@ function UserCardButton(props: {friend: Friend, userID: number, userName: string
     const socket = useContext(SocketContext);
 
     useEffect(() => {
-        socket.emit('api/get/user/status', props.userID);    
-        socket.on('api/get/user/status', (status, targetId) => {
+        socket.emit('getUserStatus', props.userID);    
+        socket.on('getUserStatus', (status, targetId) => {
             if (targetId === props.userID)
                 setOnlineStatus(status);
         })
         return (() => {
-            socket.off('api/get/user/status');
+            socket.off('getUserStatus');
         })
     }, [socket]);
 
-    function clickHandler(user?: User, value?: number, e?: any) {
-        profileState({user: user, userId: (value? value : 0), show: true});
+    function clickHandler(value: number, e?: any) {
+        profileState({ userId: value, show: true });
         resetFriendState();
         resetBlockState();
     }
@@ -79,7 +79,7 @@ function UserCardButton(props: {friend: Friend, userID: number, userName: string
     }
 
     return (
-        <CardButton onClick={(e) => clickHandler(props.friend.you, props.userID, e)}>
+        <CardButton onClick={(e) => clickHandler(props.userID, e)}>
             {/* {showRelate(props.relate)} */}
             <span className="user-id">{props.userName}</span>
             {showStatus(onlineStatus)}

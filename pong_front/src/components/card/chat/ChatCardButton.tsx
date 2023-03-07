@@ -13,7 +13,7 @@ function ChatCardButton (props: {roomName: string, current: string}) {
 
     useEffect(() => {
         return (() => {
-            socket.off('/api/check/secret');
+            socket.off('chatCheckSecret');
             socket.off('youBan');
             socket.off('youPass');
         })
@@ -21,15 +21,19 @@ function ChatCardButton (props: {roomName: string, current: string}) {
 
     function clickHandler(e: React.MouseEvent<HTMLElement>) {
         /* 비밀방 여부 확인 */
-        socket.emit('/api/check/secret', props.roomName);
-        socket.on('/api/check/secret', (data) => {
-            socket.off('/api/check/secret');
+        socket.emit('chatCheckSecret', props.roomName);
+        socket.on('chatCheckSecret', (data) => {
+            socket.off('chatCheckSecret');
             if (data) {
-                socket.emit('getUser', {roomName: props.roomName})
+                socket.emit('chatGetUser', {roomName: props.roomName})
                 /* ban 여부 확인 */
                 socket.on('youBan', () => {
                     socket.off('youBan');
                     toast.error("금지당한 채팅방입니다!");
+                })
+                socket.on('notRoom', () => {
+                    socket.off('notRoom');
+                    toast.error("존재하지 않는 채팅방입니다!");
                 })
                 socket.on('youPass', () => {
                     navigate(`/chat/room/${props.roomName}`, {state: {

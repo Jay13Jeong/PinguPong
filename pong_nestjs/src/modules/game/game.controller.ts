@@ -1,6 +1,6 @@
 import { Controller, Get, Param, ParseIntPipe, Query, Req, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guard/jwt.guard';
-import { User } from '../users/user.entity';
+import { Users } from '../users/user.entity';
 import { GameService } from './game.service';
 import { Request, Response } from 'express';
 
@@ -22,9 +22,6 @@ export class GameController {
 	@Get(':id')
     @UseGuards(JwtAuthGuard)
 	async getGameByUserID(@Param('id', ParseIntPipe) id: number) {
-        // const user = req.user as User;
-        // console.log("111");
-        // console.log(await this.gameService.test());
 		return await this.gameService.getHistoryByUserId(id);
 	}
 

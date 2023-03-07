@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { User } from "src/modules/users/user.entity";
+import { Users } from "src/modules/users/user.entity";
 import { Repository } from "typeorm";
 import { AuthService } from "../auth.service";
 
@@ -8,14 +8,13 @@ import { AuthService } from "../auth.service";
 export class JwtAuthGuard implements CanActivate {
 		constructor(
 			@Inject('AUTH_SERVICE') private authService: AuthService,
-			@InjectRepository(User) private readonly userRepository: Repository<User>,
+			@InjectRepository(Users) private readonly userRepository: Repository<Users>,
 		) { }
 
 	//리퀘스트의 토큰정보를 유효성 확인하고, 2fa검사하는 메소드.
 	async canActivate(context: ExecutionContext): Promise<boolean> {
 		const request = context.switchToHttp().getRequest();
 
-		// console.log(request);
 		if (request.cookies == undefined) {
 			throw new UnauthorizedException('쿠키 정보 없음.');
 		}
@@ -36,7 +35,6 @@ export class JwtAuthGuard implements CanActivate {
 		if (user.twofa && !obj.twofa_verified)
 			throw new UnauthorizedException('twofa');
 		request.user = user;
-		// request.fa2 = obj.twofa_verified;
 		return true;
 	}
 }
@@ -46,7 +44,7 @@ export class JwtAuthGuard implements CanActivate {
 export class Jwt2faGuard implements CanActivate {
 		constructor(
 			@Inject('AUTH_SERVICE') private authService: AuthService,
-            @InjectRepository(User) private readonly userRepository: Repository<User>,
+            @InjectRepository(Users) private readonly userRepository: Repository<Users>,
 		) { }
 
     //리퀘스트의 토큰정보를 유효성 확인하고, 유저 정보를 컨트롤러에게 전달 할 수 있도록 하는 메소드.

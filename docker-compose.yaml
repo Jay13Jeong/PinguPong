@@ -8,8 +8,8 @@ services:
       context: ./pong_database
     restart: always
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${NESTJS_USER}
+      POSTGRES_PASSWORD: ${NESTJS_PASSWORD}
       POSTGRES_DB: pong
       NESTJS_USER: ${NESTJS_USER}
       NESTJS_PASSWORD: ${NESTJS_PASSWORD}
@@ -36,7 +36,6 @@ services:
       - JWTKEY=${ACCESS_SECRET}
       - AUTH_CLIENT_ID=${AUTH_CLIENT_ID}
       - AUTH_CALLBACK_URL=${AUTH_CALLBACK_URL}
-      # - TOKEN_EXPIRATION=1d;
       - HOST_2FA=${HOST_2FA}
       - USER_2FA=${USER_2FA}
       - PASS_2FA=${PASS_2FA}
@@ -44,7 +43,6 @@ services:
       context: ./pong_nestjs
       dockerfile: Dockerfile
     command: npm run start:dev
-    # command: /entrypoint.sh npm run start:debug
     working_dir: /pong_nestjs
     networks:
       - pong
@@ -62,11 +60,9 @@ services:
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=true # App이 수정되었을 경우 Reload 가능하도록 하는 설정
       - WDS_SOCKET_PORT=0 # 문제 해결용 WebSocket connection to 'ws://localhost:3000/ws' failed:
-    #   - VITE_BASE_URL=
     build:
       context: ./pong_front
       dockerfile: Dockerfile
-    # command: npm run dev
     working_dir: /pong_front
     networks:
       - pong
@@ -90,7 +86,6 @@ services:
   #   volumes:
   #     - /etc/localtime:/etc/localtime:ro
   #     - ./pong_proxy/templates:/templates:ro
-
 
 networks: # 네트워크를 사용하겠다는 선언입니다. 선언하지 않을 경우 기본 네트워크가 사용됩니다.
   pong: # 기본 설정을 이용하여 pong이라는 네트워크를 선언합니다. pong network를 사용하는 컨테이너들은 서로 간에 서비스의 이름으로 접근할 수 있습니다.

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { SocketContext } from "../../../common/states/contextSocket";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ModalBase from "../../modal/ModalBase";
 import GameRecordList from "../../card/game/GameRecordList";
 import { useSetRecoilState , useResetRecoilState, useRecoilValue } from "recoil"
@@ -11,7 +11,6 @@ import * as types from "../../../common/types/User"
 import axios from "axios";
 import ProfileEditModal from "./ProfileEditModal";
 import { REACT_APP_HOST } from "../../../common/configData";
-import useGetData from "../../../util/useGetData";
 import ProfileModalWrapper from "./ProfileModal.style";
 import { toast } from "react-toastify";
 
@@ -20,17 +19,15 @@ function ProfileModal() {
     const showModal = useRecoilValue(profileModalState);
     const setProfileEditState = useSetRecoilState(profileEditModalState);
     const resetState = useResetRecoilState(profileModalState);
-    const [avatarFile, setAvatarFile] = useState('');
-    const [onlineStatus, setOnlineStatus] = useState('offline');
-    const [rank, setRank] = useState<number>(0);
-    // const [data, error, isLoading] = useGetData('http://' + REACT_APP_HOST + ':3000/api/user');
-
-    const socket = useContext(SocketContext);
-    
-    const [userInfo, setUserInfo] = useState<types.User>({
+    const [avatarFile, setAvatarFile] = useState(''); //대상의 아바타.
+    const [onlineStatus, setOnlineStatus] = useState('offline'); // 대상의 상태 (온,오프,게임중).
+    const [rank, setRank] = useState<number>(0); // 대상의 게임순위.
+    const [relate, setRelate] = useState<string>('nothing');// 대상과 나의 관계.
+    const socket = useContext(SocketContext); //소켓.
+    const [userInfo, setUserInfo] = useState<types.User>({ //유저정보 기본값.
         id: 0,
         avatar: "https://cdn.myanimelist.net/images/characters/11/421848.jpg",
-        userName: "pinga", myProfile: true, userStatus: "on",rank: 0,odds: 0,record: []
+        userName: "pinga", myProfile: true, userStatus: "offline",rank: 0,odds: 0,record: []
     });    // 유저 정보
 
     const navigate = useNavigate();
@@ -42,7 +39,7 @@ function ProfileModal() {
                 if (res.data === null || res.data === undefined)
                     return ;
                 if (showModal.userId !== res.data.id && showModal.userId !== 0){ //id 0은 빈 값.
-                    setUserInfo(showModal.user? showModal.user : userInfo);
+                    await initUserInfo(showModal.userId);
                 } else {
                     let totalGame = res.data.wins + res.data.loses;
                     let myInfo : types.User = {
@@ -90,23 +87,51 @@ function ProfileModal() {
     }, [showModal]);
 
     useEffect(() => {
-        if (showModal.userId !== 0){
-            checkOnline(showModal.userId);
-        } else {
-            checkOnline(userInfo.id);
+        checkOnline(userInfo.id);
+    }, [userInfo]);
+
+    useEffect(() => {
+        initRelate();
+    }, [userInfo]);
+
+    async function initRelate() {
+        try{
+            const res = await axios.get('http://' + REACT_APP_HOST + ':3000/api/friend/relate/' + userInfo.id, {withCredentials: true});
+            setRelate(res.data);
+        }catch{
+            //nothing relate...
         }
-    }, [showModal]);
+    }
+
+    async function initUserInfo(userId: number){
+        try{
+            const res = await axios.get('http://' + REACT_APP_HOST + ':3000/api/user/' + showModal.userId, {withCredentials: true});
+            let totalGame = res.data.wins + res.data.loses;
+            let myInfo : types.User = {
+                id : res.data.id,
+                avatar: res.data.avatar,
+                userName : res.data.username as string,
+                myProfile : true,
+                userStatus : 'off',
+                rank : 0,
+                odds : !res.data.wins ? 0 : Math.floor(100 / (totalGame / (res.data.wins ? res.data.wins : 1))),
+                record : [],
+            };
+            setUserInfo(myInfo);
+        }catch{
+            //nothing res...
+        }
+    }
 
     //온오프라인 게임중 검사하는 메소드.
     function checkOnline(userId: number){
-        socket.emit('api/get/user/status', userId); 
-        socket.on('api/get/user/status', (status, targetId) => {
+        socket.emit('getUserStatus', userId); 
+        socket.on('getUserStatus', (status, targetId) => {
             if (targetId !== 0)
                 setOnlineStatus(status);
         })
-        console.log(userInfo.id,onlineStatus);
         return (() => {
-            socket.off('api/get/user/status');
+            socket.off('getUserStatus');
         })
     }
 
@@ -138,54 +163,55 @@ function ProfileModal() {
     }
 
     //친추.
-    function handleFollow(event: React.MouseEvent<HTMLElement>) {
+    async function handleFollow(event: React.MouseEvent<HTMLElement>) {
         event.preventDefault();
-        axios.post('http://' + REACT_APP_HOST + ':3000/api/friend', {otherID : userInfo.id}, {withCredentials: true})
-        .then(res => {
-            if (res.status === 200)
-                toast.success('send follow');
-        })
-        .catch(err => {
-            toast.error('invalid');
-        })
+        try{
+            const res = await axios.post('http://' + REACT_APP_HOST + ':3000/api/friend', {otherID : userInfo.id}, {withCredentials: true})
+            toast.success('send follow');
+            await initRelate();
+        }catch(err: any){   
+            toast.error(err.response.data.message);
+            await initRelate();
+        }
     };
 
     //언팔.
-    function handleUnfollow(event: React.MouseEvent<HTMLElement>) {
+    async function handleUnfollow(event: React.MouseEvent<HTMLElement>) {
         event.preventDefault();
-        axios.patch('http://' + REACT_APP_HOST + ':3000/api/friend', {otherID : userInfo.id}, {withCredentials: true})
-        .then(res => {
-            if (res.status === 200)
-                toast.success('unfollow ok');
-        })
-        .catch(err => {
-            toast.error('invalid');
-        })
+        try{
+            const res = await axios.patch('http://' + REACT_APP_HOST + ':3000/api/friend', {otherID : userInfo.id}, {withCredentials: true})
+            toast.success('unfollow ok');
+            await initRelate();
+        }catch(err: any){   
+            toast.error(err.response.data.message);
+            await initRelate();
+        }
     };
 
     // 차단
-    function handleBlock(event: React.MouseEvent<HTMLElement>) {
+    async function handleBlock(event: React.MouseEvent<HTMLElement>) {
         event.preventDefault();
-        axios.post('http://' + REACT_APP_HOST + ':3000/api/friend/block', {otherID : userInfo.id}, {withCredentials: true})
-        .then(res => {
+        try{
+            await axios.post('http://' + REACT_APP_HOST + ':3000/api/friend/block', {otherID : userInfo.id}, {withCredentials: true})
             toast.success('target block ok');
-        })
-        .catch(err => {
-            toast.error('target block fail');
-        })
+            await initRelate();
+        }catch(err: any){   
+            toast.error(err.response.data.message);
+            await initRelate();
+        }
     };
 
     // 차단 해제
-    function handleUnblock(event: React.MouseEvent<HTMLElement>) {
+    async function handleUnblock(event: React.MouseEvent<HTMLElement>) {
         event.preventDefault();
-        axios.patch('http://' + REACT_APP_HOST + ':3000/api/friend/block', {otherID : userInfo.id}, {withCredentials: true})
-        .then(res => {
-            if (res.status === 200)
-                toast.success('target unblock ok');
-        })
-        .catch(err => {
-            toast.error('target unblock fail');
-        })
+        try{
+            await axios.patch('http://' + REACT_APP_HOST + ':3000/api/friend/block', {otherID : userInfo.id}, {withCredentials: true})
+            toast.success('target unblock ok');
+            await initRelate();
+        }catch(err: any){   
+            toast.error(err.response.data.message);
+            await initRelate();
+        }
     };
 
     // 게임 관전 이동
@@ -207,8 +233,8 @@ function ProfileModal() {
             return ;
         }
         /* 게임 목록 받아오기 */
-        socket.emit('api/get/roomlist');
-        socket.on('api/get/roomlist', (data: {p1: string, p2: string}[]) => {
+        socket.emit('pingGetRoomList');
+        socket.on('pingGetRoomList', (data: {p1: string, p2: string}[]) => {
             let target: {p1: string, p2: string} = {p1: "", p2: ""};
             /* 게임 목록에서 사용자 ID 찾기 */
             if (data.some((game) => {
@@ -220,7 +246,7 @@ function ProfileModal() {
                     return false;
             })) {
                 // 게임에 유저가 존재하니 이동이 가능하다.
-                socket.off('api/get/roomlist');
+                socket.off('pingGetRoomList');
                 socket.emit('watchGame', `${target.p1}vs${target.p2}`);
                 resetState();
                 navigate(`/game/watch/${target.p1}vs${target.p2}`, {state: {
@@ -228,7 +254,7 @@ function ProfileModal() {
                     player2: target.p2
                 }});
             }
-            socket.off('api/get/roomlist');
+            socket.off('pingGetRoomList');
             resetState();
         })
     }
@@ -253,14 +279,14 @@ function ProfileModal() {
         }
         return (
             <div className="profile-button-wrapper">
-                {userInfo.relate === 'accepted' ? 
+                {relate === 'accepted' ? 
                 <button className="profile-button" onClick={handleUnfollow}>
                     <FontAwesomeIcon icon={faUserMinus}/> Unfollow
                 </button> :
                 <button className="profile-button" onClick={handleFollow}>
                     <FontAwesomeIcon icon={faUserPlus}/> Follow
                 </button>}
-                {userInfo.relate == 'blocked' ? 
+                {relate === 'blocked' ? 
                 <button className="profile-button" onClick={handleUnblock}>
                     <FontAwesomeIcon icon={faUser}/> Unblock
                 </button> :
@@ -270,19 +296,11 @@ function ProfileModal() {
                 <button className="profile-button" onClick={sendDm}>
                     <FontAwesomeIcon icon={faPaperPlane}/> DM
                 </button>
-                {/* {onlineStatus === 'ingame' ?
-                <button className="profile-button" onClick={watchHandler}>
-                <FontAwesomeIcon icon={faPaperPlane}/> 게임관전
-                </button> :
-                null
-                } */}
             </div>
         )
     }
 
     const getClickUser = () : types.User => {
-        if (showModal.user)
-            return showModal.user;
         return userInfo;
     }
 

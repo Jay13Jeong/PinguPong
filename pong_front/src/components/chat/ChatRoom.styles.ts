@@ -21,7 +21,7 @@ export const ChatRoomWrapper = styled(ContentBox)`
         grid-column: 1/2;
         grid-row: 4/5;
     }
-    ${ChatFieldContainer} {
+    #chat-field {
         grid-column: 2/3;
         grid-row: 1/4;
     }

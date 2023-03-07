@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useContext, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import ModalBase from "../../modal/ModalBase";
 import { useRecoilValue, useResetRecoilState } from "recoil";
 import { profileEditModalState, profileModalState } from "../../../common/states/recoilModalState";
@@ -11,7 +11,7 @@ function ProfileEditModal(props: {name: string}) {
     const showModal = useRecoilValue(profileEditModalState);
     const resetState = useResetRecoilState(profileEditModalState);
     const resetParentState = useResetRecoilState(profileModalState);
-    const [avatar, setAvatar] = useState("https://cdn.myanimelist.net/images/characters/11/421848.jpg");
+    // const [avatar, setAvatar] = useState("https://cdn.myanimelist.net/images/characters/11/421848.jpg");
     const [username, setUsername] = useState(props.name);
     const [status2fa, setStatus2fa] = useState(false);
     const [avatarFile, setAvatarFile] = useState('');
@@ -29,7 +29,7 @@ function ProfileEditModal(props: {name: string}) {
             }
         })
         .catch(err => {
-            console.log(err.response);
+            // console.log(err.response);
             // navigate('/');
         })
     }, []);

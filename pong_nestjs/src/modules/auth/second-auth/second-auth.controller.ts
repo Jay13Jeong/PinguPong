@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Inject, Patch, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
-import { User } from 'src/modules/users/user.entity';
+import { Users } from 'src/modules/users/user.entity';
 import { Jwt2faGuard, JwtAuthGuard } from '../guard/jwt.guard';
 import { SecondAuthService } from './second-auth.service';
 import { Request, Response } from 'express';
@@ -13,7 +13,7 @@ export class SecondAuthController {
     constructor(
         private readonly secondAuthServices : SecondAuthService,
         private readonly jwtServices : JwtService,
-        @InjectRepository(User) public userRepository: Repository<User>,
+        @InjectRepository(Users) public userRepository: Repository<Users>,
     ){}
 
     //jwt토큰 속 이메일로 인증코드 메시지를 전송하는 메소드.
@@ -21,12 +21,11 @@ export class SecondAuthController {
     @Get()
     @UseGuards(Jwt2faGuard)
     async callMail(@Req() req: Request){
-        let user = req.user as User;
+        let user = req.user as Users;
         const email : string = user.email;
         const code2fa : string = Math.random().toString(36).slice(2,6); //랜덤한 값을 ^10
         this.secondAuthServices.sendCode(email, code2fa);
-        // user.twofa_secret = await bcrypt.hash(code2fa, 10);
-        user.twofa_secret = code2fa;
+        user.twofa_secret = await bcrypt.hash(code2fa, 10);
         this.userRepository.save(user);
     }
 
@@ -35,7 +34,7 @@ export class SecondAuthController {
     @UseGuards(Jwt2faGuard)
     is2faOn(@Req() req: Request){
         //시나리오 : 2fa페이지 접속시 먼저 이 api로 상태를 검사한다.
-        const user = req.user as User;
+        const user = req.user as Users;
         return { twofa : user.twofa };
     }
 
@@ -43,7 +42,7 @@ export class SecondAuthController {
     @Patch()
     @UseGuards(JwtAuthGuard)
     activate(@Req() req: Request){
-        let user = req.user as User;
+        let user = req.user as Users;
         user.twofa = true;
         this.userRepository.save(user);
         return 'ON';
@@ -53,7 +52,7 @@ export class SecondAuthController {
     @Delete()
     @UseGuards(JwtAuthGuard)
     deactivate(@Req() req: Request){
-        let user = req.user as User;
+        let user = req.user as Users;
         user.twofa = false;
         this.userRepository.save(user);
         return 'OFF';
@@ -64,11 +63,9 @@ export class SecondAuthController {
     @UseGuards(Jwt2faGuard)
     async confirm(@Req() req: Request, @Res() res, @Body() body){
         //디비에 있는 인증코드와 인풋 파라메터 값을 비교한다.
-        const user = req.user as User;
+        const user = req.user as Users;
         const fa2Code = body.code;
-        if (fa2Code !== user.twofa_secret)
-        // if (!(await bcrypt.compare(fa2Code, user.twofa_secret)))
-        {
+        if (!(await bcrypt.compare(fa2Code, user.twofa_secret))){
             throw new UnauthorizedException('2단계 코드 불일치.');
         }
         res.clearCookie('jwt');

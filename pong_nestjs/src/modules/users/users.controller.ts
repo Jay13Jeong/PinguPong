@@ -1,8 +1,8 @@
-import { BadRequestException, Body, Controller, Delete, Get, MaxFileSizeValidator, Param, ParseFilePipe, ParseIntPipe, Patch, Post, Query, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, MaxFileSizeValidator, Param, ParseFilePipe, ParseIntPipe, Patch, Post, Query, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guard/jwt.guard';
-import { User } from './user.entity';
+import { Users } from './user.entity';
 import { UsersService } from "./users.service";
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('user')
@@ -10,7 +10,7 @@ export class UsersController {
     constructor(private readonly usersService: UsersService,) {}
 
     // @Get('test') //테스트용 메소드. 유저 디비조회용.
-    // async findA(): Promise<User[]>{
+    // async findA(): Promise<Users[]>{
     //     return await this.usersService.findAll();
     // }
 
@@ -48,13 +48,11 @@ export class UsersController {
     @Get('init/status')
     @UseGuards(JwtAuthGuard)
     getUserInit(@Req() req : Request){
-        const user = req.user as User;
+        const user = req.user as Users;
         if (!user)
             return {msg : false};
-        // console.log("123");
         if (user.username.slice(0,8) !== 'no_init_')
             return {msg : true}
-            // console.log("234");
         return {msg : false};
     }
 
@@ -62,8 +60,7 @@ export class UsersController {
     @Get() 
     @UseGuards(JwtAuthGuard)
     getUserInfo(@Req() req : Request){
-        const user = req.user as User;
-        // console.log(user);
+        const user = req.user as Users;
         return user;
     }
 
@@ -110,7 +107,7 @@ export class UsersController {
         if(newName.search(/\W|\s/g) > -1){
             throw new BadRequestException('특수문자 또는 공백이 입력되었습니다');
         }
-        let user = req.user as User;
+        let user = req.user as Users;
         if (!user || newName === '')
             throw new BadRequestException('잘못된 유저 요청');
         // user.avatar = body.avatar;
@@ -135,7 +132,7 @@ export class UsersController {
 		)
 		file: Express.Multer.File
 	){
-        const user = req.user as User;
+        const user = req.user as Users;
 		return this.usersService.postAvatar(user, file.filename);
 	}
 }

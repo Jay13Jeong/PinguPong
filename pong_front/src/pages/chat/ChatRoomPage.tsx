@@ -38,8 +38,8 @@ function ChatRoomPage () {
     useEffect(() => {
         if (current !== '') {
             /* 방장 여부 확인 */
-            socket.emit('/api/get/master/status', roomInfo.id);
-            socket.on('/api/get/master/status', (data: boolean) => {
+            socket.emit('chatGetMasterStatus', roomInfo.id);
+            socket.on('chatGetMasterStatus', (data: boolean) => {
                 setMaster(data);   // 방장이면 true / 아니면 false
             });
             /* 추방 여부 듣기 */
@@ -70,8 +70,8 @@ function ChatRoomPage () {
 
         return () => {
             /* 이벤트 해제 */
-            socket.off('getUser');
-            socket.off('/api/get/master/status');
+            socket.off('chatGetUser');
+            socket.off('chatGetMasterStatuss');
             socket.off('youKick');
             socket.off('duelAccept');
         };
@@ -86,7 +86,7 @@ function ChatRoomPage () {
 
     function exitHandler(e: React.MouseEvent<HTMLElement>) {
         // data : string (roomName);
-        socket.emit('delUser', roomInfo.id);
+        socket.emit('chatDelUser', roomInfo.id);
         navigate(RoutePath.lobby);
     }
 

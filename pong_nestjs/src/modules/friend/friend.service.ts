@@ -1,8 +1,7 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { send } from 'process';
 import { Repository } from 'typeorm';
-import { User } from '../users/user.entity';
+import { Users } from '../users/user.entity';
 import { UsersService } from '../users/users.service';
 import { Friend } from './friend.entity';
 
@@ -15,7 +14,7 @@ export class FriendService {
 	) {}
 
     //친구목록 테이블에 초대 데이터를 넣고 해당 행을 반환하는 서비스.
-    async invite(sender: User, recieverID: number): Promise<Friend> {
+    async invite(sender: Users, recieverID: number): Promise<Friend> {
 		if (sender.id == recieverID)
 			throw new BadRequestException('본인 친구초대 불가.');
 		const reciever = await this.userService.findUserById(recieverID);
@@ -49,21 +48,10 @@ export class FriendService {
 				reciever: reciever,
 			});
 		}
-		/* 소켓으로 수락됨을 알린다. */
-		// if (friendship.status == 'accepted') {
-		// 	const payload: createChatDto = {
-		// 		type: ChatType.PRIVATE,
-		// 		users: [
-		// 			friendship.sender.id,
-		// 			friendship.reciever.id,
-		// 		]
-		// 	}
-		// 	this.chatService.createChat(friendship.sender.id, payload);
-		// }
 		return this.repo.save(friendship);
 	}
 
-	async  delete(sender: User, recieverID: number): Promise<Friend> {
+	async  delete(sender: Users, recieverID: number): Promise<Friend> {
 		if (sender.id == recieverID)
 			throw new BadRequestException('본인 친구삭제 불가.');
 		const reciever = await this.userService.findUserById(recieverID);
@@ -76,15 +64,10 @@ export class FriendService {
 		});
 		if (!friendship)
 			throw new NotFoundException('끊을 친구 대상 없음.');
-		// if (friendship.status == 'accepted') {
-		// 	const chatID = await this.chatService.getPrivateChat(sender.id, reciever.id)
-		// 	if (chatID)
-		// 		this.chatService.leaveChat(friendship.sender.id, chatID.id);
-		// }
 		return await this.repo.remove(friendship);
 	}
 
-	async block(sender: User, recieverID: number): Promise<Friend> {
+	async block(sender: Users, recieverID: number): Promise<Friend> {
 		if (sender.id == recieverID)
 			throw new BadRequestException('본인 차단 불가.');
 		const reciever = await this.userService.findUserById(recieverID); //차단대상의 정보를 얻어온다.
@@ -97,16 +80,13 @@ export class FriendService {
 				{ sender:  { id: reciever.id }, reciever: { id: sender.id }, status: 'pending' },
 				{ sender:  { id: sender.id }, reciever: { id: reciever.id }, status: 'accepted' },
 				{ sender:  { id: reciever.id }, reciever: { id: sender.id }, status: 'accepted' },
+				{ sender:  { id: sender.id }, reciever: { id: reciever.id }, status: 'blocked' },
 			],
 		});
-		// if (friendship) {
-		// 	const chatID = await this.chatService.getPrivateChat(sender.id, reciever.id)
-		// 	if (chatID)
-		// 		this.chatService.leaveChat(friendship.sender.id, chatID.id);
-		// }
 		if (friendship) { //차단 대상이 친구목록 테이블에 있을 때 관계를 끊음.
-				// friendship.status = 'blocked';
-				await this.repo.remove(friendship)
+			if (friendship.status === 'blocked')
+				throw new NotFoundException('이미 차단된 대상');
+			await this.repo.remove(friendship)
 		}
 		friendship = this.repo.create({
 			sender: sender,
@@ -125,7 +105,6 @@ export class FriendService {
 			relations: ['sender', 'reciever'],
 			where: [
 				{ sender:  { id: sender.id }, reciever: { id: reciever.id } },
-				// { sender:  { id: reciever.id }, reciever: { id: sender.id } },
 			],
 		});
 		if (!friendship)
@@ -146,7 +125,6 @@ export class FriendService {
 				{ reciever: { id: user.id }, status: 'accepted' },
 			],
 		});
-		// console.log(friends);
 		return friends;
 	}
 
@@ -160,7 +138,6 @@ export class FriendService {
 				{ sender: { id: user.id }, status: 'blocked' },
 			],
 		});
-		// console.log(friends);
 		return friends;
 	}
 
@@ -174,7 +151,23 @@ export class FriendService {
 				{ reciever: { id: user.id }, status: 'blocked' },
 			],
 		});
-		// console.log(friends);
 		return friends;
+	}
+
+	async getRelate(id: number, targetID: number): Promise<string> {
+		const friends = await this.repo.findOne({
+			relations: ['sender', 'reciever'],
+			where: [
+				{ sender:  { id: id }, reciever: { id: targetID }, status: 'pending' },
+				{ sender:  { id: targetID }, reciever: { id: id }, status: 'pending' },
+				{ sender:  { id: id }, reciever: { id: targetID }, status: 'accepted' },
+				{ sender:  { id: targetID }, reciever: { id: id }, status: 'accepted' },
+				{ sender:  { id: id }, reciever: { id: targetID }, status: 'blocked' },
+			],
+		});
+		if (!friends){
+			return 'nothing';
+		}
+		return friends.status;
 	}
 }

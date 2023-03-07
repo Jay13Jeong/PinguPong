@@ -1,7 +1,7 @@
-import { BadRequestException, Body, Controller, Delete, Get, ParseIntPipe, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from '../auth/auth.service';
 import { JwtAuthGuard } from '../auth/guard/jwt.guard';
-import { User } from '../users/user.entity';
+import { Users } from '../users/user.entity';
 import { UsersModule } from '../users/users.module';
 import { UsersService } from '../users/users.service';
 import { FriendService } from './friend.service';
@@ -18,7 +18,7 @@ export class FriendController {
     // @UseGuards(JwtAuthGuard)
     // async inputDummyFriendList(@Req() req)
 	// {
-    //     const user = req.user as User;
+    //     const user = req.user as Users;
     //     const user2 = await this.authServices.validateUser({
     //         username: 'pinga7', //ex. jjeong
 	// 		email: 'pinga7@pong.com',
@@ -52,20 +52,23 @@ export class FriendController {
 
     @Get()
     @UseGuards(JwtAuthGuard)
-    async getFriendList(@Req() req)
-	{
-        const user = req.user as User;
-        // console.log("322?");
+    async getFriendList(@Req() req){
+        const user = req.user as Users;
 		return await this.friendServices.getFriends(user.id);
 	}
 
     @Get('block')
     @UseGuards(JwtAuthGuard)
-    async getBlockList(@Req() req)
-	{
-        const user = req.user as User;
-        // console.log("322?");
+    async getBlockList(@Req() req){
+        const user = req.user as Users;
 		return await this.friendServices.getBlocks(user.id);
+	}
+
+    @Get('relate/:targetID')
+    @UseGuards(JwtAuthGuard)
+    async getRelate(@Req() req, @Param('targetID', ParseIntPipe) targetID: number) {
+        const user = req.user as Users;
+		return await this.friendServices.getRelate(user.id, targetID);
 	}
 
     //이름으로 친구초대 또는 수락하는 api.
@@ -86,7 +89,7 @@ export class FriendController {
         if(username.search(/\W|\s/g) > -1){
             throw new BadRequestException('특수문자 또는 공백이 입력되었습니다');
         }
-        let user = req.user as User;
+        let user = req.user as Users;
         const target = await this.userServices.findUserByUsername(username);
         if (!target)
             throw new BadRequestException('해당 유저 없음.');
@@ -98,7 +101,7 @@ export class FriendController {
     @Post()
     @UseGuards(JwtAuthGuard)
     async inviteFriend(@Req() req, @Body('otherID', ParseIntPipe) otherID: number){
-        let user = req.user as User;
+        let user = req.user as Users;
         const raw = await this.friendServices.invite(user, otherID);
         return raw;
     };
@@ -107,7 +110,7 @@ export class FriendController {
     @Patch()
     @UseGuards(JwtAuthGuard)
     async deleteFriend(@Req() req, @Body('otherID', ParseIntPipe) otherID: number){
-        let user = req.user as User;
+        let user = req.user as Users;
         const raw = await this.friendServices.delete(user, otherID);
         return raw;
         //친구 끊기.
@@ -117,11 +120,9 @@ export class FriendController {
     @Post('block')
     @UseGuards(JwtAuthGuard)
     async block(@Req() req, @Body('otherID', ParseIntPipe) otherID: number){
-        let user = req.user as User;
+        let user = req.user as Users;
         //친구를 차단한다.
-        // console.log("block api--");
         const raw = await this.friendServices.block(user, otherID);
-        // console.log("block api--");
         return raw;
     };
 
@@ -129,7 +130,7 @@ export class FriendController {
     @Patch('block')
     @UseGuards(JwtAuthGuard)
     async unblock(@Req() req, @Body('otherID', ParseIntPipe) otherID: number){
-        let user = req.user as User;
+        let user = req.user as Users;
         //친구 차단 해제.
         const raw = await this.friendServices.unblock(user.id, otherID);
         return raw;
