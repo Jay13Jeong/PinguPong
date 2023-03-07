@@ -28,14 +28,14 @@ export class Chat { //채팅방 엔티티.
 	@Column("int")
 	adminId: number; //방장 아아디.
 
-	@OneToMany((type)=>Ban, Ban => Ban.room,{ nullable: true })
-	banned: Ban[]; //채팅차단시킨 대상 목록.
+	@OneToMany(()=>Ban, Ban => Ban.room,{ nullable: true, cascade: true})
+	banned?: Ban[]; //채팅차단시킨 대상 목록.
 
-	@OneToMany((type)=>Mute, Mute => Mute.room,{ nullable: true })
-	muted: Mute[]; //음소거 시킨 대상.
+	@OneToMany(()=>Mute, Mute => Mute.room,{ nullable: true, cascade: true})
+	muted?: Mute[]; //음소거 시킨 대상.
 
-	@OneToMany((type)=>RoomUserId, RoomUserId => RoomUserId.userIds,{ nullable: true })
-	userIds: RoomUserId[]; //룸 유저 Id 시킨 대상.
+	@OneToMany(()=>RoomUserId, RoomUserId => RoomUserId.userIds,{ nullable: true, cascade: true})
+	userIds?: RoomUserId[]; //룸 유저 Id 시킨 대상.
 
 	// @ManyToMany(() => Users, (user) => user.chats, {
 	// 	onDelete: 'CASCADE',

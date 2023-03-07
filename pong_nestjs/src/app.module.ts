@@ -15,6 +15,7 @@ import { SocketModule } from './modules/socket/socket.module';
 import { Ban } from './modules/chat/ban.entity';
 import { Mute } from './modules/chat/mute.entity';
 import { RoomUserId } from './modules/chat/room.entity';
+import { ChatModule } from './modules/chat/chat.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { RoomUserId } from './modules/chat/room.entity';
     AuthModule,
     FriendModule,
     SocketModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService,],

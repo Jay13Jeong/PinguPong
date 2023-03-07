@@ -5,6 +5,7 @@ import { roomClass } from './roomClass';
 import { Repository } from 'typeorm';
 import { Chat } from './chat.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { RoomUserId } from './room.entity';
 
 @Injectable()
 export class ChatService {
@@ -75,6 +76,7 @@ export class ChatService {
     public newRoom(roomName: string, socketId:string, userId:number, secretpw:string=''){
         if (!(this.rooms.has(roomName))){
             this.rooms.set(roomName, new roomClass(userId, secretpw));
+            this.roomSave(roomName, userId, secretpw);
             if (!this.userIdRooms.has(userId))
                 this.userIdRooms.set(userId, new Set<string>());
             this.userIdRooms.get(userId).add(roomName);
@@ -213,8 +215,16 @@ export class ChatService {
         if (secretpw == '')
             secret = false;
 
-        //let chat:Chat = {roomName:roomName, adminId:userId, userIds:[userId,]};
-        //await this.chatRepository.save(chat);
+        let chat:Chat = new Chat();
+        chat.roomName = roomName;
+        chat.adminId = userId;
+        chat.secret = secret;
+        chat.password = secretpw;
+
+        let roomNewUserId : RoomUserId = new RoomUserId();
+        roomNewUserId.userid = userId;
+        chat.userIds = [roomNewUserId];
+        await this.chatRepository.save(chat);
     }
 //룸 유저 체크, 마스터 체크, 방장 위임,, 유저 추가 제거, 비번 변경, 음소거추가/해제, 벤 추가
 
