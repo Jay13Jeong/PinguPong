@@ -14,13 +14,13 @@ function UserCardButton(props: {friend: Friend, userID: number, userName: string
     const socket = useContext(SocketContext);
 
     useEffect(() => {
-        socket.emit('api/get/user/status', props.userID);    
-        socket.on('api/get/user/status', (status, targetId) => {
+        socket.emit('getUserStatus', props.userID);    
+        socket.on('getUserStatus', (status, targetId) => {
             if (targetId === props.userID)
                 setOnlineStatus(status);
         })
         return (() => {
-            socket.off('api/get/user/status');
+            socket.off('getUserStatus');
         })
     }, [socket]);
 

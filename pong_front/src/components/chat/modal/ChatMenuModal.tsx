@@ -40,8 +40,8 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
     useEffect(() => {
         // let [roomName, targetId] = data;//음소거 체크할 유저id
         if (props.isDmModal !== true) {
-            socket.emit('api/get/muteuser', props.roomName, targetID);
-            socket.on('api/get/muteuser', (data: boolean) => {
+            socket.emit('chatGetMuteUser', props.roomName, targetID);
+            socket.on('chatGetMuteUser', (data: boolean) => {
                 setIsMuted(data);
             })
         }
@@ -62,7 +62,7 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
 
     useEffect(() => {
         return(() => {
-            socket.off('api/get/muteuser');
+            socket.off('chatGetMuteUser');
             socket.off('duelRequest');
         })
     }, [socket]);
@@ -87,19 +87,19 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
 
     /* 음소거 (target 유저가 말하는 것은 누구에게도 표시되지 않는다.) */
     function muteHandler(e: React.MouseEvent<HTMLElement>) {
-        socket.emit('/api/put/addmuteuser', props.roomName, targetID);
+        socket.emit('chatPutAddmuteuser', props.roomName, targetID);
         toast("🔇 mute completed!");
         resetState();
     }
 
     function freemuteHandler(e: React.MouseEvent<HTMLElement>) {
-        socket.emit('/api/put/freemuteuser', props.roomName, targetID);
+        socket.emit('chatPutFreeMuteUser', props.roomName, targetID);
         toast("🔈 unmute completed!");
         resetState();
     }
 
     function setMasterHandler(e: React.MouseEvent<HTMLElement>) {
-        socket.emit('/api/post/mandateMaster', props.roomName, targetID);
+        socket.emit('chatPostMandateMaster', props.roomName, targetID);
         toast("👑 master set up completed!");
         props.setMaster && props.setMaster(false);
         resetState();

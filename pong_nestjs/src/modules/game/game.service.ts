@@ -140,58 +140,11 @@ class BattleClass{
     }
 
     /* 공 움직이는 함수 - 반사, 점수 획득 */
-    // private ballMove(qwe:string):void {
-    //     const p1PaddleStart = this.game.player1;
-    //     const p1PaddleEnd = this.game.player1 + this.sizes.paddleSize;
-    //     const p2PaddleStart = this.game.player2;
-    //     const p2PaddleEnd = this.game.player2 + this.sizes.paddleSize;
-    //     if (this.game.ball.y < 0 || this.game.ball.y > this.sizes.canvasHeight) {  // 위아래 벽에 튕김
-    //         this.game.ball.dy *= -1;
-    //     }
-    //     if (this.game.ball.x > this.sizes.canvasWidth - this.sizes.lineWidth) {    // 오른쪽(p2네) 벽으로 돌진
-    //         if (this.game.ball.y < p2PaddleStart || this.game.ball.y > p2PaddleEnd) { // 패들 너머로 간 경우
-    //             // 초기화
-    //             this.game.ball.y = this.sizes.canvasHeight / 2;
-    //             this.game.ball.x = this.sizes.canvasWidth / 2;
-    //             this.game.ball.dy = 4;
-    //             this.game.ball.dx = Math.random() > 0.5 ? 4 : -4;
-    //             // p1의 점수를 올린다.
-    //             this.game.score.player1++;
-    //         }
-    //         else {  // p2의 패들에 튕김
-    //             this.game.ball.dx *= -1;
-    //         }
-    //     }
-    //     else if (this.game.ball.x < this.sizes.lineWidth) {   // 왼쪽(p1네) 벽으로 돌진
-    //         if (this.game.ball.y < p1PaddleStart || this.game.ball.y > p1PaddleEnd) { // 패들 너머로 간 경우
-    //             // 초기화
-    //             this.game.ball.y = this.sizes.canvasHeight / 2;
-    //             this.game.ball.x = this.sizes.canvasWidth / 2;
-    //             this.game.ball.dy = 4;
-    //             this.game.ball.dx = Math.random() > 0.5 ? 4 : -4;
-    //             // p2의 점수를 올린다.
-    //             this.game.score.player2++;
-    //         }
-    //         else {  // p1의 패들에 튕김
-    //             this.game.ball.dx *= -1;
-    //         }
-    //     }
-    // }
-
-    /* 일정 시간마다 게임 동작 함수 실행 */
-    private async gameStart ():Promise<void> {
-        let me = await this.gameRun.bind(this);
-        this.counter = setInterval(me, 1000 * 0.02);
-    //api:clearInterval(counter)함수를 쓰면 setInterval를 종료할 수 있다.
-    }
-
-    /* 게임 동작 함수 */
-    private async gameRun(): Promise<void> {
-        // 1. 공 움직이고 (방향전환, 점수 검사)
-        const p1PaddleStart:number = this.game.player1;
-        const p1PaddleEnd:number = this.game.player1 + this.sizes.paddleSize;
-        const p2PaddleStart:number = this.game.player2;
-        const p2PaddleEnd:number = this.game.player2 + this.sizes.paddleSize;
+    private ballMove():void {
+        const p1PaddleStart = this.game.player1;
+        const p1PaddleEnd = this.game.player1 + this.sizes.paddleSize;
+        const p2PaddleStart = this.game.player2;
+        const p2PaddleEnd = this.game.player2 + this.sizes.paddleSize;
         if (this.game.ball.y < 0 || this.game.ball.y > this.sizes.canvasHeight) {  // 위아래 벽에 튕김
             this.game.ball.dy *= -1;
         }
@@ -222,7 +175,20 @@ class BattleClass{
             else {  // p1의 패들에 튕김
                 this.game.ball.dx *= -1;
             }
-        }//여기까지 ballMove함수 내용
+        }
+    }
+
+    /* 일정 시간마다 게임 동작 함수 실행 */
+    private async gameStart ():Promise<void> {
+        let me = await this.gameRun.bind(this);
+        this.counter = setInterval(me, 1000 * 0.02);
+    //api:clearInterval(counter)함수를 쓰면 setInterval를 종료할 수 있다.
+    }
+
+    /* 게임 동작 함수 */
+    private async gameRun(): Promise<void> {
+        // 1. 공 움직이고 (방향전환, 점수 검사)
+        this.ballMove();
 
         // 2. 바뀐 게임 정보들 보내준다. (플레이어와 관전자 모두에게 보내주기)
         this.myserver.to(this.roomName).emit("ballPos", this.game);

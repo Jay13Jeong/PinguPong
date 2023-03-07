@@ -17,10 +17,10 @@ export class Message { //대화내용 메시지.
 	@JoinColumn()
 	sender: Users; //작성자.
 
-	@ManyToOne(() => Chat, (chat) => chat.messages, {
-		onDelete: 'CASCADE',
-	})
-	parent: Chat; //이 메시지의 채팅방.
+	// @ManyToOne(() => Chat, (chat) => chat.messages, {
+	// 	onDelete: 'CASCADE',
+	// })
+	// parent: Chat; //이 메시지의 채팅방.
 
 	@Column()
 	createdAt: string; //작성 일자.

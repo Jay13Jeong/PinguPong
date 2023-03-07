@@ -11,13 +11,13 @@ function ChatCardButtonList(props: {current: string}) {
 
     useEffect(() => {
         if (props.current !== '') {
-            socket.emit('/api/get/RoomList');
-            socket.on('/api/get/RoomList', (data: string[]) => {
+            socket.emit('chatGetRoomList');
+            socket.on('chatGetRoomList', (data: string[]) => {
                 setChatRooms(data);
             });
         }
         return (() => {
-            socket.off('/api/get/RoomList');
+            socket.off('chatGetRoomList');
         })
     }, [socket, props.current]);
 

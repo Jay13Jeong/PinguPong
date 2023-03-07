@@ -125,13 +125,13 @@ function ProfileModal() {
 
     //온오프라인 게임중 검사하는 메소드.
     function checkOnline(userId: number){
-        socket.emit('api/get/user/status', userId); 
-        socket.on('api/get/user/status', (status, targetId) => {
+        socket.emit('getUserStatus', userId); 
+        socket.on('getUserStatus', (status, targetId) => {
             if (targetId !== 0)
                 setOnlineStatus(status);
         })
         return (() => {
-            socket.off('api/get/user/status');
+            socket.off('getUserStatus');
         })
     }
 
@@ -233,8 +233,8 @@ function ProfileModal() {
             return ;
         }
         /* 게임 목록 받아오기 */
-        socket.emit('api/get/roomlist');
-        socket.on('api/get/roomlist', (data: {p1: string, p2: string}[]) => {
+        socket.emit('pingGetRoomList');
+        socket.on('pingGetRoomList', (data: {p1: string, p2: string}[]) => {
             let target: {p1: string, p2: string} = {p1: "", p2: ""};
             /* 게임 목록에서 사용자 ID 찾기 */
             if (data.some((game) => {
@@ -246,7 +246,7 @@ function ProfileModal() {
                     return false;
             })) {
                 // 게임에 유저가 존재하니 이동이 가능하다.
-                socket.off('api/get/roomlist');
+                socket.off('pingGetRoomList');
                 socket.emit('watchGame', `${target.p1}vs${target.p2}`);
                 resetState();
                 navigate(`/game/watch/${target.p1}vs${target.p2}`, {state: {
@@ -254,7 +254,7 @@ function ProfileModal() {
                     player2: target.p2
                 }});
             }
-            socket.off('api/get/roomlist');
+            socket.off('pingGetRoomList');
             resetState();
         })
     }
