@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Server } from 'socket.io';
 import { Friend } from '../friend/friend.entity';
-import { roomClass } from './roomClass';
 import { Repository } from 'typeorm';
 import { Chat } from './chat.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -338,7 +337,4 @@ export class ChatService {
             return false;
         return true;
     }
-//룸 유저 체크, 마스터 체크, 방장 위임,, 유저 추가 제거, 비번 변경, 음소거추가/해제, 벤 추가
-
-
 }

@@ -41,9 +41,6 @@ export class Users {
 	@OneToMany(() => Friend, (friend) => friend.reciever) // Recipient
 	receivedFriendRequests: Friend[]; //초대한 사용자 목록 리스트.
 
-	// @ManyToMany(() => Chat, (chat) => chat.users)
-	// chats: Chat[]; //참여중인 채팅방 목록 리스트.
-
 	@Column({ default: '', unique: true })
 	oauthID: string; //인트라api에서 부여한 고유 id
 
