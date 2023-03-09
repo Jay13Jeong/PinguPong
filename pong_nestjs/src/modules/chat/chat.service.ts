@@ -92,8 +92,14 @@ export class ChatService {
     }
 
     //방 리스트 보내주기
-    public getRoomList():IterableIterator<string>{
-        return this.rooms.keys();
+    public async getRoomList():Promise<string[]>{
+        let rooms = await this.chatRepository.find();
+
+        let retRooms:string[] = [];
+        for(let room of rooms)
+            retRooms.push(room.roomName);
+        console.log("getRoom", retRooms);
+        return retRooms;
     }
 
     // 방이름 체크 및 기존의 방이 있는지 확인, 브라우저에서 방이 있는지 보내주기

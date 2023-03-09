@@ -29,7 +29,7 @@ import { ChatDmService } from '../chatdm/chatdm.service';
 
     socketUserid : Map<string, number> = new Map<string, number>();
     useridStatus : Map<number, status> = new Map<number, status>();
-  
+
 
     //OnGatewayConnection를 오버라이딩
     async handleConnection(client : Socket) {
@@ -205,7 +205,7 @@ import { ChatDmService } from '../chatdm/chatdm.service';
 
   @SubscribeMessage('chatGetRoomList')//브라우저가 채팅방 리스트 요청함///api/get/RoomList
   async getChatList(client : Socket) {
-    this.server.to(client.id).emit('chatGetRoomList', Array.from(this.chatService.getRoomList()));// 리스트 보내주기, 클래스 함수 리턴값으로 고치기
+    this.server.to(client.id).emit('chatGetRoomList', await this.chatService.getRoomList());// 리스트 보내주기, 클래스 함수 리턴값으로 고치기
     //this.changeUseridStatus(this.socketUserid.get(client.id), 'online');//이 부분 빼도 되지 않나?
   }
 

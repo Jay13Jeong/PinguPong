@@ -16,6 +16,9 @@ import { Ban } from './modules/chat/ban.entity';
 import { Mute } from './modules/chat/mute.entity';
 import { RoomUserId } from './modules/chat/room.entity';
 import { ChatModule } from './modules/chat/chat.module';
+import { ChatdmModule } from './modules/chatdm/chatdm.module';
+import { DmList } from './modules/chatdm/dmList.entity';
+import { DmMsgDb } from './modules/chatdm/dmMsgDb.entity';
 
 @Module({
   imports: [
@@ -29,13 +32,14 @@ import { ChatModule } from './modules/chat/chat.module';
       database: process.env.DB_NAME_DEVELOPMENT, // db name.
       autoLoadEntities: true, // 엔티티를 자동으로 로드.
       synchronize: true, // 앱을 실행할 때마다 운영 주체가 데이터베이스와 동기화. 개발모드에서만 써야함.
-      entities: [Users, Friend, Game, Chat, Message, Ban, Mute, RoomUserId] //디비가 다룰 엔티티목록.
+      entities: [Users, Friend, Game, Chat, Message, Ban, Mute, RoomUserId, DmList, DmMsgDb] //디비가 다룰 엔티티목록.
     }),
     UsersModule,
     AuthModule,
     FriendModule,
     SocketModule,
     ChatModule,
+    ChatdmModule,
   ],
   controllers: [AppController],
   providers: [AppService,],
