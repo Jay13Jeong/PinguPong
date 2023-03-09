@@ -3,8 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { REACT_APP_HOST } from "../common/configData";
 import useGetData from "./useGetData";
 
-function useCheckLogin() {
-    // const [user, setUser] = useRecoilState(userState);
+function useCheckLogin(isLoginPage?: boolean) {
     const [data, error] = useGetData('http://' + REACT_APP_HOST + ':3000/api/user');
     const navigate = useNavigate();
 
@@ -12,7 +11,8 @@ function useCheckLogin() {
         if (!data && !error)
             return ;
         if (!error && data) {
-            // setUser(data);
+            if (isLoginPage === true)
+                navigate('/lobby');
         }
         else {
             navigate('/');
