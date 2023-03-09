@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class DmList { //유저의 디엠 리스트 목록
@@ -13,6 +13,4 @@ export class DmList { //유저의 디엠 리스트 목록
 
 	@Column()
 	dmRoomName: string; //디엠룸네임
-
-
 }

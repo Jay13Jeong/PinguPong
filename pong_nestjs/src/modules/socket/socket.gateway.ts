@@ -272,7 +272,7 @@ import { ChatDmService } from '../chatdm/chatdm.service';
   async dmList(client:Socket){
     const userId:number = this.socketUserid.get(client.id);
 
-    let userIds:number[] = this.chatDmService.getdmList(userId);
+    let userIds:number[] = await this.chatDmService.getdmList(userId);
     let userName:string[] = [];
     for (let id of userIds){
       let name = await (await this.userService.findUserById(id)).username;
@@ -296,7 +296,7 @@ import { ChatDmService } from '../chatdm/chatdm.service';
     for (let id of blockedMe)
         block.push(id.sender.id);
     if (!block.includes(targetId))//날 차단 했는지 확인 후 메시지 보내기
-      this.chatDmService.sendDm(this.server, user.id, user.username, targetId, msg);
+      await this.chatDmService.sendDm(this.server, user.id, user.username, targetId, msg);
   }
 
   //1대1 대화방 입장시 여태까지 받은 Dm 보내주기
@@ -304,12 +304,12 @@ import { ChatDmService } from '../chatdm/chatdm.service';
   async connectDm(client:Socket, data){
     let targetId:number = data;
     let user:Users = await this.findUserBySocket(client);
-    this.chatDmService.connectDm(client, user.id, targetId);
+    await this.chatDmService.connectDm(client, user.id, targetId);
     let target:Users = await this.userService.findUserById(targetId);
-    let msgs = this.chatDmService.getMsgs(user, target);//여태까지 받은 대화들 반환
+    let msgs = await this.chatDmService.getMsgs(user, target);//여태까지 받은 대화들 반환
     this.server.to(client.id).emit('receiveDms', msgs);//반환된 메세지들 보내주기
     //masgs = [{userName : 'tempUser',  msg : '123123123'}, ...]
-    this.changeUseridStatus(user.id, this.chatDmService.getTargetDmRoom(user.id, targetId));//유저 상태 변경
+    this.changeUseridStatus(user.id, await this.chatDmService.getTargetDmRoom(user.id, targetId));//유저 상태 변경
   }
 
   //1대1 디엠방 나감
@@ -317,7 +317,7 @@ import { ChatDmService } from '../chatdm/chatdm.service';
   async closeDm(client:Socket, data){
     let targetId:number = data;
     let userId:number = this.socketUserid.get(client.id);
-    this.chatDmService.closeDm(client, userId, targetId);
+    await this.chatDmService.closeDm(client, userId, targetId);
     this.changeUseridStatus(userId, 'online');//유저상태 변경
   }
 
@@ -445,7 +445,7 @@ import { ChatDmService } from '../chatdm/chatdm.service';
 
         //_dm으로 오면 룸네임을 찾아서 넣어 줄 것,
         if (roomName === '_dm')
-          roomName = this.chatDmService.getTargetDmRoom(user.id, targetId);
+          roomName = await this.chatDmService.getTargetDmRoom(user.id, targetId);
 
         if (!(this.useridStatus.get(targetId).status === roomName) || (this.gameService.checkGaming(targetId)))
           return this.server.to(client.id).emit('duelRequest', false);

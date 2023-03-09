@@ -15,7 +15,7 @@ export class ChatDmController {
     async getChatDmRoomList(@Req() req : Request){
         const user = req.user as Users;
 
-        let userIds:number[] = this.chatDmService.getdmList(user.id);
+        let userIds:number[] = await this.chatDmService.getdmList(user.id);
         let userName:string[] = [];
         for (let id of userIds){
             let name = await (await this.userService.findUserById(id)).username;
