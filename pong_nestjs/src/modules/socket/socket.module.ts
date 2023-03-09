@@ -17,6 +17,7 @@ import { ChatService } from '../chat/chat.service';
 import { ChatDmService } from '../chatdm/chatdm.service';
 import { ChatModule } from '../chat/chat.module';
 import { Chat } from '../chat/chat.entity';
+import { RoomUserId } from '../chat/room.entity';
 
 @Module({
 	imports:[

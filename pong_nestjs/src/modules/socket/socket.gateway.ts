@@ -119,23 +119,23 @@ import { ChatDmService } from '../chatdm/chatdm.service';
     let roomName:string = data;
     let userId:number = this.socketUserid.get(client.id);
 
-    this.chatService.delUser(roomName, userId, this.server);
+    await this.chatService.delUser(roomName, userId, this.server);
   }
 
   @SubscribeMessage('chatGetUser')//해당 유저 등록하기//getUser
   async getUser(client : Socket, data) {
     let room:string = data.roomName;
     let userId:number = this.socketUserid.get(client.id);
-    if (this.chatService.roomCheck(room) == false) {//없는 방에 입장을 하려고 할때
+    if (await this.chatService.roomCheck(room) == false) {//없는 방에 입장을 하려고 할때
       this.server.to(client.id).emit('notRoom');
       return ;
     }
-    if (this.chatService.banCheck(room, userId)){//해당 방의 밴 리스트에 있는지 확인
+    if (await this.chatService.banCheck(room, userId)){//해당 방의 밴 리스트에 있는지 확인
       this.server.to(client.id).emit('youBan');
       return ;
     }
     this.server.to(client.id).emit('youPass');//접속 가능하면
-    this.chatService.newRoom(room, userId);//채팅방에 유저 등록
+    await this.chatService.newRoom(room, userId);//채팅방에 유저 등록
     this.changeUseridStatus(userId, room);//유저 상태 변경
   }
 
@@ -153,7 +153,6 @@ import { ChatDmService } from '../chatdm/chatdm.service';
     let blockedMe:Friend[] = await this.friendService.getReversBlocks(userId);
     //메세지를 보내야할 소켓id, 나를 차단한 유저를 제외하고.
     const sockets = await this.chatService.getSocketList(room, blockedMe);
-
     for (let id of sockets){
       this.server.to(id).emit('chat', (await user).username, msg);// 메세지 전송
     }
@@ -164,7 +163,7 @@ import { ChatDmService } from '../chatdm/chatdm.service';
   async checksecret(client : Socket, data) {
     let roomName:string = data;
 
-    this.server.to(client.id).emit('chatCheckSecret', this.chatService.checksecret(roomName));
+    this.server.to(client.id).emit('chatCheckSecret', await this.chatService.checksecret(roomName));
    }
 
   //방이름, 비밀번호: 받아서 맞으면 true. 틀리면 false// 맞으면 바로 등록해주기
@@ -174,8 +173,8 @@ import { ChatDmService } from '../chatdm/chatdm.service';
     let secretPW:string = data.secret;
     let userId:number = this.socketUserid.get(client.id);
 
-    if (this.chatService.checksecretPw(roomName, secretPW)){//비밀번호 확인
-      this.chatService.newRoom(roomName, userId);
+    if (await this.chatService.checksecretPw(roomName, secretPW)){//비밀번호 확인
+      await this.chatService.newRoom(roomName, userId);
       this.server.to(client.id).emit('chatPostSecretPW', true);
     }else
     this.server.to(client.id).emit('chatPostSecretPW', false);
@@ -186,7 +185,7 @@ import { ChatDmService } from '../chatdm/chatdm.service';
     let [room, secretpw] = data;
     let userId:number = this.socketUserid.get(client.id);
 
-    if (!this.chatService.roomCheck(room) && (room.length <= 10)){//방이름 체크 및 글자수 제한 확인, 한글로 채팅방이름 못 만듬
+    if (!(await this.chatService.roomCheck(room)) && (room.length <= 10)){//방이름 체크 및 글자수 제한 확인, 한글로 채팅방이름 못 만듬
       await this.chatService.newRoom(room, userId, secretpw);
       this.server.to(client.id).emit('chatPostNewRoom', true);
       this.changeUseridStatus(userId, room);
@@ -214,7 +213,7 @@ import { ChatDmService } from '../chatdm/chatdm.service';
     let [room, targetId] = data;//위임할 targetId
 
     let userId:number = this.socketUserid.get(client.id);
-    this.chatService.mandateMaster(this.server, room, userId, targetId);
+    await this.chatService.mandateMaster(this.server, room, userId, targetId);
   }
 
   @SubscribeMessage('chatPutSetSecretpw')//비번 변경, ''이면 공개방으로 전환///api/put/setSecretpw
@@ -222,7 +221,7 @@ import { ChatDmService } from '../chatdm/chatdm.service';
     let [roomName, newsecret] = data;
 
     let userId:number = this.socketUserid.get(client.id);
-    this.chatService.setSecretpw(roomName, userId, newsecret);
+    await this.chatService.setSecretpw(roomName, userId, newsecret);
   }
 
 
@@ -231,7 +230,7 @@ import { ChatDmService } from '../chatdm/chatdm.service';
     let [roomName, targetId] = data;//음소거할 타겟id
 
     let userId:number = this.socketUserid.get(client.id);
-    this.chatService.addmuteuser(roomName, userId, targetId);
+    await this.chatService.addmuteuser(roomName, userId, targetId);
   }
 
   @SubscribeMessage('chatPutFreeMuteUser')//음소거를 해제하는 함수///api/put/freemuteuser
@@ -239,7 +238,7 @@ import { ChatDmService } from '../chatdm/chatdm.service';
     let [room, targetId] = data;//음소거 해제할 타겟id
 
     let userId:number = this.socketUserid.get(client.id);
-    this.chatService.freemuteuser(room, userId, targetId);
+    await this.chatService.freemuteuser(room, userId, targetId);
   }
 
   @SubscribeMessage('chatGetMuteUser')//상대가 음소거인지 확인/api/get/muteuser
@@ -252,14 +251,14 @@ import { ChatDmService } from '../chatdm/chatdm.service';
   async kickuser(client: Socket, data) {
     let [roomName, targetId] = data;//킥할 타켓 id
     let userId:number = this.socketUserid.get(client.id);
-    this.chatService.kickUser(this.server, roomName, userId, targetId);
+    await this.chatService.kickUser(this.server, roomName, userId, targetId);
   }
 
   @SubscribeMessage('banUser')//너 영구밴
   async banUser(client: Socket, data) {
     let [roomName, targetId] = data;
     let userId:number = this.socketUserid.get(client.id);
-    this.chatService.banUser(this.server, roomName, userId, targetId);
+    await this.chatService.banUser(this.server, roomName, userId, targetId);
   }
 
 
@@ -414,7 +413,7 @@ import { ChatDmService } from '../chatdm/chatdm.service';
      async gameRoomCheck(client : Socket, data) {
        let roomName = data;
 
-       this.server.to(client.id).emit('gameRoomCheck', this.gameService.getRoomCheck(roomName));
+       this.server.to(client.id).emit('gameRoomCheck',this.gameService.getRoomCheck(roomName));
      }
 
      @SubscribeMessage('watchGame')//관전하기
