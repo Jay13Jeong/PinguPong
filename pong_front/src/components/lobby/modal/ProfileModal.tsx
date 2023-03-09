@@ -111,7 +111,7 @@ function ProfileModal() {
                 id : res.data.id,
                 avatar: res.data.avatar,
                 userName : res.data.username as string,
-                myProfile : true,
+                myProfile : false,
                 userStatus : 'off',
                 rank : 0,
                 odds : !res.data.wins ? 0 : Math.floor(100 / (totalGame / (res.data.wins ? res.data.wins : 1))),
