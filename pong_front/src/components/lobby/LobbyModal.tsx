@@ -1,4 +1,4 @@
-import { BlockModal, DMModal, FriendModal } from "./modal";
+import { BlockModal, DMModal, FriendModal, PendingModal } from "./modal";
 
 export default function LobbyModal() {
     return (
@@ -6,6 +6,7 @@ export default function LobbyModal() {
             <BlockModal />
             <DMModal />
             <FriendModal />
+            <PendingModal />
         </>
     );
 }

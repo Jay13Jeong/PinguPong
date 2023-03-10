@@ -128,6 +128,20 @@ export class FriendService {
 		return friends;
 	}
 
+	async getPendings(id: number): Promise<Friend[]> {
+		const user = await this.userService.findUserById(id);
+		if (!user)
+			throw new NotFoundException('User not found');
+		const friends = await this.repo.find({
+			relations: ['sender', 'reciever'],
+			where: [
+				// { sender: { id: user.id }, status: 'pending' },
+				{ reciever: { id: user.id }, status: 'pending' },
+			],
+		});
+		return friends;
+	}
+
 	async getBlocks(id: number): Promise<Friend[]> {
 		const user = await this.userService.findUserById(id);
 		if (!user)

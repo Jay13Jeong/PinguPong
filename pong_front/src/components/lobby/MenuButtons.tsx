@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSetRecoilState } from "recoil";
 import * as states from "../../common/states/recoilModalState";
 import { SocketContext } from "../../common/states/contextSocket";
-import { faCircleUser, faEnvelope, faPeopleGroup, faSignOutAlt, faUserSlash } from "@fortawesome/free-solid-svg-icons";
+import { faCircleUser, faEnvelope, faPeopleGroup, faSignOutAlt, faUserSlash, faPersonCirclePlus } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { REACT_APP_HOST } from "../../common/configData";
 import * as S from "./MenuButtons.style"
@@ -14,6 +14,7 @@ export default function MenuButtons() {
     const dmState = useSetRecoilState(states.dmModalState);
     const profileState = useSetRecoilState(states.profileModalState);
     const friendState = useSetRecoilState(states.friendModalState);
+    const pendingState = useSetRecoilState(states.pendingModalState);
     const blockState = useSetRecoilState(states.blockModalState);
     const navigate = useNavigate();
 
@@ -29,12 +30,16 @@ export default function MenuButtons() {
         friendState(true);
     }
 
+    const showPendingModal = () => {
+        pendingState(true);
+    }
+
     const showBlockModal = () => {
         blockState(true);
     }
 
     const logout = () => {
-        axios.get('http://' + REACT_APP_HOST + ':3000/api/auth/logout', {withCredentials: true}) //쿠키와 함께 보내기 true.
+        axios.get('http://' + REACT_APP_HOST + '/api/auth/logout', {withCredentials: true}) //쿠키와 함께 보내기 true.
         .then(res => {
             if (res.data && res.data.msg === 'logout ok'){
                 alert('sign out');
@@ -54,6 +59,7 @@ export default function MenuButtons() {
             <button onClick={showDmModal}><FontAwesomeIcon icon={faEnvelope}/></button>
             <button onClick={showProfileModal}><FontAwesomeIcon icon={faCircleUser}/></button>
             <button onClick={showFriendModal}><FontAwesomeIcon icon={faPeopleGroup}/></button>
+            <button onClick={showPendingModal}><FontAwesomeIcon icon={faPersonCirclePlus}/></button>
             <button onClick={showBlockModal}><FontAwesomeIcon icon={faUserSlash}/></button>
             <button onClick={logout}><FontAwesomeIcon icon={faSignOutAlt}/></button>
         </S.MenuButtonsWrapper>

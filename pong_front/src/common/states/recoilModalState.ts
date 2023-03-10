@@ -24,6 +24,11 @@ export const friendModalState = atom<boolean>({
     default: false
 })
 
+export const pendingModalState = atom<boolean>({
+    key: "pendingModalState",
+    default: false
+})
+
 export const blockModalState = atom<boolean>({
     key: "blockModalState",
     default: false

@@ -4,7 +4,7 @@ import { REACT_APP_HOST } from "../common/configData";
 import useGetData from "./useGetData";
 
 function useCheckLogin(isLoginPage?: boolean) {
-    const [data, error] = useGetData('http://' + REACT_APP_HOST + ':3000/api/user');
+    const [data, error] = useGetData('http://' + REACT_APP_HOST + '/api/user');
     const navigate = useNavigate();
 
     useEffect(() => {

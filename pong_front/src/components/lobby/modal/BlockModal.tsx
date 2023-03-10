@@ -9,7 +9,7 @@ import * as types from "../../../common/types/User"
 import ModalBase from "../../modal/ModalBase"
 import { REACT_APP_HOST } from "../../../common/configData";
 
-function FriendModal() {
+function BlockModal() {
     const showProfileModal = useRecoilValue(profileModalState);
     const showModal = useRecoilValue(blockModalState);
     const resetState = useResetRecoilState(blockModalState);
@@ -23,9 +23,9 @@ function FriendModal() {
                 return 0;
             return Math.floor(100 / ((win + lose) / (win ? win : 1)));
         }
-        axios.get('http://' + REACT_APP_HOST + ':3000/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
+        axios.get('http://' + REACT_APP_HOST + '/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
         .then(userRes => {
-            axios.get('http://' + REACT_APP_HOST + ':3000/api/friend/block', {withCredentials: true}) //쿠키와 함께 보내기 true.
+            axios.get('http://' + REACT_APP_HOST + '/api/friend/block', {withCredentials: true}) //쿠키와 함께 보내기 true.
             .then(blockRes => {
                 if (blockRes.data){
                     let myFriends : types.Friend[] = blockRes.data.map((friend: any) => {
@@ -82,4 +82,4 @@ function FriendModal() {
     return null;
 }
 
-export default FriendModal;
+export default BlockModal;
