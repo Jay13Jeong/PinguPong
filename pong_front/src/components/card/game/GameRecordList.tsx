@@ -12,7 +12,7 @@ function GameRecordList(props: {user: types.User}) {
     useEffect(() => {
         const getGameData = async () => {
             try{
-                const res = await axios.get('http://' + REACT_APP_HOST + ':3000/api/game/' + props.user.id , {withCredentials: true}); //쿠키와 함께 보내기 true.
+                const res = await axios.get('http://' + REACT_APP_HOST + '/api/game/' + props.user.id , {withCredentials: true}); //쿠키와 함께 보내기 true.
                 if (res.data === null || res.data === undefined)
                 return ;
                 let records : types.Record[] = res.data.map((rec: any) => {

@@ -21,7 +21,7 @@ function DmPage() {
     const navigate = useNavigate();
     const location = useLocation();
     const [current, setCurrent] = useState<string>("");     // 현재 유저의 id
-    const [myInfo, error, isLoading] = useGetData('http://' + REACT_APP_HOST + ':3000/api/user');
+    const [myInfo, error, isLoading] = useGetData('http://' + REACT_APP_HOST + '/api/user');
     const [msg, setMsg] = useState<string>("");
     const [invitedInfo, setInvitedInfo] = useState<{id: number, username: string}>({id: -1, username: ""});
     const setGameInviteModal = useSetRecoilState(gameInviteModalState);

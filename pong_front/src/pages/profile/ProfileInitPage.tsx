@@ -17,7 +17,7 @@ export default function ProfileInitPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('http://' + REACT_APP_HOST + ':3000/api/user/init/status', {withCredentials: true})
+    axios.get('http://' + REACT_APP_HOST + '/api/user/init/status', {withCredentials: true})
     .then(res => {
       if (res.data && res.data.msg === true)
         navigate(RoutePath.lobby);
@@ -30,11 +30,11 @@ export default function ProfileInitPage() {
   //프로필 아바타 및 이름 변경.
   function handleInitSubmit(event : any) {
     event.preventDefault();
-      axios.patch('http://' + REACT_APP_HOST + ':3000/api/user', { username : username }, {withCredentials: true})
+      axios.patch('http://' + REACT_APP_HOST + '/api/user', { username : username }, {withCredentials: true})
       .then(res => {
           if (inputRef.current && inputRef.current.value)
           {
-            axios.post('http://' + REACT_APP_HOST + ':3000/api/user/avatar', {file: inputRef.current.files![0]}, {withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' }})
+            axios.post('http://' + REACT_APP_HOST + '/api/user/avatar', {file: inputRef.current.files![0]}, {withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' }})
             .then((res) => {
               navigate(RoutePath.lobby);
             })

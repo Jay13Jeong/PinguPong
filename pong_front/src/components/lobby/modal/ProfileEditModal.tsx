@@ -20,7 +20,7 @@ function ProfileEditModal(props: {name: string}) {
 
     useEffect(() => {
         // setUserInfo();
-        axios.get('http://' + REACT_APP_HOST + ':3000/api/fa2/status', {withCredentials: true}) //쿠키와 함께 보내기 true.
+        axios.get('http://' + REACT_APP_HOST + '/api/fa2/status', {withCredentials: true}) //쿠키와 함께 보내기 true.
         .then(res => {
             if (res.data){
                 setStatus2fa(res.data.twofa);
@@ -37,7 +37,7 @@ function ProfileEditModal(props: {name: string}) {
     //프로필 아바타 및 이름 변경.
     function handleSubmit(event : any) {
         event.preventDefault();
-        axios.patch('http://' + REACT_APP_HOST + ':3000/api/user', {username : username}, {withCredentials: true})
+        axios.patch('http://' + REACT_APP_HOST + '/api/user', {username : username}, {withCredentials: true})
         .then(res => {
             //변경 성공.
             resetState();
@@ -50,7 +50,7 @@ function ProfileEditModal(props: {name: string}) {
     //2단계 켜기.
     function handle2FASubmit(event : any) {
         event.preventDefault();
-        axios.patch('http://' + REACT_APP_HOST + ':3000/api/fa2', {}, {withCredentials: true})
+        axios.patch('http://' + REACT_APP_HOST + '/api/fa2', {}, {withCredentials: true})
         .then(res => {
           if (res.status === 200)
             setStatus2fa(true);
@@ -66,7 +66,7 @@ function ProfileEditModal(props: {name: string}) {
     //2단계 끄기.
     function handleOff2FASubmit(event : any) {
         event.preventDefault();
-        axios.delete('http://' + REACT_APP_HOST + ':3000/api/fa2', {withCredentials: true})
+        axios.delete('http://' + REACT_APP_HOST + '/api/fa2', {withCredentials: true})
         .then(res => {
           if (res.status === 200)
             setStatus2fa(false);
@@ -84,7 +84,7 @@ function ProfileEditModal(props: {name: string}) {
         if (inputRef.current && inputRef.current.value)
 		{
 			//update Avatar here
-			axios.post('http://' + REACT_APP_HOST + ':3000/api/user/avatar', {file: inputRef.current.files![0]}, {withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' }})
+			axios.post('http://' + REACT_APP_HOST + '/api/user/avatar', {file: inputRef.current.files![0]}, {withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' }})
 			.then((res) => {
 				toast.success("아바타 변경 완료");
 			})

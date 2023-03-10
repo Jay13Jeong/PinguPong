@@ -1,33 +1,30 @@
+upstream front {
+  server pong_front:3000;
+}
+
+upstream nestjs {
+  server pong_nestjs:3000;
+}
+
 server {
   listen 80;
   server_name ${SERVER_HOST};
 
-  # 도커 네트워크 기본 dns서버 주소.
-  resolver 127.0.0.11;
-
-  # domain name을 ip 주소로 치환하기 위한 설정\
-  set $front pong_front;
-  set $nestjs pong_nestjs;
-
   location / {
-    proxy_pass http://$front:3000;
+    proxy_pass http://front;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "Upgrade";
   }
 
   location /api {
-    proxy_pass http://$nestjs:3000;
-  }
-
-  location /api/chat {
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection "upgrade";
-    proxy_http_version 1.1;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header Host $host;
-    proxy_set_header Origin "";
-    proxy_pass http://$nestjs:3000/api/chat;
+    proxy_pass http://nestjs;
   }
 
   location /socket.io {
-    proxy_pass http://$nestjs:3000/api/chat;
+    proxy_pass http://nestjs/socket.io;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "Upgrade";
   }
 }
