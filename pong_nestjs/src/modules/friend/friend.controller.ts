@@ -57,6 +57,13 @@ export class FriendController {
 		return await this.friendServices.getFriends(user.id);
 	}
 
+    @Get('pendings')
+    @UseGuards(JwtAuthGuard)
+    async getPendingList(@Req() req){
+        const user = req.user as Users;
+		return await this.friendServices.getPendings(user.id);
+	}
+
     @Get('block')
     @UseGuards(JwtAuthGuard)
     async getBlockList(@Req() req){
