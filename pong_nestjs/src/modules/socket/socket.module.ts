@@ -10,19 +10,19 @@ import { UsersModule } from '../users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Game } from '../game/game.entity';
 import { GameModule } from '../game/game.module';
-import { FriendModule } from '../friend/friend.module';
 import { FriendService } from '../friend/friend.service';
 import { Friend } from '../friend/friend.entity';
 import { ChatService } from '../chat/chat.service';
 import { ChatDmService } from '../chatdm/chatdm.service';
-import { ChatModule } from '../chat/chat.module';
 import { Chat } from '../chat/chat.entity';
+import { DmList } from '../chatdm/dmList.entity';
+import { DmMsgDb } from '../chatdm/dmMsgDb.entity';
 
 @Module({
 	imports:[
 		UsersModule,
 		GameModule,
-		TypeOrmModule.forFeature([Game, Friend, Chat]),
+		TypeOrmModule.forFeature([Game, Friend, Chat, DmList, DmMsgDb]),
 	],
 	providers: [
 		SocketService,

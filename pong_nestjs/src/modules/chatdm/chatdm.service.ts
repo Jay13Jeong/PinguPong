@@ -1,85 +1,96 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Socket, Server } from "socket.io";
+import { Repository } from 'typeorm';
 import { Users } from "../users/user.entity";
+import { DmList } from './dmList.entity';
+import { DmMsgDb } from './dmMsgDb.entity';
 import { receiveMsg } from "./receiveMsgType";
-import { roomMsgDb } from "./roomMsgDb";
-import { userDmList } from "./userDmListClass";
 
 @Injectable()
 export class ChatDmService {
-    private userDmList:Map<number, userDmList>;//나의 디엠 리스트
     private roomNumber : number;//프라이머리키 및 룸 넘버 지정용
-    private roomDB : Map<string, roomMsgDb>//룸 넘버에 해당하는 저장된 msg들
 
-    public constructor(){
-        this.userDmList = new Map<number, userDmList>();
-        this.roomDB = new Map<string, roomMsgDb>();
+
+    public constructor(
+        @InjectRepository(DmList) private dmRepository: Repository<DmList>,
+        @InjectRepository(DmMsgDb) private msgRepository: Repository<DmMsgDb>,
+    ){
         this.roomNumber = 1;
     }
 
     //도전기능에서 해당 유저의 타겟 방이름을 가져오기 위한 함수, 유저상태를 나타내기 위한 방이름
-    public getTargetDmRoom(userId:number, targetId:number):string{
-        const myDmList = this.userDmList.get(userId);
-        let roomName = myDmList.getTargetRoom(targetId);
-        return roomName;
+    public async getTargetDmRoom(userId:number, targetId:number):Promise<string>{
+        const myDmList = await this.dmRepository.findOneBy({userid:userId, targetid:targetId});
+        return myDmList.dmRoomName;
     }
 
     //디엠 리스트 주기, 처음 입장이거나 받은 디엠이 없으면 디엠 룸 만들어 주기
-    public getdmList(userId:number):number[]{
-        if (!this.userDmList.has(userId))
-            this.userDmList.set(userId, new userDmList());
-        return this.userDmList.get(userId).getUsers();
+    public async getdmList(userId:number):Promise<number[]>{
+        let myDmList = await this.dmRepository.findBy({userid:userId});
+        let ret:number[] = [];
+        console.log(myDmList);
+        for (let dm of myDmList){
+            ret.push(dm.targetid);
+        }
+        return ret;
     }
 
-    public sendDm(server:Server, userId:number, userName:string, targetId:number, msg:string) {
-        const myDmList = this.userDmList.get(userId);
-        let roomName = myDmList.getTargetRoom(targetId);
+    public async sendDm(server:Server, userId:number, userName:string, targetId:number, msg:string) {
+        let myDm = await this.dmRepository.findOneBy({userid:userId, targetid:targetId});
+        let roomName = myDm.dmRoomName;
 
         server.to(roomName).emit('receiveDm', userName, msg);
         this.saveDmRoomdb(roomName, userId, msg);//메세지 저장
     }
 
     //보낸 대화 저장
-    private saveDmRoomdb(roomName:string, userid:number, msg:string) {
-        this.roomDB.get(roomName).pushMsg(userid, msg);
+    private async saveDmRoomdb(roomName:string, userid:number, msg:string) {
+        let msgdb = new DmMsgDb();
+
+        msgdb.dmRoomName = roomName;
+        msgdb.userid = userid;
+        msgdb.msg = msg;
+        await this.msgRepository.save(msgdb);
     }
 
-    //1대1 대화방 입장, 단 상대방이 한번도 디엠방 이용이 없으면 만들어 주기.여태까지 주고받은 대화 반환
-    //대화 저장을 위한 디비클래스도 만들기
-    public connectDm(socket:Socket, userId:number, targetId:number) {
-        if (this.userDmList.get(userId) == undefined)//userDmList 없으면 생성하기
-            this.getdmList(userId);
-        const myDmList = this.userDmList.get(userId);
-        if (!myDmList.checkCreateDM(targetId)){
-            myDmList.pushDm(targetId, 'dm'+this.roomNumber);
-            this.roomDB.set('dm'+this.roomNumber, new roomMsgDb());//디비 클래스 생성
-            if (!this.userDmList.has(targetId))
-                this.userDmList.set(targetId, new userDmList());
-            this.userDmList.get(targetId).pushDm(userId, 'dm'+this.roomNumber);
-            this.roomNumber++;
+    //1대1 대화방 입장, 단 상대방이 한번도 디엠방 이용이 없으면 디비 만들어 주기.
+    public async connectDm(socket:Socket, userId:number, targetId:number) {
+        let myDm = await this.dmRepository.findOneBy({userid:userId, targetid:targetId});
+        if (myDm == null){
+            myDm = new DmList();
+            myDm.userid = userId;
+            myDm.targetid = targetId;
+            myDm.dmRoomName = 'dm'+this.roomNumber++;
+            await this.dmRepository.save(myDm);
+            let targetDm = new DmList();
+            targetDm.userid = targetId;
+            targetDm.targetid = userId;
+            targetDm.dmRoomName = myDm.dmRoomName;
+            await this.dmRepository.save(targetDm);
         }
-        socket.join(myDmList.getTargetRoom(targetId));
+        socket.join(myDm.dmRoomName);
     }
 
-    public getMsgs(user:Users, target:Users): receiveMsg[] {
-        const myDmList = this.userDmList.get(user.id);
-        const roomName = myDmList.getTargetRoom(target.id);
-        let msgs =  this.roomDB.get(roomName).getMsg();
+    //그동안 대화한 메세지 가져오기
+    public async getMsgs(user:Users, target:Users): Promise<receiveMsg[]> {
+        const myDm = await this.dmRepository.findOneBy({userid:user.id, targetid:target.id});
+        let msgs =  await this.msgRepository.findBy({dmRoomName:myDm.dmRoomName});
 
         let receivemsg:receiveMsg[] = [];
         for(let msg of msgs){
-            if (msg.userId == user.id)
+            if (msg.userid == user.id)
                 receivemsg.push({userName : user.username, msg : msg.msg})
-            if (msg.userId == target.id)
+            if (msg.userid == target.id)
                 receivemsg.push({userName : target.username, msg : msg.msg})
         }
         return receivemsg;
     }
 
     //1대1 대화방 나가면 socket 룸 지우기
-    public closeDm(socket:Socket, userId:number, targetId:number){
-        const myDmList = this.userDmList.get(userId);
+    public async closeDm(socket:Socket, userId:number, targetId:number){
+        const myDm = await this.dmRepository.findOneBy({userid:userId, targetid:targetId});
 
-        socket.leave(myDmList.getTargetRoom(targetId));
+        socket.leave(myDm.dmRoomName);
     }
 }
