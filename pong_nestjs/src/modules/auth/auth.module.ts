@@ -13,6 +13,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
 import { UsersService } from '../users/users.service';
 import { JwtStrategy } from './guard/jwt.strategy';
+import { GoogleStrategy } from './guard/google.strategy';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { JwtStrategy } from './guard/jwt.strategy';
     AuthService,
     JwtStrategy,
     FtStrategy,
+    GoogleStrategy,
     SecondAuthService,
     UsersService,
   ],
