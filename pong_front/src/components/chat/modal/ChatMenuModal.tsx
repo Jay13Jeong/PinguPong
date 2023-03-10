@@ -17,7 +17,7 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
     const modalState = useRecoilValue(chatMenuModalState);
     const resetState = useResetRecoilState(chatMenuModalState);
     const profileState = useSetRecoilState(profileModalState);
-    const [info, error, loading] = useGetData(`http://` + REACT_APP_HOST + `:3000/api/user/name?username=${modalState.user}`, modalState.user);
+    const [info, error, loading] = useGetData(`http://` + REACT_APP_HOST + `/api/user/name?username=${modalState.user}`, modalState.user);
     const [current, setCurrent] = useState("");
     const [myInfo, myerror, myLoading] = useGetData('http://' + REACT_APP_HOST + '/api/user');
     const [menuLoading, isMenuLoading] = useState<boolean>(true);
