@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
-import { friendModalState, profileModalState } from "../../../common/states/recoilModalState";
+import { pendingModalState, profileModalState } from "../../../common/states/recoilModalState";
 import UserCardButtonList from "../../card/user/UserCardButtonList";
 import * as types from "../../../common/types/User"
 import ModalBase from "../../modal/ModalBase";
@@ -9,13 +9,11 @@ import { REACT_APP_HOST } from "../../../common/configData";
 import useGetData from "../../../util/useGetData";
 import { toast } from "react-toastify";
 
-function FriendModal() {
-    const [isChange, setIsChange] = useState(0); //변화감지용 변수.
-    const [target, setTarget] = useState('');
+function PendingModal() {
     const showProfileModal = useRecoilValue(profileModalState);
-    const showModal = useRecoilValue(friendModalState);
-    const resetState = useResetRecoilState(friendModalState);
-    const [friendList, setFriendList] = useState<types.Friend[]>([]);
+    const showModal = useRecoilValue(pendingModalState);
+    const resetState = useResetRecoilState(pendingModalState);
+    const [pendingList, setPendingList] = useState<types.Friend[]>([]);
     const [data] = useGetData('http://' + REACT_APP_HOST + '/api/user');
 
     useEffect(() => {
@@ -25,22 +23,22 @@ function FriendModal() {
             return Math.floor(100 / ((win + lose) / (win ? win : 1)));
         }
 
-        const callFriendData = async () => {
+        const callPendingData = async () => {
             try{
-                const res = await axios.get('http://' + REACT_APP_HOST + '/api/friend', {withCredentials: true}) //쿠키와 함께 보내기 true.
+                const res = await axios.get('http://' + REACT_APP_HOST + '/api/friend/pendings', {withCredentials: true}) //쿠키와 함께 보내기 true.
                 if (res === null || res === undefined)
                 {
-                    toast.error("friend fail..");
+                    toast.error("pending fail..");
                     return;
                 }
-                let myFriends : types.Friend[] = res.data.map((friend: any) => {
-                    const myUserInfo = ((friend.sender.id !== data.id) ? friend.reciever : friend.sender);
-                    const otherUserInfo = ((friend.sender.id === data.id) ? friend.reciever : friend.sender);
+                let myPendings : types.Friend[] = res.data.map((pending: any) => {
+                    const myUserInfo = ((pending.sender.id !== data.id) ? pending.reciever : pending.sender);
+                    const otherUserInfo = ((pending.sender.id === data.id) ? pending.reciever : pending.sender);
                     return {
                         userId: otherUserInfo.id,
                         userName: otherUserInfo.username,
                         userStatus: 'on', //실시간적용 필요(기능 추가해줘야함).
-                        relate: friend.status,
+                        relate: pending.status,
                         me: {
                             id : myUserInfo.id,
                             avatar: myUserInfo.avatar,
@@ -50,7 +48,7 @@ function FriendModal() {
                             rank : 0,
                             odds : calOdds(myUserInfo.wins, myUserInfo.loses),
                             record : [],
-                            relate : friend.status,
+                            relate : pending.status,
                         },
                         you: {
                             id : otherUserInfo.id,
@@ -61,52 +59,30 @@ function FriendModal() {
                             rank : 0,
                             odds : calOdds(otherUserInfo.wins, otherUserInfo.loses),
                             record : [],
-                            relate : friend.status,
+                            relate : pending.status,
                         },
                     }
                 });
-                setFriendList(myFriends);
+                setPendingList(myPendings);
             }catch (err : any){
                 // alert("no friend data")
             }
         }
-        callFriendData();
+        callPendingData();
     }, [
         showModal,
         showProfileModal,
-        isChange,
+        // handleAddFriendSubmit,
     ]);
-
-    const handleAddFriendSubmit = async (event : any) => {
-        event.preventDefault();
-        try{
-            const res = await axios.post('http://' + REACT_APP_HOST + '/api/friend/name', {username : target}, {withCredentials: true});
-            toast.success(target + "에게 친구요청 성공");
-            setIsChange((isChange < 9999 ? isChange + 1 : 0));
-        }catch(err : any){
-            toast.error(err.response.data.message);
-        }
-    };
-
-    function handleSearchKey(event : React.KeyboardEvent<HTMLDivElement>) {
-        if (event.key !== 'Enter')
-          return ;
-        event.preventDefault();
-        handleAddFriendSubmit(event);
-    };
 
     if (showModal) {
         return (
             <ModalBase reset={resetState}>
-                <h1>👥 Friend List 👥</h1>
-                <input onKeyDown={handleSearchKey} type="text" placeholder="이름으로 요청" onChange={event => setTarget(event.target.value)} value={target} />
-                <button className="profile-button" onClick={handleAddFriendSubmit}>
-                    친구요청
-                </button>
-                <UserCardButtonList friends={friendList}/>
+                <h1>👥 Pending Friend List 👥</h1>
+                <UserCardButtonList friends={pendingList}/>
             </ModalBase>
         );
     }
     return null;
 }
-export default FriendModal;
+export default PendingModal;

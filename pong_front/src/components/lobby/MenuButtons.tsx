@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSetRecoilState } from "recoil";
 import * as states from "../../common/states/recoilModalState";
 import { SocketContext } from "../../common/states/contextSocket";
-import { faCircleUser, faEnvelope, faPeopleGroup, faSignOutAlt, faUserSlash } from "@fortawesome/free-solid-svg-icons";
+import { faCircleUser, faEnvelope, faPeopleGroup, faSignOutAlt, faUserSlash, faPersonCirclePlus } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { REACT_APP_HOST } from "../../common/configData";
 import * as S from "./MenuButtons.style"
@@ -14,6 +14,7 @@ export default function MenuButtons() {
     const dmState = useSetRecoilState(states.dmModalState);
     const profileState = useSetRecoilState(states.profileModalState);
     const friendState = useSetRecoilState(states.friendModalState);
+    const pendingState = useSetRecoilState(states.pendingModalState);
     const blockState = useSetRecoilState(states.blockModalState);
     const navigate = useNavigate();
 
@@ -27,6 +28,10 @@ export default function MenuButtons() {
 
     const showFriendModal = () => {
         friendState(true);
+    }
+
+    const showPendingModal = () => {
+        pendingState(true);
     }
 
     const showBlockModal = () => {
@@ -54,6 +59,7 @@ export default function MenuButtons() {
             <button onClick={showDmModal}><FontAwesomeIcon icon={faEnvelope}/></button>
             <button onClick={showProfileModal}><FontAwesomeIcon icon={faCircleUser}/></button>
             <button onClick={showFriendModal}><FontAwesomeIcon icon={faPeopleGroup}/></button>
+            <button onClick={showPendingModal}><FontAwesomeIcon icon={faPersonCirclePlus}/></button>
             <button onClick={showBlockModal}><FontAwesomeIcon icon={faUserSlash}/></button>
             <button onClick={logout}><FontAwesomeIcon icon={faSignOutAlt}/></button>
         </S.MenuButtonsWrapper>

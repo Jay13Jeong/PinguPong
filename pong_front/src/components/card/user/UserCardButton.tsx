@@ -10,6 +10,7 @@ function UserCardButton(props: {friend: Friend, userID: number, userName: string
     const profileState = useSetRecoilState(profileModalState);
     const [onlineStatus, setOnlineStatus] = useState<string>('offline');
     const resetFriendState =  useResetRecoilState(states.friendModalState);
+    const resetPendingState =  useResetRecoilState(states.pendingModalState);
     const resetBlockState =  useResetRecoilState(states.blockModalState);
     const socket = useContext(SocketContext);
 
@@ -27,6 +28,7 @@ function UserCardButton(props: {friend: Friend, userID: number, userName: string
     function clickHandler(value: number, e?: any) {
         profileState({ userId: value, show: true });
         resetFriendState();
+        resetPendingState();
         resetBlockState();
     }
 

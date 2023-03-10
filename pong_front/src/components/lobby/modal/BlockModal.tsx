@@ -9,7 +9,7 @@ import * as types from "../../../common/types/User"
 import ModalBase from "../../modal/ModalBase"
 import { REACT_APP_HOST } from "../../../common/configData";
 
-function FriendModal() {
+function BlockModal() {
     const showProfileModal = useRecoilValue(profileModalState);
     const showModal = useRecoilValue(blockModalState);
     const resetState = useResetRecoilState(blockModalState);
@@ -82,4 +82,4 @@ function FriendModal() {
     return null;
 }
 
-export default FriendModal;
+export default BlockModal;
