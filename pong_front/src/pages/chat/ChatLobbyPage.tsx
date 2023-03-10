@@ -16,7 +16,7 @@ function ChatLobbyPage() {
     const setCreateChatModal = useSetRecoilState(createChatModalState);
     const [loading, setLoading] = useState(true);
     const [current, setCurrent] = useState("");
-    const [myInfo, error, isLoading] = useGetData('http://' + REACT_APP_HOST + ':3000/api/user');
+    const [myInfo, error, isLoading] = useGetData('http://' + REACT_APP_HOST + '/api/user');
 
     useEffect(() => {
         if (myInfo) {

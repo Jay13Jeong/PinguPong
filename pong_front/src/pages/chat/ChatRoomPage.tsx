@@ -22,7 +22,7 @@ function ChatRoomPage () {
     const setGameInviteModal = useSetRecoilState(gameInviteModalState);
     const socket = useContext(SocketContext);
     
-    const [myInfo, error, isLoading] = useGetData('http://' + REACT_APP_HOST + ':3000/api/user');
+    const [myInfo, error, isLoading] = useGetData('http://' + REACT_APP_HOST + '/api/user');
     const [msg, setMsg] = useState<string>("");
     const [current, setCurrent] = useState<string>("");     // 현재 유저의 id
     const [master, setMaster] = useState<boolean>(false);   // 현재 유저의 방장 여부

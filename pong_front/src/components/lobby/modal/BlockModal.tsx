@@ -23,9 +23,9 @@ function FriendModal() {
                 return 0;
             return Math.floor(100 / ((win + lose) / (win ? win : 1)));
         }
-        axios.get('http://' + REACT_APP_HOST + ':3000/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
+        axios.get('http://' + REACT_APP_HOST + '/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
         .then(userRes => {
-            axios.get('http://' + REACT_APP_HOST + ':3000/api/friend/block', {withCredentials: true}) //쿠키와 함께 보내기 true.
+            axios.get('http://' + REACT_APP_HOST + '/api/friend/block', {withCredentials: true}) //쿠키와 함께 보내기 true.
             .then(blockRes => {
                 if (blockRes.data){
                     let myFriends : types.Friend[] = blockRes.data.map((friend: any) => {

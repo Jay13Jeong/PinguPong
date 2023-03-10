@@ -15,7 +15,7 @@ function FriendModal() {
     const showModal = useRecoilValue(friendModalState);
     const resetState = useResetRecoilState(friendModalState);
     const [friendList, setFriendList] = useState<types.Friend[]>([]);
-    const [data] = useGetData('http://' + REACT_APP_HOST + ':3000/api/user');
+    const [data] = useGetData('http://' + REACT_APP_HOST + '/api/user');
 
     useEffect(() => {
         const calOdds = (win: number, lose: number): number => {
@@ -26,7 +26,7 @@ function FriendModal() {
 
         const callFriendData = async () => {
             try{
-                const res = await axios.get('http://' + REACT_APP_HOST + ':3000/api/friend', {withCredentials: true}) //쿠키와 함께 보내기 true.
+                const res = await axios.get('http://' + REACT_APP_HOST + '/api/friend', {withCredentials: true}) //쿠키와 함께 보내기 true.
                 if (res === null || res === undefined)
                 {
                     toast.error("friend fail..");
@@ -79,7 +79,7 @@ function FriendModal() {
     const handleAddFriendSubmit = async (event : any) => {
         event.preventDefault();
         try{
-            const res = await axios.post('http://' + REACT_APP_HOST + ':3000/api/friend/name', {username : target}, {withCredentials: true});
+            const res = await axios.post('http://' + REACT_APP_HOST + '/api/friend/name', {username : target}, {withCredentials: true});
             toast.success(target + "에게 친구요청 성공");
         }catch(err : any){
             toast.error(err.response.data.message);

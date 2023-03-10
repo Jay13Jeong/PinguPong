@@ -11,7 +11,7 @@ import Loader from "../../util/Loader";
 function GameInviteModal (props: {targetID: number, targetUserName: string, setInviteInfo: Function}) {
     const socket = useContext(SocketContext);
     const [current, setCurrent] = useState("");
-    const [myInfo, error, isLoading] = useGetData('http://' + REACT_APP_HOST + ':3000/api/user');
+    const [myInfo, error, isLoading] = useGetData('http://' + REACT_APP_HOST + '/api/user');
     const [loading, setLoading] = useState(true);
     const modalState = useRecoilValue(gameInviteModalState);
     const resetState = useResetRecoilState(gameInviteModalState);

@@ -12,13 +12,13 @@ export default function LobbyPage() {
   const navigate = useNavigate();
   useEffect(() => {
       socket.emit('setInLobby');
-      axios.get('http://' + REACT_APP_HOST + ':3000/api/user/init/status', {withCredentials: true})
+      axios.get('http://' + REACT_APP_HOST + '/api/user/init/status', {withCredentials: true})
       .then(res => {
           if (res.data && res.data.msg === false){
             navigate(RoutePath.profile)
             return ;
           }
-          axios.get('http://' + REACT_APP_HOST + ':3000/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
+          axios.get('http://' + REACT_APP_HOST + '/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
           .then(res => {
               // if (res.data && res.data.id)
               //     props.setter(true);

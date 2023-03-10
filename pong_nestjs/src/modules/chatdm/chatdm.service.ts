@@ -29,7 +29,7 @@ export class ChatDmService {
     public async getdmList(userId:number):Promise<number[]>{
         let myDmList = await this.dmRepository.findBy({userid:userId});
         let ret:number[] = [];
-        console.log(myDmList);
+        // console.log(myDmList);
         for (let dm of myDmList){
             ret.push(dm.targetid);
         }

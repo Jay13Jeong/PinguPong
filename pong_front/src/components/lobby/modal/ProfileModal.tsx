@@ -35,7 +35,7 @@ function ProfileModal() {
     useEffect(() => {
         const initProfileData = async () => {
             try{
-                const res = await axios.get('http://' + REACT_APP_HOST + ':3000/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
+                const res = await axios.get('http://' + REACT_APP_HOST + '/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
                 if (res.data === null || res.data === undefined)
                     return ;
                 if (showModal.userId !== res.data.id && showModal.userId !== 0){ //id 0은 빈 값.
@@ -60,7 +60,7 @@ function ProfileModal() {
                 }
                 const getAvatarData = async (id : any) => {
                     try{
-                        const avatarDataRes = await axios.get('http://' + REACT_APP_HOST + ':3000/api/user/avatar/' + id, {withCredentials: true, responseType: 'blob'}) //blob : 파일전송용 큰 객체타입.
+                        const avatarDataRes = await axios.get('http://' + REACT_APP_HOST + '/api/user/avatar/' + id, {withCredentials: true, responseType: 'blob'}) //blob : 파일전송용 큰 객체타입.
                         setAvatarFile(URL.createObjectURL(avatarDataRes.data));
                     }catch{
                         //no avatar data...
@@ -75,7 +75,7 @@ function ProfileModal() {
     useEffect(() => {
         const getRank = async () =>{
             try{
-                const res = await axios.get('http://' + REACT_APP_HOST + ':3000/api/user/rank/' + (showModal.userId !== 0 ? showModal.userId : userInfo.id) , {withCredentials: true}) //쿠키와 함께 보내기 true.
+                const res = await axios.get('http://' + REACT_APP_HOST + '/api/user/rank/' + (showModal.userId !== 0 ? showModal.userId : userInfo.id) , {withCredentials: true}) //쿠키와 함께 보내기 true.
                 if (res.data && res.data.rank){
                     setRank(res.data.rank);
                 }
@@ -96,7 +96,7 @@ function ProfileModal() {
 
     async function initRelate() {
         try{
-            const res = await axios.get('http://' + REACT_APP_HOST + ':3000/api/friend/relate/' + userInfo.id, {withCredentials: true});
+            const res = await axios.get('http://' + REACT_APP_HOST + '/api/friend/relate/' + userInfo.id, {withCredentials: true});
             setRelate(res.data);
         }catch{
             //nothing relate...
@@ -105,7 +105,7 @@ function ProfileModal() {
 
     async function initUserInfo(userId: number){
         try{
-            const res = await axios.get('http://' + REACT_APP_HOST + ':3000/api/user/' + showModal.userId, {withCredentials: true});
+            const res = await axios.get('http://' + REACT_APP_HOST + '/api/user/' + showModal.userId, {withCredentials: true});
             let totalGame = res.data.wins + res.data.loses;
             let myInfo : types.User = {
                 id : res.data.id,
@@ -166,7 +166,7 @@ function ProfileModal() {
     async function handleFollow(event: React.MouseEvent<HTMLElement>) {
         event.preventDefault();
         try{
-            const res = await axios.post('http://' + REACT_APP_HOST + ':3000/api/friend', {otherID : userInfo.id}, {withCredentials: true})
+            const res = await axios.post('http://' + REACT_APP_HOST + '/api/friend', {otherID : userInfo.id}, {withCredentials: true})
             toast.success('send follow');
             await initRelate();
         }catch(err: any){   
@@ -179,7 +179,7 @@ function ProfileModal() {
     async function handleUnfollow(event: React.MouseEvent<HTMLElement>) {
         event.preventDefault();
         try{
-            const res = await axios.patch('http://' + REACT_APP_HOST + ':3000/api/friend', {otherID : userInfo.id}, {withCredentials: true})
+            const res = await axios.patch('http://' + REACT_APP_HOST + '/api/friend', {otherID : userInfo.id}, {withCredentials: true})
             toast.success('unfollow ok');
             await initRelate();
         }catch(err: any){   
@@ -192,7 +192,7 @@ function ProfileModal() {
     async function handleBlock(event: React.MouseEvent<HTMLElement>) {
         event.preventDefault();
         try{
-            await axios.post('http://' + REACT_APP_HOST + ':3000/api/friend/block', {otherID : userInfo.id}, {withCredentials: true})
+            await axios.post('http://' + REACT_APP_HOST + '/api/friend/block', {otherID : userInfo.id}, {withCredentials: true})
             toast.success('target block ok');
             await initRelate();
         }catch(err: any){   
@@ -205,7 +205,7 @@ function ProfileModal() {
     async function handleUnblock(event: React.MouseEvent<HTMLElement>) {
         event.preventDefault();
         try{
-            await axios.patch('http://' + REACT_APP_HOST + ':3000/api/friend/block', {otherID : userInfo.id}, {withCredentials: true})
+            await axios.patch('http://' + REACT_APP_HOST + '/api/friend/block', {otherID : userInfo.id}, {withCredentials: true})
             toast.success('target unblock ok');
             await initRelate();
         }catch(err: any){   
