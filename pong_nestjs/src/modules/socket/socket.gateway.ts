@@ -482,14 +482,23 @@ import { ChatDmService } from '../chatdm/chatdm.service';
         let targetSocketId:string = Array.from(targetSocketIds)[targetSocketIds.size - 1];//가장 마지막 소켓을 넣어주기
         let user = await this.findUserBySocket(client);
         //결투 거절이면 룸 삭제하기
-        if (result === false){
+        if (result === false) {
           this.gameService.duelDelete(user.id, targetId);
           this.server.to(targetSocketId).emit('duelTargetRun', user.username);
           return ;
         }
+        //대결 상대가 같은 곳에 있는지 확인, 도전장 보낸 사람이 채팅방에서 나간 경우
+        if (this.useridStatus.get(targetId).status != this.useridStatus.get(user.id).status){
+          let target:Promise<Users> = this.userService.findUserById(targetId);
+          this.gameService.duelDelete(user.id, targetId);
+          this.server.to(client.id).emit('duelTargetRun', (await target).username);
+          return ;
+        }
         //승낙하면 matchSuce
+
         this.gameService.matchEmit(this.server, user.id);
         this.changeUseridStatus(user.id, 'matching');
+
         //위의 함수에서 'matchMakeSuccess'이벤트 보냄 이후 게임화면 등장
         //->게임준비 버튼 등 로직은   @SubscribeMessage('requestStart')으로 진행된다.
      }
