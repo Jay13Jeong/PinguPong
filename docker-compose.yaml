@@ -18,12 +18,23 @@ services:
     networks:
       - pong
 
+  pong_redis:
+    container_name: pong_redis
+    build:
+      context: ./pong_redis
+    restart: always
+    networks:
+      - pong
+
   pong_nestjs:
     container_name: pong_nestjs
     depends_on:
       - pong_database
+      - pong_redis
     restart: always
     environment:
+      - REDIS_HOST=pong_redis
+      - REDIS_PORT=6379
       - DB_HOST=pong_database
       - DB_PORT=5432
       - DB_USER=${NESTJS_USER}
