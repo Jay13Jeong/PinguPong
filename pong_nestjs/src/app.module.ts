@@ -1,4 +1,4 @@
-import { Module, CacheModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
@@ -18,6 +18,7 @@ import { ChatModule } from './modules/chat/chat.module';
 import { ChatdmModule } from './modules/chatdm/chatdm.module';
 import { DmList } from './modules/chatdm/dmList.entity';
 import { DmMsgDb } from './modules/chatdm/dmMsgDb.entity';
+import { Msgs } from './modules/chat/msg.entity';
 
 @Module({
   imports: [
@@ -31,7 +32,7 @@ import { DmMsgDb } from './modules/chatdm/dmMsgDb.entity';
       database: process.env.DB_NAME_DEVELOPMENT, // db name.
       autoLoadEntities: true, // 엔티티를 자동으로 로드.
       synchronize: true, // 앱을 실행할 때마다 운영 주체가 데이터베이스와 동기화. 개발모드에서만 써야함.
-      entities: [Users, Friend, Game, Chat, Ban, Mute, RoomUserId, DmList, DmMsgDb] //디비가 다룰 엔티티목록.
+      entities: [Users, Friend, Game, Chat, Ban, Mute, RoomUserId, DmList, DmMsgDb, Msgs] //디비가 다룰 엔티티목록.
     }),
     UsersModule,
     AuthModule,

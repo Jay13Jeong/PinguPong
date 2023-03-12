@@ -54,9 +54,9 @@ import { Cache } from 'cache-manager';
     }
 
     private async changeUseridStatus(userid:number, status: string) {//유저의 현재 위치를 변경하는 함수
-      if (userid == 0)
-        return;
       let userStatus:status = await this.cacheManager.get<status>(String(userid));
+      if (userStatus == null)//로그인 전에 호출 되는 경우
+        return;
       userStatus.status = status;
 
       await this.cacheManager.set(String(userid), userStatus);
@@ -123,9 +123,9 @@ import { Cache } from 'cache-manager';
   @SubscribeMessage('getUserStatus')//api/get/user/status
   async getUserStatus(client : Socket, data) {
     let targetId: number = data;
-    if (targetId == 0)
-      return;
     let targetStatus:status = await this.cacheManager.get<status>(String(targetId));
+    if (targetStatus == null)
+      return;
     let status:string = targetStatus.status;
 
     if (status != 'offline' && status != 'online' && status != 'ingame' && status != 'matching')
@@ -157,6 +157,12 @@ import { Cache } from 'cache-manager';
     this.server.to(client.id).emit('youPass');//접속 가능하면
     await this.chatService.newRoom(room, userId);//채팅방에 유저 등록
     await this.changeUseridStatus(userId, room);//유저 상태 변경
+    let msgs = await this.chatService.sendMsg(room);
+    for (let msg of msgs){//채팅방의 이전 대화 불러오기
+    let user:Promise<Users> = this.userService.findUserById(msg.userid);
+    this.server.to(client.id).emit('chat', (await user).username, msg.msg);
+    console.log("chat", msg.userid, msg.msg);
+    }
   }
 
   @SubscribeMessage('chat')//음소거, 차단 유무까지 확인을 해야한다.
@@ -176,6 +182,7 @@ import { Cache } from 'cache-manager';
     for (let id of sockets){
       this.server.to(id).emit('chat', (await user).username, msg);// 메세지 전송
     }
+    await this.chatService.saveMsg(room, userId, msg);
   }
 
   //방이름 :보내면, 공개방이면 true, 비밀방이면 false 반환
