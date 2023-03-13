@@ -1,12 +1,12 @@
-import { BadRequestException, ConsoleLogger, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, CACHE_MANAGER, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ColdObservable } from 'rxjs/internal/testing/ColdObservable';
 import { Socket, Server } from 'socket.io';
 import { Repository } from 'typeorm';
 import { Users } from '../users/user.entity';
 import { UsersService } from '../users/users.service';
 import { GameDto } from './game.dto';
 import { Game } from './game.entity';
+import { Cache } from 'cache-manager';
 
 type p1p2 ={
     p1:string,
@@ -317,6 +317,7 @@ export class GameService {
     public constructor(
         @InjectRepository(Game) private gameRepo: Repository<Game>,
 		private usersService: UsersService,
+        @Inject(CACHE_MANAGER) private cacheManager: Cache,
     ) {
         this.vs = new Map<string, BattleClass>();
         this.userIduserName = new Map<number, string>();
@@ -361,11 +362,11 @@ export class GameService {
         this.NoGamegetoutSocketList.delete(socketId)
     }
 
-    public async iGamegetout(client:Socket, socketUserId:Map<string, number>) : Promise<void>{
+    public async iGamegetout(client:Socket) : Promise<void>{
         if (this.NoGamegetoutSocketList.has(client.id) === false)//중복 매칭 된 유저의 소켓id 이면 취소 시킬것
             return ;
 
-        let userId:number = socketUserId.get(client.id);
+        let userId:number = await this.cacheManager.get<number>(client.id);
         if (!this.userIdRoomname.has(userId)) {//대결중이 아니면 종료
             this.userIduserName.delete(userId);
             this.easyLvUserList.delete(userId);//매칭중에 새로고침을 할 경우
@@ -380,7 +381,7 @@ export class GameService {
 
         if (vs != undefined){//but BattleClass이 이미 지웠지만, 다른 사용자가 새로고침할 경우 문제가 생길 수 있다
             const winner:string = await vs.iGameLoser(this.userIduserName.get(userId));//이긴 사람의 소켓 id
-            this.userIdRoomname.delete(socketUserId.get(winner));
+            this.userIdRoomname.delete(await this.cacheManager.get<number>(winner));
         }
         this.userIdRoomname.delete(userId);
         this.userIduserName.delete(userId);
