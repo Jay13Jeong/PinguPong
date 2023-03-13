@@ -5,23 +5,30 @@ import { dmModalState } from "../../../common/states/recoilModalState";
 import DmCardButtonList from "../../card/dm/DmCardButtonList";
 import Loader from "../../util/Loader";
 import ModalBase from "../../modal/ModalBase";
+import useGetData from "../../../util/useGetData";
+import { REACT_APP_HOST } from "../../../common/configData";
+import axios from "axios";
+
 
 function DMModal() {
     const showModal = useRecoilValue(dmModalState);
     const resetState = useResetRecoilState(dmModalState);
-    const socket = useContext(SocketContext);
     const [dmList, setDmList] = useState<string[]>();
     useEffect(() => {
-        if (showModal) {
-            socket.emit('dmList')
-            socket.on('dmList', (data) => {
-                setDmList([...data]);
-            })
-        }
-        return (() => {
-            socket.off('dmList');
-        })
-    }, [socket, showModal]);
+        const getDmList = async () => {
+            try {
+                await axios.get(`http://` + REACT_APP_HOST + `/api/chatdm/rooms`, {withCredentials: true})
+                .then((res) => {
+                    setDmList([...res.data]);
+                })
+            }
+            catch (e: any) {
+                // error
+            }
+        };
+        if (showModal)
+            getDmList();
+    }, [showModal]);
 
     if (showModal) {
         return (

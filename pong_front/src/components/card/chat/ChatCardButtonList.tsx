@@ -3,23 +3,17 @@ import { SocketContext } from "../../../common/states/contextSocket";
 import CardList from "../../card/CardList";
 import ChatCardButton from "./ChatCardButton";
 import SecretChatModal from "../../chat/modal/SecretChatModal";
+import { REACT_APP_HOST } from "../../../common/configData";
+import useGetData from "../../../util/useGetData";
 
-function ChatCardButtonList(props: {current: string}) {
-    const socket = useContext(SocketContext);
+function ChatCardButtonList(props: {current: string, chatList: string[]}) {
     const [chatRooms, setChatRooms] = useState<string[]>([]);
-    const [currPage, setCurrPage] = useState<number>(1)
+    const [currPage, setCurrPage] = useState<number>(1);
 
     useEffect(() => {
-        if (props.current !== '') {
-            socket.emit('chatGetRoomList');
-            socket.on('chatGetRoomList', (data: string[]) => {
-                setChatRooms(data);
-            });
-        }
-        return (() => {
-            socket.off('chatGetRoomList');
-        })
-    }, [socket, props.current]);
+        if (props.chatList)
+            setChatRooms(props.chatList);
+    },[props.chatList]);
 
     /* variables */
     const cardsPerPage = 5;

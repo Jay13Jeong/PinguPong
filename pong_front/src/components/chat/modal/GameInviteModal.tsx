@@ -7,6 +7,7 @@ import { REACT_APP_HOST } from "../../../common/configData";
 import ModalBase from "../../modal/ModalBase";
 import { useNavigate } from "react-router-dom";
 import Loader from "../../util/Loader";
+import { toast } from "react-toastify";
 
 function GameInviteModal (props: {targetID: number, targetUserName: string, setInviteInfo: Function}) {
     const socket = useContext(SocketContext);
@@ -33,14 +34,25 @@ function GameInviteModal (props: {targetID: number, targetUserName: string, setI
 
     function acceptHandler(e: React.MouseEvent<HTMLElement>) {
         socket.emit('duelAccept', {targetId: props.targetID, result: true});
-        props.setInviteInfo({id: -1, username: ""});
-        resetState();
-        navigate(`/game/match/${props.targetUserName}vs${current}`, {state: {
-            player1: props.targetUserName,
-            player2: current,
-            current: current,
-            invite: false
-        }});
+        socket.on('matchMakeSuccess', (data: {p1: string, p2: string}) => {
+            socket.off('matchMakeSuccess');
+            socket.off('duelTargetRun');
+            props.setInviteInfo({id: -1, username: ""});
+            resetState();
+            navigate(`/game/match/${props.targetUserName}vs${current}`, {state: {
+                player1: data.p1,
+                player2: data.p2,
+                current: current,
+                invite: false
+            }});
+        });
+        socket.on('duelTargetRun', (username: string) => {
+            socket.off('duelTargetRun');
+            socket.off('matchMakeSuccess');
+            toast.error("🔥 결투 상대가 게임을 나갔습니다!");
+            props.setInviteInfo({id: -1, username: ""});
+            resetState();
+        })
     }
     function rejectHandler(e: React.MouseEvent<HTMLElement>) {
         socket.emit('duelAccept', {targetId: props.targetID, result: false});
