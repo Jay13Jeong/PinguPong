@@ -52,15 +52,20 @@ function ProfileEditModal(props: {name: string}) {
         event.preventDefault();
         axios.patch('http://' + REACT_APP_HOST + '/api/fa2', {}, {withCredentials: true})
         .then(res => {
-          if (res.status === 200)
+          if (res.status === 200){
+            toast.success("2단계 인증 활성화 완료.");
             setStatus2fa(true);
+            // resetState();
+            // resetParentState();
+            // navigate('/');
+          } else {
+            toast.error("2단계 인증 활성화 실패");
+          }
         })
         .catch(err => {
-        //   alert('invalid : 2fa on');
+            toast.error("서버 2단계 인증 지원안됨.");
+            // toast.error(err.response.data.message);
         })
-        navigate('/');
-        resetState();
-        resetParentState();
     };
 
     //2단계 끄기.
@@ -68,10 +73,15 @@ function ProfileEditModal(props: {name: string}) {
         event.preventDefault();
         axios.delete('http://' + REACT_APP_HOST + '/api/fa2', {withCredentials: true})
         .then(res => {
-          if (res.status === 200)
+          if (res.status === 200){
+            toast.success("2단계 인증 비활성화 완료.");
             setStatus2fa(false);
+          } else {
+            toast.error("2단계 인증 비활성화 실패.")
+          }
         })
         .catch(err => {
+            toast.error("2단계 인증 비활성화 실패.")
             navigate('/');
             resetState();
             resetParentState();
