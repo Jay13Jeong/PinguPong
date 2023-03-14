@@ -7,6 +7,7 @@ import { ContentBox } from '../../common/styles/ContentBox.style';
 import { InputTextWrapper } from '../../common/styles/InputTextWrapper.style';
 import {ProfileBox} from '../../common/styles/ProfileBox.style';
 import { RoutePath } from '../../common/configData';
+import { toast } from 'react-toastify';
 
 export default function ProfileInitPage() {
   useCheckLogin();
@@ -39,14 +40,14 @@ export default function ProfileInitPage() {
               navigate(RoutePath.lobby);
             })
             .catch((err) => {
-              alert("img upload fail");
+              toast.error("img upload fail");
             })
             return ;
           }
           navigate(RoutePath.lobby);
       })
       .catch(err => {
-        alert(err.response.data.message);
+        toast.error(err.response.data.message);
       });
   };
 

@@ -5,6 +5,7 @@ import axios from "axios";
 import { REACT_APP_HOST } from "../../common/configData";
 import { ContentBox } from "../../common/styles/ContentBox.style";
 import { RoutePath } from "../../common/configData";
+import { toast } from "react-toastify";
 
 export default function FA2Page() {
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ export default function FA2Page() {
           if (res.status === 200)
             navigate('/lobby');
         }catch(err: any){
-          alert('invalid code : check 42Email again');
+          toast.error('invalid code : check 42Email again');
         }
       }
       submitCode();
