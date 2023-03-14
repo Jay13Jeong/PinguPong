@@ -1,4 +1,3 @@
-import React from "react";
 import { PropagateLoader, BeatLoader } from "react-spinners";
 import LoaderWrapper from "./Loader.style";
 

@@ -1,4 +1,3 @@
-import React from "react";
 import {Card} from "../Card.style";
 
 function GameCard (props: {p1: string, p2: string, s1: number, s2: number}) {

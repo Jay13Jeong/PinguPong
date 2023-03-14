@@ -1,8 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useResetRecoilState, useSetRecoilState } from "recoil";
 import { SocketContext } from "../../../common/states/contextSocket";
 import { profileModalState } from "../../../common/states/recoilModalState";
-import { Friend, User } from "../../../common/types/User";
+import { Friend, } from "../../../common/types/User";
 import {CardButton} from "../Card.style";
 import * as states from "../../../common/states/recoilModalState";
 
