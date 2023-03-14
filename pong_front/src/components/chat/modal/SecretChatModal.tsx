@@ -4,7 +4,6 @@ import { toast } from 'react-toastify';
 import { SocketContext } from '../../../common/states/contextSocket';
 import { useResetRecoilState, useRecoilValue } from 'recoil';
 import { secretChatModalState } from '../../../common/states/recoilModalState';
-// import { Button } from '../../styles/Inputs';
 import ModalBase from '../../modal/ModalBase';
 import { Stack } from '../../../common/styles/Stack.style';
 import { InputTextWrapper } from '../../../common/styles/InputTextWrapper.style';

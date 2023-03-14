@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import {useState} from "react";
 import CardList from "../CardList";
 import UserCardButton from "./UserCardButton";
 import * as types from "../../../common/types/User";

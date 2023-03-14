@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
+import { useRecoilValue, useResetRecoilState } from "recoil";
 import { friendModalState, profileModalState } from "../../../common/states/recoilModalState";
 import UserCardButtonList from "../../card/user/UserCardButtonList";
 import * as types from "../../../common/types/User"
