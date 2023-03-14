@@ -1,8 +1,8 @@
-import { Body, Controller, Delete, Get, Inject, Patch, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Patch, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { Users } from 'src/modules/users/user.entity';
 import { Jwt2faGuard, JwtAuthGuard } from '../guard/jwt.guard';
 import { SecondAuthService } from './second-auth.service';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
@@ -42,6 +42,9 @@ export class SecondAuthController {
     @Patch()
     @UseGuards(JwtAuthGuard)
     activate(@Req() req: Request){
+        if (process.env.USER_2FA === "" || process.env.PASS_2FA === ""){
+            throw new NotFoundException('서버 환경변수에 2단계 인증 설정없음.');
+        }
         let user = req.user as Users;
         user.twofa = true;
         this.userRepository.save(user);

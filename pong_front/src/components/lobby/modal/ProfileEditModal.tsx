@@ -52,15 +52,16 @@ function ProfileEditModal(props: {name: string}) {
         event.preventDefault();
         axios.patch('http://' + REACT_APP_HOST + '/api/fa2', {}, {withCredentials: true})
         .then(res => {
-          if (res.status === 200)
+          if (res.status === 200){
             setStatus2fa(true);
+            navigate('/');
+            resetState();
+            resetParentState();
+          }
         })
         .catch(err => {
-        //   alert('invalid : 2fa on');
+            alert("서버 2단계 인증 지원안됨.");
         })
-        navigate('/');
-        resetState();
-        resetParentState();
     };
 
     //2단계 끄기.
