@@ -1,5 +1,6 @@
 import { BeforeInsert, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Ban } from "./ban.entity";
+import { Msgs } from "./msg.entity";
 import { Mute } from "./mute.entity";
 import { RoomUserId } from "./room.entity";
 
@@ -22,6 +23,9 @@ export class Chat { //채팅방 엔티티.
 
 	@OneToMany(()=>RoomUserId, RoomUserId => RoomUserId.userIds,{ nullable: true, eager: true, cascade: true})
 	userIds?: RoomUserId[]; //룸 유저 Id 시킨 대상.
+
+	@OneToMany(()=>Msgs, Msgs => Msgs.room,{ nullable: true, eager: true, cascade: true})
+	msgs?: Msgs[]; //룸 유저 Id 시킨 대상.
 
 	@Column()
 	secret: boolean; //비밀방여부

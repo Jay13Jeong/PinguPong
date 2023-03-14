@@ -16,30 +16,31 @@ function ChatLobbyPage() {
     const setCreateChatModal = useSetRecoilState(createChatModalState);
     const [loading, setLoading] = useState(true);
     const [current, setCurrent] = useState("");
-    const [myInfo, error, isLoading] = useGetData('http://' + REACT_APP_HOST + '/api/user');
+    const [myInfo, infoError, isLoading] = useGetData('http://' + REACT_APP_HOST + '/api/user');
+    const [chatList, chatListError, isloading] = useGetData(`http://` + REACT_APP_HOST + `/api/chat/rooms`);
 
     useEffect(() => {
         if (myInfo) {
             setCurrent(myInfo.username);
         }
-    }, [myInfo, error, isLoading]);
+    }, [myInfo, infoError, isLoading]);
 
     useEffect(() => {
-        if (current !== "") {
+        if (current !== "" && chatList) {
             setLoading(false);
         }
         else
             setLoading(true);
-    }, [current]);
+    }, [current, chatList]);
 
     return (
     <>
-        <CreateChatModal current={current}/>
+        <CreateChatModal current={current} />
         <ContentBox>
         {loading ? <Loader/> : 
             <Stack>
                 <h1>🗣 Chat Room List 🗣</h1>
-                <ChatCardButtonList current={current}/>
+                <ChatCardButtonList current={current} chatList={chatList}/>
                 <button onClick={(e) => {setCreateChatModal(true)}}>새 채팅방 생성</button>
             </Stack>
         }

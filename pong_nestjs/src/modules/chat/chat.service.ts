@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { RoomUserId } from './room.entity';
 import { Mute } from './mute.entity';
 import { Ban } from './ban.entity';
+import { Msgs } from './msg.entity';
 
 @Injectable()
 export class ChatService {
@@ -131,6 +132,28 @@ export class ChatService {
         room.userIds.push(addUser);
         await this.chatRepository.save(room);
     }
+
+    public async saveMsg(roomName: string, userId:number, msg:string){
+        let room = await this.chatRepository.findOneBy({roomName: roomName});
+
+        let saveMsg:Msgs = new Msgs();
+        saveMsg.userid = userId;
+        saveMsg.msg = msg;
+
+        room.msgs.push(saveMsg);
+        await this.chatRepository.save(room);
+    }
+
+    public async sendMsg(roomName):Promise<Msgs[]>{
+        let room = await this.chatRepository.findOneBy({roomName: roomName});
+        let Msgs = room.msgs;
+        let sendMsgs:Msgs[] = [];
+
+        for (let msg of Msgs){
+            sendMsgs.push(msg);
+        }
+        return sendMsgs;
+    }
     //방 인원 나감,
     public async delUser(roomName:string, userId:number, server:Server) {
         let room = await this.chatRepository.findOneBy({roomName:roomName});
@@ -197,7 +220,7 @@ export class ChatService {
     //음소거를 하는 함수
     public async addmuteuser(roomName: string, userId:number, targetId:number) {
         let room = await this.chatRepository.findOneBy({roomName:roomName});
-        
+
         if (room.adminId != userId)
             return ;
 
@@ -261,7 +284,7 @@ export class ChatService {
     //비밀방의 비밀번호가 맞는지 확인하기 맞으면 ture, 틀리면 false
     public async checksecretPw(roomName:string, secretPW:string){
         let room = await this.chatRepository.findOneBy({roomName:roomName});
-        
+
         return room.password == secretPW;
     }
 
@@ -294,7 +317,7 @@ export class ChatService {
                 roomUsers.splice(i, 1);//유저 목록에서 제거
                 let targetSocketIds:Set<string> = this.userIdsocketId.get(targetId);
                 for (let id of targetSocketIds)
-                    server.to(id).emit('youKick');       
+                    server.to(id).emit('youKick');
                 break ;
             }
         }
@@ -325,6 +348,7 @@ export class ChatService {
         chat.password = secretpw;
         chat.banned = [];
         chat.muted = [];
+        chat.msgs = [];
         let roomNewUserId : RoomUserId = new RoomUserId();
         roomNewUserId.userid = userId;
         chat.userIds = [roomNewUserId];

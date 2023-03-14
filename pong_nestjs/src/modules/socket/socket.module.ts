@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { SocketService } from './socket.service';
 import { SocketController } from './socket.controller';
 import { socketGateway } from './socket.gateway';
@@ -17,12 +17,19 @@ import { ChatDmService } from '../chatdm/chatdm.service';
 import { Chat } from '../chat/chat.entity';
 import { DmList } from '../chatdm/dmList.entity';
 import { DmMsgDb } from '../chatdm/dmMsgDb.entity';
+import * as redisStore from 'cache-manager-ioredis';
 
 @Module({
 	imports:[
 		UsersModule,
 		GameModule,
 		TypeOrmModule.forFeature([Game, Friend, Chat, DmList, DmMsgDb]),
+		CacheModule.register({
+			store: redisStore,
+			host: process.env.REDIS_HOST,
+			port: process.env.REDIS_PORT,
+			ttl: 100000, // 없는 경우 default 5초, ttl 단위 초(sec)
+		  }),
 	],
 	providers: [
 		SocketService,
