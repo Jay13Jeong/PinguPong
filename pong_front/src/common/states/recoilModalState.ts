@@ -1,5 +1,4 @@
 import { atom } from "recoil"
-import { User } from "../types/User"
 
 export const dmModalState = atom<boolean>({
     key: "dmModalState",
@@ -8,6 +7,14 @@ export const dmModalState = atom<boolean>({
 
 export const profileModalState = atom<{ userId: number, show: boolean }>({
     key: "profileModalState",
+    default: {
+        userId: 0,
+        show: false
+    }
+})
+
+export const otherProfileModalState = atom<{ userId: number, show: boolean }>({
+    key: "otherProfileModalState",
     default: {
         userId: 0,
         show: false
@@ -69,8 +76,3 @@ export const gameInviteModalState = atom<boolean>({
     key: "gameInviteModalState",
     default: false
 })
-
-export const myProfileModalState = atom<boolean>({
-    key: "myProfileModalState",
-    default: false
-});
