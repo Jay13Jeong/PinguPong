@@ -11,7 +11,6 @@ function ProfileEditModal(props: {name: string}) {
     const showModal = useRecoilValue(profileEditModalState);
     const resetState = useResetRecoilState(profileEditModalState);
     const resetParentState = useResetRecoilState(profileModalState);
-    // const [avatar, setAvatar] = useState("https://cdn.myanimelist.net/images/characters/11/421848.jpg");
     const [username, setUsername] = useState(props.name);
     const [status2fa, setStatus2fa] = useState(false);
     const [avatarFile, setAvatarFile] = useState('');
@@ -123,11 +122,6 @@ function ProfileEditModal(props: {name: string}) {
                     </button>
                 </div>
                 <div className="profile-button-wrapper">
-                    {/* <select onChange={event => setAvatar(event.target.value)} value={avatar}>
-                        <option value="default.jpeg" key="default.jpeg">Pinga</option>
-                        <option value="favicon.ico" key="favicon.ico">Pingu</option>
-                        <option value="logo192.png" key="logo192.png">React</option>
-                    </select> */}
                     Name : <input id="username" name="username" type="text" placeholder="" onChange={event => setUsername(event.target.value)} value={username} />
                     <button id="profile-btn" className="profile-button" onClick={handleSubmit}>
                         이름수정

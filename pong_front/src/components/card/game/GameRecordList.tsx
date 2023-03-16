@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import CardList from "../CardList";
 import GameCard from "./GameCard";
 import * as types from "../../../common/types/User"

@@ -1,10 +1,7 @@
-import {useState, useEffect, useContext} from "react";
-import { SocketContext } from "../../../common/states/contextSocket";
+import {useState, useEffect } from "react";
 import CardList from "../../card/CardList";
 import ChatCardButton from "./ChatCardButton";
 import SecretChatModal from "../../chat/modal/SecretChatModal";
-import { REACT_APP_HOST } from "../../../common/configData";
-import useGetData from "../../../util/useGetData";
 
 function ChatCardButtonList(props: {current: string, chatList: string[]}) {
     const [chatRooms, setChatRooms] = useState<string[]>([]);

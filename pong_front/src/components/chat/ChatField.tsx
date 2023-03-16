@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useRef } from 'react';
+import { useState, useContext, useEffect, useRef } from 'react';
 import * as Chat from './ChatField.styles';
 import { SocketContext } from "../../common/states/contextSocket"
 import {useSetRecoilState } from 'recoil';

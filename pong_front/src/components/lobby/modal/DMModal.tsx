@@ -1,11 +1,9 @@
-import {useEffect, useState, useContext} from "react";
+import {useEffect, useState } from "react";
 import { useRecoilValue, useResetRecoilState } from "recoil";
-import { SocketContext } from "../../../common/states/contextSocket";
 import { dmModalState } from "../../../common/states/recoilModalState";
 import DmCardButtonList from "../../card/dm/DmCardButtonList";
 import Loader from "../../util/Loader";
 import ModalBase from "../../modal/ModalBase";
-import useGetData from "../../../util/useGetData";
 import { REACT_APP_HOST } from "../../../common/configData";
 import axios from "axios";
 

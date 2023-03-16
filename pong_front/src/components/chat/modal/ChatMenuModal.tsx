@@ -8,9 +8,6 @@ import Loader from "../../util/Loader";
 import { REACT_APP_HOST } from "../../../common/configData";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { Friend, User } from "../../../common/types/User";
-import axios from "axios";
-// import { userState } from "../../states/recoilUserState";
 
 function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?: Function, isDmModal: boolean}) {
     const socket = useContext(SocketContext);
