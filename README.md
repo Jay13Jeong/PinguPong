@@ -57,3 +57,11 @@ google api 또는 42api의 클라이언트 아이디와 시크릿키를 준비�
 
 <img width="1660" alt="Screen Shot 2023-03-10 at 7 17 09 PM" src="https://user-images.githubusercontent.com/63899204/224290504-d1b3b4b7-180a-4aa8-8f8a-bcdd0e474c62.png">
 
+
+## ERD
+
+<img width="1051" alt="Screen Shot 2023-03-20 at 7 23 31 PM" src="https://user-images.githubusercontent.com/67796301/226312792-4579192c-5a3e-49e7-b9c9-42d872fa3017.png">
+
+<img width="958" alt="Screen Shot 2023-03-20 at 7 24 23 PM" src="https://user-images.githubusercontent.com/67796301/226312893-408edf00-4ee2-4036-b2ad-81c99eb6d9f9.png">
+
+<img width="785" alt="Screen Shot 2023-03-20 at 7 23 45 PM" src="https://user-images.githubusercontent.com/67796301/226312923-1d8c801b-6d04-419c-a2df-e8adcb37f30e.png">
