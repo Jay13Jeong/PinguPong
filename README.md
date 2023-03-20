@@ -6,18 +6,20 @@
 실시간 대전 핑퐁 웹 게임 프로젝트입니다.
 
 ## 기술 스택
-<img src="https://img.shields.io/badge/NGINX-#009639?style=for-the-badge&logo=NGINX&logoColor=white">
-<img src="https://img.shields.io/badge/React-#61DAFB?style=for-the-badge&logo=React&logoColor=white">
-<img src="https://img.shields.io/badge/NestJS-#E0234E?style=for-the-badge&logo=NestJS&logoColor=white">
-<img src="https://img.shields.io/badge/TypeScript-#3178C6?style=for-the-badge&logo=TypeScript&logoColor=white">
-<img src="https://img.shields.io/badge/PostgreSQL-#4169E1?style=for-the-badge&logo=PostgreSQL&logoColor=white">
-<img src="https://img.shields.io/badge/Redis-#DC382D?style=for-the-badge&logo=Redis&logoColor=white">
-<img src="https://img.shields.io/badge/Docker-#2496ED?style=for-the-badge&logo=Docekr&logoColor=white">
+<div align=center> 
+<img src="https://img.shields.io/badge/NGINX-009639?style=for-the-badge&logo=NGINX&logoColor=white">
+<img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white">
+<img src="https://img.shields.io/badge/NestJS-E0234E?style=for-the-badge&logo=NestJS&logoColor=white">
+<img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=TypeScript&logoColor=white">
+<img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=PostgreSQL&logoColor=white">
+<img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=Redis&logoColor=white">
+<img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=Docker&logoColor=white">
+</div>
 
 ## 구현 기능
-  Profil  - 친구 추가/차단, DM, 2차비밀번호 설정/해제, PingPong 전적, 유저상태(오프라인, 온라인, 게임중)
- PingPong - 실시간 매칭, 관전, 난이도 모드, 도전장기능
-   Chat   - 기본방, 비밀방, 방장(강퇴, 밴, 음소거설정/해제)
+- Profil  - 친구 추가/차단, DM, 2차비밀번호 설정/해제, PingPong 전적, 유저상태(오프라인, 온라인, 게임중)</br>
+- PingPong - 실시간 매칭, 관전, 난이도 모드, 도전장기능</br>
+- Chat   - 기본방, 비밀방, 방장(강퇴, 밴, 음소거설정/해제)</br>
 
 ## Installation & Execution
 프로젝트는 docker-compose로 구성되어 있습니다.
