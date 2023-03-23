@@ -3,11 +3,14 @@ import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import useCheckLogin from '../../util/useCheckLogin';
 import { REACT_APP_HOST } from '../../common/configData';
-import { ContentBox } from '../../common/styles/ContentBox.style';
-import { InputTextWrapper } from '../../common/styles/InputTextWrapper.style';
-import {ProfileBox} from '../../common/styles/ProfileBox.style';
 import { RoutePath } from '../../common/configData';
 import { toast } from 'react-toastify';
+
+import { Typography, Avatar, Stack, IconButton,TextField } from '@mui/material';
+import { PhotoCamera } from '@mui/icons-material';
+
+import DefaultBox from '../../common/styles/DefaultBox';
+import { DefaultButton } from '../../common/styles/DefaultButton';
 
 export default function ProfileInitPage() {
   useCheckLogin();
@@ -15,6 +18,8 @@ export default function ProfileInitPage() {
   const [username, setUsername] = useState('');
   const inputRef = useRef<HTMLInputElement | null> (null);
   const [avatarFile, setAvatarFile] = useState('');
+  const [error, setError] = useState<boolean>(false);
+  const [helperText, setHelperText] = useState<string>("10글자 이내로 입력해주세요.");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -47,15 +52,9 @@ export default function ProfileInitPage() {
           navigate(RoutePath.lobby);
       })
       .catch(err => {
-        toast.error(err.response.data.message);
+        setError(true);
+        setHelperText(err.response.data.message);
       });
-  };
-
-  function handleInitKey(event : React.KeyboardEvent<HTMLDivElement>) {
-      if (event.key !== 'Enter')
-        return ;
-      event.preventDefault();
-      handleInitSubmit(event);
   };
 
   function onAvatar(e: React.ChangeEvent<HTMLInputElement>) {
@@ -63,24 +62,35 @@ export default function ProfileInitPage() {
     setAvatarFile(URL.createObjectURL(image));
   }
   return (
-    <ContentBox>
-      <h1>Profile Init</h1>
-      <ProfileBox>
-        {avatarFile !== '' ?
-        <img className="profile-image" src={avatarFile}/>  
-        : null}
-      </ProfileBox>
-      <InputTextWrapper>
-        <span>Avatar : </span>
-        <input ref={inputRef} type="file" id="img" name="img" accept="image/*" onChange={onAvatar}/>
-      </InputTextWrapper>
-      <InputTextWrapper>
-        <span>Name : </span>
-        <input onKeyDown={handleInitKey} type="text" placeholder="사용 할 이름" onChange={event => setUsername(event.target.value)} value={username} />
-      </InputTextWrapper>
-      <button className="profile-button" onClick={handleInitSubmit}>
-          입장
-      </button>
-    </ContentBox>
+    <DefaultBox>
+    <Stack
+      spacing={2}
+    >
+      <Typography variant='h2' component='h1' sx={{marginBottom: '10px'}}>Profile Init</Typography>
+      <Stack 
+        direction="row"
+        spacing={1}
+        alignItems="center"
+      >
+        <Avatar src={avatarFile} alt="profile avatar" variant="rounded" sx={{ width: 100, height: 100 }} />
+        <IconButton color="primary" aria-label="upload-avatar" component="label" size="large" >
+          <input ref={inputRef} onChange={onAvatar} id="avatar" name="avatar" hidden accept="image/*" type="file" />
+          <PhotoCamera />
+        </IconButton>
+      </Stack>
+      <TextField 
+        id="username" 
+        label="user name" 
+        variant="outlined" 
+        size="small"
+        helperText={helperText}
+        error={error ? true : false}
+        onChange={event => setUsername(event.target.value)}
+      />
+      <DefaultButton onClick={handleInitSubmit}>
+          완료
+      </DefaultButton>
+    </Stack>
+    </DefaultBox>
   );
 }
