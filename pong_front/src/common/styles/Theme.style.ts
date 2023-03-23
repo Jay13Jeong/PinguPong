@@ -41,6 +41,22 @@ export const theme = createTheme({
             ].join(','),
             fontSize: '3rem',
         },
+        h3: {
+            fontFamily: [
+                // 'Nanum Gothic',
+                'Jua',
+                'sans-serif',
+            ].join(','),
+            fontSize: '2.5rem',
+        },
+        subtitle1: {
+            fontFamily: [
+                // 'Nanum Gothic',
+                'Jua',
+                'sans-serif',
+            ].join(','),
+            fontSize: '1.25rem',
+        },
         body1: {
             fontFamily: [
                 'Nanum Gothic',

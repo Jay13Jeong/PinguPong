@@ -1,27 +1,37 @@
 import { useEffect, useContext } from "react";
-import {Link} from 'react-router-dom'
+import {useNavigate} from 'react-router-dom'
 import { SocketContext } from "../../common/states/contextSocket";
-import {Stack} from "../../common/styles/Stack.style";
-import { ContentBox } from "../../common/styles/ContentBox.style";
 import useCheckLogin from "../../util/useCheckLogin";
+
+import { Typography, Stack } from "@mui/material";
+
+import { DefaultBox, DefaultButton } from "../../components/common";
+
 
 function GameLobbyPage() {
     useCheckLogin();
     const socket = useContext(SocketContext);
+    const navigate = useNavigate();
     useEffect(() => {
         socket.emit('setInLobby');
     }, [socket]);
 
     return (
-        <ContentBox><Stack>
-            <h1>👾 Game Lobby 👾</h1>
-            <Link to="/game/match">
-                <button>게임 시작</button>
-            </Link>
-            <Link to="/game/watch">
-                <button>관전 시작</button>
-            </Link>
-        </Stack></ContentBox>
+        <DefaultBox>
+            <Stack>
+                <Typography variant="h2" component="h1" align='center' gutterBottom> 👾 Game Lobby 👾 </Typography>
+                <DefaultButton sx={{fontSize: "1.5rem"}}
+                    onClick={() => {navigate('/game/match')}}
+                >
+                    게임하기
+                </DefaultButton>
+                <DefaultButton sx={{fontSize: "1.5rem"}}
+                    onClick={() => {navigate('/game/watch')}}
+                >
+                    관전하기
+                </DefaultButton>
+            </Stack>
+        </DefaultBox>
     );
 }
 
