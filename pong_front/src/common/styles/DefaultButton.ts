@@ -7,4 +7,8 @@ export const DefaultButton = styled(Button)(({ theme }) => ({
     '&:hover': {
         backgroundColor: theme.palette.secondary.main,
     },
+    a : {
+        textDecoration: 'none',
+        color: 'inherit',
+    }
   }));

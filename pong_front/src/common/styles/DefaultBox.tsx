@@ -10,7 +10,6 @@ export default function DefaultBox({ children }: WrapperProp) {
             padding: '20px',
             backgroundColor: 'background.paper',
             borderRadius: 2,
-
          }}>
             {children}
         </Box>

@@ -3,9 +3,11 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import { SocketContext } from "../common/states/contextSocket";
-import { ContentBox } from "../common/styles/ContentBox.style";
 import {MenuButtons, LobbyButtons, LobbyModal} from "../components/lobby/"
 import { REACT_APP_HOST, RoutePath } from "../common/configData";
+
+import { Typography, Stack, Divider } from "@mui/material";
+import DefaultBox from "../common/styles/DefaultBox";
 
 export default function LobbyPage() {
   const socket = useContext(SocketContext);
@@ -19,12 +21,7 @@ export default function LobbyPage() {
             return ;
           }
           axios.get('http://' + REACT_APP_HOST + '/api/user', {withCredentials: true}) //쿠키와 함께 보내기 true.
-          .then(res => {
-              // if (res.data && res.data.id)
-              //     props.setter(true);
-          })
           .catch(err => {
-              // props.setter(false);
               navigate(RoutePath.root); //로그인 안되어 있다면 로그인페이지로 돌아간다.
           })
       })
@@ -35,10 +32,22 @@ export default function LobbyPage() {
   }, []);
   
   return (
-    <ContentBox>
-      <MenuButtons/>
-      <LobbyButtons/>
+    <DefaultBox>
+      <>
+      <Stack
+        direction="row"
+        divider={<Divider orientation="vertical" flexItem />}
+        spacing={2}
+        alignItems="center"
+      >
+        <Stack>
+          <Typography align="center" variant="h2" component="h1" gutterBottom>Lobby</Typography>
+          <MenuButtons/>
+        </Stack>
+        <LobbyButtons/>
+      </Stack>
       <LobbyModal />
-    </ContentBox>
+      </>
+    </DefaultBox>
   );
 }
