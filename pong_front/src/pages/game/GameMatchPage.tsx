@@ -66,12 +66,10 @@ function GameMatchPage() {
         })
     }, [current, socket, navigate]);
 
-    let currentDifficulty: number = 0;
-
     /* 매치 메이킹 */
     function handleMatchMakeRequest(e: React.MouseEvent<HTMLElement>) {
         socket.emit('requestMatchMake', {
-            difficulty: currentDifficulty,
+            difficulty: difficulty,
             player: current
         });
         setLoading(true);
@@ -99,7 +97,7 @@ function GameMatchPage() {
                             justifyContent="center"
                         >
                             {difficultyList.map((item) => (
-                                <Chip label={item.label} color="primary"
+                                <Chip key={item.label} label={item.label} color="primary"
                                     variant={difficulty === item.value ? "filled" : "outlined"}
                                     onClick={() => setDifficulty(item.value)}
                                     sx={{color: "black"}}
