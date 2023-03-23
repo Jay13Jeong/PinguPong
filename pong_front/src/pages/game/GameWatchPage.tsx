@@ -1,12 +1,10 @@
 import {useState, useEffect, useContext} from "react";
-import Loader from "../../components/util/Loader";
-import {Stack} from "../../common/styles/Stack.style"
 import { SocketContext } from "../../common/states/contextSocket";
 import GameCardButton from "../../components/card/game/GameCardButton";
 import CardList from "../../components/card/CardList";
-
 import useCheckLogin from "../../util/useCheckLogin";
-import { ContentBox } from "../../common/styles/ContentBox.style";
+import { Stack, Typography } from "@mui/material";
+import { DefaultBox, DefaultLinearProgress } from "../../components/common";
 
 function GameWatchPage () {
     useCheckLogin();
@@ -31,22 +29,27 @@ function GameWatchPage () {
     const offset = (currPage - 1) * cardsPerPage;
     let totalPage = Math.ceil(gameList.length / cardsPerPage);      // 전체 페이지
 
-
-    if (loading) {
-        return (<Loader text="게임 목록 로딩 중"/>);
-    }
-
     return (
-        <ContentBox>
-           <Stack>
-                <h1>👾 Live Game List 👾</h1>
-                <CardList currPage={currPage} totalPage={totalPage} setCurrPage={setCurrPage}>
-                    {gameList.slice(offset, offset + cardsPerPage).map((item, index) => 
-                        <GameCardButton key={index} p1={item.p1} p2={item.p2}/>
-                )}
-                </CardList>
+        <DefaultBox>
+           <Stack
+                justifyContent="center"
+                alignItems="center"
+           >
+                {loading ? 
+                <>
+                    <Typography variant="subtitle1" gutterBottom>게임 목록 로딩중...</Typography>
+                    <DefaultLinearProgress />
+                </> : 
+                <>
+                    <Typography variant="h2" gutterBottom>👾 Live Game List 👾</Typography>
+                    <CardList currPage={currPage} totalPage={totalPage} setCurrPage={setCurrPage}>
+                        {gameList.slice(offset, offset + cardsPerPage).map((item, index) => 
+                            <GameCardButton key={index} p1={item.p1} p2={item.p2}/>
+                    )}
+                    </CardList>
+                </>}
             </Stack> 
-        </ContentBox>
+        </DefaultBox>
     );
 }
 

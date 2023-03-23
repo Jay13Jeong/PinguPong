@@ -5,6 +5,9 @@ import {CardButton} from "../Card.style";
 import { toast } from "react-toastify";
 import { RoutePath } from "../../../common/configData";
 
+import { Typography, CardActionArea } from "@mui/material";
+import { CardBase } from "../CardBase";
+
 function GameCardButton (props: {p1: string, p2: string}) {
     const navigate = useNavigate();
     const socket = useContext(SocketContext);
@@ -28,9 +31,11 @@ function GameCardButton (props: {p1: string, p2: string}) {
     }
 
     return (
-        <CardButton onClick={clickHandler}>
-            <span className="player">{props.p1} ⚔️ {props.p2}</span>
-        </CardButton>
+        <CardBase>
+            <CardActionArea onClick={clickHandler}>
+                <Typography variant="subtitle2" sx={{minWidth: "400px"}}>{props.p1} ⚔️ {props.p2}</Typography>
+            </CardActionArea>
+        </CardBase>
     )
 }
 
