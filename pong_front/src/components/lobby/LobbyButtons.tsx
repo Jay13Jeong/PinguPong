@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import * as S from "./LobbyButtons.style"
 import { RoutePath } from "../../common/configData";
 
@@ -6,16 +6,18 @@ import { Stack, Box } from "@mui/material";
 import { LobbyButton } from "./LobbyButtons.style";
 
 export default function LobbyButtons() {
+    const navigate = useNavigate();
+
     return (
         <Stack>
-            <LobbyButton>
+            <LobbyButton onClick={()=>{navigate(RoutePath.game)}}>
                 <Box sx={{minWidth: '100%', border: '1px dashed #141616'}}>
-                    <Link to={RoutePath.game}>Game</Link>
+                    Game
                 </Box>
             </LobbyButton>
-            <LobbyButton>
+            <LobbyButton onClick={()=>{navigate(RoutePath.chat)}}>
                 <Box sx={{minWidth: '100%', border: '1px dashed #141616'}}>
-                    <Link to={RoutePath.chat}>Chat</Link>
+                    Chat
                 </Box>
             </LobbyButton>
         </Stack>
