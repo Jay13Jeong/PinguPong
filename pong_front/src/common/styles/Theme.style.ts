@@ -12,6 +12,9 @@ export const theme = createTheme({
             primary: '#141616',
             secondary: '#141616',
         },
+        error: {
+            main: '#F05454',
+        },
         background: {
             default: '#EFFFFB',
         }
@@ -28,6 +31,7 @@ export const theme = createTheme({
                 'Jua',
                 'sans-serif',
             ].join(','),
+            fontSize: '4rem',
         },
         h2: {
             fontFamily: [
@@ -35,6 +39,7 @@ export const theme = createTheme({
                 'Jua',
                 'sans-serif',
             ].join(','),
+            fontSize: '3rem',
         },
         body1: {
             fontFamily: [

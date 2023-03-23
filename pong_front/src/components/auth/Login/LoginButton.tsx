@@ -6,7 +6,7 @@ export default function LoginButton() {
     return (
         <DefaultBox>
         <Stack>
-            <Typography variant='h2' sx={{marginBottom: '10px'}}>Pingu Pong</Typography>
+            <Typography variant='h1' sx={{marginBottom: '10px'}}>Pingu Pong</Typography>
             <S.LoginButton 
                 className='loginbtn' 
                 onClick={()=>{window.location.href = "http://" + REACT_APP_HOST + "/api/auth/google/login"}}>
