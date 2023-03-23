@@ -9,8 +9,7 @@ import { toast } from 'react-toastify';
 import { Typography, Avatar, Stack, IconButton,TextField } from '@mui/material';
 import { PhotoCamera } from '@mui/icons-material';
 
-import DefaultBox from '../../common/styles/DefaultBox';
-import { DefaultButton } from '../../common/styles/DefaultButton';
+import { DefaultBox, DefaultButton } from '../../components/common';
 
 export default function ProfileInitPage() {
   useCheckLogin();

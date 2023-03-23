@@ -1,5 +1,5 @@
 import { styled } from "@mui/system";
-import { DefaultButton } from "../../common/styles/DefaultButton";
+import { DefaultButton } from "../common/DefaultButton";
 
 export const LobbyButton = styled(DefaultButton)({
     fontSize: '1.5rem',

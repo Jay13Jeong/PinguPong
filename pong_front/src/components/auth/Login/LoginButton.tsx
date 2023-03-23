@@ -1,6 +1,6 @@
 import { REACT_APP_HOST } from '../../../common/configData';
 import * as S from './LoginButton.style';
-import DefaultBox from '../../../common/styles/DefaultBox';
+import { DefaultBox } from '../../common';
 import { Typography, Stack, Box } from '@mui/material';
 export default function LoginButton() {
     return (

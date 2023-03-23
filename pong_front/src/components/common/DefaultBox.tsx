@@ -4,7 +4,7 @@ type WrapperProp = {
     children: React.ReactElement;
 };
 
-export default function DefaultBox({ children }: WrapperProp) {
+export function DefaultBox({ children }: WrapperProp) {
     return (
         <Box sx={{ 
             padding: '20px',

@@ -7,7 +7,7 @@ import {MenuButtons, LobbyButtons, LobbyModal} from "../components/lobby/"
 import { REACT_APP_HOST, RoutePath } from "../common/configData";
 
 import { Typography, Stack, Divider } from "@mui/material";
-import DefaultBox from "../common/styles/DefaultBox";
+import { DefaultBox } from "../components/common";
 
 export default function LobbyPage() {
   const socket = useContext(SocketContext);
