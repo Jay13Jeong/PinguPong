@@ -1,7 +1,13 @@
-import styled from 'styled-components';
+import { styled } from "@mui/material"
+import { Button } from "@mui/material"
+import { theme } from "../../../common/styles/Theme.style"
 
-export const LoginButton = styled.button `
-    opacity: 70%;
-    font-size: 300%;
-    border-radius: 10px;
+export const LoginButton = styled(Button) `
+    background: ${theme.palette.primary.main};
+    color: ${theme.palette.text.primary};
+    font-size: 2rem;
+    margin: 1rem;
+    &:hover {
+        background: ${theme.palette.secondary.main};
+    }
 `
