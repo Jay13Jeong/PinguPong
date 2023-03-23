@@ -1,10 +1,12 @@
 import React, { useContext, useEffect } from "react";
 import { SocketContext } from "../../../common/states/contextSocket"
 import { useNavigate } from "react-router-dom";
-import {CardButton} from "../Card.style";
 import { useSetRecoilState } from "recoil";
 import { secretChatModalState } from "../../../common/states/recoilModalState";
 import { toast } from "react-toastify";
+
+import { Typography, CardActionArea } from "@mui/material";
+import { CardBase } from "../CardBase";
 
 function ChatCardButton (props: {roomName: string, current: string}) {
     const navigate = useNavigate();
@@ -47,9 +49,11 @@ function ChatCardButton (props: {roomName: string, current: string}) {
     };
 
     return (
-        <CardButton onClick={clickHandler}>
-            <span className="roomName">{props.roomName}</span>
-        </CardButton>
+        <CardBase>
+        <CardActionArea onClick={clickHandler}>
+            <Typography variant="subtitle2" sx={{minWidth: "400px"}}>{props.roomName}</Typography>
+        </CardActionArea>
+    </CardBase>
     );
 }
 
