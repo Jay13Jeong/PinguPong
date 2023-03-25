@@ -22,7 +22,7 @@ function ChangeChatPwModal(props: {roomName: string}) {
 
     if (showModal.show) {
         return (
-            <ModalBase reset={resetState}>
+            <ModalBase open={showModal.show} reset={resetState}>
                 <Stack>
                     <h2>비밀번호 설정</h2>
                     <form onSubmit={handler}>

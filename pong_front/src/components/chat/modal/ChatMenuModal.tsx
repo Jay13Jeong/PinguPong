@@ -149,7 +149,7 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
 
     if (modalState.show) {
         return (
-            <ModalBase reset={resetState} z_index={100}>
+            <ModalBase open={modalState.show} reset={resetState} z_index={100}>
                 <h2>Chat Menu</h2>
                 {menuLoading ? <Loader/> : 
                     <>

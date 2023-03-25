@@ -61,7 +61,7 @@ function GameInviteModal (props: {targetID: number, targetUserName: string, setI
     }
     if (modalState) {
         return (
-            <ModalBase reset={resetState} z_index={100}>
+            <ModalBase open={modalState} reset={resetState} z_index={100}>
                 {loading ? <Loader/> : 
                     <>
                     <h2>{props.targetUserName}의 도전 신청</h2>

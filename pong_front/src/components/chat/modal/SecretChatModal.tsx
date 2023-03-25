@@ -44,7 +44,7 @@ function SecretChatModal(props: {current: string}) {
 
     if (showModal.show) {
         return (
-            <ModalBase reset={resetState}>
+            <ModalBase open={showModal.show} reset={resetState}>
                 <Stack>
                     <h1>비밀 채팅방 입장</h1>
                     <form onSubmit={handler}>

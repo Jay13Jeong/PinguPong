@@ -1,20 +1,26 @@
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import * as Modal from "./Modal.style";
 import { Resetter } from "recoil";
+import { Modal, Box, IconButton } from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
 
-function ModalBase (props: {reset:Resetter, children: React.ReactNode, z_index?: number}) {
+import * as S from './Modal.style'
+
+function ModalBase (props: { children: React.ReactNode, z_index?: number, reset?:Resetter, closeButton?: boolean, open: boolean}) {
+
   return (
-    <Modal.OverLay z_index={props.z_index ? props.z_index : undefined}>
-      <Modal.Wrapper>
-        <button className="close-button" onClick={() => props.reset()}>
-          <FontAwesomeIcon icon={faXmark} />
-        </button>
-        {props.children}
-      </Modal.Wrapper>
-    </Modal.OverLay>
-  );
+    <Modal open={props.open}>
+      <Box sx={S.modalSx}>
+        {
+          props.closeButton && props.reset ? 
+          <IconButton sx={S.closeButtonSx} onClick={() => props.reset?.()} >
+            <CloseIcon />
+          </IconButton>
+          : null
+        }
+        {props.children}  
+      </Box>
+    </Modal>
+  )
 }
 
 export default ModalBase;

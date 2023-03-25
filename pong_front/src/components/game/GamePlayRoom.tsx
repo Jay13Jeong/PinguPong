@@ -12,6 +12,8 @@ import GameRoom from "./GameRoom";
 import { Modal, Stack, Typography, Box } from "@mui/material";
 import { DefaultButton } from "../../components/common";
 
+import ModalBase from "../modal/ModalBase";
+
 const resultStyle = {
     padding: '20px',
     backgroundColor: 'background.paper',
@@ -113,7 +115,7 @@ function GamePlayRoom() {
                     게임 준비
                 </DefaultButton>
             </Stack>
-           <Modal open={winner ? true : false}>
+           <ModalBase open={winner ? true : false}>
                 <Box sx={resultStyle}>
                     <Stack>
                         <Typography variant="h3" component="h4" align="center">
@@ -122,7 +124,7 @@ function GamePlayRoom() {
                         <DefaultButton onClick={() => {navigate(RoutePath.lobby)}}>Go To Lobby</DefaultButton>
                     </Stack>
                 </Box>
-           </Modal>
+           </ModalBase>
         </>
     );
 }

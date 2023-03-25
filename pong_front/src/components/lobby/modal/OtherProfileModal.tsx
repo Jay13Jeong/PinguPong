@@ -264,7 +264,7 @@ function OtherProfileModal() {
 
     if (showModal.show) {
         return (
-            <ModalBase reset={resetState}>
+            <ModalBase open={showModal.show} reset={resetState}>
                 <ProfileEditModal name={userInfo.userName}/>
                 <ProfileModalWrapper>
                     <div className="profile-box">

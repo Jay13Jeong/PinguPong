@@ -112,7 +112,7 @@ function ProfileEditModal(props: {name: string}) {
 
     if (showModal) {
         return (
-            <ModalBase reset={resetState}>
+            <ModalBase open={showModal} reset={resetState}>
                 <h1>Profile Edit Modal</h1>
                 <div className="profile-button-wrapper">
                     Avatar :

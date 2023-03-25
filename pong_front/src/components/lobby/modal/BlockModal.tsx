@@ -73,7 +73,7 @@ function BlockModal() {
 
     if (showModal) {
         return (
-            <ModalBase reset={resetState}>
+            <ModalBase open={showModal} reset={resetState}>
                 <h1>🚫 Block List 🚫</h1>
                 <UserCardButtonList friends={friendList}/>
             </ModalBase>

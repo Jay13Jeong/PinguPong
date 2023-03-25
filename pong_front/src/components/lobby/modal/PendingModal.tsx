@@ -77,7 +77,7 @@ function PendingModal() {
 
     if (showModal) {
         return (
-            <ModalBase reset={resetState}>
+            <ModalBase open={showModal} reset={resetState}>
                 <h1>👥 Pending Friend List 👥</h1>
                 <UserCardButtonList friends={pendingList}/>
             </ModalBase>

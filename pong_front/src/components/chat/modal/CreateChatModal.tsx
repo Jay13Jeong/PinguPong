@@ -59,7 +59,7 @@ function CreateChatModal(props: {current: string}) {
 
     if (showModal) {
         return (
-            <ModalBase reset={resetState}>
+            <ModalBase open={showModal} reset={resetState}>
                 {loading ? <Loader/> : 
                 <Stack>
                 <h1>새 채팅방 만들기</h1>
