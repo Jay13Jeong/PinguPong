@@ -77,7 +77,7 @@ function BlockModal() {
                 justifyContent="center"
                 alignItems="center"
             >
-                <Typography variant="h2" gutterBottom>👥 Pending Friend List 👥</Typography>
+                <Typography variant="h2" gutterBottom>🚫 Block List 🚫</Typography>
                 <UserCardButtonList friends={blockList}/>
             </Stack>
         </ModalBase>

@@ -1,12 +1,8 @@
 import { useState, useContext, useEffect, useRef } from 'react';
-import * as Chat from './ChatField.styles';
 import { SocketContext } from "../../common/states/contextSocket"
-import { useSetRecoilState } from 'recoil';
-import { chatMenuModalState } from '../../common/states/recoilModalState';
 
 import * as C from './Chat.styles'
 
-import { Box, Typography, Container } from '@mui/material';
 import Message from './Message';
 
 function ChatField (props: {roomName: string, current: string}) {
@@ -14,7 +10,6 @@ function ChatField (props: {roomName: string, current: string}) {
     const chatContainerRef = useRef<HTMLDivElement>(null);
     const [chat, setChat] = useState<{user: string, msg: string}>({user: "", msg: ""});
     const [chatList, setChatList] = useState<{user: string, msg: string}[]>([]);
-    const setShowModal = useSetRecoilState(chatMenuModalState)
 
     useEffect(() => {
         if (!chatContainerRef.current) return;
