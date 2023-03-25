@@ -7,6 +7,8 @@ import ModalBase from "../../modal/ModalBase";
 import { REACT_APP_HOST } from "../../../common/configData";
 import axios from "axios";
 
+import { Typography, Stack } from '@mui/material'
+import { DefaultLinearProgress } from "../../common";
 
 function DMModal() {
     const showModal = useRecoilValue(dmModalState);
@@ -28,16 +30,23 @@ function DMModal() {
             getDmList();
     }, [showModal]);
 
-    if (showModal) {
-        return (
-            <ModalBase reset={resetState}>
-                <h1>💌 DM List 💌</h1>
-                {dmList === undefined ? <Loader/> : 
+    return (
+        <ModalBase open={showModal} reset={resetState} closeButton>
+            <Stack 
+                justifyContent="center"
+                alignItems="center"
+            >
+                <Typography variant="h2" gutterBottom>💌 DM List 💌</Typography>
+                {dmList === undefined ? 
+                <>
+                <Typography variant="subtitle1">로딩중...</Typography>
+                <DefaultLinearProgress/>
+                </>
+                : 
                 <DmCardButtonList dmList={dmList}/>}
-            </ModalBase>
-        )
-    }
-    return null;
+            </Stack>
+        </ModalBase>
+    )
 }
 
 export default DMModal;
