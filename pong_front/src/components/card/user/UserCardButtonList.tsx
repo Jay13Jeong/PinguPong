@@ -5,7 +5,7 @@ import * as types from "../../../common/types/User";
 
 function UserCardButtonList(props: {friends: types.Friend[]}) {
     const [currPage, setCurrPage] = useState<number>(1);
-    const cardsPerPage = 5; // 한 페이지에 보여줄 카드
+    const cardsPerPage = 3; // 한 페이지에 보여줄 카드
     const offset = (currPage - 1) * cardsPerPage;
     let totalPage = Math.ceil(props.friends.length / cardsPerPage);
 

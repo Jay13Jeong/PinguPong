@@ -25,7 +25,7 @@ function GameWatchPage () {
         })
     }, [socket]);
 
-    const cardsPerPage = 8; // 한 페이지에 보여줄 카드
+    const cardsPerPage = 3; // 한 페이지에 보여줄 카드
     const offset = (currPage - 1) * cardsPerPage;
     let totalPage = Math.ceil(gameList.length / cardsPerPage);      // 전체 페이지
 

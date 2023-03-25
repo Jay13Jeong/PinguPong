@@ -36,7 +36,7 @@ function ChatLobbyPage() {
             setLoading(true);
     }, [current, chatList]);
 
-    const cardsPerPage = 8;
+    const cardsPerPage = 3;
     const offset = (currPage - 1) * cardsPerPage;
     let totalPage = chatList ? Math.ceil(chatList.length / cardsPerPage) : 0;
 
