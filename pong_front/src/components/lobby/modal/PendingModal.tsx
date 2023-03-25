@@ -8,6 +8,7 @@ import axios from "axios";
 import { REACT_APP_HOST } from "../../../common/configData";
 import useGetData from "../../../util/useGetData";
 import { toast } from "react-toastify";
+import { Typography, Stack } from '@mui/material'
 
 function PendingModal() {
     const showProfileModal = useRecoilValue(profileModalState);
@@ -72,17 +73,18 @@ function PendingModal() {
     }, [
         showModal,
         showProfileModal,
-        // handleAddFriendSubmit,
     ]);
 
-    if (showModal) {
-        return (
-            <ModalBase open={showModal} reset={resetState}>
-                <h1>👥 Pending Friend List 👥</h1>
+    return (
+        <ModalBase open={showModal} reset={resetState} closeButton>
+            <Stack 
+                justifyContent="center"
+                alignItems="center"
+            >
+                <Typography variant="h2" gutterBottom>👥 Pending Friend List 👥</Typography>
                 <UserCardButtonList friends={pendingList}/>
-            </ModalBase>
-        );
-    }
-    return null;
+            </Stack>
+        </ModalBase>
+    )
 }
 export default PendingModal;
