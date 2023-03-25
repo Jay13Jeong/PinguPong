@@ -1,10 +1,10 @@
 import { useState, useContext, useEffect, useRef } from 'react';
 import * as Chat from './ChatField.styles';
 import { SocketContext } from "../../common/states/contextSocket"
-import {useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { chatMenuModalState } from '../../common/states/recoilModalState';
 
-import * as C from './CChatRoom.styles'
+import * as C from './Chat.styles'
 
 import { Box, Typography, Container } from '@mui/material';
 import Message from './Message';
@@ -15,7 +15,6 @@ function ChatField (props: {roomName: string, current: string}) {
     const [chat, setChat] = useState<{user: string, msg: string}>({user: "", msg: ""});
     const [chatList, setChatList] = useState<{user: string, msg: string}[]>([]);
     const setShowModal = useSetRecoilState(chatMenuModalState)
-    // const [showMenu, setShowMenu] = useState<{user: string, show: boolean}>({user: "", show: false});
 
     useEffect(() => {
         if (!chatContainerRef.current) return;
@@ -42,38 +41,13 @@ function ChatField (props: {roomName: string, current: string}) {
         })
     }, [socket]);
 
-    function showMenuHander(userName: string) {
-        setShowModal({user: userName, show: true});
-    }
-
     return (
-        // <Chat.ChatFieldContainer id={"chat-field"} ref={chatContainerRef}>
-        //     { chatList.map((chat, index) => (
-        //         <Chat.MessageBox key={index} className={chat.user === props.current ? "my_message" : "other"}>
-        //             <span onClick={chat.user === props.current ? undefined : (e) => {showMenuHander(chat.user)}}>
-        //                 {chat.user === props.current ? '' : chat.user}
-        //             </span>
-        //             <Chat.Message className="message">{chat.msg}</Chat.Message>
-        //         </Chat.MessageBox>
-        //     )) }
-        // </Chat.ChatFieldContainer>
-        // <div ref={chatContainerRef} style={C.chatFieldStyle}>
-        //     { chatList.map((chat, index) => (
-        //         <Box key={index} sx={chat.user === props.current ? C.myMessageBoxStyle : C.otherMessageBoxStyle}>
-        //             <Typography variant="subtitle1" onClick={chat.user === props.current ? undefined : (e) => {showMenuHander(chat.user)}} >
-        //                 {chat.user === props.current ? '' : chat.user}
-        //             </Typography>
-        //             <Container className='message' sx={C.messageStyle}>{chat.msg}</Container>
-        //         </Box>
-        //     )) }
-        // </div>
-        // <div css={C.chatFieldStyle} ref={chatContainerRef}>
-        //     { chatList.map((chat, index) => (
-        //         <Message key={index} my_msg={chat.user === props.current} name={chat.user} msg={chat.msg} />
-        //     )) }
-        // </div>
-        <div css={C.chatFieldStyle}>
-            
+        <div className={C.chatFieldStyle} ref={chatContainerRef}>
+            <ul style={{width: "100%", listStyle: "none", paddingLeft: 0}}>
+                { chatList.map((chat, index) => (
+                    <Message key={index} my_msg={chat.user === props.current} name={chat.user} msg={chat.msg} />
+                )) }
+            </ul>
         </div>
     )
 }

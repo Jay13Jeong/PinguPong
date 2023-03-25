@@ -1,6 +1,6 @@
 import { styled } from "@mui/material"
 import { DefaultBox } from "../common";
-import { css } from "@emotion/react";
+import { css } from "@emotion/css";
 
 export const ChatRoomWrapper = styled(DefaultBox)(({ theme }) => ({
     display: "grid",
@@ -30,8 +30,6 @@ export const exitChatBtnStyle = {
 export const cchatFieldStyle = {
     gridColumn: "2/3",
     gridRow: "1/4",
-    // minHeight: "360px",
-    // maxHeight: "600px",
     height: "600px",
     overflow: "auto",
     display: "flex",
@@ -39,17 +37,11 @@ export const cchatFieldStyle = {
 }
 
 export const chatFieldStyle = css({
-    gridColumn: "2/3",
-    gridRow: "1/4",
     height: "600px",
     overflow: "auto",
-    display: "flex",
-    flexDirection: "column",
 })
 
 export const chatInputStyle = {
-    // gridColumn: "2/3",
-    // gridRow: "4/5",
     display: "grid",
     gridTemplateColumns: "9fr 1fr",
 }

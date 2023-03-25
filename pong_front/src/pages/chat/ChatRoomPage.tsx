@@ -20,7 +20,7 @@ import KeyIcon from '@mui/icons-material/Key';
 import SportsKabaddiIcon from '@mui/icons-material/SportsKabaddi';
 
 import { DefaultBox, DefaultButton } from "../../components/common";
-import { chatInputStyle } from "../../components/chat/CChatRoom.styles";
+import { chatInputStyle } from "../../components/chat/Chat.styles";
 
 function ChatRoomPage () {
     useCheckLogin();
@@ -115,7 +115,7 @@ function ChatRoomPage () {
             <Stack 
                 spacing={1} 
                 justifyContent="center"
-                // sx={{paddingTop: "15px"}}
+                sx={{width: "1000px"}}
             >
                 <Stack
                     direction="row"
