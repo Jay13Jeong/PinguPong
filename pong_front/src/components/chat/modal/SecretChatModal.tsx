@@ -56,6 +56,7 @@ function SecretChatModal(props: {current: string}) {
                                 value={values}
                                 variant="standard"
                                 autoComplete="off"
+                                type="password"
                             />
                             <DefaultButton type="submit">입장</DefaultButton>
                         </Stack>
