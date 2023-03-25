@@ -71,7 +71,7 @@ export default function ProfileInitPage() {
         spacing={1}
         alignItems="center"
       >
-        <Avatar src={avatarFile} alt="profile avatar" variant="rounded" sx={{ width: 100, height: 100 }} />
+        <Avatar src={avatarFile} alt="profile avatar" variant="rounded" sx={{ width: 150, height: 150 }} />
         <IconButton color="primary" aria-label="upload-avatar" component="label" size="large" >
           <input ref={inputRef} onChange={onAvatar} id="avatar" name="avatar" hidden accept="image/*" type="file" />
           <PhotoCamera />
