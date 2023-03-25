@@ -55,8 +55,9 @@ function SecretChatModal(props: {current: string}) {
                                 onChange={(e) => setValues(e.target.value)}
                                 value={values}
                                 variant="standard"
+                                autoComplete="off"
                             />
-                            <DefaultButton type="submit">채팅방 생성</DefaultButton>
+                            <DefaultButton type="submit">입장</DefaultButton>
                         </Stack>
                     </form>
             </Stack>

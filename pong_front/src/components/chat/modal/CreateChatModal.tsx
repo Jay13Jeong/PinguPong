@@ -79,6 +79,7 @@ function CreateChatModal(props: {current: string}) {
                                 value={values.pw}
                                 helperText={"빈 칸인 경우 공개 채팅방이 됩니다."}
                                 variant="standard"
+                                autoComplete="off"
                             />
                             <DefaultButton type="submit">채팅방 생성</DefaultButton>
                         </Stack>
