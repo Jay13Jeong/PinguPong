@@ -2,18 +2,18 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useRecoilValue, useResetRecoilState } from "recoil";
-
 import { blockModalState, profileModalState } from "../../../common/states/recoilModalState";
 import UserCardButtonList from "../../card/user/UserCardButtonList";
 import * as types from "../../../common/types/User"
 import ModalBase from "../../modal/ModalBase"
 import { REACT_APP_HOST } from "../../../common/configData";
+import { Typography, Stack } from '@mui/material'
 
 function BlockModal() {
     const showProfileModal = useRecoilValue(profileModalState);
     const showModal = useRecoilValue(blockModalState);
     const resetState = useResetRecoilState(blockModalState);
-    const [friendList, setFriendList] = useState<types.Friend[]>([])
+    const [blockList, setBlockList] = useState<types.Friend[]>([])
 
     const navigate = useNavigate();
 
@@ -60,7 +60,7 @@ function BlockModal() {
                             },
                         }
                     });
-                    setFriendList(myFriends);
+                    setBlockList(myFriends);
                 }
             })
             .catch(err => {
@@ -71,15 +71,17 @@ function BlockModal() {
         .catch(err => { })
     }, [showModal, showProfileModal]);
 
-    if (showModal) {
-        return (
-            <ModalBase open={showModal} reset={resetState}>
-                <h1>🚫 Block List 🚫</h1>
-                <UserCardButtonList friends={friendList}/>
-            </ModalBase>
-        );
-    }
-    return null;
+    return (
+        <ModalBase open={showModal} reset={resetState} closeButton>
+            <Stack 
+                justifyContent="center"
+                alignItems="center"
+            >
+                <Typography variant="h2" gutterBottom>👥 Pending Friend List 👥</Typography>
+                <UserCardButtonList friends={blockList}/>
+            </Stack>
+        </ModalBase>
+    )
 }
 
 export default BlockModal;
