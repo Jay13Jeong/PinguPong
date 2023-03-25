@@ -12,16 +12,7 @@ import useCheckLogin from "../../util/useCheckLogin";
 
 import { Modal, Stack, Typography, Box } from "@mui/material";
 import { DefaultBox, DefaultButton, DefaultLinearProgress } from "../../components/common";
-
-const resultStyle = {
-    padding: '20px',
-    backgroundColor: 'background.paper',
-    borderRadius: 2,
-    position: 'absolute' as 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-}
+import { modalSx } from "../../components/modal/Modal.style";
 
 function GameWatchRoomPage() {
     useCheckLogin();
@@ -94,7 +85,7 @@ function GameWatchRoomPage() {
                 </DefaultButton>
             </Stack>
             <Modal open={winner ? true : false}>
-                <Box sx={resultStyle}>
+                <Box sx={modalSx}>
                     <Stack>
                         <Typography variant="h3" component="h4" align="center">
                             `🎉 {winner}의 승리! 🎉`
