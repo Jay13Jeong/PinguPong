@@ -112,18 +112,25 @@ function ProfileModal() {
             Edit Profile
         </DefaultButton>,
         <Typography variant="subtitle1" component='div'>ID : {userInfo.userName}</Typography>,
-        <div>
-            {(() => {
+        (() => {
                 switch (onlineStatus) {
                     case "offline" :
-                        return <Typography variant="subtitle1" component='div'><><CircleIcon sx={{color: "#FE346E"}}/>Offline</></Typography>
+                        return <div>
+                                <CircleIcon sx={{color: "#FE346E", display: "inline-block", verticalAlign: "middle"}}/>
+                                <Typography variant="subtitle1" component='span' sx={{display: "inline-block", verticalAlign: "middle"}}>Offline</Typography>
+                            </div>
                     case "ingame":
-                        return <Typography variant="subtitle1" component='div'><><CircleIcon sx={{color: "#400082"}}/>In Game</></Typography>
+                        return <div>
+                            <CircleIcon sx={{color: "#400082", display: "inline-block", verticalAlign: "middle"}}/>
+                            <Typography variant="subtitle1" component='span' sx={{display: "inline-block", verticalAlign: "middle"}}>In Game</Typography>
+                        </div>
                     default:
-                        return <Typography variant="subtitle1" component='div'><><CircleIcon sx={{color: "#00BDAA"}}/>Online</></Typography>
+                        return <div>
+                            <CircleIcon sx={{color: "#00BDAA", display: "inline-block", verticalAlign: "middle"}}/>
+                            <Typography variant="subtitle1" component='span' sx={{display: "inline-block", verticalAlign: "middle"}}>Online</Typography>
+                        </div>
                 }
-            })()}
-        </div>,
+            })(),
         <Typography variant="subtitle1" component='div'>Rank : {rank}</Typography>,
         <Typography variant="subtitle1" component='div'>Odds : {userInfo.odds} %</Typography>
     ]
