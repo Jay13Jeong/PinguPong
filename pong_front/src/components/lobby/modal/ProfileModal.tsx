@@ -142,7 +142,7 @@ function ProfileModal() {
                     justifyContent="center"
                 >
                     { profileItems.map((item, index) => (
-                        <Grid key={index} xs={1} 
+                        <Grid item key={index} xs={1} 
                             display="flex"
                             justifyContent="center"
                             alignItems="center"
