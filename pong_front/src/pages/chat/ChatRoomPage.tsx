@@ -115,7 +115,7 @@ function ChatRoomPage () {
             <Stack 
                 spacing={1} 
                 justifyContent="center"
-                sx={{width: "1000px"}}
+                sx={{width: "800px"}}
             >
                 <Stack
                     direction="row"
