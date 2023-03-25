@@ -63,7 +63,7 @@ export const theme = createTheme({
                 'Jua',
                 'sans-serif',
             ].join(','),
-            fontSize: '1.5rem',
+            fontSize: '1.75rem',
         },
         body1: {
             fontFamily: [
@@ -71,6 +71,7 @@ export const theme = createTheme({
                 // 'Jua',
                 'sans-serif',
             ].join(','),
+            fontSize: '1.25rem',
         },
         body2: {
             fontFamily: [
@@ -78,6 +79,7 @@ export const theme = createTheme({
                 // 'Jua',
                 'sans-serif',
             ].join(','),
+            fontSize: '1.25rem',
         },
         button: {
             fontFamily: [
@@ -85,6 +87,7 @@ export const theme = createTheme({
                 'Jua',
                 'sans-serif',
             ].join(','),
+            fontSize: '1.25rem',
         },
     }
 });

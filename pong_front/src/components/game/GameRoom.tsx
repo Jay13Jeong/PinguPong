@@ -41,10 +41,10 @@ const GameRoom = (props: {p1: string, p2: string}) => {
             alignItems="center"
         >
             <Grid item xs={6}>
-                <Typography className="player-name" variant="subtitle1" align="center">{props.p1}</Typography>
+                <Typography className="player-name" variant="subtitle2" align="center">{props.p1}</Typography>
             </Grid>
             <Grid item xs={6}>
-                <Typography className="player-name" variant="subtitle1" align="center">{props.p2}</Typography>
+                <Typography className="player-name" variant="subtitle2" align="center">{props.p2}</Typography>
             </Grid>
             <Grid item xs={6}>
                 <Typography className="score" variant="h3" align="center">{game.score.player1}</Typography>
