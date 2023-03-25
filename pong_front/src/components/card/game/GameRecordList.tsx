@@ -30,7 +30,7 @@ function GameRecordList(props: {user: types.User}) {
         getGameData();
     }, []);
     
-    const cardsPerPage = 5; // 한 페이지에 보여줄 카드
+    const cardsPerPage = 3; // 한 페이지에 보여줄 카드
     const offset = (currPage - 1) * cardsPerPage;
     let totalPage = Math.ceil(record.length / cardsPerPage);
     

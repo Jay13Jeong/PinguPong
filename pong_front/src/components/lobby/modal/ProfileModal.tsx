@@ -11,7 +11,11 @@ import * as types from "../../../common/types/User"
 import axios from "axios";
 import ProfileEditModal from "./ProfileEditModal";
 import { REACT_APP_HOST } from "../../../common/configData";
-import ProfileModalWrapper from "./ProfileModal.style";
+
+import { Grid, Avatar, Typography, Divider, Stack } from '@mui/material'
+import EditIcon from '@mui/icons-material/Edit';
+import CircleIcon from '@mui/icons-material/Circle';
+import { DefaultButton } from "../../common";
 
 function ProfileModal() {
     const showEditModal = useRecoilValue(profileEditModalState);
@@ -102,71 +106,56 @@ function ProfileModal() {
         })
     }
 
-    function showStatus(status: string){
-        switch(status) {
-            case "offline":
-                return (
-                    <div className="profile-status">
-                        <FontAwesomeIcon style={{color: "#FE346E"}} icon={faCircle}/> Offline
-                    </div>
-                );
-            case "ingame":
-                return (
-                    <div className="profile-status">
-                        <FontAwesomeIcon style={{color: "#400082"}} icon={faCircle}/> In Game
-                    </div>
-                );
-            default:
-                return (
-                    <div className="profile-status">
-                        <FontAwesomeIcon style={{color: "#00BDAA"}} icon={faCircle}/> Online
-                    </div>
-                );
-        }
-    }
+    const profileItems = [
+        <Avatar src={avatarFile !== '' ? avatarFile : '/favicon.ico'} alt={userInfo.userName + '-profile'} variant="rounded" sx={{ width: 150, height: 150 }} />,
+        <DefaultButton startIcon={<EditIcon/>} onClick={() => setProfileEditState(true)}>
+            Edit Profile
+        </DefaultButton>,
+        <Typography variant="subtitle1" component='div'>ID : {userInfo.userName}</Typography>,
+        <div>
+            {(() => {
+                switch (onlineStatus) {
+                    case "offline" :
+                        return <Typography variant="subtitle1" component='div'><><CircleIcon sx={{color: "#FE346E"}}/>Offline</></Typography>
+                    case "ingame":
+                        return <Typography variant="subtitle1" component='div'><><CircleIcon sx={{color: "#400082"}}/>In Game</></Typography>
+                    default:
+                        return <Typography variant="subtitle1" component='div'><><CircleIcon sx={{color: "#00BDAA"}}/>Online</></Typography>
+                }
+            })()}
+        </div>,
+        <Typography variant="subtitle1" component='div'>Rank : {rank}</Typography>,
+        <Typography variant="subtitle1" component='div'>Odds : {userInfo.odds} %</Typography>
+    ]
 
-    function profileButton () {
-        return (
-            <div className="profile-button-wrapper">
-                <button className="profile-button"
-                    onClick={(e) => setProfileEditState(true)}>
-                    <FontAwesomeIcon icon={faUserPen}/> Edit Profile
-                </button>
-            </div>
-        )
-    }
-
-    const getClickUser = () : types.User => {
-        return userInfo;
-    }
-
-    if (showModal.show) {
-        return (
-            <ModalBase open={showModal.show} reset={resetState}>
-                <ProfileEditModal name={userInfo.userName}/>
-                <ProfileModalWrapper>
-                    <div className="profile-box">
-                        {avatarFile !== '' ?
-                        <img className="profile-image" src={avatarFile} alt={userInfo.userName + '-profile'} />
-                        : <img className="profile-image" src="/favicon.ico" alt={userInfo.userName + '-profile'} />}
-                    </div>
-                    {profileButton()}
-                    <div className="profile-name">
-                        ID : {userInfo.userName}
-                    </div>
-                    {showStatus(onlineStatus)}   
-                    <div className="profile-rank">
-                        Rank : {rank}
-                    </div>
-                    <div className="profile-odds">
-                        Odds : {userInfo.odds} %
-                    </div>
-                    <div className="record-title">최근 10경기 전적</div>
-                </ProfileModalWrapper>
-                <GameRecordList user={getClickUser()}/>
-            </ModalBase>
-        )
-    }
-    return null;
+    return (
+        <ModalBase open={showModal.show} reset={resetState} closeButton>
+            <ProfileEditModal name={userInfo.userName}/>
+            <Stack 
+                justifyContent="center"
+                alignItems="center"
+            >
+                <Typography variant="h2" gutterBottom >🤩 Profile 🤩</Typography>
+                <Grid container columns={2} rowSpacing={1}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                >
+                    { profileItems.map((item, index) => (
+                        <Grid key={index} xs={1} 
+                            display="flex"
+                            justifyContent="center"
+                            alignItems="center"
+                        >
+                            {item}
+                        </Grid>
+                    )) }
+                </Grid>
+                <Divider />
+                <Typography variant="subtitle2" >최근 10경기 전적</Typography>
+                <GameRecordList user={userInfo}/>
+            </Stack>
+        </ModalBase>
+    )
 }
 export default ProfileModal;

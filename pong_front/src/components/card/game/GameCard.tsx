@@ -1,11 +1,16 @@
 import {Card} from "../Card.style";
+import { CardBase } from "../CardBase"
+
+import { Typography } from '@mui/material'
 
 function GameCard (props: {p1: string, p2: string, s1: number, s2: number}) {
     return (
-        <Card>
-            <span className="player">{props.p1} ⚔️ {props.p2}</span>
-            <span className="score">{props.s1} : {props.s2}</span>
-        </Card>
+        <CardBase>
+            <>
+                <Typography variant="subtitle1">{props.p1} ⚔️ {props.p2}</Typography>
+                <Typography variant="subtitle1">{props.s1} : {props.s2}</Typography>
+            </>
+        </CardBase>
     )
 }
 
