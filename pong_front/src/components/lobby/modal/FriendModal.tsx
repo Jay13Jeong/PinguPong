@@ -9,6 +9,10 @@ import { REACT_APP_HOST } from "../../../common/configData";
 import useGetData from "../../../util/useGetData";
 import { toast } from "react-toastify";
 
+import { Typography, Stack, Grid, TextField } from '@mui/material'
+import { DefaultButton } from "../../common";
+import { DefaultLinearProgress } from "../../common";
+
 function FriendModal() {
     const [isChange, setIsChange] = useState(0); //변화감지용 변수.
     const [target, setTarget] = useState('');
@@ -95,18 +99,80 @@ function FriendModal() {
         handleAddFriendSubmit(event);
     };
 
-    if (showModal) {
-        return (
-            <ModalBase open={showModal} reset={resetState}>
-                <h1>👥 Friend List 👥</h1>
-                <input onKeyDown={handleSearchKey} type="text" placeholder="이름으로 요청" onChange={event => setTarget(event.target.value)} value={target} />
-                <button className="profile-button" onClick={handleAddFriendSubmit}>
-                    친구요청
-                </button>
+    // if (showModal) {
+    //     return (
+    //         <ModalBase open={showModal} reset={resetState}>
+    //             <h1>👥 Friend List 👥</h1>
+    //             <input onKeyDown={handleSearchKey} type="text" placeholder="이름으로 요청" onChange={event => setTarget(event.target.value)} value={target} />
+    //             <button className="profile-button" onClick={handleAddFriendSubmit}>
+    //                 친구요청
+    //             </button>
+    //             <UserCardButtonList friends={friendList}/>
+    //         </ModalBase>
+    //     );
+    // }
+    // return null;
+
+    return (
+        <ModalBase open={showModal} reset={resetState} closeButton>
+            <Stack 
+                justifyContent="center"
+                alignItems="center"
+            >
+                <Typography variant="h2" gutterBottom>👥 Friend List 👥</Typography>
+
+                <Grid container columns={4} 
+                >
+                    <Grid item xs={3}
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                    >
+                        <TextField 
+                            fullWidth
+                            id="username" 
+                            label="친구 추가할 유저의 이름을 입력해주세요." 
+                            variant="outlined" 
+                            size="small"
+                            onChange={event => setTarget(event.target.value)}
+                            onKeyDown={handleSearchKey}
+                        />
+                    </Grid>
+                    <Grid item xs={1}
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                    >
+                        <DefaultButton onClick={handleAddFriendSubmit} sx={{marginRight: 0}}>친구 추가하기</DefaultButton>
+                    </Grid>
+                </Grid>
+
+                {/* <Stack direction="row"
+                    justifyContent="center"
+                    alignItems="center"
+                    width="100%"
+                >
+                    <TextField 
+                        // fullWidth
+                        id="username" 
+                        label="친구 추가할 유저의 이름을 입력해주세요." 
+                        variant="outlined" 
+                        size="small"
+                        onChange={event => setTarget(event.target.value)}
+                        onKeyDown={handleSearchKey}
+                    />
+                    <DefaultButton onClick={handleAddFriendSubmit}>친구 추가하기</DefaultButton>
+                </Stack> */}
                 <UserCardButtonList friends={friendList}/>
-            </ModalBase>
-        );
-    }
-    return null;
+                {/* {dmList === undefined ? 
+                <>
+                <Typography variant="subtitle1">로딩중...</Typography>
+                <DefaultLinearProgress/>
+                </>
+                : 
+                <DmCardButtonList dmList={dmList}/>} */}
+            </Stack>
+        </ModalBase>
+    )
 }
 export default FriendModal;
