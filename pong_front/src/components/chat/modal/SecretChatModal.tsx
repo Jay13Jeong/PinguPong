@@ -5,8 +5,8 @@ import { SocketContext } from '../../../common/states/contextSocket';
 import { useResetRecoilState, useRecoilValue } from 'recoil';
 import { secretChatModalState } from '../../../common/states/recoilModalState';
 import ModalBase from '../../modal/ModalBase';
-import { Stack } from '../../../common/styles/Stack.style';
-import { InputTextWrapper } from '../../../common/styles/InputTextWrapper.style';
+import { Typography, TextField, Stack } from '@mui/material';
+import { DefaultButton } from '../../common';
 
 function SecretChatModal(props: {current: string}) {
     const showModal = useRecoilValue(secretChatModalState);
@@ -23,7 +23,6 @@ function SecretChatModal(props: {current: string}) {
 
     function handler(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        // socket.emit('chatPostSecretPW', {roomName: showModal.roomName, secret: values, userId: props.current});
         socket.emit('chatPostSecretPW', {roomName: showModal.roomName, secret: values});
         socket.on('chatPostSecretPW', (data) => {
             if (data) {
@@ -42,23 +41,27 @@ function SecretChatModal(props: {current: string}) {
         })
     }
 
-    if (showModal.show) {
-        return (
-            <ModalBase open={showModal.show} reset={resetState}>
-                <Stack>
-                    <h1>비밀 채팅방 입장</h1>
-                    <form onSubmit={handler}>
-                        <InputTextWrapper>
-                            <span>비밀번호</span>
-                            <input type="password" autoComplete="off" placeholder="비밀번호" value={values} onChange={(e) => setValues(e.target.value)} />
-                        </InputTextWrapper>
-                        <button type="submit">입장</button>
+    return (
+        <ModalBase open={showModal.show} reset={resetState} closeButton>
+            <Stack 
+                justifyContent="center"
+                alignItems="center"
+            >
+                <Typography variant="h3" gutterBottom sx={{marginLeft: "3rem", marginRight: "3rem"}}>비밀 채팅방 입장</Typography>
+                <form style={{width: "100%"}} onSubmit={handler}>
+                        <Stack spacing={1} >
+                            <TextField fullWidth size="small"
+                                label="비밀번호"
+                                onChange={(e) => setValues(e.target.value)}
+                                value={values}
+                                variant="standard"
+                            />
+                            <DefaultButton type="submit">채팅방 생성</DefaultButton>
+                        </Stack>
                     </form>
-                </Stack>
-            </ModalBase>
-        );
-    }
-    return null;
+            </Stack>
+        </ModalBase>
+    )
 }
 
 export default SecretChatModal;
