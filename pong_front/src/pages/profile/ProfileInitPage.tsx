@@ -6,7 +6,7 @@ import { REACT_APP_HOST } from '../../common/configData';
 import { RoutePath } from '../../common/configData';
 import { toast } from 'react-toastify';
 
-import { Typography, Avatar, Stack, IconButton,TextField } from '@mui/material';
+import { Typography, Avatar, Stack, Button,TextField } from '@mui/material';
 import { PhotoCamera } from '@mui/icons-material';
 
 import { DefaultBox, DefaultButton } from '../../components/common';
@@ -72,10 +72,10 @@ export default function ProfileInitPage() {
         alignItems="center"
       >
         <Avatar src={avatarFile} alt="profile avatar" variant="rounded" sx={{ width: 150, height: 150 }} />
-        <IconButton color="primary" aria-label="upload-avatar" component="label" size="large" >
+        <Button variant="outlined" startIcon={<PhotoCamera />} size="small" component="label">
           <input ref={inputRef} onChange={onAvatar} id="avatar" name="avatar" hidden accept="image/*" type="file" />
-          <PhotoCamera />
-        </IconButton>
+          파일 업로드
+        </Button>
       </Stack>
       <TextField 
         id="username" 
