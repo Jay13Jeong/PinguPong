@@ -49,14 +49,14 @@ google api 또는 42api의 클라이언트 아이디와 시크릿키를 준비�
 ## Browser Support
 이 프로젝트는 크롬과 사파리 브라우저에서 테스트되었습니다.
 
-<img width="1666" alt="Screen Shot 2023-03-10 at 7 09 46 PM" src="https://user-images.githubusercontent.com/63899204/224290392-2b1432c9-6657-4dcf-bf9a-6bb1343ec1cc.png">
+## Screenshot
 
-<img width="1645" alt="Screen Shot 2023-03-10 at 7 17 37 PM" src="https://user-images.githubusercontent.com/63899204/224290447-1e17136a-702f-4b15-a7f6-1f9199c14967.png">
-
-<img width="1655" alt="Screen Shot 2023-03-10 at 7 10 31 PM" src="https://user-images.githubusercontent.com/63899204/224290483-d28dc8ef-6fad-4eef-9d53-7924b22cd01a.png">
-
-<img width="1660" alt="Screen Shot 2023-03-10 at 7 17 09 PM" src="https://user-images.githubusercontent.com/63899204/224290504-d1b3b4b7-180a-4aa8-8f8a-bcdd0e474c62.png">
-
+| ![Login](./assets/Login_ScreenShot.png)            | ![Lobby](./assets/Lobby_ScreenShot.png)                 |
+| -------------------------------------------------- | ------------------------------------------------------- |
+| ![Game](./assets/Game_ScreenShot.png)              | ![Live Game List](./assets/LiveGameList_ScreenShot.png) |
+| ![My Profile](./assets/MyProfile_ScreenShot.png)   | ![Other Profile](./assets/OtherProfile_ScreenShot.png)  |
+| ![Friend List](./assets/FriendList_ScreenShot.png) | ![Chat Room List](./assets/ChatRoom_ScreenShot.png)     |
+| ![Chat Room](./assets/Chat_ScreenShot.png)         | ![Chat Menu](./assets/ChatMenu_ScreenShot.png)          |
 
 ## ERD
 
