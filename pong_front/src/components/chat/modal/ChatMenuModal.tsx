@@ -77,7 +77,6 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
     /* 채팅방에 못들어오게 함 */
     function banHandler(e: React.MouseEvent<HTMLElement>) {
         // 밴 기능
-        // let [roomName, targetId] = data;
         socket.emit('banUser', props.roomName, targetID);
         toast("🔥 ban completed!");
         resetState();
@@ -104,11 +103,6 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
     }
 
     function inviteHandler(e: React.MouseEvent<HTMLElement>) {
-        /**
-         * 'duelRequest'
-         * let targetId:number = data.targetId;
-         * return boolean (성공시 true, 여러 이유로 실패하면 false)
-         */
         socket.emit('duelRequest', {targetId: targetID, roomName: props.roomName});
         /* 성공 여부 듣기 */
         socket.on('duelRequest', (data: boolean) => {

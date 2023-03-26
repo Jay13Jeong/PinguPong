@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useResetRecoilState } from "recoil";
 import { useNavigate } from "react-router-dom";
-import { Typography, CardActionArea, Card, CircularProgress } from "@mui/material";
+import { Typography, CardActionArea, CircularProgress } from "@mui/material";
 import { dmModalState } from "../../../common/states/recoilModalState";
 import useGetData from "../../../util/useGetData";
 import { REACT_APP_HOST } from "../../../common/configData";

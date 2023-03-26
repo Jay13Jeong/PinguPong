@@ -5,8 +5,6 @@ import ModalBase from "../../modal/ModalBase";
 import GameRecordList from "../../card/game/GameRecordList";
 import { useSetRecoilState , useResetRecoilState, useRecoilValue } from "recoil"
 import { otherProfileModalState, profileEditModalState, profileModalState } from "../../../common/states/recoilModalState";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircle, faUserPen, } from "@fortawesome/free-solid-svg-icons";
 import * as types from "../../../common/types/User"
 import axios from "axios";
 import ProfileEditModal from "./ProfileEditModal";

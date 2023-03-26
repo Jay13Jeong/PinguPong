@@ -27,7 +27,6 @@ export const theme = createTheme({
           ].join(','),
         h1: {
             fontFamily: [
-                // 'Nanum Gothic',
                 'Jua',
                 'sans-serif',
             ].join(','),
@@ -35,7 +34,6 @@ export const theme = createTheme({
         },
         h2: {
             fontFamily: [
-                // 'Nanum Gothic',
                 'Jua',
                 'sans-serif',
             ].join(','),
@@ -43,7 +41,6 @@ export const theme = createTheme({
         },
         h3: {
             fontFamily: [
-                // 'Nanum Gothic',
                 'Jua',
                 'sans-serif',
             ].join(','),
@@ -51,7 +48,6 @@ export const theme = createTheme({
         },
         subtitle1: {
             fontFamily: [
-                // 'Nanum Gothic',
                 'Jua',
                 'sans-serif',
             ].join(','),
@@ -59,7 +55,6 @@ export const theme = createTheme({
         },
         subtitle2: {
             fontFamily: [
-                // 'Nanum Gothic',
                 'Jua',
                 'sans-serif',
             ].join(','),
@@ -68,7 +63,6 @@ export const theme = createTheme({
         body1: {
             fontFamily: [
                 'Nanum Gothic',
-                // 'Jua',
                 'sans-serif',
             ].join(','),
             fontSize: '1.25rem',
@@ -76,14 +70,12 @@ export const theme = createTheme({
         body2: {
             fontFamily: [
                 'Nanum Gothic',
-                // 'Jua',
                 'sans-serif',
             ].join(','),
             fontSize: '1.25rem',
         },
         button: {
             fontFamily: [
-                //'Nanum Gothic',
                 'Jua',
                 'sans-serif',
             ].join(','),

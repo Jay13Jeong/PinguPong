@@ -1,4 +1,3 @@
-import {Card} from "../Card.style";
 import { CardBase } from "../CardBase"
 
 import { Typography } from '@mui/material'

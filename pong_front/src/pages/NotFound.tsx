@@ -1,10 +1,9 @@
-import { useMemo } from "react";
+import { Typography } from "@mui/material";
 import useCheckLogin from "../util/useCheckLogin";
 function NotFound() {
     useCheckLogin();
-    const fontStyle = useMemo(() => ({color: "white" }), []);
     return (
-        <h1 style={fontStyle}>🤡 Not Found 🤡</h1>
+        <Typography variant="h1" color="#FFFFFF">🤡 Not Found 🤡</Typography>
     );
 }
 

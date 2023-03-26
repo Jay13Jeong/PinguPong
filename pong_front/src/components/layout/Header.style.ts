@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from "@emotion/styled";
 
 export const HeaderWrapper = styled.header`
     position: fixed;
@@ -22,8 +22,9 @@ export const HeaderWrapper = styled.header`
         }
         span {
             vertical-align: middle;
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: bold;
+            font-family: "Jua", sans-serif;
             color: #000000;
         }
     }

@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import * as S from "./LobbyButtons.style"
 import { RoutePath } from "../../common/configData";
 
 import { Stack, Box } from "@mui/material";

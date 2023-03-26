@@ -1,4 +1,3 @@
-// import styled from "styled-components";
 import { Box, styled } from "@mui/material";
 import pingaDoor from "../../assets/pinga-door.gif";
 
