@@ -5,14 +5,20 @@ import ModalBase from "../../modal/ModalBase";
 import GameRecordList from "../../card/game/GameRecordList";
 import { useResetRecoilState, useRecoilValue } from "recoil"
 import { otherProfileModalState, } from "../../../common/states/recoilModalState";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircle, faUserPlus, faUserMinus, faUser, faUserSlash, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import * as types from "../../../common/types/User"
 import axios from "axios";
 import ProfileEditModal from "./ProfileEditModal";
 import { REACT_APP_HOST } from "../../../common/configData";
-import ProfileModalWrapper from "./ProfileModal.style";
 import { toast } from "react-toastify";
+
+import { Grid, Avatar, Typography, Divider, Stack, ButtonGroup } from '@mui/material'
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import GroupRemoveIcon from '@mui/icons-material/GroupRemove';
+import PersonIcon from '@mui/icons-material/Person';
+import PersonOffIcon from '@mui/icons-material/PersonOff';
+import SendIcon from '@mui/icons-material/Send';
+import CircleIcon from '@mui/icons-material/Circle';
+import { DefaultButton } from "../../common";
 
 function OtherProfileModal() {
     const showModal = useRecoilValue(otherProfileModalState);
@@ -107,29 +113,6 @@ function OtherProfileModal() {
         })
     }
 
-    function showStatus(status: string){
-        switch(status) {
-            case "offline":
-                return (
-                    <div className="profile-status">
-                        <FontAwesomeIcon style={{color: "#FE346E"}} icon={faCircle}/> Offline
-                    </div>
-                );
-            case "ingame":
-                return ( 
-                    <button className="profile-status" onClick={watchHandler}>
-                        <FontAwesomeIcon style={{color: "#400082"}} icon={faCircle}/> In Game
-                    </button>
-                );
-            default:
-                return (
-                    <div className="profile-status">
-                        <FontAwesomeIcon style={{color: "#00BDAA"}} icon={faCircle}/> Online
-                    </div>
-                );
-        }
-    }
-
     //친추.
     async function handleFollow(event: React.MouseEvent<HTMLElement>) {
         event.preventDefault();
@@ -184,13 +167,6 @@ function OtherProfileModal() {
 
     // 게임 관전 이동
     function watchHandler(event: React.MouseEvent<HTMLElement>) {
-        /**
-         * NOTE
-         * - 게임 목록 받아오기
-         * - 게임 목록에서 사용자 ID 찾기
-         * - 모달 클리어
-         * - 그 게임으로 이동
-         */
         if (showModal.userId !== 0){
             checkOnline(showModal.userId);
         } else {
@@ -234,61 +210,76 @@ function OtherProfileModal() {
         }});
     }
 
-    function profileButton () {
-        return (
-            <div className="profile-button-wrapper">
-                {relate === 'accepted' ? 
-                <button className="profile-button" onClick={handleUnfollow}>
-                    <FontAwesomeIcon icon={faUserMinus}/> Unfollow
-                </button> :
-                <button className="profile-button" onClick={handleFollow}>
-                    <FontAwesomeIcon icon={faUserPlus}/> Follow
-                </button>}
-                {relate === 'blocked' ? 
-                <button className="profile-button" onClick={handleUnblock}>
-                    <FontAwesomeIcon icon={faUser}/> Unblock
-                </button> :
-                <button className="profile-button" onClick={handleBlock}>
-                    <FontAwesomeIcon icon={faUserSlash}/> Block
-                </button>}
-                <button className="profile-button" onClick={sendDm}>
-                    <FontAwesomeIcon icon={faPaperPlane}/> DM
-                </button>
-            </div>
-        )
-    }
+    // const getClickUser = () : types.User => {
+    //     return userInfo;
+    // }
 
-    const getClickUser = () : types.User => {
-        return userInfo;
-    }
+    const profileItems = [
+        { width: 2, element: <Avatar src={avatarFile !== '' ? avatarFile : '/favicon.ico'} alt={userInfo.userName + '-profile'} variant="rounded" sx={{ width: 150, height: 150 }} />},
+        { width: 4, element: 
+            <ButtonGroup>
+                { relate === 'accepted' ? 
+                <DefaultButton onClick={handleUnfollow} startIcon={<GroupRemoveIcon/>}>Unfollow</DefaultButton> :
+                <DefaultButton onClick={handleFollow} startIcon={<GroupAddIcon/>}>Follow</DefaultButton> }
+                { relate === 'blocked' ? 
+                <DefaultButton onClick={handleUnblock} startIcon={<PersonIcon/>}>Unblock</DefaultButton> :
+                <DefaultButton onClick={handleBlock} startIcon={<PersonOffIcon/>}>Block</DefaultButton> }
+                <DefaultButton onClick={sendDm} startIcon={<SendIcon/>}>DM</DefaultButton>
+            </ButtonGroup> },
+        { width: 3, element: <Typography variant="subtitle1" component='div'>ID : {userInfo.userName}</Typography> },
+        {width: 3, element: 
+            (() => {
+                switch (onlineStatus) {
+                    case "offline" :
+                        return <div>
+                                <CircleIcon sx={{color: "#FE346E", display: "inline-block", verticalAlign: "middle"}}/>
+                                <Typography variant="subtitle1" component='span' sx={{display: "inline-block", verticalAlign: "middle"}}>Offline</Typography>
+                            </div>
+                    case "ingame":
+                        return <div onClick={watchHandler}>
+                            <CircleIcon sx={{color: "#400082", display: "inline-block", verticalAlign: "middle"}}/>
+                            <Typography variant="subtitle1" component='span' sx={{display: "inline-block", verticalAlign: "middle"}}>In Game</Typography>
+                        </div>
+                    default:
+                        return <div>
+                            <CircleIcon sx={{color: "#00BDAA", display: "inline-block", verticalAlign: "middle"}}/>
+                            <Typography variant="subtitle1" component='span' sx={{display: "inline-block", verticalAlign: "middle"}}>Online</Typography>
+                        </div>
+                }
+            })() },
+        {width: 3, element: <Typography variant="subtitle1" component='div'>Rank : {rank}</Typography> },
+        {width: 3, element: <Typography variant="subtitle1" component='div'>Odds : {userInfo.odds} %</Typography> },
+    ];
 
-    if (showModal.show) {
-        return (
-            <ModalBase reset={resetState}>
-                <ProfileEditModal name={userInfo.userName}/>
-                <ProfileModalWrapper>
-                    <div className="profile-box">
-                        {avatarFile !== '' ?
-                        <img className="profile-image" src={avatarFile} alt={userInfo.userName + '-profile'} />
-                        : <img className="profile-image" src="/favicon.ico" alt={userInfo.userName + '-profile'} />}
-                    </div>
-                    {profileButton()}
-                    <div className="profile-name">
-                        ID : {userInfo.userName}
-                    </div>
-                    {showStatus(onlineStatus)}   
-                    <div className="profile-rank">
-                        Rank : {rank}
-                    </div>
-                    <div className="profile-odds">
-                        Odds : {userInfo.odds} %
-                    </div>
-                    <div className="record-title">최근 10경기 전적</div>
-                </ProfileModalWrapper>
-                <GameRecordList user={getClickUser()}/>
-            </ModalBase>
-        )
-    }
-    return null;
+    return (
+        <ModalBase open={showModal.show} reset={resetState} closeButton>
+            <ProfileEditModal name={userInfo.userName}/>
+            <Stack 
+                justifyContent="center"
+                alignItems="center"
+                sx={{ flexGrow: 1 }}
+            >
+                <Typography variant="h2" gutterBottom >🤩 Profile 🤩</Typography>
+                <Grid container columns={6} rowSpacing={1}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                >
+                    { profileItems.map((item, index) => (
+                        <Grid item key={index} xs={item.width} 
+                            display="flex"
+                            justifyContent="center"
+                            alignItems="center"
+                        >
+                            {item.element}
+                        </Grid>
+                    )) }
+                </Grid>
+                <Divider />
+                <Typography variant="subtitle2" >최근 10경기 전적</Typography>
+                <GameRecordList user={userInfo}/>
+            </Stack>
+        </ModalBase>
+    )
 }
 export default OtherProfileModal;

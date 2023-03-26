@@ -1,20 +1,35 @@
 import React, {useState, useEffect, useContext} from "react";
 import { useNavigate } from "react-router-dom";
 import { SocketContext } from "../../common/states/contextSocket";
-import {Stack } from "../../common/styles/Stack.style";
 import useGetData from "../../util/useGetData";
-import DifficultyButtons from "../../components/game/DifficultyButtons";
-import Loader from "../../components/util/Loader";
 import { REACT_APP_HOST, RoutePath } from "../../common/configData";
 import useCheckLogin from "../../util/useCheckLogin";
-import { ContentBox } from "../../common/styles/ContentBox.style";
 import { toast } from "react-toastify";
+
+import { Typography, Stack, Chip } from "@mui/material";
+import { DefaultBox, DefaultButton, DefaultLinearProgress } from "../../components/common";
+
+const difficultyList = [
+    {
+        label: "✨EASY✨",
+        value: 0
+    },
+    {
+        label: "✨NORMAL✨",
+        value: 1
+    },
+    {
+        label: "✨HARD✨",
+        value: 2
+    }
+];
 
 function GameMatchPage() {
     useCheckLogin();
     const [loading, setLoading] = useState<boolean>(true);
     const [current, setCurrent] = useState<string>("");
     const [myInfo, error, isLoading] = useGetData('http://' + REACT_APP_HOST + '/api/user');
+    const [difficulty, setDifficulty] = useState<number>(0);
     const navigate = useNavigate();
     const socket = useContext(SocketContext);
 
@@ -51,19 +66,13 @@ function GameMatchPage() {
         })
     }, [current, socket, navigate]);
 
-    let currentDifficulty: number = 0;
-
     /* 매치 메이킹 */
     function handleMatchMakeRequest(e: React.MouseEvent<HTMLElement>) {
         socket.emit('requestMatchMake', {
-            difficulty: currentDifficulty,
+            difficulty: difficulty,
             player: current
         });
         setLoading(true);
-    }
-
-    function setDifficulty(difficulty: number) {
-        currentDifficulty = difficulty;
     }
 
     /* 매칭 취소 이벤트 */
@@ -72,15 +81,33 @@ function GameMatchPage() {
     }
 
     return (
-        <ContentBox><Stack>
-        {loading ? <><Loader text="로딩중"/><button onClick={requestCancelHander}>게임 매칭 취소</button></> : 
-            <>
-            <h1>👾 Choose Game Level 👾</h1>
-            <DifficultyButtons difficulty={currentDifficulty} setDifficulty={setDifficulty}/>
-            <button onClickCapture={handleMatchMakeRequest}> 게임 매칭 요청 </button>
-            </>
-        }
-        </Stack></ContentBox>
+        <DefaultBox>
+            <Stack spacing={2} justifyContent="center">
+                <Typography variant="h3" component="h1" align='center' gutterBottom> 👾 Choose Game Level 👾 </Typography>
+                {loading ? 
+                    <>
+                        <Typography variant="subtitle1">게임 매칭 대기중...</Typography>
+                        <DefaultLinearProgress />
+                        <DefaultButton onClick={requestCancelHander}>게임 매칭 취소</DefaultButton>
+                    </> : 
+                    <Stack>
+                        <Stack 
+                            direction="row" 
+                            spacing={1}
+                            justifyContent="center"
+                        >
+                            {difficultyList.map((item) => (
+                                <Chip key={item.label} label={item.label} color="primary"
+                                    variant={difficulty === item.value ? "filled" : "outlined"}
+                                    onClick={() => setDifficulty(item.value)}
+                                    sx={{color: "black"}}
+                                />
+                            ))}
+                        </Stack>
+                        <DefaultButton onClick={handleMatchMakeRequest}>게임 매칭 요청</DefaultButton>
+                    </Stack>}
+            </Stack>
+        </DefaultBox>
     )
 }
 

@@ -3,13 +3,16 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import { REACT_APP_HOST } from "../../common/configData";
-import { ContentBox } from "../../common/styles/ContentBox.style";
 import { RoutePath } from "../../common/configData";
-import { toast } from "react-toastify";
+
+import { Typography, Stack, TextField } from "@mui/material";
+import { DefaultBox, DefaultButton } from "../../components/common";
 
 export default function FA2Page() {
   const navigate = useNavigate();
     const [code, setCode] = useState('');
+    const [error, setError] = useState<boolean>(false);
+    const [helperText, setHelperText] = useState<string>("메일로 전송된 코드를 입력하세요.");
 
     useEffect(() => {
       //2단계인증이 켜져있는지 검사.
@@ -41,19 +44,33 @@ export default function FA2Page() {
           if (res.status === 200)
             navigate('/lobby');
         }catch(err: any){
-          toast.error('invalid code : check 42Email again');
+          setError(true);
+          setHelperText("인증코드가 일치하지 않습니다.");
         }
       }
       submitCode();
     };
 
     return (
-      <ContentBox>
-        <h1>CODE</h1>
-        <form onSubmit={handleSubmit}>
-          <input type="text" value={code} onChange={(e) => setCode(e.target.value)} />
-          <button onClick={handleSubmit} className="confirmBtn">OK</button>
-        </form>
-      </ContentBox>
-    );
+      <DefaultBox>
+        <Stack>
+          <Typography variant="h2" component="h1" gutterBottom>2차 인증 코드</Typography>
+          <form onSubmit={handleSubmit}>
+            <Stack>
+              <TextField
+                label="인증 코드"
+                variant="outlined"
+                value={code}
+                size="small"
+                helperText={helperText}
+                error={error ? true : false}
+                onChange={(e) => setCode(e.target.value)}
+                type="password"
+                />
+              <DefaultButton type="submit">확인</DefaultButton>
+            </Stack>
+          </form>
+        </Stack>
+      </DefaultBox>
+    )
   }

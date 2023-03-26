@@ -1,15 +1,17 @@
 import React, {useState, useEffect, useContext} from "react";
-import {useLocation, Link, useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {useSetRecoilState, useResetRecoilState} from "recoil";
 import { toast } from "react-toastify";
 
 import { SocketContext } from "../../common/states/contextSocket";
 import {gameState} from "../../common/states/recoilGameState";
-import { Stack } from "../../common/styles/Stack.style";
 import * as types from "../../common/types/Game";
 import { RoutePath } from "../../common/configData";
 import GameRoom from "./GameRoom";
-import { OverLay, Wrapper } from "../modal/Modal.style";
+
+import { Modal, Stack, Typography, Box } from "@mui/material";
+import { DefaultButton } from "../../components/common";
+import { modalSx } from "../modal/Modal.style";
 
 function GamePlayRoom() {
     const [winner, setWinner] = useState<string>();
@@ -98,24 +100,20 @@ function GamePlayRoom() {
         <>
             <Stack>
                 <GameRoom p1={player1} p2={player2}/>
-                <button className="game-button" onClick={readyHandler}>
+                <DefaultButton className="game-button" onClick={readyHandler}>
                     게임 준비
-                </button>
+                </DefaultButton>
             </Stack>
-            {winner ? 
-            <OverLay z_index={100}>
-                <Wrapper>
-                {winner === currentPlayer ? 
-                <div>
-                    <div>Win!!</div>
-                </div> : 
-                <div>
-                    <div>Lose!!</div>
-                </div>
-                }
-                <Link to={RoutePath.lobby}><button>Go To Lobby</button></Link>
-            </Wrapper>
-        </OverLay> : null}
+           <Modal open={winner ? true : false}>
+                <Box sx={modalSx}>
+                    <Stack>
+                        <Typography variant="h3" component="h4" align="center">
+                            {winner === currentPlayer ? "🥳 Win!! 🥳" : "😭 Lose!! 😭"}
+                        </Typography>
+                        <DefaultButton onClick={() => {navigate(RoutePath.lobby)}}>Go To Lobby</DefaultButton>
+                    </Stack>
+                </Box>
+           </Modal>
         </>
     );
 }

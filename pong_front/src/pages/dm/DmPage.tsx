@@ -4,16 +4,19 @@ import { SocketContext } from "../../common/states/contextSocket";
 import { useNavigate, useLocation } from "react-router-dom";
 import useGetData from "../../util/useGetData";
 import { REACT_APP_HOST } from "../../common/configData";
-import Loader from "../../components/util/Loader";
 import DmField from "../../components/chat/DmField";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import useCheckLogin from "../../util/useCheckLogin";
 import ChatMenuModal from "../../components/chat/modal/ChatMenuModal";
 import GameInviteModal from "../../components/chat/modal/GameInviteModal";
 import { RoutePath } from "../../common/configData";
-import { ChatRoomWrapper } from "../../components/chat/ChatRoom.styles";
 import { gameInviteModalState } from "../../common/states/recoilModalState";
+
+import { OutlinedInput, Button, Stack, Tooltip, Divider, CircularProgress } from "@mui/material";
+import SendIcon from '@mui/icons-material/Send';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import SportsKabaddiIcon from '@mui/icons-material/SportsKabaddi';
+import { DefaultBox, DefaultButton } from "../../components/common";
+import { chatInputStyle } from "../../components/chat/Chat.styles";
 
 function DmPage() {
     useCheckLogin();
@@ -65,17 +68,44 @@ function DmPage() {
         <>
         <ChatMenuModal isMaster={false} roomName={"_dm"} isDmModal={true}/>
         <GameInviteModal targetID={invitedInfo.id} targetUserName={invitedInfo.username} setInviteInfo={setInvitedInfo}/>
-        {current === "" ? <Loader/> :
-        <ChatRoomWrapper>
-            {invitedInfo.id !== -1 ? <button onClick={(e) => {setGameInviteModal(true)}} id="duel-request-btn">도전장 도착</button> : null}
-            <button onClick={exitHandler} id="exit-chat-btn">DM 나가기</button>
-            <DmField current={current} targetId={targetId}/>
-            <form onSubmit={msgHandler} id="chat-input">
-                <input type="text" autoComplete="off" id="message" placeholder="메시지를 입력하세요" value={msg} onChange={(e) => setMsg(e.target.value)}/>
-                <button type="submit"><FontAwesomeIcon icon={faPaperPlane}/></button>
-            </form>
-        </ChatRoomWrapper>
-        }
+        { current === "" ? <CircularProgress /> : 
+        <DefaultBox>
+            <Stack 
+                spacing={1} 
+                justifyContent="center"
+                sx={{width: "800px"}}
+            >
+                <Stack
+                    direction="row"
+                    spacing={1}
+                    justifyContent="center"
+                >
+                    <Tooltip title="채팅방을 나갑니다.">
+                        <span ><DefaultButton
+                            startIcon={<ExitToAppIcon />}
+                            onClick={exitHandler}
+                        >
+                            채팅방 나가기
+                        </DefaultButton></span>
+                    </Tooltip>
+                    <Tooltip title="도전장이 도작한 경우에만 활성화됩니다.">
+                        <span><DefaultButton 
+                            startIcon={<SportsKabaddiIcon />}
+                            onClick={(e) => {setGameInviteModal(true)}}
+                            disabled={invitedInfo.id === -1}
+                        >
+                            도전장 확인
+                        </DefaultButton></span>
+                    </Tooltip>
+                </Stack>
+                <Divider variant="middle" sx={{borderColor: "#06283D"}} />
+                <DmField current={current} targetId={targetId}/>
+                <form onSubmit={msgHandler} style={chatInputStyle}>
+                    <OutlinedInput id="message" fullWidth size="small" value={msg} onChange={(e) => setMsg(e.target.value)}/>
+                    <Button type="submit" variant="text" ><SendIcon/></Button>
+                </form>
+            </Stack>
+        </DefaultBox> }
         </>
     )
 }

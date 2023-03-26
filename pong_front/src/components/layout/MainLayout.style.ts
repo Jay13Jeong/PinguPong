@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from "@emotion/styled";
 import { pingu1, pingu2, pingu3, pingu4, pingu5, pingu6, pingu7, pingu8 } from "../../assets/background";
 
 function randomNum(){
