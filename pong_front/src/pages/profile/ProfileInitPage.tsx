@@ -57,8 +57,18 @@ export default function ProfileInitPage() {
   };
 
   function onAvatar(e: React.ChangeEvent<HTMLInputElement>) {
-    const image: File = e.target.files![0];
-    setAvatarFile(URL.createObjectURL(image));
+    try{
+      const image: File = e.target.files![0];
+      if (image.size >= ((1 << 20) * 4))
+          throw("4MB미만 업로드 가능.");
+      setAvatarFile(URL.createObjectURL(image));
+    }catch(err: any){
+      if (err){
+          toast.error(err);
+      } else {
+          toast.error("이미지 파일 지정 취소됨.");
+      }
+    }
   }
   return (
     <DefaultBox>
