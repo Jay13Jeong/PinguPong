@@ -6,13 +6,13 @@ import { toast } from "react-toastify";
 import {gameState} from "../../common/states/recoilGameState";
 import { SocketContext } from "../../common/states/contextSocket";
 import { RoutePath } from "../../common/configData";
-import { Stack } from "../../common/styles/Stack.style";
-import { ContentBox } from "../../common/styles/ContentBox.style";
 import * as types from "../../common/types/Game";
 import GameRoom from "../../components/game/GameRoom";
-import { OverLay, Wrapper } from "../../components/modal/Modal.style";
 import useCheckLogin from "../../util/useCheckLogin";
-import Loader from "../../components/util/Loader";
+
+import { Modal, Stack, Typography, Box } from "@mui/material";
+import { DefaultBox, DefaultButton, DefaultLinearProgress } from "../../components/common";
+import { modalSx } from "../../components/modal/Modal.style";
 
 function GameWatchRoomPage() {
     useCheckLogin();
@@ -24,6 +24,8 @@ function GameWatchRoomPage() {
     const setGame = useSetRecoilState<types.gamePosInfo>(gameState);
     const [winner, setWinner] = useState<string>();
     const resetGame = useResetRecoilState(gameState);
+    const [player1, setPlayer1] = useState<string>();
+    const [player2, setPlayer2] = useState<string>();
 
     useEffect(() => {
         if (!location) {
@@ -34,8 +36,8 @@ function GameWatchRoomPage() {
         socket.on('gameRoomCheck', (result) => {
             socket.off('gameRoomCheck');
             if (result === true) {
-                player1 = location.state.player1;
-                player2 = location.state.player2;
+                setPlayer1(location.state.player1);
+                setPlayer2(location.state.player2);
                 socket.emit('watchGame', id);
             }
             else {
@@ -67,34 +69,38 @@ function GameWatchRoomPage() {
         })
     }, [resetGame]);
 
-    let player1: string | undefined;
-    let player2: string | undefined;
-
     function endHandler(e: React.MouseEvent<HTMLButtonElement>) {
         socket.emit('stopwatchGame', `${player1}vs${player2}`);
         navigate(RoutePath.lobby);
     }
 
     return (
-        <ContentBox>
+        <DefaultBox>
             {player1 && player2 ? 
             <>
             <Stack>
                 <GameRoom p1={player1} p2={player2}/>
-                <button onClick={endHandler} className="game-button">
+                <DefaultButton onClick={endHandler}>
                     관전 종료
-                </button>
+                </DefaultButton>
             </Stack>
-            {winner ? 
-            <OverLay z_index={100}>
-                <Wrapper>
-                    <div>Winner is {winner}!</div>
-                    <Link to={RoutePath.lobby}><button>Go To Lobby</button></Link>
-                </Wrapper>
-            </OverLay> : null}
+            <Modal open={winner ? true : false}>
+                <Box sx={modalSx}>
+                    <Stack>
+                        <Typography variant="h3" component="h4" align="center">
+                            `🎉 {winner}의 승리! 🎉`
+                        </Typography>
+                        <DefaultButton onClick={() => {navigate(RoutePath.lobby)}}>Go To Lobby</DefaultButton>
+                    </Stack>
+                </Box>
+           </Modal>
             </>
-            : <Loader text="게임 로딩 중"/>}
-        </ContentBox>
+            : 
+            <>
+                <Typography variant="subtitle1">게임 로딩중...</Typography>
+                <DefaultLinearProgress/>
+            </>}
+        </DefaultBox>
     );
 }
 

@@ -4,7 +4,8 @@ import {drawNet,drawPaddle, drawBall} from "./draw";
 import {useRecoilValue} from "recoil";
 import {gameState} from "../../common/states/recoilGameState"
 import * as types from "../../common/types/Game";
-import GameRoomGrid from "./GameRoom.style";
+
+import { Grid, Stack, Typography} from "@mui/material";
 
 const GameRoom = (props: {p1: string, p2: string}) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -32,17 +33,32 @@ const GameRoom = (props: {p1: string, p2: string}) => {
     }
 
     return (
-        <GameRoomGrid>
-                <div className="player-name">{props.p1}</div>
-                <div className="player-name">{props.p2}</div>
-                <div className="score">{game.score.player1}</div>
-                <div className="score">{game.score.player2}</div>
-            <canvas className="game-canvas" 
+        <Stack>
+        <Grid
+            container
+            direction="row"
+            justifyContent="center"
+            alignItems="center"
+        >
+            <Grid item xs={6}>
+                <Typography className="player-name" variant="subtitle2" align="center">{props.p1}</Typography>
+            </Grid>
+            <Grid item xs={6}>
+                <Typography className="player-name" variant="subtitle2" align="center">{props.p2}</Typography>
+            </Grid>
+            <Grid item xs={6}>
+                <Typography className="score" variant="h3" align="center">{game.score.player1}</Typography>
+            </Grid>
+            <Grid item xs={6}>
+                <Typography className="score" variant="h3" align="center">{game.score.player2}</Typography>
+            </Grid>
+        </Grid>
+            <canvas
                 ref={canvasRef}
                 width={sizes.canvasWidth} 
                 height={sizes.canvasHeight} 
                 style={{background: colors.backgroudColor}}></canvas>
-        </GameRoomGrid>
+        </Stack>
     );
 }
 export default GameRoom;

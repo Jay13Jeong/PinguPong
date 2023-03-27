@@ -1,13 +1,18 @@
 import { useContext } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSetRecoilState } from "recoil";
 import * as states from "../../common/states/recoilModalState";
 import { SocketContext } from "../../common/states/contextSocket";
-import { faCircleUser, faEnvelope, faPeopleGroup, faSignOutAlt, faUserSlash, faPersonCirclePlus } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { REACT_APP_HOST } from "../../common/configData";
-import * as S from "./MenuButtons.style"
 import axios from "axios";
+
+import { Stack, IconButton, Tooltip } from "@mui/material";
+import EmailIcon from '@mui/icons-material/Email';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import GroupIcon from '@mui/icons-material/Group';
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import PersonOffIcon from '@mui/icons-material/PersonOff';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 export default function MenuButtons() {
     const socket = useContext(SocketContext);
@@ -18,25 +23,15 @@ export default function MenuButtons() {
     const blockState = useSetRecoilState(states.blockModalState);
     const navigate = useNavigate();
 
-    const showDmModal = (e: React.MouseEvent<HTMLElement>) => {
-        dmState(true);
-    }
+    const showDmModal = (e: React.MouseEvent<HTMLElement>) => dmState(true);
 
-    const showProfileModal = () => {
-        profileState({userId: 0, show: true});
-    }
+    const showProfileModal = () => profileState({userId: 0, show: true});
 
-    const showFriendModal = () => {
-        friendState(true);
-    }
+    const showFriendModal = () => friendState(true);
 
-    const showPendingModal = () => {
-        pendingState(true);
-    }
+    const showPendingModal = () => pendingState(true);
 
-    const showBlockModal = () => {
-        blockState(true);
-    }
+    const showBlockModal = () => blockState(true);
 
     const logout = () => {
         axios.get('http://' + REACT_APP_HOST + '/api/auth/logout', {withCredentials: true}) //쿠키와 함께 보내기 true.
@@ -52,16 +47,52 @@ export default function MenuButtons() {
         .finally( () => {
           socket.disconnect();
         })
-    }
+    };
+
+    const MenuButtonList = [
+        {
+            icon: <EmailIcon />,
+            tooltip: "DM",
+            onClick: showDmModal,
+        },
+        {
+            icon: <AccountCircleIcon />,
+            tooltip: "Profile",
+            onClick: showProfileModal,
+        },
+        {
+            icon: <GroupIcon />,
+            tooltip: "Friend",
+            onClick: showFriendModal,
+        },
+        {
+            icon: <GroupAddIcon />,
+            tooltip: "Pending",
+            onClick: showPendingModal,
+        },
+        {
+            icon: <PersonOffIcon />,
+            tooltip: "Block",
+            onClick: showBlockModal,
+        },
+        {
+            icon: <LogoutIcon />,
+            tooltip: "Logout",
+            onClick: logout,
+        },
+    ];
 
     return (
-        <S.MenuButtonsWrapper>
-            <button onClick={showDmModal}><FontAwesomeIcon icon={faEnvelope}/></button>
-            <button onClick={showProfileModal}><FontAwesomeIcon icon={faCircleUser}/></button>
-            <button onClick={showFriendModal}><FontAwesomeIcon icon={faPeopleGroup}/></button>
-            <button onClick={showPendingModal}><FontAwesomeIcon icon={faPersonCirclePlus}/></button>
-            <button onClick={showBlockModal}><FontAwesomeIcon icon={faUserSlash}/></button>
-            <button onClick={logout}><FontAwesomeIcon icon={faSignOutAlt}/></button>
-        </S.MenuButtonsWrapper>
+        <Stack direction="row" spacing={2}>
+            {MenuButtonList.map((item) => {
+                return (
+                    <Tooltip title={item.tooltip} key={item.tooltip}>
+                        <IconButton onClick={item.onClick}>
+                            {item.icon}
+                        </IconButton>
+                    </Tooltip>
+                );
+            })}
+        </Stack>
     );
 }

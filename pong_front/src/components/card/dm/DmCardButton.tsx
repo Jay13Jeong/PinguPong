@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import { useResetRecoilState } from "recoil";
 import { useNavigate } from "react-router-dom";
-
+import { Typography, CardActionArea, CircularProgress } from "@mui/material";
 import { dmModalState } from "../../../common/states/recoilModalState";
-import Loader from "../../util/Loader";
 import useGetData from "../../../util/useGetData";
 import { REACT_APP_HOST } from "../../../common/configData";
-import { CardButton} from "../Card.style";
+import { CardBase } from "../CardBase";
 
 function DmCardButton(props: {userName: string}) {
     const [targetId, setTargetId] = useState<number>();
@@ -29,12 +28,13 @@ function DmCardButton(props: {userName: string}) {
         }});
     }
     return (
-        <CardButton onClick={loading ? undefined : clickHandler}>
-            {loading ? <Loader/> : 
-            <span>
-                {props.userName}
-            </span>}
-        </CardButton>
+        <CardBase>
+            { loading ? <CircularProgress /> :
+                <CardActionArea onClick={clickHandler}>
+                    <Typography variant="subtitle2" sx={{minWidth: "400px"}}>{props.userName}</Typography>
+                </CardActionArea>
+            }
+        </CardBase>
     )
 }
 

@@ -9,6 +9,9 @@ import { REACT_APP_HOST } from "../../../common/configData";
 import useGetData from "../../../util/useGetData";
 import { toast } from "react-toastify";
 
+import { Typography, Stack, Grid, TextField } from '@mui/material'
+import { DefaultButton } from "../../common";
+
 function FriendModal() {
     const [isChange, setIsChange] = useState(0); //변화감지용 변수.
     const [target, setTarget] = useState('');
@@ -94,19 +97,43 @@ function FriendModal() {
         event.preventDefault();
         handleAddFriendSubmit(event);
     };
-
-    if (showModal) {
-        return (
-            <ModalBase reset={resetState}>
-                <h1>👥 Friend List 👥</h1>
-                <input onKeyDown={handleSearchKey} type="text" placeholder="이름으로 요청" onChange={event => setTarget(event.target.value)} value={target} />
-                <button className="profile-button" onClick={handleAddFriendSubmit}>
-                    친구요청
-                </button>
+    return (
+        <ModalBase open={showModal} reset={resetState} closeButton>
+            <Stack 
+                justifyContent="center"
+                alignItems="center"
+            >
+                <Typography variant="h2" gutterBottom>👥 Friend List 👥</Typography>
+                <Grid container 
+                    columns={4}
+                    columnSpacing={2} 
+                >
+                    <Grid item xs={3}
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                    >
+                        <TextField 
+                            fullWidth
+                            id="username" 
+                            label="친구 추가할 유저의 이름을 입력해주세요." 
+                            variant="outlined" 
+                            size="small"
+                            onChange={event => setTarget(event.target.value)}
+                            onKeyDown={handleSearchKey}
+                        />
+                    </Grid>
+                    <Grid item xs={1}
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                    >
+                        <DefaultButton onClick={handleAddFriendSubmit} sx={{marginLeft: 0, marginRight: 0, width: "100%"}}>친구 추가하기</DefaultButton>
+                    </Grid>
+                </Grid>
                 <UserCardButtonList friends={friendList}/>
-            </ModalBase>
-        );
-    }
-    return null;
+            </Stack>
+        </ModalBase>
+    )
 }
 export default FriendModal;

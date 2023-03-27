@@ -21,6 +21,7 @@ import { GoogleStrategy } from './guard/google.strategy';
     UsersModule,
     JwtModule.register({
         secret: process.env.JWTKEY,
+        signOptions: { expiresIn: '7200s' }, //jwt토큰 2시간동안만 사용가능.
     }),
     MailerModule.forRootAsync({
         useFactory: () => ({

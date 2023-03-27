@@ -1,15 +1,13 @@
 import { useState, useEffect, useContext, useRef } from "react";
-import { useSetRecoilState } from "recoil";
-import { chatMenuModalState } from "../../common/states/recoilModalState";
 import { SocketContext } from "../../common/states/contextSocket";
-import * as Chat from './ChatField.styles';
+import * as C from './Chat.styles'
+import Message from "./Message";
 
 function DmField (props: {current: string, targetId: number}) {
     const socket = useContext(SocketContext);
     const chatContainerRef = useRef<HTMLDivElement>(null);
     const [chat, setChat] = useState<{userName: string, msg: string}>({userName: "", msg: ""});
     const [chatList, setChatList] = useState<{userName: string, msg: string}[]>([]);
-    const setShowModal = useSetRecoilState(chatMenuModalState);
 
     useEffect(() => {
         if (!chatContainerRef.current) return;
@@ -42,22 +40,15 @@ function DmField (props: {current: string, targetId: number}) {
         }
     }, [chat]);
 
-    function showMenuHander(userName: string) {
-        setShowModal({user: userName, show: true});
-    }
-
     return (
-        <Chat.ChatFieldContainer id={"chat-field"} ref={chatContainerRef}>
-            { chatList.map((chat, index) => (
-                <Chat.MessageBox key={index} className={chat.userName === props.current ? "my_message" : "other"}>
-                    <span onClick={chat.userName === props.current ? undefined : (e) => {showMenuHander(chat.userName)}}>
-                        {chat.userName === props.current ? '' : chat.userName}
-                    </span>
-                    <Chat.Message className="message">{chat.msg}</Chat.Message>
-                </Chat.MessageBox>
-            )) }
-        </Chat.ChatFieldContainer>
-    );
+        <div className={C.chatFieldStyle} ref={chatContainerRef}>
+            <ul style={{width: "100%", listStyle: "none", paddingLeft: 0}}>
+                { chatList.map((chat, index) => (
+                    <Message key={index} my_msg={chat.userName === props.current} name={chat.userName} msg={chat.msg} />
+                )) }
+            </ul>
+        </div>
+    )
 
 }
 

@@ -2,11 +2,13 @@ import { useEffect, useState, useContext } from "react";
 import { SocketContext } from "../../common/states/contextSocket";
 import { useNavigate, useLocation } from "react-router-dom";
 import GamePlayRoom from "../../components/game/GamePlayRoom";
-import Loader from "../../components/util/Loader";
 import { toast } from "react-toastify";
-import { ContentBox } from "../../common/styles/ContentBox.style";
 import useCheckLogin from "../../util/useCheckLogin";
 import { RoutePath } from "../../common/configData";
+
+import { Typography } from "@mui/material";
+
+import { DefaultBox, DefaultButton, DefaultLinearProgress } from "../../components/common";
 
 function GamePlayRoomPage() {
     useCheckLogin();
@@ -47,14 +49,15 @@ function GamePlayRoomPage() {
     }
 
     return (
-        <ContentBox>
+        <DefaultBox>
             {loading ? 
             <>
-            <Loader/>
-            <button onClick={duelRunHander}>초대 취소</button>
+            <Typography variant="subtitle1">대기중...</Typography>
+            <DefaultLinearProgress/>
+            <DefaultButton onClick={duelRunHander}>초대 취소</DefaultButton>
             </> : 
             <GamePlayRoom/>}
-        </ContentBox>
+        </DefaultBox>
     );
 }
 

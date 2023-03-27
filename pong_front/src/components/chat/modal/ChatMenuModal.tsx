@@ -4,10 +4,11 @@ import { chatMenuModalState, profileModalState } from "../../../common/states/re
 import { SocketContext } from "../../../common/states/contextSocket";
 import useGetData from "../../../util/useGetData";
 import ModalBase from "../../modal/ModalBase";
-import Loader from "../../util/Loader";
 import { REACT_APP_HOST } from "../../../common/configData";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { Stack, Typography, CircularProgress, ButtonGroup } from "@mui/material";
+import { DefaultButton } from "../../common";
 
 function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?: Function, isDmModal: boolean}) {
     const socket = useContext(SocketContext);
@@ -76,7 +77,6 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
     /* 채팅방에 못들어오게 함 */
     function banHandler(e: React.MouseEvent<HTMLElement>) {
         // 밴 기능
-        // let [roomName, targetId] = data;
         socket.emit('banUser', props.roomName, targetID);
         toast("🔥 ban completed!");
         resetState();
@@ -103,18 +103,6 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
     }
 
     function inviteHandler(e: React.MouseEvent<HTMLElement>) {
-        /**
-         * NOTE - 흐름
-         * - 도전장을 보냄
-         * - 모달 리셋
-         * - 소켓 이벤트 off
-         * - 게임 화면으로 전환 (로딩)
-         */
-        /**
-         * 'duelRequest'
-         * let targetId:number = data.targetId;
-         * return boolean (성공시 true, 여러 이유로 실패하면 false)
-         */
         socket.emit('duelRequest', {targetId: targetID, roomName: props.roomName});
         /* 성공 여부 듣기 */
         socket.on('duelRequest', (data: boolean) => {
@@ -147,30 +135,34 @@ function ChatMenuModal (props: {roomName: string, isMaster: boolean, setMaster?:
         resetState();
     }
 
-    if (modalState.show) {
-        return (
-            <ModalBase reset={resetState} z_index={100}>
-                <h2>Chat Menu</h2>
-                {menuLoading ? <Loader/> : 
+    return (
+        <ModalBase open={modalState.show} reset={resetState} closeButton>
+            <Stack 
+                justifyContent="center"
+                alignItems="center"
+            >
+                <Typography variant="h3" gutterBottom >Chat Menu</Typography>
+                { menuLoading ? <CircularProgress/> : 
                     <>
-                    {props.isMaster ? <div>
-                        <button onClick={kickHandler}>강퇴</button>
-                        <button onClick={banHandler}>추방</button>
-                        {isMuted ? <button onClick={freemuteHandler}>음소거 해제</button> : <button onClick={muteHandler}>음소거</button>}
-                        <button onClick={setMasterHandler}>방장 위임</button>
-                    </div> : null}
-                    <div>
-                        <button onClick={inviteHandler}>도전장 보내기</button>
-                        {targetID !== 0 ?
-                        <button onClick={showProfileHander}>프로필 보기</button>
-                        : null}
-                    </div>
+                    { props.isMaster ? 
+                        <ButtonGroup>
+                            <DefaultButton onClick={kickHandler}>강퇴</DefaultButton>
+                            <DefaultButton onClick={banHandler}>추방</DefaultButton>
+                            {isMuted ? <DefaultButton onClick={freemuteHandler}>음소거 해제</DefaultButton> : <DefaultButton onClick={muteHandler}>음소거</DefaultButton>}
+                            <DefaultButton onClick={setMasterHandler}>방장 위임</DefaultButton>
+                        </ButtonGroup>    
+                    : null}
+                    <ButtonGroup>
+                        <DefaultButton onClick={inviteHandler}>도전장 보내기</DefaultButton>
+                        { targetID !== 0 ?
+                         <DefaultButton onClick={showProfileHander}>프로필 보기</DefaultButton>
+                        : null }
+                    </ButtonGroup>
                     </>
                 }
-            </ModalBase>
-        )
-    }
-    return null;
+            </Stack>
+        </ModalBase>
+    )
 }
 
 export default ChatMenuModal;

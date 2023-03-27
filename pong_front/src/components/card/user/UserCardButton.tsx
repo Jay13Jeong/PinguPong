@@ -3,8 +3,10 @@ import { useResetRecoilState, useSetRecoilState } from "recoil";
 import { SocketContext } from "../../../common/states/contextSocket";
 import { profileModalState } from "../../../common/states/recoilModalState";
 import { Friend, } from "../../../common/types/User";
-import {CardButton} from "../Card.style";
 import * as states from "../../../common/states/recoilModalState";
+import { CardActionArea, Typography } from "@mui/material";
+import { CardBase } from "../CardBase";
+import CircleIcon from '@mui/icons-material/Circle';
 
 function UserCardButton(props: {friend: Friend, userID: number, userName: string, userStatus: string, relate?: string}) {
     const profileState = useSetRecoilState(profileModalState);
@@ -25,68 +27,38 @@ function UserCardButton(props: {friend: Friend, userID: number, userName: string
         })
     }, [socket]);
 
-    function clickHandler(value: number, e?: any) {
+    function clickHandler(value: number) {
         profileState({ userId: value, show: true });
         resetFriendState();
         resetPendingState();
         resetBlockState();
     }
 
-    function showStatus(status: string) {
-        switch(status) {
-            case "ingame" : 
-                return (
-                    <span className="status">
-                        ingame
-                    </span>
-                );
-            case "offline" :
-                return (
-                    <span className="status">
-                        offline
-                    </span>
-                );
-            default:
-                return (
-                    <span className="status">
-                        online
-                    </span>
-                );
-        }
-    }
-
-    function showRelate(relate: string | undefined) {
-        switch(relate) {
-            case "accepted" :
-                return (
-                    <span className="relate">
-                        친구
-                    </span>
-                );
-            case "blocked" :
-                return (
-                    <span className="relate">
-                        차단중
-                    </span>
-                );
-            case "pending" : 
-                return (
-                    <span className="relate">
-                        보류중
-                    </span>
-                );
-            default:
-                return (null);
-        }
-    }
-
     return (
-        <CardButton onClick={(e) => clickHandler(props.userID, e)}>
-            {/* {showRelate(props.relate)} */}
-            <span className="user-id">{props.userName}</span>
-            {showStatus(onlineStatus)}
-            {/* {onlineStatus} */}
-        </CardButton>
+        <CardBase>
+            <CardActionArea onClick={() => clickHandler(props.userID)} sx={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+                <Typography variant="subtitle2" component="span" align="center" sx={{minWidth: "400px"}}>{props.userName}</Typography>
+                {(() => {
+                    switch (onlineStatus) {
+                        case "offline" :
+                            return <div style={{marginLeft: "auto"}}>
+                                    <CircleIcon sx={{color: "#FE346E", display: "inline-block", verticalAlign: "middle"}}/>
+                                    <Typography variant="subtitle1" component='span' sx={{display: "inline-block", verticalAlign: "middle"}}>Offline</Typography>
+                                </div>
+                        case "ingame":
+                            return <div style={{marginLeft: "auto"}}>
+                                <CircleIcon sx={{color: "#400082", display: "inline-block", verticalAlign: "middle"}}/>
+                                <Typography variant="subtitle1" component='span' sx={{display: "inline-block", verticalAlign: "middle"}}>In Game</Typography>
+                            </div>
+                        default:
+                            return <div style={{marginLeft: "auto"}}>
+                                <CircleIcon sx={{color: "#00BDAA", display: "inline-block", verticalAlign: "middle"}}/>
+                                <Typography variant="subtitle1" component='span' sx={{display: "inline-block", verticalAlign: "middle"}}>Online</Typography>
+                            </div>
+                    }
+                })()}
+            </CardActionArea>
+        </CardBase>
     );
 }
 

@@ -1,7 +1,7 @@
-import styled from 'styled-components';
+import { styled } from "@mui/material"
 
-export const LoginButton = styled.button `
-    opacity: 70%;
-    font-size: 300%;
-    border-radius: 10px;
+import { DefaultButton } from "../../common"
+
+export const LoginButton = styled(DefaultButton) `
+    font-size: 2rem;
 `

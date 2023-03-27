@@ -7,6 +7,10 @@ import { useNavigate } from "react-router-dom";
 import { REACT_APP_HOST } from "../../../common/configData";
 import { toast } from "react-toastify";
 
+import { Typography, Stack, Avatar, Button, TextField, Divider } from '@mui/material'
+import { PhotoCamera } from '@mui/icons-material';
+import { DefaultButton } from "../../common";
+
 function ProfileEditModal(props: {name: string}) {
     const showModal = useRecoilValue(profileEditModalState);
     const resetState = useResetRecoilState(profileEditModalState);
@@ -28,8 +32,7 @@ function ProfileEditModal(props: {name: string}) {
             }
         })
         .catch(err => {
-            // console.log(err.response);
-            // navigate('/');
+
         })
     }, []);
 
@@ -54,16 +57,13 @@ function ProfileEditModal(props: {name: string}) {
           if (res.status === 200){
             toast.success("2단계 인증 활성화 완료.");
             setStatus2fa(true);
-            // resetState();
-            // resetParentState();
-            // navigate('/');
+
           } else {
             toast.error("2단계 인증 활성화 실패");
           }
         })
         .catch(err => {
             toast.error("서버 2단계 인증 지원안됨.");
-            // toast.error(err.response.data.message);
         })
     };
 
@@ -98,7 +98,7 @@ function ProfileEditModal(props: {name: string}) {
 				toast.success("아바타 변경 완료");
 			})
 			.catch((err) => {
-				toast.error("fail : 사진 파일만 업로드 가능");
+				toast.error("아바타 변경 실패");
 			})
             return ;
         }
@@ -106,39 +106,61 @@ function ProfileEditModal(props: {name: string}) {
     };
 
     function onAvatar(e: ChangeEvent<HTMLInputElement>) {
-		const image: File = e.target.files![0];
-		setAvatarFile(URL.createObjectURL(image));
+        try{
+            const image: File = e.target.files![0];
+            if (image.size >= ((1 << 20) * 4))
+                throw("4MB미만 업로드 가능.");
+            setAvatarFile(URL.createObjectURL(image));
+        }catch(err: any){
+            if (err){
+                toast.error(err);
+            } else {
+                toast.error("이미지 파일 지정 취소됨.");
+            }
+        }
 	}
 
-    if (showModal) {
-        return (
-            <ModalBase reset={resetState}>
-                <h1>Profile Edit Modal</h1>
-                <div className="profile-button-wrapper">
-                    Avatar :
-                    <input ref={inputRef} type="file" id="img" name="img" accept="image/*" onChange={onAvatar}/>
-                    <button id="profile-btn" className="profile-button" onClick={handleFileSubmit}>
-                        아바타 변경
-                    </button>
-                </div>
-                <div className="profile-button-wrapper">
-                    Name : <input id="username" name="username" type="text" placeholder="" onChange={event => setUsername(event.target.value)} value={username} />
-                    <button id="profile-btn" className="profile-button" onClick={handleSubmit}>
-                        이름수정
-                    </button>
-                </div>
-                <div className="profile-button-wrapper">
-                    {!status2fa?
-                    <button id="profile-btn" className="profile-button" onClick={handle2FASubmit}>
+    return (
+        <ModalBase open={showModal} reset={resetState} closeButton>
+            <Stack 
+                justifyContent="center"
+                alignItems="center"
+                rowGap={2}
+            >
+                <Typography variant="h3" gutterBottom sx={{marginLeft: "2rem", marginRight: "2rem"}}> Edit Profile </Typography>
+                <Stack 
+                    direction="row"
+                    spacing={1}
+                    alignItems="center"
+                >
+                    <Avatar src={avatarFile} alt="profile avatar" variant="rounded" sx={{ width: 100, height: 100 }} />
+                    <Button variant="outlined" startIcon={<PhotoCamera />} size="small" component="label">
+                        <input ref={inputRef} onChange={onAvatar} id="avatar" name="avatar" hidden accept="image/*" type="file" />
+                        파일 업로드
+                    </Button>
+                </Stack>
+                <DefaultButton size="small" onClick={handleFileSubmit} fullWidth>아바타 변경</DefaultButton>
+                <Divider sx={{width: "100%"}}/>
+                <TextField 
+                    id="username"
+                    name="username"
+                    label="Name"
+                    variant="standard"
+                    size="small"
+                    defaultValue={props.name}
+                    value={username}
+                    onChange={event => setUsername(event.target.value)}
+                />
+                <DefaultButton size="small" onClick={handleSubmit} fullWidth>이름 변경</DefaultButton>
+                { !status2fa?
+                    <DefaultButton size="small" onClick={handle2FASubmit} fullWidth>
                         2단계 활성화
-                    </button> :
-                    <button id="profile-btn" className="profile-button" onClick={handleOff2FASubmit}>
-                    2단계 비활성화
-                    </button>}
-                </div>
-            </ModalBase>
-        )
-    }
-    return null;
+                    </DefaultButton> :
+                    <DefaultButton size="small" onClick={handleOff2FASubmit} fullWidth>
+                        2단계 비활성화
+                    </DefaultButton> }
+            </Stack>
+        </ModalBase>
+    )
 }
 export default ProfileEditModal;

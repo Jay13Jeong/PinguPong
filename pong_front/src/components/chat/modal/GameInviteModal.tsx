@@ -6,8 +6,10 @@ import useGetData from "../../../util/useGetData";
 import { REACT_APP_HOST } from "../../../common/configData";
 import ModalBase from "../../modal/ModalBase";
 import { useNavigate } from "react-router-dom";
-import Loader from "../../util/Loader";
 import { toast } from "react-toastify";
+
+import { Stack, Typography, CircularProgress, ButtonGroup } from "@mui/material";
+import { DefaultButton } from "../../common";
 
 function GameInviteModal (props: {targetID: number, targetUserName: string, setInviteInfo: Function}) {
     const socket = useContext(SocketContext);
@@ -59,20 +61,23 @@ function GameInviteModal (props: {targetID: number, targetUserName: string, setI
         props.setInviteInfo({id: -1, username: ""});
         resetState();
     }
-    if (modalState) {
-        return (
-            <ModalBase reset={resetState} z_index={100}>
-                {loading ? <Loader/> : 
-                    <>
-                    <h2>{props.targetUserName}의 도전 신청</h2>
-                    <button onClick={acceptHandler}>수락</button>
-                    <button onClick={rejectHandler}>거절</button>
-                    </>
+
+    return (
+        <ModalBase open={modalState} reset={resetState} closeButton>
+            <Stack 
+                justifyContent="center"
+                alignItems="center"
+            >
+                <Typography variant="h3" sx={{marginLeft: "3rem", marginRight: "3rem"}} gutterBottom >{props.targetUserName}의 도전 신청 🥊</Typography>
+                { loading ? <CircularProgress/> : 
+                    <ButtonGroup>
+                        <DefaultButton onClick={acceptHandler}>수락</DefaultButton>
+                        <DefaultButton onClick={rejectHandler}>거절</DefaultButton>
+                    </ButtonGroup>
                 }
-            </ModalBase>
-        );
-    }
-    return null;
+            </Stack>
+        </ModalBase>
+    )
 }
 
 export default GameInviteModal;
