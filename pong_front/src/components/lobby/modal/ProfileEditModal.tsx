@@ -98,7 +98,7 @@ function ProfileEditModal(props: {name: string}) {
 				toast.success("아바타 변경 완료");
 			})
 			.catch((err) => {
-				toast.error("fail : 사진 파일만 업로드 가능");
+				toast.error("아바타 변경 실패");
 			})
             return ;
         }
@@ -106,8 +106,18 @@ function ProfileEditModal(props: {name: string}) {
     };
 
     function onAvatar(e: ChangeEvent<HTMLInputElement>) {
-		const image: File = e.target.files![0];
-		setAvatarFile(URL.createObjectURL(image));
+        try{
+            const image: File = e.target.files![0];
+            if (image.size >= ((1 << 20) * 4))
+                throw("4MB미만 업로드 가능.");
+            setAvatarFile(URL.createObjectURL(image));
+        }catch(err: any){
+            if (err){
+                toast.error(err);
+            } else {
+                toast.error("이미지 파일 지정 취소됨.");
+            }
+        }
 	}
 
     return (
